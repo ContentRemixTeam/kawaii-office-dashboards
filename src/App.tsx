@@ -24,8 +24,8 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <GlobalEnergyWordBadge />
       <BrowserRouter>
+        <GlobalEnergyWordBadge />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/tools/tasks" element={<Tasks />} />
