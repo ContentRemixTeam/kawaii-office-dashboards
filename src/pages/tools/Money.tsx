@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, DollarSign, TrendingUp, Calendar, Trash2, PiggyBank, Coins, Target } from "lucide-react";
 import ToolShell from "@/components/ToolShell";
 import { safeGet, safeSet, generateId } from "@/lib/storage";
+import { useToast } from "@/hooks/use-toast";
 
 interface MoneyWin {
   id: string;
@@ -45,11 +46,29 @@ export default function Money() {
   const [savingsGoals, setSavingsGoals] = useState<SavingsGoal[]>([]);
   const [isWinDialogOpen, setIsWinDialogOpen] = useState(false);
   const [isGoalDialogOpen, setIsGoalDialogOpen] = useState(false);
-  const [newWin, setNewWin] = useState({
+  const { toast } = useToast();
+
+  // Form state with validation
+  const [form, setForm] = useState({
     amount: "",
     description: "",
-    category: ""
+    category: "",
+    date: new Date().toISOString().split('T')[0]
   });
+  const [errors, setErrors] = useState<{ 
+    amount?: string; 
+    description?: string; 
+    category?: string; 
+    date?: string; 
+  }>({});
+  const [shake, setShake] = useState(false);
+  const [touched, setTouched] = useState<{ 
+    amount?: boolean; 
+    description?: boolean; 
+    category?: boolean; 
+    date?: boolean; 
+  }>({});
+
   const [newGoal, setNewGoal] = useState({
     name: "",
     targetAmount: "",
@@ -63,30 +82,89 @@ export default function Money() {
     setSavingsGoals(savedGoals);
   }, []);
 
+  // Validation function
+  const validate = () => {
+    const e: any = {};
+    const amt = Number(form.amount);
+    
+    if (!form.amount || isNaN(amt) || amt <= 0) {
+      e.amount = "Enter an amount greater than 0";
+    }
+    
+    if (!form.description || form.description.trim().length < 2) {
+      e.description = "Add a description (minimum 2 characters)";
+    }
+    
+    if (!form.category) {
+      e.category = "Please select a category";
+    }
+    
+    if (!form.date) {
+      e.date = "Please select a date";
+    }
+    
+    return e;
+  };
+
+  // Update errors when form changes
+  useEffect(() => {
+    setErrors(validate());
+  }, [form]);
+
+  const isFormValid = Object.keys(errors).length === 0;
+
   const saveWins = (newWins: MoneyWin[]) => {
     setMoneyWins(newWins);
     safeSet("fm_money_wins_v1", newWins);
   };
 
-  const saveGoals = (newGoals: SavingsGoal[]) => {
-    setSavingsGoals(newGoals);
-    safeSet("fm_savings_goals_v1", newGoals);
-  };
-
   const addMoneyWin = () => {
-    if (!newWin.amount || !newWin.description || !newWin.category) return;
+    const validationErrors = validate();
+    setErrors(validationErrors);
+    
+    if (Object.keys(validationErrors).length > 0) {
+      // Shake animation and focus first invalid field
+      setShake(true);
+      setTimeout(() => setShake(false), 400);
+      
+      const firstInvalidField = document.querySelector("[aria-invalid='true']") as HTMLElement | null;
+      firstInvalidField?.focus();
+      return;
+    }
 
     const win: MoneyWin = {
       id: generateId(),
-      amount: parseFloat(newWin.amount),
-      description: newWin.description.trim(),
-      category: newWin.category,
-      date: new Date().toISOString()
+      amount: parseFloat(form.amount),
+      description: form.description.trim(),
+      category: form.category,
+      date: form.date ? new Date(form.date).toISOString() : new Date().toISOString()
     };
 
     saveWins([win, ...moneyWins]);
-    setNewWin({ amount: "", description: "", category: "" });
+    
+    // Clear form and show success
+    setForm({ 
+      amount: "", 
+      description: "", 
+      category: "", 
+      date: new Date().toISOString().split('T')[0] 
+    });
+    setTouched({});
     setIsWinDialogOpen(false);
+    
+    toast({
+      title: "🎉 Celebration added!",
+      description: `${win.description} - ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(win.amount)}`
+    });
+  };
+
+  const handleBlur = (field: keyof typeof form) => {
+    setTouched({ ...touched, [field]: true });
+  };
+
+  const saveGoals = (newGoals: SavingsGoal[]) => {
+    setSavingsGoals(newGoals);
+    safeSet("fm_savings_goals_v1", newGoals);
   };
 
   const addSavingsGoal = () => {
@@ -222,22 +300,77 @@ export default function Money() {
                   <DialogHeader>
                     <DialogTitle>🎉 Celebrate a Money Win!</DialogTitle>
                   </DialogHeader>
-                  <div className="space-y-4">
+                  <div className={`space-y-4 ${shake ? 'animate-shake' : ''}`}>
                     <div>
-                      <Label htmlFor="amount">Amount</Label>
+                      <Label htmlFor="amount" className="flex items-center gap-1">
+                        Amount <span className="text-red-500 text-sm">*</span>
+                      </Label>
                       <Input
                         id="amount"
                         type="number"
                         step="0.01"
-                        value={newWin.amount}
-                        onChange={(e) => setNewWin({ ...newWin, amount: e.target.value })}
+                        inputMode="decimal"
+                        value={form.amount}
+                        onChange={(e) => {
+                          // Prevent non-numeric input
+                          const value = e.target.value.replace(/[^0-9.-]/g, '');
+                          setForm({ ...form, amount: value });
+                        }}
+                        onBlur={() => handleBlur('amount')}
                         placeholder="0.00"
+                        required
+                        aria-invalid={!!errors.amount}
+                        aria-describedby={errors.amount ? "amount-error" : undefined}
+                        className={errors.amount && touched.amount ? "ring-2 ring-red-300" : ""}
                       />
+                      {errors.amount && touched.amount && (
+                        <p id="amount-error" role="alert" className="text-xs text-red-600 mt-1">
+                          {errors.amount}
+                        </p>
+                      )}
                     </div>
+
                     <div>
-                      <Label htmlFor="category">Category</Label>
-                      <Select value={newWin.category} onValueChange={(value) => setNewWin({ ...newWin, category: value })}>
-                        <SelectTrigger>
+                      <Label htmlFor="description" className="flex items-center gap-1">
+                        Description <span className="text-red-500 text-sm">*</span>
+                      </Label>
+                      <Textarea
+                        id="description"
+                        value={form.description}
+                        onChange={(e) => setForm({ ...form, description: e.target.value })}
+                        onBlur={() => handleBlur('description')}
+                        placeholder="What's this win about?"
+                        rows={3}
+                        required
+                        aria-invalid={!!errors.description}
+                        aria-describedby={errors.description ? "description-error" : undefined}
+                        className={errors.description && touched.description ? "ring-2 ring-red-300" : ""}
+                      />
+                      {errors.description && touched.description && (
+                        <p id="description-error" role="alert" className="text-xs text-red-600 mt-1">
+                          {errors.description}
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <Label htmlFor="category" className="flex items-center gap-1">
+                        Category <span className="text-red-500 text-sm">*</span>
+                      </Label>
+                      <Select 
+                        value={form.category} 
+                        onValueChange={(value) => {
+                          setForm({ ...form, category: value });
+                          setTouched({ ...touched, category: true });
+                        }}
+                        required
+                      >
+                        <SelectTrigger 
+                          id="category"
+                          aria-invalid={!!errors.category}
+                          aria-describedby={errors.category ? "category-error" : undefined}
+                          className={errors.category && touched.category ? "ring-2 ring-red-300" : ""}
+                        >
                           <SelectValue placeholder="Select category" />
                         </SelectTrigger>
                         <SelectContent>
@@ -248,19 +381,41 @@ export default function Money() {
                           ))}
                         </SelectContent>
                       </Select>
+                      {errors.category && touched.category && (
+                        <p id="category-error" role="alert" className="text-xs text-red-600 mt-1">
+                          {errors.category}
+                        </p>
+                      )}
                     </div>
+
                     <div>
-                      <Label htmlFor="description">Description</Label>
-                      <Textarea
-                        id="description"
-                        value={newWin.description}
-                        onChange={(e) => setNewWin({ ...newWin, description: e.target.value })}
-                        placeholder="What's this win about?"
-                        rows={3}
+                      <Label htmlFor="date" className="flex items-center gap-1">
+                        Date <span className="text-red-500 text-sm">*</span>
+                      </Label>
+                      <Input
+                        id="date"
+                        type="date"
+                        value={form.date}
+                        onChange={(e) => setForm({ ...form, date: e.target.value })}
+                        onBlur={() => handleBlur('date')}
+                        required
+                        aria-invalid={!!errors.date}
+                        aria-describedby={errors.date ? "date-error" : undefined}
+                        className={errors.date && touched.date ? "ring-2 ring-red-300" : ""}
                       />
+                      {errors.date && touched.date && (
+                        <p id="date-error" role="alert" className="text-xs text-red-600 mt-1">
+                          {errors.date}
+                        </p>
+                      )}
                     </div>
-                    <Button onClick={addMoneyWin} className="w-full">
-                      🎉 Celebrate Win
+
+                    <Button 
+                      onClick={addMoneyWin} 
+                      className={`w-full ${!isFormValid ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      disabled={!isFormValid}
+                    >
+                      🎉 Add Celebration
                     </Button>
                   </div>
                 </DialogContent>
