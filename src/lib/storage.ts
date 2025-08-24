@@ -84,3 +84,32 @@ export function setEncouragementsEnabled(enabled: boolean): void {
     localStorage.setItem("fm_encouragements_enabled", enabled ? "true" : "false"); 
   } catch {}
 }
+
+// Customizable front page text
+export function getHomeTitle(): string {
+  try {
+    return localStorage.getItem("fm_home_title") || "Desk Quest";
+  } catch {
+    return "Desk Quest";
+  }
+}
+
+export function setHomeTitle(title: string) {
+  try {
+    localStorage.setItem("fm_home_title", title);
+  } catch {}
+}
+
+export function getHomeSubtitle(): string {
+  try {
+    return localStorage.getItem("fm_home_subtitle") || "Welcome to your cozy digital workspace! ✨";
+  } catch {
+    return "Welcome to your cozy digital workspace! ✨";
+  }
+}
+
+export function setHomeSubtitle(subtitle: string) {
+  try {
+    localStorage.setItem("fm_home_subtitle", subtitle);
+  } catch {}
+}

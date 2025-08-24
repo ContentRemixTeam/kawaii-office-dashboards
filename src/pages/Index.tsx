@@ -1,11 +1,30 @@
+import { useState, useEffect } from "react";
 import OfficeHero from "@/components/OfficeHero";
 import VisionPreviewOverlay from "@/components/VisionPreviewOverlay";
 import NavPills from "@/components/NavPills";
 import BigThreeTasksSection from "@/components/BigThreeTasksSection";
 import { HOTSPOTS, OFFICE_ALT, OFFICE_IMAGE_SRC } from "@/data/hotspots";
+import { getHomeTitle, getHomeSubtitle } from "@/lib/storage";
 import { Sparkles, Heart } from "lucide-react";
 
 const Index = () => {
+  const [homeTitle, setHomeTitle] = useState("");
+  const [homeSubtitle, setHomeSubtitle] = useState("");
+  
+  useEffect(() => {
+    setHomeTitle(getHomeTitle());
+    setHomeSubtitle(getHomeSubtitle());
+    
+    // Listen for storage changes to update text
+    const handleStorageChange = () => {
+      setHomeTitle(getHomeTitle());
+      setHomeSubtitle(getHomeSubtitle());
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
   const boardHotspot = HOTSPOTS.find(h => h.id === 'board')!;
   return (
     <main className="min-h-screen body-gradient flex flex-col items-center py-10 px-4">
@@ -13,12 +32,12 @@ const Index = () => {
         <div className="flex items-center justify-center gap-3 mb-6">
           <Sparkles className="w-8 h-8 text-primary animate-pulse-soft" />
           <h1 className="text-4xl md:text-5xl font-bold bg-gradient-kawaii bg-clip-text text-transparent">
-            Kawaii Positivity Office
+            {homeTitle}
           </h1>
           <Heart className="w-8 h-8 text-primary animate-bounce-cute" />
         </div>
         <p className="text-xl text-muted max-w-2xl mx-auto leading-relaxed">
-          Welcome to your cozy digital workspace! ✨ Use the toolbar below to access your favorite productivity and positivity tools.
+          {homeSubtitle} Use the toolbar below to access your favorite productivity and positivity tools.
         </p>
       </div>
 

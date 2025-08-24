@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Palette, RotateCcw, Save, Upload } from "lucide-react";
 import ToolShell from "@/components/ToolShell";
-import { safeGet, safeSet, getCelebrationsEnabled, setCelebrationsEnabled, getEncouragementsEnabled, setEncouragementsEnabled } from "@/lib/storage";
+import { safeGet, safeSet, getCelebrationsEnabled, setCelebrationsEnabled, getEncouragementsEnabled, setEncouragementsEnabled, getHomeTitle, setHomeTitle, getHomeSubtitle, setHomeSubtitle } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 import { loadHero, saveHero, OFFICE_IMAGES, HeroState } from "@/lib/heroStore";
 
@@ -258,6 +258,8 @@ export default function Theme() {
   const [tempTheme, setTempTheme] = useState<ThemeData>(DEFAULT_THEME);
   const [celebrationsEnabled, setCelebrationsEnabledState] = useState(true);
   const [encouragementsEnabled, setEncouragementsEnabledState] = useState(true);
+  const [homeTitle, setHomeTitleState] = useState("");
+  const [homeSubtitle, setHomeSubtitleState] = useState("");
   const [heroState, setHeroState] = useState<HeroState>(loadHero());
   const [youtubeUrl, setYoutubeUrl] = useState("");
   const { toast } = useToast();
@@ -285,6 +287,8 @@ export default function Theme() {
     setYoutubeUrl(loadHero().youtubeUrl || "");
     setCelebrationsEnabledState(getCelebrationsEnabled());
     setEncouragementsEnabledState(getEncouragementsEnabled());
+    setHomeTitleState(getHomeTitle());
+    setHomeSubtitleState(getHomeSubtitle());
   }, []);
 
   // Listen for storage changes
@@ -1081,6 +1085,49 @@ export default function Theme() {
                     setTempTheme(newTheme);
                   }}
                 />
+              </div>
+              
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Home Page Text</h3>
+                
+                <div className="space-y-3 p-4 border border-border rounded-lg">
+                  <div>
+                    <Label htmlFor="home-title">Page Title</Label>
+                    <Input
+                      id="home-title"
+                      value={homeTitle}
+                      onChange={(e) => setHomeTitleState(e.target.value)}
+                      placeholder="Desk Quest"
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="home-subtitle">Page Subtitle</Label>
+                    <Input
+                      id="home-subtitle"
+                      value={homeSubtitle}
+                      onChange={(e) => setHomeSubtitleState(e.target.value)}
+                      placeholder="Welcome to your cozy digital workspace! ✨"
+                      className="mt-1"
+                    />
+                  </div>
+                  <Button
+                    onClick={() => {
+                      setHomeTitle(homeTitle);
+                      setHomeSubtitle(homeSubtitle);
+                      toast({
+                        title: "✨ Home page updated",
+                        description: "Your custom text has been saved!"
+                      });
+                      // Trigger a page refresh or state update if needed
+                      window.dispatchEvent(new Event('storage'));
+                    }}
+                    className="w-full"
+                  >
+                    <Save className="w-4 h-4 mr-2" />
+                    Save Home Page Text
+                  </Button>
+                </div>
               </div>
             </div>
           </TabsContent>
