@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -11,6 +11,69 @@ import { Play, Pause, RotateCcw, Settings, Sparkles, ChevronDown, ChevronUp, Pal
 import { safeGet, safeSet } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 import { onDataChanged } from "@/lib/bus";
+import { toLocalISODate, isSameLocalDayISO } from "@/lib/localDate";
+
+// Storage keys
+const ENERGY_KEY = "fm_energy_v1";
+const AFFIRM_KEY = "fm_affirmations_v1";
+const TASKS_KEY = "fm_tasks_v1";
+const WINS_KEY = "fm_wins_v1";
+
+// Data readers for robust localStorage parsing
+function readEnergy(): { word?: string; date?: string; pinned?: boolean } {
+  if (typeof window === "undefined") return {};
+  try {
+    const raw = localStorage.getItem(ENERGY_KEY);
+    if (!raw) return {};
+    const data = JSON.parse(raw);
+    // Shape A: { date, word, pinned? }
+    if (data?.word && data?.date) return { word: data.word, date: data.date, pinned: data.pinned };
+    // Shape B: { pinned?, recent: [{date, word}, ...] }
+    if (Array.isArray(data?.recent) && data.recent.length) {
+      const latest = data.recent[0];
+      return { word: latest?.word, date: latest?.date, pinned: data.pinned };
+    }
+    return {};
+  } catch { return {}; }
+}
+
+function readAffirm(): { text?: string; date?: string } {
+  if (typeof window === "undefined") return {};
+  try {
+    const raw = localStorage.getItem(AFFIRM_KEY);
+    if (!raw) return {};
+    const data = JSON.parse(raw);
+    // Shape A: { date, cardIndex, text }
+    if (data?.text && data?.date) return { text: data.text, date: data.date };
+    // Shape B: { today:{date,text}, history: [...] }
+    if (data?.today?.text && data?.today?.date) return { text: data.today.text, date: data.today.date };
+    // Fallback to most recent history item
+    if (Array.isArray(data?.history) && data.history.length) {
+      const latest = data.history[0];
+      return { text: latest?.text, date: latest?.date };
+    }
+    return {};
+  } catch { return {}; }
+}
+
+function readWins(): number {
+  if (typeof window === "undefined") return 0;
+  try {
+    const raw = localStorage.getItem(WINS_KEY);
+    if (!raw) return 0;
+    const data = JSON.parse(raw);
+    if (Array.isArray(data)) {
+      const today = toLocalISODate();
+      return data.filter((win: any) => {
+        if (!win.date && !win.createdAt && !win.timestamp) return false;
+        const winDate = new Date(win.date || win.createdAt || win.timestamp);
+        const winDateISO = toLocalISODate(winDate);
+        return winDateISO === today;
+      }).length;
+    }
+    return 0;
+  } catch { return 0; }
+}
 
 // Pet data types and helpers
 type TaskState = {
@@ -20,8 +83,6 @@ type TaskState = {
 };
 
 type PetStage = 0 | 1 | 2 | 3; // 0=egg, 1=baby, 2=growing, 3=full
-
-const TASKS_KEY = "fm_tasks_v1";
 
 function readTasks(): { animal?: string; completedCount: number; total: number } {
   if (typeof window === "undefined") return { completedCount: 0, total: 3 };
@@ -111,6 +172,37 @@ interface PositivityData {
   winsCount?: number;
 }
 
+// Custom hook for live data updates
+function useLiveData(loadFn: () => void) {
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (!e.key) return;
+      if ([ENERGY_KEY, AFFIRM_KEY, TASKS_KEY, WINS_KEY].includes(e.key)) loadFn();
+    };
+    window.addEventListener("storage", onStorage);
+
+    let offBus: (() => void) | undefined;
+    try { 
+      offBus = onDataChanged?.((keys) => {
+        if (!keys || !keys.length) { loadFn(); return; }
+        if (keys.some(k => [ENERGY_KEY, AFFIRM_KEY, TASKS_KEY, WINS_KEY].includes(k))) loadFn();
+      }); 
+    } catch {}
+
+    const onVis = () => { if (document.visibilityState === "visible") loadFn(); };
+    document.addEventListener("visibilitychange", onVis);
+
+    const id = window.setInterval(loadFn, 10000);
+
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      document.removeEventListener("visibilitychange", onVis);
+      window.clearInterval(id);
+      offBus?.();
+    };
+  }, [loadFn]);
+}
+
 const getTodayISO = () => new Date().toISOString().split('T')[0];
 
 const ANIMAL_STAGES = {
@@ -160,10 +252,15 @@ export default function ProductivityBar() {
   const [positivityData, setPositivityData] = useState<PositivityData>({});
   const [petInfo, setPetInfo] = useState<{animal?: string; count: number; total: number}>({ count: 0, total: 3 });
 
+  // Individual state for better tracking
+  const [energyWord, setEnergyWord] = useState<string>();
+  const [affirmText, setAffirmText] = useState<string>();
+  const [winsCount, setWinsCount] = useState<number>(0);
+
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
 
-  // Load pet data
+  // Load data functions
   const loadPet = () => {
     const taskData = readTasks();
     setPetInfo({ 
@@ -173,173 +270,71 @@ export default function ProductivityBar() {
     });
   };
 
-  // Load saved data and positivity data
+  const loadData = useCallback(() => {
+    const e = readEnergy();
+    const a = readAffirm();
+    const w = readWins();
+    
+    // Only show today's energy word if it's today and not explicitly disabled
+    setEnergyWord(isSameLocalDayISO(e.date) && e.pinned !== false ? e.word : undefined);
+    
+    // Only show today's affirmation
+    setAffirmText(isSameLocalDayISO(a.date) ? a.text : undefined);
+    
+    // Set wins count
+    setWinsCount(w);
+    
+    // Update combined data for compatibility
+    setPositivityData({
+      energyWord: isSameLocalDayISO(e.date) && e.pinned !== false ? e.word : undefined,
+      affirmation: isSameLocalDayISO(a.date) ? a.text : undefined,
+      winsCount: w
+    });
+    
+    // Load pet data
+    loadPet();
+  }, []);
+
+  // Subscribe to live updates
+  useLiveData(loadData);
+
+  // Load saved data on mount
   useEffect(() => {
-    const loadData = () => {
-      const savedSettings = safeGet<ProductivitySettings>('fm_productivity_settings_v1', DEFAULT_SETTINGS);
-      const savedProgress = safeGet<DailyProgress>('fm_productivity_day_v1', {
-        date: getTodayISO(),
+    loadData();
+  }, [loadData]);
+
+  // Setup settings and daily progress separately
+  useEffect(() => {
+    const savedSettings = safeGet<ProductivitySettings>('fm_productivity_settings_v1', DEFAULT_SETTINGS);
+    const savedProgress = safeGet<DailyProgress>('fm_productivity_day_v1', {
+      date: getTodayISO(),
+      focusSessions: 0,
+      waters: 0,
+      stretches: 0,
+      currentRound: 1
+    });
+
+    setSettings(savedSettings);
+    
+    // Reset progress if it's a new day
+    const today = getTodayISO();
+    if (savedProgress.date !== today) {
+      const newProgress = {
+        date: today,
         focusSessions: 0,
         waters: 0,
         stretches: 0,
         currentRound: 1
-      });
+      };
+      setDailyProgress(newProgress);
+      safeSet('fm_productivity_day_v1', newProgress);
+    } else {
+      setDailyProgress(savedProgress);
+    }
 
-      setSettings(savedSettings);
-      
-      // Reset progress if it's a new day
-      const today = getTodayISO();
-      if (savedProgress.date !== today) {
-        const newProgress = {
-          date: today,
-          focusSessions: 0,
-          waters: 0,
-          stretches: 0,
-          currentRound: 1
-        };
-        setDailyProgress(newProgress);
-        safeSet('fm_productivity_day_v1', newProgress);
-      } else {
-        setDailyProgress(savedProgress);
-      }
-
-      // Set initial timer duration
-      setTimer(prev => ({ ...prev, timeLeft: savedSettings.focusMinutes * 60 }));
-
-      // Load positivity data and pet info
-      loadPositivityData();
-      loadPet();
-    };
-
-    loadData();
-    
-    // Listen for ALL data change events for real-time updates
-    const handleStorageChange = (e: StorageEvent) => {
-      const relevantKeys = ['fm_energy_v1', 'fm_affirmations_v1', 'fm_tasks_v1', 'fm_wins_v1'];
-      if (relevantKeys.includes(e.key || '')) {
-        if (e.key === 'fm_tasks_v1') {
-          loadPet();
-        }
-        loadPositivityData();
-      }
-    };
-
-    const handleBusChange = (keys: string[]) => {
-      const relevantKeys = ['fm_energy_v1', 'fm_affirmations_v1', 'fm_tasks_v1', 'fm_wins_v1'];
-      if (keys.some(key => relevantKeys.includes(key))) {
-        if (keys.includes('fm_tasks_v1')) {
-          loadPet();
-        }
-        loadPositivityData();
-      }
-    };
-
-    const handleVisibilityChange = () => {
-      if (!document.hidden) {
-        loadPositivityData(); // Reload when tab becomes visible
-        loadPet();
-      }
-    };
-
-    // Fallback polling every 10s to catch any missed events
-    const pollInterval = setInterval(() => {
-      loadPositivityData();
-      loadPet();
-    }, 10000);
-
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('visibilitychange', handleVisibilityChange);
-    const unsubscribeBus = onDataChanged(handleBusChange);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('visibilitychange', handleVisibilityChange);
-      clearInterval(pollInterval);
-      unsubscribeBus();
-    };
+    // Set initial timer duration
+    setTimer(prev => ({ ...prev, timeLeft: savedSettings.focusMinutes * 60 }));
   }, []);
-
-  const loadPositivityData = () => {
-    if (typeof window === 'undefined') return; // SSR guard
-    
-    const today = getTodayISO();
-    const newPositivityData: PositivityData = {};
-
-    // Load Energy Word - handle multiple shapes robustly
-    try {
-      const energyRaw = localStorage.getItem('fm_energy_v1');
-      if (energyRaw) {
-        const energyData = JSON.parse(energyRaw);
-        
-        // Shape A: { date, word, pinned? } - daily format
-        if (energyData.date === today && energyData.word) {
-          newPositivityData.energyWord = energyData.word;
-        }
-        // Shape B: { pinned?, recent: [{date,word}, ...] } - history format
-        else if (Array.isArray(energyData.recent) && energyData.recent.length > 0) {
-          const todayEntry = energyData.recent.find((entry: any) => entry.date === today);
-          if (todayEntry?.word) {
-            newPositivityData.energyWord = todayEntry.word;
-          }
-        }
-        // Shape C: Direct { word, isCustom, pinned } format
-        else if (energyData.word && !energyData.date) {
-          newPositivityData.energyWord = energyData.word;
-        }
-      }
-    } catch (error) {
-      console.debug('Error loading energy word:', error);
-    }
-
-    // Load Affirmation - handle multiple shapes robustly  
-    try {
-      const affirmationRaw = localStorage.getItem('fm_affirmations_v1');
-      if (affirmationRaw) {
-        const affirmationData = JSON.parse(affirmationRaw);
-        
-        // Shape A: { date, cardIndex, text } - daily format
-        if (affirmationData.date === today && affirmationData.text) {
-          newPositivityData.affirmation = affirmationData.text;
-        }
-        // Shape B: { today: {date,text}, history:[...] } - structured format
-        else if (affirmationData.today?.date === today && affirmationData.today?.text) {
-          newPositivityData.affirmation = affirmationData.today.text;
-        }
-        // Shape C: Direct { text, cardIndex } format
-        else if (affirmationData.text && !affirmationData.date) {
-          newPositivityData.affirmation = affirmationData.text;
-        }
-      }
-    } catch (error) {
-      console.debug('Error loading affirmation:', error);
-    }
-
-    // Load Pet Data is now handled by loadPet() function separately
-
-    // Load Daily Wins - handle array format
-    try {
-      const winsRaw = localStorage.getItem('fm_wins_v1');
-      if (winsRaw) {
-        const winsData = JSON.parse(winsRaw);
-        if (Array.isArray(winsData)) {
-          // Count wins from today - handle multiple date formats
-          const todayWins = winsData.filter((win: any) => {
-            if (!win.date && !win.createdAt && !win.timestamp) return false;
-            
-            const winDate = new Date(win.date || win.createdAt || win.timestamp);
-            const winDateISO = winDate.toISOString().split('T')[0];
-            return winDateISO === today;
-          }).length;
-          
-          newPositivityData.winsCount = todayWins;
-        }
-      }
-    } catch (error) {
-      console.debug('Error loading wins data:', error);
-    }
-
-    setPositivityData(newPositivityData);
-  };
 
   // Timer logic
   useEffect(() => {
@@ -695,7 +690,7 @@ export default function ProductivityBar() {
             {/* Right Side - Positivity Anchors */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {/* Energy Word */}
-              <div className="flex items-center gap-2 min-w-0 overflow-hidden rounded-xl px-3 py-2 bg-white/50 dark:bg-black/20 border border-border/10">
+              <div className="flex items-center gap-2 min-w-0 overflow-hidden rounded-xl px-3 py-2 bg-white/70 border shadow-sm">
                 <span aria-hidden="true" className="text-lg flex-shrink-0">🌟</span>
                 <div className="flex-1 min-w-0">
                   <div className="text-xs text-muted-foreground leading-tight">Energy</div>
@@ -706,22 +701,22 @@ export default function ProductivityBar() {
                         size="sm"
                         className="h-auto p-0 text-left justify-start font-medium leading-tight"
                         onClick={() => navigate('/tools/energy')}
-                        title={positivityData.energyWord || 'Choose your word ✨'}
+                        title={energyWord || 'Choose your word ✨'}
                       >
-                        <span className="truncate max-w-[10rem] sm:max-w-[7.5rem] text-sm">
-                          {positivityData.energyWord || 'Choose your word ✨'}
+                        <span className="truncate leading-tight max-w-[12rem] md:max-w-[10rem] sm:max-w-[8rem] text-sm">
+                          {energyWord || 'Choose your word ✨'}
                         </span>
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>{positivityData.energyWord || 'Choose your word ✨'}</p>
+                      <p>{energyWord || 'Choose your word ✨'}</p>
                     </TooltipContent>
                   </Tooltip>
                 </div>
               </div>
 
               {/* Affirmation Card */}
-              <div className="flex items-center gap-2 min-w-0 overflow-hidden rounded-xl px-3 py-2 bg-white/50 dark:bg-black/20 border border-border/10">
+              <div className="flex items-center gap-2 min-w-0 overflow-hidden rounded-xl px-3 py-2 bg-white/70 border shadow-sm">
                 <span aria-hidden="true" className="text-lg flex-shrink-0">🃏</span>
                 <div className="flex-1 min-w-0">
                   <div className="text-xs text-muted-foreground leading-tight">Affirmation</div>
@@ -732,15 +727,15 @@ export default function ProductivityBar() {
                         size="sm"
                         className="h-auto p-0 text-left justify-start font-medium leading-tight"
                         onClick={() => navigate('/tools/affirmations')}
-                        title={positivityData.affirmation || 'Draw your card 🃏'}
+                        title={affirmText || 'Draw your card 🃏'}
                       >
-                        <span className="truncate max-w-[10rem] sm:max-w-[7.5rem] text-sm">
-                          {positivityData.affirmation || 'Draw your card 🃏'}
+                        <span className="truncate leading-tight max-w-[12rem] md:max-w-[10rem] sm:max-w-[8rem] text-sm">
+                          {affirmText || 'Draw your card 🃏'}
                         </span>
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>{positivityData.affirmation || 'Draw your card 🃏'}</p>
+                      <p>{affirmText || 'Draw your card 🃏'}</p>
                     </TooltipContent>
                   </Tooltip>
                 </div>
@@ -766,7 +761,7 @@ export default function ProductivityBar() {
               </div>
 
               {/* Daily Wins */}
-              <div className="flex items-center gap-2 min-w-0 overflow-hidden rounded-xl px-3 py-2 bg-white/50 dark:bg-black/20 border border-border/10">
+              <div className="flex items-center gap-2 min-w-0 overflow-hidden rounded-xl px-3 py-2 bg-white/70 border shadow-sm">
                 <span aria-hidden="true" className="text-lg flex-shrink-0">🏆</span>
                 <div className="flex-1 min-w-0">
                   <div className="text-xs text-muted-foreground leading-tight">Wins</div>
@@ -777,18 +772,18 @@ export default function ProductivityBar() {
                         size="sm"
                         className="h-auto p-0 text-left justify-start font-medium leading-tight"
                         onClick={() => navigate('/tools/wins')}
-                        title={positivityData.winsCount && positivityData.winsCount > 0 
-                          ? `${positivityData.winsCount} win${positivityData.winsCount > 1 ? 's' : ''} today!`
+                        title={winsCount && winsCount > 0 
+                          ? `${winsCount} win${winsCount > 1 ? 's' : ''} today!`
                           : 'Log a win 🏆'
                         }
                       >
-                        <span className={`text-sm truncate max-w-[8rem] sm:max-w-[6rem] ${
-                          positivityData.winsCount && positivityData.winsCount > 0
+                        <span className={`text-sm truncate leading-tight max-w-[12rem] md:max-w-[10rem] sm:max-w-[8rem] ${
+                          winsCount && winsCount > 0
                             ? 'text-yellow-600 dark:text-yellow-400 font-bold'
                             : 'text-muted-foreground'
                         }`}>
-                          {positivityData.winsCount && positivityData.winsCount > 0 
-                            ? `${positivityData.winsCount} Win${positivityData.winsCount > 1 ? 's' : ''}` 
+                          {winsCount && winsCount > 0 
+                            ? `${winsCount} Win${winsCount > 1 ? 's' : ''}` 
                             : 'Log a win 🏆'
                           }
                         </span>
@@ -796,8 +791,8 @@ export default function ProductivityBar() {
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>
-                        {positivityData.winsCount && positivityData.winsCount > 0 
-                          ? `You've logged ${positivityData.winsCount} win${positivityData.winsCount > 1 ? 's' : ''} today!`
+                        {winsCount && winsCount > 0 
+                          ? `You've logged ${winsCount} win${winsCount > 1 ? 's' : ''} today!`
                           : 'Log your daily wins and celebrations'
                         }
                       </p>
