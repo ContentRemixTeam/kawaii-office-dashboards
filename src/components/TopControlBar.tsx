@@ -40,10 +40,18 @@ export default function TopControlBar() {
   const [thumbs, setThumbs] = React.useState<string[]>([]);
 
   const refresh = React.useCallback(() => {
-    setEnergy(readEnergy());
-    setAffirm(readAffirmation());
-    setPet(readPetStage());
-    setThumbs(readVisionThumbs(3));
+    console.log('TopBar refreshing...');
+    const energyData = readEnergy();
+    const affirmData = readAffirmation();
+    const petData = readPetStage();
+    const thumbsData = readVisionThumbs(3);
+    
+    console.log('TopBar data:', { energyData, affirmData, petData, thumbsData });
+    
+    setEnergy(energyData);
+    setAffirm(affirmData);
+    setPet(petData);
+    setThumbs(thumbsData);
   }, []);
 
   React.useEffect(() => {

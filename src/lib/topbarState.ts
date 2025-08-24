@@ -13,6 +13,7 @@ export const KEY_VISION  = "fm_vision_v1";
 export function readEnergy() {
   try {
     const d = JSON.parse(localStorage.getItem(KEY_ENERGY) || "null");
+    console.log('Energy data:', d, 'Today:', todayISO());
     return d?.date === todayISO() ? d.word ?? null : null;
   } catch { return null; }
 }
@@ -20,10 +21,11 @@ export function readEnergy() {
 export function readAffirmation() {
   try {
     const d = JSON.parse(localStorage.getItem(KEY_AFFIRM) || "null");
+    console.log('Affirmation data:', d, 'Today:', todayISO());
     if (d?.date !== todayISO()) return { text: null, title: null };
     return {
-      text: d.text ?? d.card?.text ?? null,
-      title: d.title ?? d.card?.title ?? null,
+      text: d.text ?? null,
+      title: d.text ?? null, // Use text as title for display
     };
   } catch { return { text: null, title: null }; }
 }

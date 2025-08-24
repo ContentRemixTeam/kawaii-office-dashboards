@@ -74,10 +74,12 @@ export default function Energy() {
     };
     setTodayWord(wordData);
     setDailyData("fm_energy_v1", wordData);
+    
+    // Emit change for TopBar updates
+    emitChanged([KEY_ENERGY]);
 
     // Dispatch custom event for badge updates
     window.dispatchEvent(new CustomEvent('energyWordUpdated'));
-    // Dispatch storage event for cross-tab updates
     window.dispatchEvent(new Event('storage'));
     // Notify via event bus
     emitChanged([KEY_ENERGY]);

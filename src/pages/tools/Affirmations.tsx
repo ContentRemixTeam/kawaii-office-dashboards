@@ -110,6 +110,9 @@ export default function Affirmations() {
       setTodaysCard(newCard);
       setDailyData("fm_affirmations_v1", newCard);
       
+      // Emit change for TopBar updates
+      emitChanged([KEY_AFFIRM]);
+      
       // Save to history
       const updatedHistory = { ...cardHistory, [today]: newCard };
       setCardHistory(updatedHistory);
