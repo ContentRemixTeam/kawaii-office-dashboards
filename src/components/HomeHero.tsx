@@ -86,7 +86,7 @@ export default function HomeHero() {
       <YouTubeAmbient
         videoId={currentVideoId}
         onError={handleVideoError}
-        startMuted={true}
+        startMuted={false}
         className="aspect-[16/9]"
       />
       

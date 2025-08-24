@@ -12,16 +12,66 @@ interface TaskData {
 }
 
 const ANIMALS = [
-  { id: "unicorn", name: "Unicorn", emoji: "🦄" },
-  { id: "dragon", name: "Dragon", emoji: "🐉" },
-  { id: "cat", name: "Cat", emoji: "🐱" },
-  { id: "dog", name: "Dog", emoji: "🐶" },
-  { id: "bunny", name: "Bunny", emoji: "🐰" },
-  { id: "fox", name: "Fox", emoji: "🦊" },
-  { id: "panda", name: "Panda", emoji: "🐼" },
-  { id: "penguin", name: "Penguin", emoji: "🐧" },
-  { id: "owl", name: "Owl", emoji: "🦉" },
-  { id: "hamster", name: "Hamster", emoji: "🐹" }
+  { 
+    id: "unicorn", 
+    name: "Unicorn", 
+    emoji: "🦄",
+    stages: ["🥚", "🦄", "🌈🦄", "✨🦄👑"]
+  },
+  { 
+    id: "dragon", 
+    name: "Dragon", 
+    emoji: "🐉",
+    stages: ["🥚", "🐲", "🔥🐉", "👑🐉🔥"]
+  },
+  { 
+    id: "cat", 
+    name: "Cat", 
+    emoji: "🐱",
+    stages: ["🥚", "🐱", "🐾🐱", "👑🐱✨"]
+  },
+  { 
+    id: "dog", 
+    name: "Dog", 
+    emoji: "🐶",
+    stages: ["🥚", "🐶", "🦴🐕", "👑🐕⭐"]
+  },
+  { 
+    id: "bunny", 
+    name: "Bunny", 
+    emoji: "🐰",
+    stages: ["🥚", "🐰", "🥕🐇", "👑🐇🌸"]
+  },
+  { 
+    id: "fox", 
+    name: "Fox", 
+    emoji: "🦊",
+    stages: ["🥚", "🦊", "🍂🦊", "👑🦊🔥"]
+  },
+  { 
+    id: "panda", 
+    name: "Panda", 
+    emoji: "🐼",
+    stages: ["🥚", "🐼", "🎋🐼", "👑🐼🎍"]
+  },
+  { 
+    id: "penguin", 
+    name: "Penguin", 
+    emoji: "🐧",
+    stages: ["🥚", "🐧", "❄️🐧", "👑🐧🏔️"]
+  },
+  { 
+    id: "owl", 
+    name: "Owl", 
+    emoji: "🦉",
+    stages: ["🥚", "🦉", "📚🦉", "👑🦉🌙"]
+  },
+  { 
+    id: "hamster", 
+    name: "Hamster", 
+    emoji: "🐹",
+    stages: ["🥚", "🐹", "🌻🐹", "👑🐹⚡"]
+  }
 ];
 
 export default function BigThreeTasksSection() {
@@ -138,6 +188,8 @@ export default function BigThreeTasksSection() {
 
   const completedCount = taskData.completed.filter(Boolean).length;
   const selectedAnimal = ANIMALS.find(a => a.id === taskData.selectedAnimal) || ANIMALS[0];
+  const currentStage = Math.min(completedCount, 3);
+  const stageEmoji = selectedAnimal.stages[currentStage];
 
   return (
     <div className="w-full max-w-4xl mx-auto mb-8">
@@ -173,9 +225,14 @@ export default function BigThreeTasksSection() {
             <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
               The Big Three
             </h2>
-            <span className="text-2xl">{selectedAnimal.emoji}</span>
+            <div className="text-4xl">
+              {stageEmoji}
+            </div>
           </div>
           <p className="text-muted-foreground">Your top 3 priorities for today</p>
+          <div className="text-sm text-muted-foreground/80 mt-1">
+            {selectedAnimal.name} - Stage {currentStage}/3
+          </div>
           
           {completedCount === 3 && (
             <div className="mt-3 text-center animate-pulse">
