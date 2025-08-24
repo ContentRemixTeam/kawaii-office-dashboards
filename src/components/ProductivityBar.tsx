@@ -26,9 +26,20 @@ function readEnergy(): { word?: string; date?: string; pinned?: boolean } {
     const raw = localStorage.getItem(ENERGY_KEY);
     if (!raw) return {};
     const data = JSON.parse(raw);
-    // Shape A: { date, word, pinned? }
+    
+    // Shape A: Wrapped format from getDailyData/setDailyData { date: "2025-01-XX", data: { word, isCustom, pinned } }
+    if (data?.date && data?.data?.word) {
+      return { 
+        word: data.data.word, 
+        date: data.date, 
+        pinned: data.data.pinned !== false 
+      };
+    }
+    
+    // Shape B: Direct format { date, word, pinned? }
     if (data?.word && data?.date) return { word: data.word, date: data.date, pinned: data.pinned };
-    // Shape B: { pinned?, recent: [{date, word}, ...] }
+    
+    // Shape C: { pinned?, recent: [{date, word}, ...] }
     if (Array.isArray(data?.recent) && data.recent.length) {
       const latest = data.recent[0];
       return { word: latest?.word, date: latest?.date, pinned: data.pinned };
@@ -43,10 +54,18 @@ function readAffirm(): { text?: string; date?: string } {
     const raw = localStorage.getItem(AFFIRM_KEY);
     if (!raw) return {};
     const data = JSON.parse(raw);
-    // Shape A: { date, cardIndex, text }
+    
+    // Shape A: Wrapped format from getDailyData/setDailyData { date: "2025-01-XX", data: { cardIndex, text } }
+    if (data?.date && data?.data?.text) {
+      return { text: data.data.text, date: data.date };
+    }
+    
+    // Shape B: Direct format { date, cardIndex, text }
     if (data?.text && data?.date) return { text: data.text, date: data.date };
-    // Shape B: { today:{date,text}, history: [...] }
+    
+    // Shape C: { today:{date,text}, history: [...] }
     if (data?.today?.text && data?.today?.date) return { text: data.today.text, date: data.today.date };
+    
     // Fallback to most recent history item
     if (Array.isArray(data?.history) && data.history.length) {
       const latest = data.history[0];
@@ -703,7 +722,7 @@ export default function ProductivityBar() {
                         onClick={() => navigate('/tools/energy')}
                         title={energyWord || 'Choose your word ✨'}
                       >
-                        <span className="truncate leading-tight max-w-[12rem] md:max-w-[10rem] sm:max-w-[8rem] text-sm">
+                        <span className="truncate leading-tight max-w-[16rem] md:max-w-[14rem] sm:max-w-[12rem] text-sm">
                           {energyWord || 'Choose your word ✨'}
                         </span>
                       </Button>
@@ -729,7 +748,7 @@ export default function ProductivityBar() {
                         onClick={() => navigate('/tools/affirmations')}
                         title={affirmText || 'Draw your card 🃏'}
                       >
-                        <span className="truncate leading-tight max-w-[12rem] md:max-w-[10rem] sm:max-w-[8rem] text-sm">
+                        <span className="truncate leading-tight max-w-[16rem] md:max-w-[14rem] sm:max-w-[12rem] text-sm">
                           {affirmText || 'Draw your card 🃏'}
                         </span>
                       </Button>
