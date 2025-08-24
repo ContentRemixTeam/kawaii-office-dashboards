@@ -1,4 +1,8 @@
 import { todayISO } from "./today";
+import { emitChanged } from "./bus";
+
+// Re-export emitChanged for convenience
+export { emitChanged };
 
 export const KEY_ENERGY  = "fm_energy_v1";
 export const KEY_AFFIRM  = "fm_affirmations_v1";

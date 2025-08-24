@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Sparkles, RotateCw, Calendar, Heart } from "lucide-react";
 import ToolShell from "@/components/ToolShell";
 import { getDailyData, setDailyData, safeGet, safeSet } from "@/lib/storage";
-import { notifyDataChanged } from "@/lib/bus";
+import { emitChanged, KEY_AFFIRM } from "@/lib/topbarState";
 
 const AFFIRMATIONS = [
   "I am worthy of love and happiness",
@@ -122,7 +122,7 @@ export default function Affirmations() {
       // Dispatch events for real-time updates
       window.dispatchEvent(new CustomEvent('affirmationUpdated'));
       window.dispatchEvent(new Event('storage'));
-      notifyDataChanged(["fm_affirmations_v1"]);
+      emitChanged([KEY_AFFIRM]);
     }, 1000);
   };
 

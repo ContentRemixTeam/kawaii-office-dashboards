@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { getDailyData, setDailyData, safeGet, safeSet } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
-import { notifyDataChanged } from "@/lib/bus";
+import { emitChanged, KEY_ENERGY } from "@/lib/topbarState";
 import ToolShell from "@/components/ToolShell";
 
 interface EnergyWordData {
@@ -80,7 +80,7 @@ export default function Energy() {
     // Dispatch storage event for cross-tab updates
     window.dispatchEvent(new Event('storage'));
     // Notify via event bus
-    notifyDataChanged(["fm_energy_v1"]);
+    emitChanged([KEY_ENERGY]);
 
     // Add to history
     const historyEntry = { ...wordData, date: new Date().toISOString().split('T')[0] };
@@ -114,7 +114,7 @@ export default function Energy() {
       setDailyData("fm_energy_v1", updatedData);
       window.dispatchEvent(new CustomEvent('energyWordUpdated'));
       window.dispatchEvent(new Event('storage'));
-      notifyDataChanged(["fm_energy_v1"]);
+      emitChanged([KEY_ENERGY]);
     }
   };
 

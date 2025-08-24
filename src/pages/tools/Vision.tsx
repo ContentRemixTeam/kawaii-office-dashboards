@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { X, Upload, Link2 } from "lucide-react";
 import { safeGet, safeSet, generateId } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
+import { emitChanged, KEY_VISION } from "@/lib/topbarState";
 
 interface VisionImage {
   id: string;
@@ -12,7 +13,15 @@ interface VisionImage {
   createdAt: string;
 }
 
-const STORAGE_KEY = "fm_vision_v1";
+interface VisionData {
+  items: Array<{
+    kind: string;
+    image_url: string;
+    id: string;
+    z: number;
+    createdAt: string;
+  }>;
+}
 
 export default function Vision() {
   const [images, setImages] = useState<VisionImage[]>([]);
@@ -22,16 +31,53 @@ export default function Vision() {
   const { toast } = useToast();
 
   useEffect(() => {
-    const savedImages = safeGet<VisionImage[]>(STORAGE_KEY, []);
-    setImages(savedImages);
+    // Migrate from old format if needed
+    const oldData = safeGet<VisionImage[]>(KEY_VISION, []);
+    const newData = safeGet<VisionData>(KEY_VISION, { items: [] });
+    
+    if (Array.isArray(oldData) && oldData.length > 0 && (!newData.items || newData.items.length === 0)) {
+      // Migrate old format to new format
+      const migratedItems = oldData.map((img, index) => ({
+        kind: "image",
+        image_url: img.url,
+        id: img.id,
+        z: index,
+        createdAt: img.createdAt
+      }));
+      const migratedData: VisionData = { items: migratedItems };
+      safeSet(KEY_VISION, migratedData);
+      setImages(oldData);
+    } else if (newData.items) {
+      // Convert new format back to component format
+      const convertedImages: VisionImage[] = newData.items.map(item => ({
+        id: item.id,
+        url: item.image_url,
+        createdAt: item.createdAt
+      }));
+      setImages(convertedImages);
+    }
   }, []);
 
   const saveImages = (newImages: VisionImage[]) => {
     setImages(newImages);
-    safeSet(STORAGE_KEY, newImages);
+    
+    // Convert to the format expected by TopBar
+    const visionData: VisionData = {
+      items: newImages.map((img, index) => ({
+        kind: "image",
+        image_url: img.url,
+        id: img.id,
+        z: index,
+        createdAt: img.createdAt
+      }))
+    };
+    
+    safeSet(KEY_VISION, visionData);
     
     // Dispatch custom event for same-tab updates
     window.dispatchEvent(new CustomEvent('visionBoardUpdated'));
+    // Emit change for TopBar updates
+    emitChanged([KEY_VISION]);
   };
 
   const addImageFromUrl = () => {
