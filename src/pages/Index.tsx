@@ -1,5 +1,6 @@
 import HotspotImage from "@/components/HotspotImage";
 import VisionPreviewOverlay from "@/components/VisionPreviewOverlay";
+import NavPills from "@/components/NavPills";
 import { HOTSPOTS, OFFICE_ALT, OFFICE_IMAGE_SRC } from "@/data/hotspots";
 import { Sparkles, Heart } from "lucide-react";
 
@@ -28,6 +29,11 @@ const Index = () => {
           aspectRatio={16/9}
         />
         <VisionPreviewOverlay boardBox={boardHotspot} />
+      </div>
+
+      {/* Navigation Pills */}
+      <div className="w-full max-w-5xl mt-6 mb-8 rounded-2xl bg-white/70 dark:bg-black/20 backdrop-blur border border-white/60 dark:border-white/20 shadow-lg p-4">
+        <NavPills />
       </div>
 
       <div className="text-center space-y-3">
