@@ -31,18 +31,18 @@ export default function HomeHero() {
   });
 
   return (
-    <div className="relative w-full max-w-5xl mx-auto mb-8">
-      <div className="relative aspect-[16/9] overflow-hidden rounded-3xl shadow-xl bg-black/10">
+    <div className="relative w-full max-w-4xl mx-auto">
+      <div className="relative aspect-[16/9] overflow-hidden rounded-2xl shadow-lg bg-black/10">
         <iframe
           src={embedSrc}
-          className="w-full h-full absolute inset-0 rounded-3xl"
+          className="w-full h-full absolute inset-0 rounded-2xl"
           allow="autoplay; encrypted-media; picture-in-picture"
           style={{ border: "none" }}
         />
         
         {/* Overlay with preset info */}
-        <div className="absolute top-4 right-4 z-10">
-          <div className="bg-black/40 backdrop-blur-sm rounded-lg px-3 py-2 text-white text-sm font-medium">
+        <div className="absolute top-3 right-3 z-10">
+          <div className="bg-black/50 backdrop-blur-sm rounded-lg px-3 py-2 text-white text-sm font-medium">
             <div className="flex items-center gap-2">
               <span className="truncate max-w-32">{presetName}</span>
               <Button

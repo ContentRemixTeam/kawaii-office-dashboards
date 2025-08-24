@@ -5,23 +5,22 @@ import { onChanged } from "../lib/bus";
 import TopBarPetChip from "./TopBarPetChip";
 import TopBarDailyButtons from "./TopBarDailyButtons";
 
-function Chip({ icon, label, value, onClick }: {
+function DailyInfoPill({ icon, label, value, onClick }: {
   icon: React.ReactNode; 
   label: string; 
   value?: string | null; 
   onClick: () => void;
 }) {
-  
   return (
     <button
       onClick={onClick}
-      className="group inline-flex min-w-[10rem] max-w-[16rem] items-center gap-2 rounded-2xl border bg-card/80 px-3 py-2 backdrop-blur shadow-sm hover:shadow-md transition-all"
+      className="group inline-flex items-center gap-2 rounded-full border border-border/20 bg-card/60 backdrop-blur-sm px-3 py-1.5 shadow-sm hover:shadow-md hover:bg-card/80 transition-all duration-200"
     >
-      <span className="text-lg">{icon}</span>
+      <span className="text-sm">{icon}</span>
       <div className="min-w-0">
-        <div className="text-[12px] text-muted-foreground">{label}</div>
-        <div className="truncate text-sm text-foreground" title={value ?? ""}>
-          {value ?? <span className="text-muted-foreground">Set up</span>}
+        <div className="text-xs text-muted-foreground/80">{label}</div>
+        <div className="truncate text-xs font-medium text-foreground max-w-24" title={value ?? ""}>
+          {value ?? "Set up"}
         </div>
       </div>
     </button>
@@ -70,70 +69,60 @@ export default function TopControlBar() {
   }, [refresh]);
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
-      <div className="flex items-center justify-between px-4 py-3">
-        <div className="flex items-center gap-3">
-          {/* Energy Word */}
+    <div className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/10">
+      <div className="flex items-center justify-between px-4 py-2">
+        {/* Daily Info Pills */}
+        <div className="flex items-center gap-2 overflow-x-auto">
           {energy && (
-            <Chip 
+            <DailyInfoPill 
               icon="⚡" 
-              label="Power Word" 
+              label="Power" 
               value={energy} 
               onClick={() => navigate("/tools/energy")}
             />
           )}
           
-          {/* Affirmation */}
           {affirm.text && (
-            <Chip 
-              icon="💫" 
+            <DailyInfoPill 
+              icon="🃏" 
               label="Affirmation" 
               value={affirm.text} 
               onClick={() => navigate("/tools/affirmations")}
             />
           )}
           
-          {/* Pet */}
-          <TopBarPetChip animal={pet.animal} stage={pet.stage} />
+          {pet.animal && (
+            <button
+              onClick={() => navigate("/tools/tasks")}
+              className="inline-flex items-center gap-2 rounded-full border border-border/20 bg-card/60 backdrop-blur-sm px-3 py-1.5 shadow-sm hover:shadow-md hover:bg-card/80 transition-all duration-200"
+            >
+              <span className="text-sm">🐾</span>
+              <div className="min-w-0">
+                <div className="text-xs text-muted-foreground/80">Pet</div>
+                <div className="text-xs font-medium text-foreground">
+                  Stage {pet.stage}/3
+                </div>
+              </div>
+            </button>
+          )}
           
-          {/* Earned Animals */}
           {earnedAnimals.length > 0 && (
-            <div className="inline-flex items-center gap-1 rounded-2xl border bg-card/80 px-3 py-2 backdrop-blur shadow-sm">
-              <span className="text-xs text-muted-foreground">Earned:</span>
-              {earnedAnimals.map((animal, i) => (
-                <span key={animal.id} className="text-lg animate-bounce" style={{animationDelay: `${i * 0.2}s`}}>
+            <div className="inline-flex items-center gap-1 rounded-full border border-border/20 bg-gradient-to-r from-primary/10 to-primary/5 backdrop-blur-sm px-3 py-1.5 shadow-sm">
+              <span className="text-xs text-muted-foreground/80">Earned:</span>
+              {earnedAnimals.slice(0, 3).map((animal, i) => (
+                <span key={animal.id} className="text-sm animate-bounce" style={{animationDelay: `${i * 0.2}s`}}>
                   {animal.emoji}
                 </span>
               ))}
+              {earnedAnimals.length > 3 && (
+                <span className="text-xs text-muted-foreground">+{earnedAnimals.length - 3}</span>
+              )}
             </div>
-          )}
-          
-          {/* Vision Board Thumbnails */}
-          {thumbs.length > 0 && (
-            <button
-              onClick={() => navigate("/tools/vision")}
-              className="inline-flex items-center gap-2 rounded-2xl border bg-card/80 px-3 py-2 backdrop-blur shadow-sm hover:shadow-md transition-all"
-            >
-              <span className="text-sm text-foreground">Vision</span>
-              <div className="flex -space-x-1">
-                {thumbs.slice(0, 3).map((url, i) => (
-                  <img
-                    key={i}
-                    src={url}
-                    alt=""
-                    className="w-6 h-6 rounded-full border-2 border-background object-cover"
-                  />
-                ))}
-              </div>
-            </button>
           )}
         </div>
         
         <TopBarDailyButtons />
       </div>
-      
-      {/* Spacer to prevent content from hiding behind fixed bar */}
-      <div className="h-16" />
     </div>
   );
 }
