@@ -74,9 +74,9 @@ export default function TopControlBar() {
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/10">
-      <div className="flex items-center justify-between px-4 py-2">
+      <div className="flex items-center justify-between pl-12 pr-4 py-2">
         {/* Daily Info Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto">
+        <div className="flex items-center gap-2 overflow-x-auto">{/* Leave space for sidebar trigger */}
           {isFeatureVisible('topBarEnergyWord') && energy && (
             <DailyInfoPill 
               icon="⚡" 

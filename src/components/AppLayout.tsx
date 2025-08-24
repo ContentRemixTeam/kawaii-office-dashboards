@@ -24,7 +24,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
             
             {/* Sidebar trigger positioned on top of the control bar */}
             <SidebarTrigger className="
-              fixed top-3 left-3 z-50 h-8 w-8 p-0 
+              fixed top-3 left-2 z-50 h-8 w-8 p-0 
               bg-primary text-primary-foreground shadow-lg 
               hover:bg-primary/90 hover:shadow-xl hover:scale-105
               transition-all duration-200 rounded-lg
