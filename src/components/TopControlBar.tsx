@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { readEnergy, readAffirmation, readPetStage, readVisionThumbs } from "../lib/topbarState";
+import { readEnergy, readAffirmation, readPetStage, readVisionThumbs, readEarnedAnimals } from "../lib/topbarState";
 import { onChanged } from "../lib/bus";
 import TopBarPetChip from "./TopBarPetChip";
 import TopBarDailyButtons from "./TopBarDailyButtons";
@@ -34,6 +34,7 @@ export default function TopControlBar() {
   const [affirm, setAffirm] = React.useState<{text: string | null; title: string | null}>({ text: null, title: null });
   const [pet, setPet] = React.useState<{animal: string | null; stage: number}>({ animal: null, stage: 0 });
   const [thumbs, setThumbs] = React.useState<string[]>([]);
+  const [earnedAnimals, setEarnedAnimals] = React.useState<{id: string; emoji: string}[]>([]);
 
   const refresh = React.useCallback(() => {
     console.log('TopBar refreshing...');
@@ -41,13 +42,15 @@ export default function TopControlBar() {
     const affirmData = readAffirmation();
     const petData = readPetStage();
     const thumbsData = readVisionThumbs(3);
+    const earnedData = readEarnedAnimals();
     
-    console.log('TopBar data:', { energyData, affirmData, petData, thumbsData });
+    console.log('TopBar data:', { energyData, affirmData, petData, thumbsData, earnedData });
     
     setEnergy(energyData);
     setAffirm(affirmData);
     setPet(petData);
     setThumbs(thumbsData);
+    setEarnedAnimals(earnedData);
   }, []);
 
   React.useEffect(() => {
@@ -58,7 +61,8 @@ export default function TopControlBar() {
           keys.includes("fm_tasks_v1") || 
           keys.includes("fm_vision_v1") ||
           keys.includes("fm_daily_intention_v1") ||
-          keys.includes("fm_daily_debrief_v1")) {
+          keys.includes("fm_daily_debrief_v1") ||
+          keys.includes("fm_earned_animals_v1")) {
         refresh();
       }
     });
@@ -91,6 +95,18 @@ export default function TopControlBar() {
           
           {/* Pet */}
           <TopBarPetChip animal={pet.animal} stage={pet.stage} />
+          
+          {/* Earned Animals */}
+          {earnedAnimals.length > 0 && (
+            <div className="inline-flex items-center gap-1 rounded-2xl border bg-card/80 px-3 py-2 backdrop-blur shadow-sm">
+              <span className="text-xs text-muted-foreground">Earned:</span>
+              {earnedAnimals.map((animal, i) => (
+                <span key={animal.id} className="text-lg animate-bounce" style={{animationDelay: `${i * 0.2}s`}}>
+                  {animal.emoji}
+                </span>
+              ))}
+            </div>
+          )}
           
           {/* Vision Board Thumbnails */}
           {thumbs.length > 0 && (

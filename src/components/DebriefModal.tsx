@@ -1,6 +1,7 @@
 import React from "react";
 import { writeTodayDebrief } from "@/lib/dailyFlow";
 import { emitChanged } from "@/lib/bus";
+import { clearEarnedAnimals } from "@/lib/topbarState";
 
 export default function DebriefModal({ open, onClose }:{ open:boolean; onClose:()=>void; }){
   const [w1,setW1]=React.useState("");
@@ -86,6 +87,7 @@ export default function DebriefModal({ open, onClose }:{ open:boolean; onClose:(
               const wins=[w1,w2,w3].filter(Boolean);
               const nextTop3=[n1,n2,n3].filter(Boolean);
               writeTodayDebrief({ wins, reflect, nextTop3 });
+              clearEarnedAnimals(); // Clear earned animals on sign-off
               emitChanged(["fm_daily_debrief_v1"]);
               onClose();
             }}

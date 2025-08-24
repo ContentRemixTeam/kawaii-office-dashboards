@@ -9,6 +9,7 @@ export const KEY_AFFIRM  = "fm_affirmations_v1";
 export const KEY_TASKS   = "fm_tasks_v1";
 export const KEY_WINS    = "fm_wins_v1";
 export const KEY_VISION  = "fm_vision_v1";
+export const KEY_EARNED_ANIMALS = "fm_earned_animals_v1";
 
 export function readEnergy() {
   try {
@@ -58,4 +59,46 @@ export function readVisionThumbs(max = 3): string[] {
       .slice(0, max)
       .map((it:any)=> it.image_url);
   } catch { return []; }
+}
+
+export function addEarnedAnimal(animalId: string, animalEmoji: string) {
+  try {
+    const today = todayISO();
+    const existing = JSON.parse(localStorage.getItem(KEY_EARNED_ANIMALS) || "null");
+    
+    // Reset if different day
+    if (existing?.date !== today) {
+      const newData = { date: today, animals: [{ id: animalId, emoji: animalEmoji }] };
+      localStorage.setItem(KEY_EARNED_ANIMALS, JSON.stringify(newData));
+      emitChanged([KEY_EARNED_ANIMALS]);
+      return;
+    }
+    
+    // Add to existing day if not already earned
+    const animals = existing.animals || [];
+    if (!animals.find((a: any) => a.id === animalId)) {
+      animals.push({ id: animalId, emoji: animalEmoji });
+      const newData = { date: today, animals };
+      localStorage.setItem(KEY_EARNED_ANIMALS, JSON.stringify(newData));
+      emitChanged([KEY_EARNED_ANIMALS]);
+    }
+  } catch { /* ignore */ }
+}
+
+export function readEarnedAnimals() {
+  try {
+    const today = todayISO();
+    const d = JSON.parse(localStorage.getItem(KEY_EARNED_ANIMALS) || "null");
+    if (d?.date === today) {
+      return d.animals || [];
+    }
+    return [];
+  } catch { return []; }
+}
+
+export function clearEarnedAnimals() {
+  try {
+    localStorage.removeItem(KEY_EARNED_ANIMALS);
+    emitChanged([KEY_EARNED_ANIMALS]);
+  } catch { /* ignore */ }
 }

@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { getDailyData, setDailyData } from "@/lib/storage";
-import { emitChanged, KEY_TASKS } from "@/lib/topbarState";
+import { emitChanged, KEY_TASKS, addEarnedAnimal } from "@/lib/topbarState";
 import { useToast } from "@/hooks/use-toast";
 import ToolShell from "@/components/ToolShell";
 import CelebrationModal from "@/components/CelebrationModal";
@@ -406,6 +406,10 @@ export default function Tasks() {
       setTimeout(() => setShowConfetti(false), 3000);
       
       const animal = ANIMALS.find(a => a.id === taskData.selectedAnimal) || ANIMALS[0];
+      
+      // Add animal to top bar
+      addEarnedAnimal(animal.id, animal.emoji);
+      
       toast({
         title: "🎉 All tasks completed!",
         description: `Your ${animal.name.toLowerCase()} has reached maximum power! You're amazing!`
