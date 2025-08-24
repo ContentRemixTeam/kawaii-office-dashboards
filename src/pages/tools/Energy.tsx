@@ -64,11 +64,12 @@ export default function Energy() {
   }, []);
 
   const selectWord = (word: string, isCustom = false) => {
-    const wordData: EnergyWordData = { 
+    const today = new Date().toISOString().slice(0, 10);
+    const wordData = { 
+      date: today,
       word, 
       isCustom, 
-      pinned: isPinned,
-      position: todayWord?.position 
+      pinned: isPinned
     };
     setTodayWord(wordData);
     setDailyData("fm_energy_v1", wordData);
@@ -97,8 +98,14 @@ export default function Energy() {
   const togglePin = (newPinned: boolean) => {
     setIsPinned(newPinned);
     if (todayWord) {
-      const updatedData = { ...todayWord, pinned: newPinned };
-      setTodayWord(updatedData);
+      const today = new Date().toISOString().slice(0, 10);
+      const updatedData = { 
+        date: today,
+        word: todayWord.word, 
+        isCustom: todayWord.isCustom,
+        pinned: newPinned 
+      };
+      setTodayWord({ ...todayWord, pinned: newPinned });
       setDailyData("fm_energy_v1", updatedData);
       window.dispatchEvent(new CustomEvent('energyWordUpdated'));
     }
