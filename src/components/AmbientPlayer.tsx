@@ -85,18 +85,7 @@ export default function AmbientPlayer() {
     saveAmbient(newState);
   }
 
-  function toggleHero() {
-    const newState = { ...state, useAsHero: !state.useAsHero };
-    setState(newState);
-    saveAmbient(newState);
-    
-    toast({
-      title: newState.useAsHero ? "🖼️ Office background enabled" : "🖼️ Office background disabled",
-      description: newState.useAsHero 
-        ? "Ambient video will be used as your office background"
-        : "Office background returned to image mode"
-    });
-  }
+  // toggleHero function removed - videos automatically become office background
 
   function stopAmbient() {
     const newState = { ...state, activeId: undefined };
@@ -198,16 +187,7 @@ export default function AmbientPlayer() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Switch
-            id="use-as-hero"
-            checked={!!state.useAsHero}
-            onCheckedChange={toggleHero}
-          />
-          <Label htmlFor="use-as-hero" className="text-sm text-main">
-            🖼️ Use as office background
-          </Label>
-        </div>
+        {/* Switch removed - videos automatically become office background */}
       </div>
 
       {/* Player */}

@@ -36,8 +36,8 @@ export default function OfficeHero({ hotspots, fallbackSrc, alt, aspectRatio = 1
     };
   }, []);
 
-  // Check if ambient should be used as hero
-  const useAmbientAsHero = ambientState.useAsHero && ambientState.activeId;
+  // Always use ambient video as hero when available
+  const useAmbientAsHero = ambientState.activeId;
   
   if (useAmbientAsHero) {
     const activePreset = AMBIENT_PRESETS.find(p => p.id === ambientState.activeId);
@@ -61,10 +61,7 @@ export default function OfficeHero({ hotspots, fallbackSrc, alt, aspectRatio = 1
               allowFullScreen
             />
           </div>
-          {/* hotspot layer above video */}
-          <div className="absolute inset-0 pointer-events-none">
-            <HotspotOverlay hotspots={hotspots} navigate={navigate} />
-          </div>
+          {/* No hotspots when video is playing - use toolbar navigation */}
         </div>
       );
     }
@@ -92,10 +89,7 @@ export default function OfficeHero({ hotspots, fallbackSrc, alt, aspectRatio = 1
             />
           )}
         </div>
-        {/* hotspot layer above video */}
-        <div className="absolute inset-0 pointer-events-none">
-          <HotspotOverlay hotspots={hotspots} navigate={navigate} />
-        </div>
+        {/* No hotspots when video is playing - use toolbar navigation */}
       </div>
     );
   }

@@ -17,7 +17,7 @@ const Index = () => {
           <Heart className="w-8 h-8 text-primary animate-bounce-cute" />
         </div>
         <p className="text-xl text-muted max-w-2xl mx-auto leading-relaxed">
-          Welcome to your cozy digital workspace! ✨ Click on any object in the office to access your favorite productivity and positivity tools.
+          Welcome to your cozy digital workspace! ✨ Use the toolbar below to access your favorite productivity and positivity tools.
         </p>
       </div>
 
@@ -31,14 +31,18 @@ const Index = () => {
         <VisionPreviewOverlay boardBox={boardHotspot} />
       </div>
 
-      {/* Navigation Pills */}
-      <div className="w-full max-w-5xl mt-6 mb-8 rounded-2xl bg-white/70 dark:bg-black/20 backdrop-blur border border-white/60 dark:border-white/20 shadow-lg p-4">
+      {/* Navigation Toolbar */}
+      <div className="w-full max-w-6xl mt-8 mb-8 rounded-3xl bg-white/80 dark:bg-black/30 backdrop-blur-lg border-2 border-primary/20 shadow-2xl p-6">
+        <div className="text-center mb-4">
+          <h2 className="text-lg font-semibold text-main mb-1">🛠️ Your Productivity Toolkit</h2>
+          <p className="text-sm text-muted">Choose your tool to get started</p>
+        </div>
         <NavPills />
       </div>
 
       <div className="text-center space-y-3">
         <p className="text-sm text-muted-foreground font-medium">
-          💡 Tip: Hover over objects to see what tools are available
+          💡 Tip: Select YouTube ambient videos in Sounds to replace the office background
         </p>
         <div className="flex items-center justify-center gap-6 text-xs text-muted-foreground/80">
           <span>🐱 Task Pets</span>
