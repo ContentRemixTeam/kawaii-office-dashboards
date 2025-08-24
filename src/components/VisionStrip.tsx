@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { readVisionThumbs, KEY_VISION } from "@/lib/topbarState";
 import { onChanged } from "@/lib/bus";
+import { isFeatureVisible } from "@/lib/theme";
 
 export default function VisionStrip() {
   const navigate = useNavigate();
@@ -15,6 +16,10 @@ export default function VisionStrip() {
       if (keys.includes(KEY_VISION)) refresh(); 
     });
   }, [refresh]);
+
+  if (!isFeatureVisible('homeVisionStrip')) {
+    return null;
+  }
 
   const handleClick = () => {
     navigate("/tools/vision");

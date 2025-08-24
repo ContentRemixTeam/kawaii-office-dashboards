@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { readEnergy, readAffirmation, readPetStage, readVisionThumbs, readEarnedAnimals } from "../lib/topbarState";
 import { onChanged } from "../lib/bus";
+import { isFeatureVisible } from "../lib/theme";
 import TopBarPetChip from "./TopBarPetChip";
 import TopBarDailyButtons from "./TopBarDailyButtons";
 
@@ -73,7 +74,7 @@ export default function TopControlBar() {
       <div className="flex items-center justify-between px-4 py-2">
         {/* Daily Info Pills */}
         <div className="flex items-center gap-2 overflow-x-auto">
-          {energy && (
+          {isFeatureVisible('topBarEnergyWord') && energy && (
             <DailyInfoPill 
               icon="⚡" 
               label="Power" 
@@ -82,7 +83,7 @@ export default function TopControlBar() {
             />
           )}
           
-          {affirm.text && (
+          {isFeatureVisible('topBarAffirmations') && affirm.text && (
             <DailyInfoPill 
               icon="🃏" 
               label="Affirmation" 
@@ -91,7 +92,7 @@ export default function TopControlBar() {
             />
           )}
           
-          {pet.animal && (
+          {isFeatureVisible('topBarTaskPet') && pet.animal && (
             <button
               onClick={() => navigate("/tools/tasks")}
               className="inline-flex items-center gap-2 rounded-full border border-border/20 bg-card/60 backdrop-blur-sm px-3 py-1.5 shadow-sm hover:shadow-md hover:bg-card/80 transition-all duration-200"
@@ -106,7 +107,7 @@ export default function TopControlBar() {
             </button>
           )}
           
-          {earnedAnimals.length > 0 && (
+          {isFeatureVisible('topBarEarnedAnimals') && earnedAnimals.length > 0 && (
             <div className="inline-flex items-center gap-1 rounded-full border border-border/20 bg-gradient-to-r from-primary/10 to-primary/5 backdrop-blur-sm px-3 py-1.5 shadow-sm">
               <span className="text-xs text-muted-foreground/80">Earned:</span>
               {earnedAnimals.slice(0, 3).map((animal, i) => (

@@ -1,9 +1,11 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { isFeatureVisible } from "@/lib/theme";
 
 interface ToolSection {
   title: string;
   emoji: string;
+  visibilityKey: "homeDailyHabits" | "homeGameified" | "homeCustomization";
   tools: Array<{
     href: string;
     title: string;
@@ -16,6 +18,7 @@ const TOOL_SECTIONS: ToolSection[] = [
   {
     title: "Daily Habits",
     emoji: "🌱",
+    visibilityKey: "homeDailyHabits",
     tools: [
       { href: "/tools/tasks", title: "Task Pets", emoji: "🐾", subtitle: "Gamified tasks" },
       { href: "/tools/energy", title: "Energy Word", emoji: "✨", subtitle: "Daily power word" },
@@ -26,6 +29,7 @@ const TOOL_SECTIONS: ToolSection[] = [
   {
     title: "Gamified Tools",
     emoji: "🎮",
+    visibilityKey: "homeGameified",
     tools: [
       { href: "/tools/focus", title: "Pomodoro", emoji: "⏱️", subtitle: "Focus sessions" },
       { href: "/tools/wins", title: "Daily Wins", emoji: "🏆", subtitle: "Celebrate progress" },
@@ -36,6 +40,7 @@ const TOOL_SECTIONS: ToolSection[] = [
   {
     title: "Customization",
     emoji: "✨",
+    visibilityKey: "homeCustomization",
     tools: [
       { href: "/tools/vision", title: "Vision Board", emoji: "🖼️", subtitle: "Visual goals" },
       { href: "/tools/sounds", title: "Soundscapes", emoji: "🎧", subtitle: "Ambient focus" },
@@ -48,13 +53,17 @@ export default function ThemedToolSections() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const visibleSections = TOOL_SECTIONS.filter(section => 
+    isFeatureVisible(section.visibilityKey)
+  );
+
   return (
     <div className="w-full space-y-8">
       <div className="text-center mb-6">
         <p className="text-muted-foreground text-sm">Choose your tool →</p>
       </div>
       
-      {TOOL_SECTIONS.map((section) => (
+      {visibleSections.map((section) => (
         <div key={section.title} className="space-y-4">
           {/* Section Header */}
           <div className="flex items-center gap-2 text-lg font-bold text-foreground">

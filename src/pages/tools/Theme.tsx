@@ -27,6 +27,20 @@ interface ThemeData {
   };
   backgroundImage?: string;
   useImage?: boolean;
+  hiddenFeatures?: {
+    topBarEnergyWord?: boolean;
+    topBarAffirmations?: boolean;
+    topBarTaskPet?: boolean;
+    topBarEarnedAnimals?: boolean;
+    homeVisionStrip?: boolean;
+    homeDailyHabits?: boolean;
+    homeGameified?: boolean;
+    homeCustomization?: boolean;
+    dailyIntentionAuto?: boolean;
+    debriefAuto?: boolean;
+    celebrationModals?: boolean;
+    pomodoroWinTracking?: boolean;
+  };
 }
 
 const DEFAULT_THEME: ThemeData = {
@@ -41,6 +55,20 @@ const DEFAULT_THEME: ThemeData = {
     "--text": "340 15% 25%",         // dark gray
     "--muted": "340 10% 45%",        // secondary text
     "--ring": "340 75% 85%"          // focus ring
+  },
+  hiddenFeatures: {
+    topBarEnergyWord: false,
+    topBarAffirmations: false,
+    topBarTaskPet: false,
+    topBarEarnedAnimals: false,
+    homeVisionStrip: false,
+    homeDailyHabits: false,
+    homeGameified: false,
+    homeCustomization: false,
+    dailyIntentionAuto: false,
+    debriefAuto: false,
+    celebrationModals: false,
+    pomodoroWinTracking: false,
   }
 };
 
@@ -240,6 +268,10 @@ export default function Theme() {
       vars: {
         ...DEFAULT_THEME.vars,
         ...saved.vars
+      },
+      hiddenFeatures: {
+        ...DEFAULT_THEME.hiddenFeatures,
+        ...saved.hiddenFeatures
       }
     };
     setCurrentTheme(mergedTheme);
@@ -261,6 +293,10 @@ export default function Theme() {
           vars: {
             ...DEFAULT_THEME.vars,
             ...saved.vars
+          },
+          hiddenFeatures: {
+            ...DEFAULT_THEME.hiddenFeatures,
+            ...saved.hiddenFeatures
           }
         };
         setCurrentTheme(mergedTheme);
@@ -389,11 +425,12 @@ export default function Theme() {
         </Card>
 
         <Tabs defaultValue="presets" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="presets">Presets</TabsTrigger>
             <TabsTrigger value="colors">Custom Colors</TabsTrigger>
             <TabsTrigger value="background">Background</TabsTrigger>
             <TabsTrigger value="hero">Hero</TabsTrigger>
+            <TabsTrigger value="features">Features</TabsTrigger>
           </TabsList>
 
           <TabsContent value="presets" className="space-y-4">
@@ -670,6 +707,284 @@ export default function Theme() {
                     </div>
                   )}
                 </div>
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="features" className="space-y-6">
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-semibold text-main mb-2">🎛️ Feature Visibility</h3>
+                <p className="text-muted mb-4">Customize which features appear in your app interface.</p>
+              </div>
+
+              <div className="space-y-6">
+                {/* Top Bar Features */}
+                <Card className="p-4">
+                  <h4 className="font-semibold mb-3 flex items-center gap-2">
+                    📍 Top Bar Elements
+                  </h4>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label htmlFor="hide-energy">⚡ Energy Word</Label>
+                        <p className="text-xs text-muted-foreground">Show your daily power word</p>
+                      </div>
+                      <Switch
+                        id="hide-energy"
+                        checked={!tempTheme.hiddenFeatures?.topBarEnergyWord}
+                        onCheckedChange={(checked) => {
+                          const newTheme = {
+                            ...tempTheme,
+                            hiddenFeatures: {
+                              ...tempTheme.hiddenFeatures,
+                              topBarEnergyWord: !checked
+                            }
+                          };
+                          setTempTheme(newTheme);
+                        }}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label htmlFor="hide-affirmations">🃏 Affirmations</Label>
+                        <p className="text-xs text-muted-foreground">Display your daily affirmation</p>
+                      </div>
+                      <Switch
+                        id="hide-affirmations"
+                        checked={!tempTheme.hiddenFeatures?.topBarAffirmations}
+                        onCheckedChange={(checked) => {
+                          const newTheme = {
+                            ...tempTheme,
+                            hiddenFeatures: {
+                              ...tempTheme.hiddenFeatures,
+                              topBarAffirmations: !checked
+                            }
+                          };
+                          setTempTheme(newTheme);
+                        }}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label htmlFor="hide-pet">🐾 Task Pet</Label>
+                        <p className="text-xs text-muted-foreground">Show your task completion pet</p>
+                      </div>
+                      <Switch
+                        id="hide-pet"
+                        checked={!tempTheme.hiddenFeatures?.topBarTaskPet}
+                        onCheckedChange={(checked) => {
+                          const newTheme = {
+                            ...tempTheme,
+                            hiddenFeatures: {
+                              ...tempTheme.hiddenFeatures,
+                              topBarTaskPet: !checked
+                            }
+                          };
+                          setTempTheme(newTheme);
+                        }}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label htmlFor="hide-earned">🏆 Earned Animals</Label>
+                        <p className="text-xs text-muted-foreground">Display earned animal rewards</p>
+                      </div>
+                      <Switch
+                        id="hide-earned"
+                        checked={!tempTheme.hiddenFeatures?.topBarEarnedAnimals}
+                        onCheckedChange={(checked) => {
+                          const newTheme = {
+                            ...tempTheme,
+                            hiddenFeatures: {
+                              ...tempTheme.hiddenFeatures,
+                              topBarEarnedAnimals: !checked
+                            }
+                          };
+                          setTempTheme(newTheme);
+                        }}
+                      />
+                    </div>
+                  </div>
+                </Card>
+
+                {/* Homepage Features */}
+                <Card className="p-4">
+                  <h4 className="font-semibold mb-3 flex items-center gap-2">
+                    🏠 Homepage Sections
+                  </h4>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label htmlFor="hide-vision">🌟 Vision Board Strip</Label>
+                        <p className="text-xs text-muted-foreground">Show vision board preview</p>
+                      </div>
+                      <Switch
+                        id="hide-vision"
+                        checked={!tempTheme.hiddenFeatures?.homeVisionStrip}
+                        onCheckedChange={(checked) => {
+                          const newTheme = {
+                            ...tempTheme,
+                            hiddenFeatures: {
+                              ...tempTheme.hiddenFeatures,
+                              homeVisionStrip: !checked
+                            }
+                          };
+                          setTempTheme(newTheme);
+                        }}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label htmlFor="hide-daily">🌱 Daily Habits Section</Label>
+                        <p className="text-xs text-muted-foreground">Tasks, Energy, Affirmations, Habits</p>
+                      </div>
+                      <Switch
+                        id="hide-daily"
+                        checked={!tempTheme.hiddenFeatures?.homeDailyHabits}
+                        onCheckedChange={(checked) => {
+                          const newTheme = {
+                            ...tempTheme,
+                            hiddenFeatures: {
+                              ...tempTheme.hiddenFeatures,
+                              homeDailyHabits: !checked
+                            }
+                          };
+                          setTempTheme(newTheme);
+                        }}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label htmlFor="hide-gamified">🎮 Gamified Tools Section</Label>
+                        <p className="text-xs text-muted-foreground">Pomodoro, Wins, Money, Cabinet</p>
+                      </div>
+                      <Switch
+                        id="hide-gamified"
+                        checked={!tempTheme.hiddenFeatures?.homeGameified}
+                        onCheckedChange={(checked) => {
+                          const newTheme = {
+                            ...tempTheme,
+                            hiddenFeatures: {
+                              ...tempTheme.hiddenFeatures,
+                              homeGameified: !checked
+                            }
+                          };
+                          setTempTheme(newTheme);
+                        }}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label htmlFor="hide-custom">✨ Customization Section</Label>
+                        <p className="text-xs text-muted-foreground">Sounds, Theme, Vision Board</p>
+                      </div>
+                      <Switch
+                        id="hide-custom"
+                        checked={!tempTheme.hiddenFeatures?.homeCustomization}
+                        onCheckedChange={(checked) => {
+                          const newTheme = {
+                            ...tempTheme,
+                            hiddenFeatures: {
+                              ...tempTheme.hiddenFeatures,
+                              homeCustomization: !checked
+                            }
+                          };
+                          setTempTheme(newTheme);
+                        }}
+                      />
+                    </div>
+                  </div>
+                </Card>
+
+                {/* Automation Features */}
+                <Card className="p-4">
+                  <h4 className="font-semibold mb-3 flex items-center gap-2">
+                    🤖 Automation & Notifications
+                  </h4>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label htmlFor="hide-intention">🎯 Daily Intention Auto-Show</Label>
+                        <p className="text-xs text-muted-foreground">Automatically show intention modal</p>
+                      </div>
+                      <Switch
+                        id="hide-intention"
+                        checked={!tempTheme.hiddenFeatures?.dailyIntentionAuto}
+                        onCheckedChange={(checked) => {
+                          const newTheme = {
+                            ...tempTheme,
+                            hiddenFeatures: {
+                              ...tempTheme.hiddenFeatures,
+                              dailyIntentionAuto: !checked
+                            }
+                          };
+                          setTempTheme(newTheme);
+                        }}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label htmlFor="hide-debrief">📝 Daily Debrief Auto-Show</Label>
+                        <p className="text-xs text-muted-foreground">Automatically show debrief modal</p>
+                      </div>
+                      <Switch
+                        id="hide-debrief"
+                        checked={!tempTheme.hiddenFeatures?.debriefAuto}
+                        onCheckedChange={(checked) => {
+                          const newTheme = {
+                            ...tempTheme,
+                            hiddenFeatures: {
+                              ...tempTheme.hiddenFeatures,
+                              debriefAuto: !checked
+                            }
+                          };
+                          setTempTheme(newTheme);
+                        }}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label htmlFor="hide-celebrations">🎉 Celebration Modals</Label>
+                        <p className="text-xs text-muted-foreground">Show achievement celebrations</p>
+                      </div>
+                      <Switch
+                        id="hide-celebrations"
+                        checked={!tempTheme.hiddenFeatures?.celebrationModals}
+                        onCheckedChange={(checked) => {
+                          const newTheme = {
+                            ...tempTheme,
+                            hiddenFeatures: {
+                              ...tempTheme.hiddenFeatures,
+                              celebrationModals: !checked
+                            }
+                          };
+                          setTempTheme(newTheme);
+                        }}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label htmlFor="hide-pomodoro">⏱️ Pomodoro Win Tracking</Label>
+                        <p className="text-xs text-muted-foreground">Track and celebrate pomodoro sessions</p>
+                      </div>
+                      <Switch
+                        id="hide-pomodoro"
+                        checked={!tempTheme.hiddenFeatures?.pomodoroWinTracking}
+                        onCheckedChange={(checked) => {
+                          const newTheme = {
+                            ...tempTheme,
+                            hiddenFeatures: {
+                              ...tempTheme.hiddenFeatures,
+                              pomodoroWinTracking: !checked
+                            }
+                          };
+                          setTempTheme(newTheme);
+                        }}
+                      />
+                    </div>
+                  </div>
+                </Card>
               </div>
             </div>
           </TabsContent>

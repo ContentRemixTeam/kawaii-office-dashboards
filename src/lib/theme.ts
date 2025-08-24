@@ -16,6 +16,20 @@ interface ThemeData {
   };
   backgroundImage?: string;
   useImage?: boolean;
+  hiddenFeatures?: {
+    topBarEnergyWord?: boolean;
+    topBarAffirmations?: boolean;
+    topBarTaskPet?: boolean;
+    topBarEarnedAnimals?: boolean;
+    homeVisionStrip?: boolean;
+    homeDailyHabits?: boolean;
+    homeGameified?: boolean;
+    homeCustomization?: boolean;
+    dailyIntentionAuto?: boolean;
+    debriefAuto?: boolean;
+    celebrationModals?: boolean;
+    pomodoroWinTracking?: boolean;
+  };
 }
 
 const DEFAULT_THEME: ThemeData = {
@@ -30,6 +44,20 @@ const DEFAULT_THEME: ThemeData = {
     "--text": "340 15% 25%",         // dark gray
     "--muted": "340 10% 45%",        // secondary text
     "--ring": "340 75% 85%"          // focus ring
+  },
+  hiddenFeatures: {
+    topBarEnergyWord: false,
+    topBarAffirmations: false,
+    topBarTaskPet: false,
+    topBarEarnedAnimals: false,
+    homeVisionStrip: false,
+    homeDailyHabits: false,
+    homeGameified: false,
+    homeCustomization: false,
+    dailyIntentionAuto: false,
+    debriefAuto: false,
+    celebrationModals: false,
+    pomodoroWinTracking: false,
   }
 };
 
@@ -72,4 +100,34 @@ export function applyTheme(theme: ThemeData) {
     document.body.style.backgroundRepeat = '';
     document.body.style.backgroundPosition = '';
   }
+}
+
+// Feature visibility helpers
+export function isFeatureVisible(featureKey: keyof NonNullable<ThemeData['hiddenFeatures']>): boolean {
+  if (typeof window === 'undefined') return true;
+  
+  const savedTheme = safeGet<ThemeData>('fm_theme_v1', DEFAULT_THEME);
+  return !savedTheme.hiddenFeatures?.[featureKey];
+}
+
+export function updateFeatureVisibility(updates: Partial<NonNullable<ThemeData['hiddenFeatures']>>) {
+  if (typeof window === 'undefined') return;
+  
+  const currentTheme = safeGet<ThemeData>('fm_theme_v1', DEFAULT_THEME);
+  const updatedTheme = {
+    ...currentTheme,
+    hiddenFeatures: {
+      ...DEFAULT_THEME.hiddenFeatures,
+      ...currentTheme.hiddenFeatures,
+      ...updates
+    }
+  };
+  
+  localStorage.setItem('fm_theme_v1', JSON.stringify(updatedTheme));
+  
+  // Trigger storage event for other tabs
+  window.dispatchEvent(new StorageEvent('storage', {
+    key: 'fm_theme_v1',
+    newValue: JSON.stringify(updatedTheme)
+  }));
 }
