@@ -1,15 +1,15 @@
-export const BUS_EVENT = "fm:data-changed";
+type Fn = (keys: string[]) => void;
+const subs = new Set<Fn>();
 
-export function notifyDataChanged(keys: string[]) {
-  try { 
-    window.dispatchEvent(new CustomEvent(BUS_EVENT, { detail: { keys } })); 
-  } catch (error) {
-    console.debug('Failed to dispatch data changed event:', error);
-  }
+export function emitChanged(keys: string[]) { 
+  subs.forEach(fn => fn(keys)); 
 }
 
-export function onDataChanged(fn: (keys: string[]) => void) {
-  const handler = (e: Event) => fn((e as CustomEvent).detail?.keys ?? []);
-  window.addEventListener(BUS_EVENT, handler);
-  return () => window.removeEventListener(BUS_EVENT, handler);
+export function onChanged(fn: Fn) {
+  subs.add(fn);
+  return () => { subs.delete(fn); };
 }
+
+// Legacy aliases for compatibility
+export const notifyDataChanged = emitChanged;
+export const onDataChanged = onChanged;
