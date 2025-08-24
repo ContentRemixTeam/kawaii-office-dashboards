@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,6 +9,8 @@ import NavigationDrawer from "@/components/NavigationDrawer";
 import useDailyFlow from "./hooks/useDailyFlow";
 import DailyIntentionModal from "./components/DailyIntentionModal";
 import DebriefModal from "./components/DebriefModal";
+import PomodoroWinModal from "./components/PomodoroWinModal";
+import focusTimer from "@/lib/focusTimer";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import Tasks from "./pages/tools/Tasks";
@@ -27,6 +30,20 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const flow = useDailyFlow();
+  const [showPomodoroWin, setShowPomodoroWin] = useState(false);
+  const [sessionDuration, setSessionDuration] = useState(25);
+
+  useEffect(() => {
+    const unsubscribe = focusTimer.on("complete", (phase) => {
+      if (phase === "focus") {
+        const config = focusTimer.getConfig();
+        setSessionDuration(config.focusMin);
+        setShowPomodoroWin(true);
+      }
+    });
+
+    return unsubscribe;
+  }, []);
   
   return (
     <QueryClientProvider client={queryClient}>
@@ -59,6 +76,11 @@ const App = () => {
         {/* Daily Flow Modals */}
         <DailyIntentionModal open={flow.showIntention} onClose={()=> flow.setShowIntention(false)} />
         <DebriefModal open={flow.showDebrief} onClose={()=> flow.setShowDebrief(false)} />
+        <PomodoroWinModal 
+          open={showPomodoroWin} 
+          onClose={() => setShowPomodoroWin(false)}
+          sessionDuration={sessionDuration}
+        />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

@@ -7,12 +7,15 @@ import { getDailyData, setDailyData } from "@/lib/storage";
 import { emitChanged, KEY_TASKS } from "@/lib/topbarState";
 import { useToast } from "@/hooks/use-toast";
 import ToolShell from "@/components/ToolShell";
+import CelebrationModal from "@/components/CelebrationModal";
 
 interface TaskData {
   tasks: string[];
   reflections: string[];
   completed: boolean[];
   selectedAnimal: string;
+  roundsCompleted?: number;
+  totalTasksCompleted?: number;
 }
 
 const REFLECTION_PROMPTS = [
@@ -324,16 +327,21 @@ export default function Tasks() {
     tasks: ["", "", ""],
     reflections: ["", "", ""],
     completed: [false, false, false],
-    selectedAnimal: "unicorn"
+    selectedAnimal: "unicorn",
+    roundsCompleted: 0,
+    totalTasksCompleted: 0
   });
   const [showConfetti, setShowConfetti] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
 
   useEffect(() => {
     const data = getDailyData("fm_tasks_v1", {
       tasks: ["", "", ""],
       reflections: ["", "", ""],
       completed: [false, false, false],
-      selectedAnimal: "unicorn"
+      selectedAnimal: "unicorn",
+      roundsCompleted: 0,
+      totalTasksCompleted: 0
     });
     setTaskData(data);
   }, []);
@@ -402,10 +410,27 @@ export default function Tasks() {
         title: "🎉 All tasks completed!",
         description: `Your ${animal.name.toLowerCase()} has reached maximum power! You're amazing!`
       });
+      
+      // Show celebration modal after a brief delay
+      setTimeout(() => setShowCelebration(true), 1500);
     }
   };
 
   const completedCount = taskData.completed.filter(Boolean).length;
+  
+  const resetForNewRound = () => {
+    const newData = {
+      ...taskData,
+      tasks: ["", "", ""],
+      completed: [false, false, false],
+      roundsCompleted: (taskData.roundsCompleted || 0) + 1,
+      totalTasksCompleted: (taskData.totalTasksCompleted || 0) + 3
+    };
+    saveData(newData);
+    setShowCelebration(false);
+  };
+
+  const selectedAnimal = ANIMALS.find(a => a.id === taskData.selectedAnimal) || ANIMALS[0];
 
   return (
     <ToolShell title="Daily Task Pets + Intention">
@@ -437,6 +462,36 @@ export default function Tasks() {
         />
         
         <PetStage completed={completedCount} selectedAnimal={taskData.selectedAnimal} />
+        
+        {/* Progress Stats */}
+        {(taskData.roundsCompleted || 0) > 0 && (
+          <div className="bg-card rounded-xl p-4 border border-border/20">
+            <h3 className="font-semibold text-card-foreground mb-2 text-center">📊 Today's Progress</h3>
+            <div className="grid grid-cols-2 gap-4 text-center">
+              <div>
+                <div className="text-2xl font-bold text-primary">{taskData.roundsCompleted || 0}</div>
+                <div className="text-xs text-muted-foreground">Rounds Completed</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-primary">{taskData.totalTasksCompleted || 0}</div>
+                <div className="text-xs text-muted-foreground">Total Tasks Done</div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Reset Button for completed rounds */}
+        {completedCount === 3 && (
+          <div className="text-center">
+            <Button 
+              onClick={() => setShowCelebration(true)}
+              variant="outline"
+              className="bg-gradient-to-r from-primary/10 to-primary/5 hover:from-primary/20 hover:to-primary/10"
+            >
+              ✨ Celebrate & Start New Round
+            </Button>
+          </div>
+        )}
         
         <div className="grid md:grid-cols-2 gap-6">
           <div className="bg-card rounded-xl p-6 border border-border/20">
@@ -483,6 +538,14 @@ export default function Tasks() {
             </div>
           </div>
         </div>
+
+        <CelebrationModal
+          open={showCelebration}
+          onClose={() => setShowCelebration(false)}
+          animalName={selectedAnimal.name}
+          animalEmoji={selectedAnimal.emoji}
+          onReset={resetForNewRound}
+        />
       </div>
     </ToolShell>
   );
