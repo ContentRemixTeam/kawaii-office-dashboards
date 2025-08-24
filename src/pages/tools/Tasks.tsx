@@ -11,6 +11,7 @@ interface TaskData {
   tasks: string[];
   reflections: string[];
   completed: boolean[];
+  selectedAnimal: string;
 }
 
 const REFLECTION_PROMPTS = [
@@ -19,122 +20,284 @@ const REFLECTION_PROMPTS = [
   "What am I grateful for right now?"
 ];
 
-const PetStage = ({ completed }: { completed: number }) => {
+const ANIMALS = [
+  { 
+    id: "unicorn", 
+    name: "Unicorn", 
+    emoji: "🦄",
+    stages: ["🥚", "🦄", "🌈🦄", "✨🦄👑"],
+    encouragement: [
+      "Your magic is growing! ✨🦄✨",
+      "Unicorn power activated! 🌈",
+      "Believe in your magical abilities! ✨",
+      "You're absolutely magical today! 🦄💫"
+    ]
+  },
+  { 
+    id: "dragon", 
+    name: "Dragon", 
+    emoji: "🐉",
+    stages: ["🥚", "🐲", "🔥🐉", "👑🐉🔥"],
+    encouragement: [
+      "You're breathing fire into your goals! 🔥🐉",
+      "Dragon strength is rising! 💪",
+      "Fierce and unstoppable! 🐉⚡",
+      "You're a legendary dragon today! 👑🐉"
+    ]
+  },
+  { 
+    id: "cat", 
+    name: "Cat", 
+    emoji: "🐱",
+    stages: ["🥚", "🐱", "😸🐾", "👑😸💎"],
+    encouragement: [
+      "Purr-fect progress! You're paw-some! 🐾😸",
+      "Meow-nificent work! 🐱✨",
+      "You're the cat's meow! 😸💕",
+      "Absolutely purr-fection achieved! 👑😸"
+    ]
+  },
+  { 
+    id: "dog", 
+    name: "Dog", 
+    emoji: "🐶",
+    stages: ["🥚", "🐶", "🐕💕", "👑🐕⭐"],
+    encouragement: [
+      "Good human! Your pup is proud! 🐶💕",
+      "Pawsitively amazing progress! 🐾",
+      "You're such a good boy/girl! 🐕✨",
+      "Best human ever! Woof woof! 👑🐕"
+    ]
+  },
+  { 
+    id: "bunny", 
+    name: "Bunny", 
+    emoji: "🐰",
+    stages: ["🥚", "🐰", "🌸🐰", "👑🐰🌈"],
+    encouragement: [
+      "Hopping toward success! 🐰💨",
+      "Bunny bounces with joy! 🌸",
+      "Some-bunny is very proud! 🐰💕",
+      "You're absolutely bunny-tastic! 👑🐰"
+    ]
+  },
+  { 
+    id: "fox", 
+    name: "Fox", 
+    emoji: "🦊",
+    stages: ["🥚", "🦊", "🍂🦊", "👑🦊✨"],
+    encouragement: [
+      "Clever fox energy! 🦊✨",
+      "Sly progress happening! 🍂",
+      "Fantastic foxiness! 🦊💫",
+      "You're fox-traordinarily amazing! 👑🦊"
+    ]
+  },
+  { 
+    id: "panda", 
+    name: "Panda", 
+    emoji: "🐼",
+    stages: ["🥚", "🐼", "🎋🐼", "👑🐼💚"],
+    encouragement: [
+      "Panda-stic progress! 🐼🎋",
+      "Bear-y impressive work! 💚",
+      "You're panda-monium in the best way! 🐼✨",
+      "Absolutely panda-perfect! 👑🐼"
+    ]
+  },
+  { 
+    id: "penguin", 
+    name: "Penguin", 
+    emoji: "🐧",
+    stages: ["🥚", "🐧", "❄️🐧", "👑🐧💎"],
+    encouragement: [
+      "Waddle-ing toward greatness! 🐧❄️",
+      "Cool progress, literally! 💎",
+      "You're ice-credibly awesome! 🐧✨",
+      "Penguin perfection achieved! 👑🐧"
+    ]
+  },
+  { 
+    id: "owl", 
+    name: "Owl", 
+    emoji: "🦉",
+    stages: ["🥚", "🦉", "🌙🦉", "👑🦉📚"],
+    encouragement: [
+      "Wise moves today! 🦉🌙",
+      "Owl always believe in you! 📚",
+      "Hoot-ray for your progress! 🦉✨",
+      "Owlstanding achievement! 👑🦉"
+    ]
+  },
+  { 
+    id: "hamster", 
+    name: "Hamster", 
+    emoji: "🐹",
+    stages: ["🥚", "🐹", "🌻🐹", "👑🐹💫"],
+    encouragement: [
+      "Hamster wheel of success! 🐹💨",
+      "Tiny but mighty progress! 🌻",
+      "You're wheely amazing! 🐹✨",
+      "Hamster-ific achievement! 👑🐹"
+    ]
+  }
+];
+
+const AnimalSelector = ({ selectedAnimal, onAnimalSelect, disabled }: {
+  selectedAnimal: string;
+  onAnimalSelect: (animalId: string) => void;
+  disabled: boolean;
+}) => {
+  return (
+    <div className="mb-6">
+      <h3 className="text-lg font-semibold text-foreground mb-3">🎯 Choose Your Daily Pet</h3>
+      <div className="grid grid-cols-5 gap-2">
+        {ANIMALS.map((animal) => (
+          <button
+            key={animal.id}
+            onClick={() => onAnimalSelect(animal.id)}
+            disabled={disabled}
+            className={`p-3 rounded-xl border-2 transition-all duration-200 hover:scale-105 ${
+              selectedAnimal === animal.id
+                ? "border-primary bg-primary/10 scale-105"
+                : "border-border/20 hover:border-primary/50"
+            } ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+          >
+            <div className="text-2xl mb-1">{animal.emoji}</div>
+            <div className="text-xs font-medium text-muted-foreground">{animal.name}</div>
+          </button>
+        ))}
+      </div>
+      {disabled && (
+        <p className="text-xs text-muted-foreground mt-2 text-center">
+          🔒 Animal locked for today! Complete tasks to unlock for tomorrow.
+        </p>
+      )}
+    </div>
+  );
+};
+
+const PetStage = ({ completed, selectedAnimal }: { completed: number; selectedAnimal: string }) => {
+  const animal = ANIMALS.find(a => a.id === selectedAnimal) || ANIMALS[0];
+  
   const stages = [
     { 
-      emoji: "🌸", 
-      name: "Sleepy Bud", 
-      desc: "Waiting for some love...",
-      size: "text-4xl",
-      glow: "",
-      bounce: ""
-    },
-    { 
-      emoji: "💕", 
-      name: "Happy Blossom", 
-      desc: "Growing with your progress!",
-      size: "text-5xl",
-      glow: "drop-shadow-lg",
-      bounce: "animate-bounce"
-    },
-    { 
-      emoji: "✨", 
-      name: "Sparkling Star", 
-      desc: "So proud and full of joy!",
+      name: "Sleeping Baby", 
+      desc: "Dreaming of adventures...",
       size: "text-6xl",
-      glow: "drop-shadow-2xl filter brightness-110",
-      bounce: "animate-pulse"
+      animation: ""
+    },
+    { 
+      name: "Awake Baby", 
+      desc: "Ready to grow with you!",
+      size: "text-7xl",
+      animation: "animate-bounce"
+    },
+    { 
+      name: "Growing Strong", 
+      desc: "Getting stronger every task!",
+      size: "text-8xl",
+      animation: "animate-pulse"
+    },
+    { 
+      name: "Fully Grown Magical", 
+      desc: "Maximum power achieved!",
+      size: "text-9xl",
+      animation: "animate-bounce"
     }
   ];
   
-  const stage = Math.min(completed, 2);
+  const stage = Math.min(completed, 3);
   const currentStage = stages[stage];
-  
-  // Kawaii face expressions based on progress
-  const kawaiiPet = () => {
-    if (completed === 0) {
-      return (
-        <div className="relative">
-          <div className="text-6xl mb-2">🌙</div>
-          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 text-lg">
-            <span className="text-pink-300">• ᴗ •</span>
-          </div>
-        </div>
-      );
-    } else if (completed === 1) {
-      return (
-        <div className="relative">
-          <div className="text-7xl mb-2 animate-bounce">🌺</div>
-          <div className="absolute top-2 left-1/2 transform -translate-x-1/2 text-xl">
-            <span className="text-pink-500">◡ ω ◡</span>
-          </div>
-        </div>
-      );
-    } else if (completed === 2) {
-      return (
-        <div className="relative">
-          <div className="text-8xl mb-2 animate-pulse">🌟</div>
-          <div className="absolute top-1 left-1/2 transform -translate-x-1/2 text-2xl">
-            <span className="text-yellow-400">★ ᵕ ★</span>
-          </div>
-        </div>
-      );
-    } else {
-      return (
-        <div className="relative animate-bounce">
-          <div className="text-9xl mb-2">🎀</div>
-          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 text-3xl">
-            <span className="text-pink-400">♡ ◡ ♡</span>
-          </div>
-          <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 text-lg animate-spin">
-            ✨
-          </div>
-          <div className="absolute -top-2 right-4 text-lg animate-ping">
-            💖
-          </div>
-        </div>
-      );
-    }
-  };
+  const currentEmoji = animal.stages[stage];
   
   const getKawaiiMessage = () => {
-    if (completed === 0) return "zzz... dreaming of tasks... ☾";
-    if (completed === 1) return "Yay! One step closer! (◡ ‿ ◡)";
-    if (completed === 2) return "Almost there! So exciting! ♪(´▽｀)";
-    return "Perfect day! You're amazing! ٩(◕‿◕)۶";
+    if (completed === 0) return `${animal.name} is sleeping... zzz 💤`;
+    if (completed === 1) return animal.encouragement[0];
+    if (completed === 2) return animal.encouragement[1];
+    if (completed === 3) return animal.encouragement[2];
+    return animal.encouragement[3];
   };
   
   const getProgressBar = () => {
     const progress = (completed / 3) * 100;
     return (
-      <div className="w-full bg-pink-100 rounded-full h-3 mt-4 overflow-hidden">
+      <div className="w-full bg-muted rounded-full h-3 mt-4 overflow-hidden">
         <div 
-          className="bg-gradient-to-r from-pink-400 to-purple-400 h-full rounded-full transition-all duration-700 ease-out"
+          className="bg-gradient-to-r from-primary to-primary/80 h-full rounded-full transition-all duration-700 ease-out relative"
           style={{ width: `${progress}%` }}
         >
           {completed > 0 && (
-            <div className="w-full h-full animate-shimmer bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse"></div>
           )}
         </div>
       </div>
     );
   };
   
+  const getSpecialEffects = () => {
+    if (completed === 0) return null;
+    
+    const effects = {
+      unicorn: ["🌈", "✨", "⭐", "💫"],
+      dragon: ["🔥", "⚡", "💥", "🌟"],
+      cat: ["💕", "🐾", "✨", "💖"],
+      dog: ["❤️", "🌟", "⭐", "💫"],
+      bunny: ["🌸", "🌺", "✨", "💕"],
+      fox: ["🍂", "✨", "🌟", "💫"],
+      panda: ["🎋", "💚", "✨", "🌟"],
+      penguin: ["❄️", "💎", "⭐", "✨"],
+      owl: ["🌙", "📚", "✨", "🌟"],
+      hamster: ["🌻", "💫", "⭐", "✨"]
+    };
+    
+    const animalEffects = effects[animal.id as keyof typeof effects] || effects.unicorn;
+    
+    return (
+      <div className="absolute inset-0 pointer-events-none">
+        {animalEffects.slice(0, completed).map((effect, i) => (
+          <div
+            key={i}
+            className="absolute text-lg animate-bounce"
+            style={{
+              left: `${15 + i * 20}%`,
+              top: `${10 + i * 15}%`,
+              animationDelay: `${i * 0.5}s`,
+              animationDuration: "2s"
+            }}
+          >
+            {effect}
+          </div>
+        ))}
+      </div>
+    );
+  };
+  
   return (
-    <div className="text-center p-8 bg-gradient-to-br from-pink-50 to-purple-50 rounded-3xl border-2 border-pink-200/50 shadow-lg">
-      <div className="mb-4">
-        {kawaiiPet()}
+    <div className="text-center p-8 bg-gradient-to-br from-background to-muted/30 rounded-3xl border-2 border-border/50 shadow-lg relative overflow-hidden">
+      {getSpecialEffects()}
+      
+      <div className="mb-4 relative">
+        <div className={`${currentStage.size} mb-2 ${currentStage.animation} transition-all duration-500`}>
+          {currentEmoji}
+        </div>
+        
+        {completed > 0 && (
+          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 text-xl">
+            <span className="text-primary">◡ ◡</span>
+          </div>
+        )}
       </div>
       
-      <h3 className="text-xl font-bold text-pink-600 mb-2">
+      <h3 className="text-xl font-bold text-foreground mb-2">
         {currentStage.name}
       </h3>
       
-      <p className="text-pink-500/80 text-sm mb-2 font-medium">
+      <p className="text-muted-foreground text-sm mb-2 font-medium">
         {getKawaiiMessage()}
       </p>
       
-      <div className="text-pink-400/70 text-xs mb-3">
+      <div className="text-muted-foreground/70 text-xs mb-3">
         {completed}/3 tasks completed
       </div>
       
@@ -142,11 +305,11 @@ const PetStage = ({ completed }: { completed: number }) => {
       
       {completed === 3 && (
         <div className="mt-4 animate-bounce">
-          <div className="text-sm text-pink-600 font-semibold">
+          <div className="text-sm text-primary font-semibold">
             Perfect day achieved! ✨
           </div>
-          <div className="text-xs text-pink-400 mt-1">
-            Your kawaii pet is overjoyed! 💕
+          <div className="text-xs text-muted-foreground mt-1">
+            Your {animal.name.toLowerCase()} is absolutely magical! 💕
           </div>
         </div>
       )}
@@ -159,7 +322,8 @@ export default function Tasks() {
   const [taskData, setTaskData] = useState<TaskData>({
     tasks: ["", "", ""],
     reflections: ["", "", ""],
-    completed: [false, false, false]
+    completed: [false, false, false],
+    selectedAnimal: "unicorn"
   });
   const [showConfetti, setShowConfetti] = useState(false);
 
@@ -167,7 +331,8 @@ export default function Tasks() {
     const data = getDailyData("fm_tasks_v1", {
       tasks: ["", "", ""],
       reflections: ["", "", ""],
-      completed: [false, false, false]
+      completed: [false, false, false],
+      selectedAnimal: "unicorn"
     });
     setTaskData(data);
   }, []);
@@ -193,6 +358,14 @@ export default function Tasks() {
     saveData(newData);
   };
 
+  const handleAnimalSelect = (animalId: string) => {
+    const hasAnyProgress = taskData.completed.some(Boolean);
+    if (hasAnyProgress) return; // Don't allow changing if progress made
+    
+    const newData = { ...taskData, selectedAnimal: animalId };
+    saveData(newData);
+  };
+
   const toggleTaskCompleted = (index: number) => {
     const newCompleted = taskData.completed.map((completed, i) => 
       i === index ? !completed : completed
@@ -201,12 +374,28 @@ export default function Tasks() {
     saveData(newData);
 
     const completedCount = newCompleted.filter(Boolean).length;
-    if (completedCount === 3 && !taskData.completed.every(Boolean)) {
+    const previousCompletedCount = taskData.completed.filter(Boolean).length;
+    
+    // Show individual task completion celebration
+    if (newCompleted[index] && !taskData.completed[index]) {
+      const animal = ANIMALS.find(a => a.id === taskData.selectedAnimal) || ANIMALS[0];
+      const encouragementIndex = Math.min(completedCount - 1, animal.encouragement.length - 1);
+      
+      toast({
+        title: animal.encouragement[encouragementIndex],
+        description: `Task ${index + 1} completed! Your ${animal.name.toLowerCase()} is growing! ✨`
+      });
+    }
+    
+    // Show full completion celebration
+    if (completedCount === 3 && previousCompletedCount < 3) {
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 3000);
+      
+      const animal = ANIMALS.find(a => a.id === taskData.selectedAnimal) || ANIMALS[0];
       toast({
         title: "🎉 All tasks completed!",
-        description: "Your pet is so happy and proud of you!"
+        description: `Your ${animal.name.toLowerCase()} has reached maximum power! You're amazing!`
       });
     }
   };
@@ -236,7 +425,13 @@ export default function Tasks() {
           </div>
         )}
 
-        <PetStage completed={completedCount} />
+        <AnimalSelector 
+          selectedAnimal={taskData.selectedAnimal}
+          onAnimalSelect={handleAnimalSelect}
+          disabled={taskData.completed.some(Boolean)}
+        />
+        
+        <PetStage completed={completedCount} selectedAnimal={taskData.selectedAnimal} />
         
         <div className="grid md:grid-cols-2 gap-6">
           <div className="bg-card rounded-xl p-6 border border-border/20">
