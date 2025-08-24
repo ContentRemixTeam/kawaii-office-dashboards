@@ -52,6 +52,7 @@ interface PositivityData {
     stage: number;
     emoji: string;
   };
+  winsCount?: number;
 }
 
 const getTodayISO = () => new Date().toISOString().split('T')[0];
@@ -146,7 +147,7 @@ export default function ProductivityBar() {
     
     // Listen for storage changes to update positivity data
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'fm_energy_v1' || e.key === 'fm_affirmations_v1' || e.key === 'fm_tasks_v1') {
+      if (e.key === 'fm_energy_v1' || e.key === 'fm_affirmations_v1' || e.key === 'fm_tasks_v1' || e.key === 'fm_wins_v1') {
         loadPositivityData();
       }
     };
@@ -158,12 +159,14 @@ export default function ProductivityBar() {
     window.addEventListener('energyWordUpdated', handleUpdates);
     window.addEventListener('affirmationUpdated', handleUpdates);
     window.addEventListener('tasksUpdated', handleUpdates);
+    window.addEventListener('winsUpdated', handleUpdates);
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('energyWordUpdated', handleUpdates);
       window.removeEventListener('affirmationUpdated', handleUpdates);
       window.removeEventListener('tasksUpdated', handleUpdates);
+      window.removeEventListener('winsUpdated', handleUpdates);
     };
   }, []);
 
@@ -219,6 +222,24 @@ export default function ProductivityBar() {
       }
     } catch (error) {
       console.debug('Error loading pet data:', error);
+    }
+
+    // Load Daily Wins
+    try {
+      const winsRaw = localStorage.getItem('fm_wins_v1');
+      if (winsRaw) {
+        const winsData = JSON.parse(winsRaw);
+        if (Array.isArray(winsData)) {
+          // Count wins from today
+          const todayWins = winsData.filter((win: any) => {
+            const winDate = new Date(win.createdAt || win.date || win.timestamp);
+            return winDate.toISOString().split('T')[0] === today;
+          }).length;
+          newPositivityData.winsCount = todayWins;
+        }
+      }
+    } catch (error) {
+      console.debug('Error loading wins data:', error);
     }
 
     setPositivityData(newPositivityData);
@@ -401,7 +422,7 @@ export default function ProductivityBar() {
     <TooltipProvider>
       <div className="fixed bottom-0 left-0 right-0 z-40 p-4">
         <div className="max-w-6xl mx-auto">
-        <div className="bg-gradient-to-r from-pink-100 via-purple-50 to-emerald-100 dark:from-pink-900/30 dark:via-purple-900/30 dark:to-emerald-900/30 backdrop-blur-lg border border-pink-200/50 dark:border-pink-700/50 rounded-2xl shadow-lg p-4">
+          <div className="bg-gradient-to-r from-pink-100 via-purple-50 to-emerald-100 dark:from-pink-900/30 dark:via-purple-900/30 dark:to-emerald-900/30 backdrop-blur-lg border border-pink-200/50 dark:border-pink-700/50 rounded-2xl shadow-lg p-4">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-semibold text-pink-800 dark:text-pink-200">✨ Kawaii Productivity</h3>
             <div className="flex items-center gap-2">
@@ -568,7 +589,7 @@ export default function ProductivityBar() {
             </div>
 
             {/* Right Side - Positivity Anchors */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {/* Energy Word */}
               <div className="flex items-center gap-3 p-3 bg-white/50 dark:bg-black/20 rounded-xl">
                 <div className="text-2xl">🌟</div>
@@ -650,9 +671,49 @@ export default function ProductivityBar() {
                   </div>
                 </div>
               </div>
+
+              {/* Daily Wins */}
+              <div className="flex items-center gap-3 p-3 bg-white/50 dark:bg-black/20 rounded-xl">
+                <div className="text-2xl">🏆</div>
+                <div className="flex-1">
+                  <div className="text-xs text-muted-foreground mb-1">Daily Wins</div>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-auto p-0 text-left justify-start"
+                        onClick={() => navigate('/tools/wins')}
+                      >
+                        <Badge 
+                          variant="secondary" 
+                          className={`${
+                            positivityData.winsCount && positivityData.winsCount > 0
+                              ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200 border border-yellow-200 dark:border-yellow-700 animate-pulse'
+                              : 'bg-gray-100 text-gray-500 dark:bg-gray-800/30 dark:text-gray-400 border border-gray-200 dark:border-gray-700 opacity-60'
+                          }`}
+                        >
+                          {positivityData.winsCount && positivityData.winsCount > 0 
+                            ? `${positivityData.winsCount} Win${positivityData.winsCount > 1 ? 's' : ''}` 
+                            : 'Log a win ✨'
+                          }
+                        </Badge>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>
+                        {positivityData.winsCount && positivityData.winsCount > 0 
+                          ? `You've logged ${positivityData.winsCount} win${positivityData.winsCount > 1 ? 's' : ''} today!`
+                          : 'Log your daily wins and celebrations'
+                        }
+                      </p>
+                     </TooltipContent>
+                   </Tooltip>
+                 </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
         </div>
       </div>
     </TooltipProvider>
