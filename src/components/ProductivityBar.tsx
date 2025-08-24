@@ -152,10 +152,12 @@ export default function ProductivityBar() {
       }
     };
 
-    // Listen for custom events
+    // Listen for custom events AND storage events for same-tab updates
     const handleUpdates = () => loadPositivityData();
+    const handleGenericStorage = () => loadPositivityData(); // For manual storage events
 
     window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('storage', handleGenericStorage); // Listen for manual storage events
     window.addEventListener('energyWordUpdated', handleUpdates);
     window.addEventListener('affirmationUpdated', handleUpdates);
     window.addEventListener('tasksUpdated', handleUpdates);
@@ -163,6 +165,7 @@ export default function ProductivityBar() {
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('storage', handleGenericStorage);
       window.removeEventListener('energyWordUpdated', handleUpdates);
       window.removeEventListener('affirmationUpdated', handleUpdates);
       window.removeEventListener('tasksUpdated', handleUpdates);
@@ -632,7 +635,7 @@ export default function ProductivityBar() {
                         onClick={() => navigate('/tools/affirmations')}
                       >
                         <div className="text-xs text-purple-800 dark:text-purple-200 line-clamp-2 leading-tight">
-                          {positivityData.affirmation || 'Draw your card ✨'}
+                          {positivityData.affirmation || 'Draw your card 🃏'}
                         </div>
                       </Button>
                     </TooltipTrigger>
@@ -653,7 +656,7 @@ export default function ProductivityBar() {
                       className="text-2xl p-1 hover:scale-110 transition-transform"
                       onClick={() => navigate('/tools/tasks')}
                     >
-                      {positivityData.pet ? positivityData.pet.emoji : '🥚'}
+                      {positivityData.pet ? positivityData.pet.emoji : '🦄'}
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -666,7 +669,7 @@ export default function ProductivityBar() {
                     {positivityData.pet ? (
                       `${positivityData.pet.animal} • Stage ${positivityData.pet.stage + 1}`
                     ) : (
-                      'Choose your pet ✨'
+                      'Choose your pet 🦄'
                     )}
                   </div>
                 </div>
@@ -695,7 +698,7 @@ export default function ProductivityBar() {
                         >
                           {positivityData.winsCount && positivityData.winsCount > 0 
                             ? `${positivityData.winsCount} Win${positivityData.winsCount > 1 ? 's' : ''}` 
-                            : 'Log a win ✨'
+                            : 'Log a win 🏆'
                           }
                         </Badge>
                       </Button>

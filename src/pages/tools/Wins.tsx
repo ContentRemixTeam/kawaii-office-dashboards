@@ -81,6 +81,10 @@ export default function Wins() {
     setShowSparkles(true);
     setTimeout(() => setShowSparkles(false), 2000);
 
+    // Dispatch events for real-time updates
+    window.dispatchEvent(new CustomEvent('winsUpdated'));
+    window.dispatchEvent(new Event('storage'));
+
     toast({
       title: "✨ Win captured!",
       description: "Your achievement has been added to your trophy collection!"

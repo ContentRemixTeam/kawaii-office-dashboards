@@ -117,6 +117,10 @@ export default function Affirmations() {
       setHasDrawnToday(true);
       setIsCardRevealed(true);
       setIsFlipping(false);
+
+      // Dispatch events for real-time updates
+      window.dispatchEvent(new CustomEvent('affirmationUpdated'));
+      window.dispatchEvent(new Event('storage'));
     }, 1000);
   };
 

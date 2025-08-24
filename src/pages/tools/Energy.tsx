@@ -76,6 +76,8 @@ export default function Energy() {
 
     // Dispatch custom event for badge updates
     window.dispatchEvent(new CustomEvent('energyWordUpdated'));
+    // Dispatch storage event for cross-tab updates
+    window.dispatchEvent(new Event('storage'));
 
     // Add to history
     const historyEntry = { ...wordData, date: new Date().toISOString().split('T')[0] };
@@ -108,6 +110,7 @@ export default function Energy() {
       setTodayWord({ ...todayWord, pinned: newPinned });
       setDailyData("fm_energy_v1", updatedData);
       window.dispatchEvent(new CustomEvent('energyWordUpdated'));
+      window.dispatchEvent(new Event('storage'));
     }
   };
 

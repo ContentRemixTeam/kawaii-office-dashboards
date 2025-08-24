@@ -340,6 +340,9 @@ export default function Tasks() {
   const saveData = (data: TaskData) => {
     setTaskData(data);
     setDailyData("fm_tasks_v1", data);
+    // Dispatch events for real-time updates
+    window.dispatchEvent(new CustomEvent('tasksUpdated'));
+    window.dispatchEvent(new Event('storage'));
   };
 
   const handleTaskChange = (index: number, value: string) => {
