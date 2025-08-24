@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { getDailyData, setDailyData, safeGet, safeSet } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 import ToolShell from "@/components/ToolShell";
@@ -9,6 +10,8 @@ import ToolShell from "@/components/ToolShell";
 interface EnergyWordData {
   word: string;
   isCustom: boolean;
+  pinned?: boolean;
+  position?: { x: number; y: number };
 }
 
 const PRESET_WORDS = {
@@ -39,12 +42,14 @@ export default function Energy() {
   const { toast } = useToast();
   const [todayWord, setTodayWord] = useState<EnergyWordData | null>(null);
   const [customWord, setCustomWord] = useState("");
+  const [isPinned, setIsPinned] = useState(true);
   const [history, setHistory] = useState<Array<EnergyWordData & { date: string }>>([]);
 
   useEffect(() => {
     // Load today's word
     const wordData = getDailyData("fm_energy_v1", null);
     setTodayWord(wordData);
+    setIsPinned(wordData?.pinned !== false);
 
     // Load history (last 7 days)
     const allHistory = safeGet<Array<EnergyWordData & { date: string }>>("fm_energy_history_v1", []);
@@ -59,9 +64,17 @@ export default function Energy() {
   }, []);
 
   const selectWord = (word: string, isCustom = false) => {
-    const wordData: EnergyWordData = { word, isCustom };
+    const wordData: EnergyWordData = { 
+      word, 
+      isCustom, 
+      pinned: isPinned,
+      position: todayWord?.position 
+    };
     setTodayWord(wordData);
     setDailyData("fm_energy_v1", wordData);
+
+    // Dispatch custom event for badge updates
+    window.dispatchEvent(new CustomEvent('energyWordUpdated'));
 
     // Add to history
     const historyEntry = { ...wordData, date: new Date().toISOString().split('T')[0] };
@@ -81,6 +94,16 @@ export default function Energy() {
     setCustomWord("");
   };
 
+  const togglePin = (newPinned: boolean) => {
+    setIsPinned(newPinned);
+    if (todayWord) {
+      const updatedData = { ...todayWord, pinned: newPinned };
+      setTodayWord(updatedData);
+      setDailyData("fm_energy_v1", updatedData);
+      window.dispatchEvent(new CustomEvent('energyWordUpdated'));
+    }
+  };
+
   return (
     <ToolShell title="Energy Word Selector">
       <div className="space-y-6">
@@ -94,16 +117,36 @@ export default function Energy() {
         </div>
 
         {todayWord ? (
-          <div className="bg-gradient-kawaii rounded-2xl p-6 text-center">
-            <h3 className="text-2xl font-bold text-primary-foreground mb-2">Today's Energy Word</h3>
-            <div className="text-4xl font-bold text-primary-foreground mb-3">"{todayWord.word}"</div>
-            <p className="text-primary-foreground/80">
-              {todayWord.isCustom ? "Your personal power word" : "Let this word energize your day!"}
-            </p>
-            <p className="text-primary-foreground/60 text-sm mt-4">
-              Come back tomorrow to choose a new word
-            </p>
-          </div>
+          <>
+            <div className="bg-gradient-kawaii rounded-2xl p-6 text-center">
+              <h3 className="text-2xl font-bold text-primary-foreground mb-2">Today's Energy Word</h3>
+              <div className="text-4xl font-bold text-primary-foreground mb-3">"{todayWord.word}"</div>
+              <p className="text-primary-foreground/80">
+                {todayWord.isCustom ? "Your personal power word" : "Let this word energize your day!"}
+              </p>
+              <p className="text-primary-foreground/60 text-sm mt-4">
+                Come back tomorrow to choose a new word
+              </p>
+            </div>
+
+            <div className="bg-card rounded-xl p-6 border border-border/20">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="pin-toggle" className="text-sm font-medium">
+                    📌 Pin today's word to screen
+                  </Label>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Show a floating badge on all pages
+                  </p>
+                </div>
+                <Switch
+                  id="pin-toggle"
+                  checked={isPinned}
+                  onCheckedChange={togglePin}
+                />
+              </div>
+            </div>
+          </>
         ) : (
           <>
             <div className="grid md:grid-cols-3 gap-6">
