@@ -2,6 +2,7 @@ import React from "react";
 import { writeTodayDebrief } from "@/lib/dailyFlow";
 import { emitChanged } from "@/lib/bus";
 import { clearEarnedAnimals } from "@/lib/topbarState";
+import { getTodaysNote } from "@/lib/futureNotes";
 import DailySummary from "@/components/DailySummary";
 
 export default function DebriefModal({ open, onClose }:{ open:boolean; onClose:()=>void; }){
@@ -12,6 +13,8 @@ export default function DebriefModal({ open, onClose }:{ open:boolean; onClose:(
   const [n1,setN1]=React.useState("");
   const [n2,setN2]=React.useState("");
   const [n3,setN3]=React.useState("");
+  
+  const todays = getTodaysNote();
 
   if (!open) return null;
   return (
@@ -22,6 +25,14 @@ export default function DebriefModal({ open, onClose }:{ open:boolean; onClose:(
           <p className="text-sm text-muted-foreground">Close the loop and set tomorrow up for success.</p>
         </div>
         <div className="p-5 space-y-4">
+          {/* Today's Future Note */}
+          {todays?.text && (
+            <div className="rounded-xl border bg-accent/20 px-4 py-3 text-foreground">
+              <div className="text-sm font-semibold">💌 Encouragement for You</div>
+              <div className="text-sm mt-1">{todays.text}</div>
+            </div>
+          )}
+          
           {/* Daily Summary */}
           <DailySummary />
           

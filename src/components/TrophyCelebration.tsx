@@ -124,7 +124,7 @@ export default function TrophyCelebration({
           <div className="bg-gradient-subtle border border-border/20 rounded-xl p-3 mb-4">
             <div className="flex items-center gap-2 mb-1">
               <span className="text-xs">💌</span>
-              <span className="text-xs font-medium text-muted-foreground">From Future You</span>
+              <span className="text-xs font-medium text-muted-foreground">Encouragement</span>
             </div>
             <p className="text-main text-sm italic leading-relaxed">
               {encouragement}

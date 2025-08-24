@@ -1,6 +1,7 @@
 import React from "react";
 import { writeTodayIntention } from "@/lib/dailyFlow";
 import { emitChanged } from "@/lib/bus";
+import { addFutureNote } from "@/lib/futureNotes";
 
 export default function DailyIntentionModal({ open, onClose }:{
   open:boolean; onClose: ()=>void;
@@ -11,6 +12,7 @@ export default function DailyIntentionModal({ open, onClose }:{
   const [top2, setTop2]   = React.useState("");
   const [top3, setTop3]   = React.useState("");
   const [notes,setNotes]  = React.useState("");
+  const [futureNote, setFutureNote] = React.useState("");
 
   if (!open) return null;
   return (
@@ -66,6 +68,18 @@ export default function DailyIntentionModal({ open, onClose }:{
             </div>
           </div>
           <div>
+            <label className="text-sm text-muted-foreground block mb-1">Write a kind note to Future You (optional)</label>
+            <textarea 
+              value={futureNote}
+              onChange={e => setFutureNote(e.target.value)}
+              className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              rows={2}
+              placeholder="What do you want Future You to remember later today?"
+              maxLength={200}
+            />
+            <div className="mt-1 text-xs text-muted-foreground">{futureNote.length}/200</div>
+          </div>
+          <div>
             <label className="text-sm text-muted-foreground block mb-1">Notes (optional)</label>
             <textarea 
               value={notes} 
@@ -86,7 +100,10 @@ export default function DailyIntentionModal({ open, onClose }:{
             onClick={()=>{
               const payload = { feel, focus, top3:[top1,top2,top3].filter(Boolean), notes };
               writeTodayIntention(payload);
-              emitChanged(["fm_daily_intention_v1"]);
+              if (futureNote.trim()) { 
+                addFutureNote(futureNote.trim()); 
+              }
+              emitChanged(["fm_daily_intention_v1", "fm_future_notes_v1"]);
               onClose();
             }}
             className="px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
