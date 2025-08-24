@@ -12,6 +12,8 @@ import { safeGet, safeSet } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 import { onDataChanged } from "@/lib/bus";
 import { toLocalISODate, isSameLocalDayISO } from "@/lib/localDate";
+import { loadAmbient, AMBIENT_KEY } from "@/lib/ambientStore";
+import { AMBIENT_PRESETS } from "@/data/ambientPresets";
 
 // Storage keys
 const ENERGY_KEY = "fm_energy_v1";
@@ -196,7 +198,7 @@ function useLiveData(loadFn: () => void) {
   useEffect(() => {
     const onStorage = (e: StorageEvent) => {
       if (!e.key) return;
-      if ([ENERGY_KEY, AFFIRM_KEY, TASKS_KEY, WINS_KEY].includes(e.key)) loadFn();
+      if ([ENERGY_KEY, AFFIRM_KEY, TASKS_KEY, WINS_KEY, AMBIENT_KEY].includes(e.key)) loadFn();
     };
     window.addEventListener("storage", onStorage);
 
@@ -204,7 +206,7 @@ function useLiveData(loadFn: () => void) {
     try { 
       offBus = onDataChanged?.((keys) => {
         if (!keys || !keys.length) { loadFn(); return; }
-        if (keys.some(k => [ENERGY_KEY, AFFIRM_KEY, TASKS_KEY, WINS_KEY].includes(k))) loadFn();
+        if (keys.some(k => [ENERGY_KEY, AFFIRM_KEY, TASKS_KEY, WINS_KEY, AMBIENT_KEY].includes(k))) loadFn();
       }); 
     } catch {}
 
@@ -763,8 +765,8 @@ export default function ProductivityBar() {
                 </div>
               </div>
 
-              {/* Bottom Row - Pet & Wins */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Bottom Row - Pet, Wins, & Ambient */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
 
               {/* Pet of the Day */}
               <div 
@@ -824,7 +826,63 @@ export default function ProductivityBar() {
                     </TooltipContent>
                   </Tooltip>
                 </div>
+                </div>
               </div>
+
+              {/* Ambient Soundscape */}
+              <div className="flex items-center gap-2 min-w-0 overflow-hidden rounded-xl px-3 py-2 bg-white/70 border shadow-sm">
+                <span aria-hidden="true" className="text-lg flex-shrink-0">🎵</span>
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs text-muted leading-tight">Ambient</div>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-auto p-0 text-left justify-start font-medium leading-tight w-full"
+                        onClick={() => navigate('/tools/sounds')}
+                        title={(() => {
+                          const ambientState = loadAmbient();
+                          if (!ambientState.activeId) return 'Choose ambient soundscape 🎵';
+                          
+                          if (ambientState.activeId === 'custom') {
+                            return 'Custom ambient video playing';
+                          }
+                          
+                          const preset = AMBIENT_PRESETS.find(p => p.id === ambientState.activeId);
+                          return preset ? `${preset.emoji} ${preset.title} playing` : 'Ambient playing';
+                        })()}
+                      >
+                        <span className="truncate leading-tight text-sm line-clamp-2 text-left w-full">
+                          {(() => {
+                            const ambientState = loadAmbient();
+                            if (!ambientState.activeId) return 'Choose ambient 🎵';
+                            
+                            if (ambientState.activeId === 'custom') {
+                              return '🎬 Custom Video';
+                            }
+                            
+                            const preset = AMBIENT_PRESETS.find(p => p.id === ambientState.activeId);
+                            return preset ? `${preset.emoji} ${preset.title}` : 'Playing...';
+                          })()}
+                        </span>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{(() => {
+                        const ambientState = loadAmbient();
+                        if (!ambientState.activeId) return 'Choose your ambient soundscape';
+                        
+                        if (ambientState.activeId === 'custom') {
+                          return 'Custom ambient video is playing';
+                        }
+                        
+                        const preset = AMBIENT_PRESETS.find(p => p.id === ambientState.activeId);
+                        return preset ? `${preset.emoji} ${preset.title} is playing` : 'Ambient soundscape active';
+                      })()}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
               </div>
               </div>
             </div>

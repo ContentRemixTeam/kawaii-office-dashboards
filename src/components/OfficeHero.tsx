@@ -1,6 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { loadHero, HERO_KEY } from "@/lib/heroStore";
+import { loadAmbient, AMBIENT_KEY } from "@/lib/ambientStore";
+import { AMBIENT_PRESETS } from "@/data/ambientPresets";
+import { buildEmbedSrc } from "@/lib/youtube";
 import HotspotImage, { Hotspot } from "@/components/HotspotImage";
 
 type Props = { 
@@ -12,6 +15,7 @@ type Props = {
 
 export default function OfficeHero({ hotspots, fallbackSrc, alt, aspectRatio = 16/9 }: Props) {
   const [state, setState] = React.useState(loadHero());
+  const [ambientState, setAmbientState] = React.useState(loadAmbient());
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -19,6 +23,9 @@ export default function OfficeHero({ hotspots, fallbackSrc, alt, aspectRatio = 1
       const keys = e?.detail?.keys || [e.key];
       if (keys?.includes?.(HERO_KEY)) {
         setState(loadHero());
+      }
+      if (keys?.includes?.(AMBIENT_KEY)) {
+        setAmbientState(loadAmbient());
       }
     };
     window.addEventListener("fm:data-changed", onStorage as any);
@@ -29,20 +36,56 @@ export default function OfficeHero({ hotspots, fallbackSrc, alt, aspectRatio = 1
     };
   }, []);
 
+  // Check if ambient should be used as hero
+  const useAmbientAsHero = ambientState.useAsHero && ambientState.activeId;
+  
+  if (useAmbientAsHero) {
+    const activePreset = AMBIENT_PRESETS.find(p => p.id === ambientState.activeId);
+    const activeUrl = ambientState.activeId === "custom" ? ambientState.customUrl : activePreset?.youtube;
+    
+    if (activeUrl) {
+      const embedSrc = buildEmbedSrc(activeUrl, { 
+        autoplay: 1, 
+        mute: ambientState.muted ? 1 : 0, 
+        loop: 1 
+      });
+      
+      return (
+        <div className="relative w-full max-w-6xl mx-auto rounded-2xl overflow-hidden shadow-lg">
+          <div className="relative bg-black/5" style={{ paddingBottom: `${(1/aspectRatio) * 100}%` }}>
+            <iframe
+              className="absolute inset-0 w-full h-full"
+              src={embedSrc}
+              title="Ambient Office Background"
+              allow="autoplay; encrypted-media; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+          {/* hotspot layer above video */}
+          <div className="absolute inset-0 pointer-events-none">
+            <HotspotOverlay hotspots={hotspots} navigate={navigate} />
+          </div>
+        </div>
+      );
+    }
+  }
+
   if (state?.kind === "youtube" && state.youtubeUrl) {
     // Extract video ID and use privacy-enhanced nocookie domain
-    const id = getYouTubeId(state.youtubeUrl);
-    const src = id
-      ? `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&controls=0&loop=1&modestbranding=1&playsinline=1&rel=0&playlist=${id}`
-      : "";
+    const embedSrc = buildEmbedSrc(state.youtubeUrl, { 
+      autoplay: 1, 
+      mute: 1, 
+      loop: 1 
+    });
+    
     
     return (
       <div className="relative w-full max-w-6xl mx-auto rounded-2xl overflow-hidden shadow-lg">
         <div className="relative bg-black/5" style={{ paddingBottom: `${(1/aspectRatio) * 100}%` }}>
-          {id && (
+          {embedSrc && (
             <iframe
               className="absolute inset-0 w-full h-full"
-              src={src}
+              src={embedSrc}
               title="Ambient Office"
               allow="autoplay; encrypted-media; picture-in-picture"
               allowFullScreen
@@ -92,21 +135,4 @@ function HotspotOverlay({ hotspots, navigate }: { hotspots: Hotspot[]; navigate:
       ))}
     </div>
   );
-}
-
-// Utility to extract YouTube video ID from various URL formats
-function getYouTubeId(url: string): string | null {
-  try {
-    const u = new URL(url);
-    if (u.hostname.includes("youtu.be")) {
-      return u.pathname.slice(1);
-    }
-    if (u.searchParams.get("v")) {
-      return u.searchParams.get("v");
-    }
-    const match = u.pathname.match(/\/embed\/([^/?#]+)/);
-    return match?.[1] || null;
-  } catch {
-    return null;
-  }
 }

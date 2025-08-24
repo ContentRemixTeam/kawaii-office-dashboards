@@ -1,229 +1,27 @@
-import { useState, useEffect, useRef } from "react";
 import ToolShell from "@/components/ToolShell";
-import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
-import { Volume2, VolumeX } from "lucide-react";
-import { safeGet, safeSet } from "@/lib/storage";
-import { useToast } from "@/hooks/use-toast";
-
-interface SoundState {
-  activeSounds: string[];
-  volume: number;
-}
-
-const STORAGE_KEY = "fm_sounds_v1";
-
-const sounds = [
-  { id: "rain", name: "Rain", emoji: "🌧", file: "/sounds/rain.mp3" },
-  { id: "cafe", name: "Café", emoji: "☕", file: "/sounds/cafe.mp3" },
-  { id: "fireplace", name: "Fireplace", emoji: "🔥", file: "/sounds/fireplace.mp3" },
-  { id: "ocean", name: "Ocean", emoji: "🌊", file: "/sounds/ocean.mp3" },
-  { id: "birds", name: "Birds", emoji: "🐦", file: "/sounds/birds.mp3" },
-  { id: "lofi", name: "Lofi", emoji: "🎶", file: "/sounds/lofi.mp3" }
-];
+import AmbientPlayer from "@/components/AmbientPlayer";
 
 export default function Sounds() {
-  const [activeSounds, setActiveSounds] = useState<string[]>([]);
-  const [volume, setVolume] = useState(50);
-  const [audioElements, setAudioElements] = useState<{ [key: string]: HTMLAudioElement }>({});
-  const audioRefs = useRef<{ [key: string]: HTMLAudioElement }>({});
-  const { toast } = useToast();
-
-  // Initialize audio elements
-  useEffect(() => {
-    const elements: { [key: string]: HTMLAudioElement } = {};
-    
-    sounds.forEach(sound => {
-      const audio = new Audio(sound.file);
-      audio.loop = true;
-      audio.preload = "metadata";
-      audio.volume = volume / 100;
-      
-      // Add error handling for missing files
-      audio.addEventListener('error', () => {
-        toast({
-          title: `⚠️ Missing sound file: ${sound.name}.mp3`,
-          description: "Please upload it to /public/sounds/",
-          variant: "destructive"
-        });
-      });
-      
-      // Add load success handler  
-      audio.addEventListener('canplaythrough', () => {
-        console.log(`✅ Sound loaded: ${sound.name}`);
-      });
-      
-      elements[sound.id] = audio;
-      audioRefs.current[sound.id] = audio;
-    });
-    
-    setAudioElements(elements);
-  }, [volume, toast]);
-
-  // Load saved state and restore playing sounds
-  useEffect(() => {
-    const savedState = safeGet<SoundState>(STORAGE_KEY, { activeSounds: [], volume: 50 });
-    setActiveSounds(savedState.activeSounds);
-    setVolume(savedState.volume);
-    
-    // Restore playing sounds after audio elements are loaded
-    if (Object.keys(audioRefs.current).length > 0 && savedState.activeSounds.length > 0) {
-      savedState.activeSounds.forEach(soundId => {
-        const audio = audioRefs.current[soundId];
-        if (audio) {
-          audio.volume = savedState.volume / 100;
-          audio.play().catch(error => {
-            console.log(`Could not auto-play ${soundId}:`, error);
-            // Remove from active sounds if autoplay fails
-            setActiveSounds(prev => prev.filter(id => id !== soundId));
-          });
-        }
-      });
-    }
-  }, [audioElements]);
-
-  // Update volume for all audio elements
-  useEffect(() => {
-    Object.values(audioRefs.current).forEach(audio => {
-      audio.volume = volume / 100;
-    });
-  }, [volume]);
-
-  // Save state to localStorage
-  const saveState = (newActiveSounds: string[], newVolume: number) => {
-    safeSet(STORAGE_KEY, { activeSounds: newActiveSounds, volume: newVolume });
-  };
-
-  const toggleSound = async (soundId: string) => {
-    const audio = audioRefs.current[soundId];
-    if (!audio) return;
-
-    try {
-      if (activeSounds.includes(soundId)) {
-        // Stop the sound
-        audio.pause();
-        audio.currentTime = 0;
-        const newActiveSounds = activeSounds.filter(id => id !== soundId);
-        setActiveSounds(newActiveSounds);
-        saveState(newActiveSounds, volume);
-        
-        toast({
-          title: `${sounds.find(s => s.id === soundId)?.name} stopped`,
-          description: "Sound has been paused."
-        });
-      } else {
-        // Start the sound
-        audio.volume = volume / 100;
-        await audio.play();
-        const newActiveSounds = [...activeSounds, soundId];
-        setActiveSounds(newActiveSounds);
-        saveState(newActiveSounds, volume);
-        
-        toast({
-          title: `${sounds.find(s => s.id === soundId)?.name} playing`,
-          description: "Ambient sound is now active."
-        });
-      }
-    } catch (error) {
-      const soundName = sounds.find(s => s.id === soundId)?.name || soundId;
-      toast({
-        title: `⚠️ Could not play ${soundName}`,
-        description: "Check if the sound file exists in /public/sounds/",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleVolumeChange = (newVolume: number[]) => {
-    const volumeValue = newVolume[0];
-    setVolume(volumeValue);
-    saveState(activeSounds, volumeValue);
-  };
-
-  const stopAllSounds = () => {
-    Object.values(audioRefs.current).forEach(audio => {
-      audio.pause();
-      audio.currentTime = 0;
-    });
-    setActiveSounds([]);
-    saveState([], volume);
-    
-    toast({
-      title: "All sounds stopped",
-      description: "Ambient soundscape cleared."
-    });
-  };
-
   return (
-    <ToolShell title="Soundscapes & Ambience">
+    <ToolShell title="Ambient Soundscapes">
       <div className="space-y-6">
         <div className="bg-gradient-mint rounded-2xl p-6">
-          <h2 className="text-xl font-semibold text-secondary-foreground mb-3">🎵 Ambient Atmosphere</h2>
-          <p className="text-secondary-foreground/80">
-            Create the perfect working atmosphere with soothing soundscapes. Mix and match different ambient sounds to find your ideal focus environment.
+          <h2 className="text-xl font-semibold text-main mb-3">🎵 YouTube Ambient Player</h2>
+          <p className="text-muted">
+            Create the perfect working atmosphere with ambient YouTube videos. Choose from curated presets or add your own custom ambient videos for focus and relaxation.
           </p>
         </div>
 
-        {/* Volume Control */}
-        <div className="bg-card rounded-xl p-6 border border-border/20">
-          <div className="flex items-center gap-4 mb-4">
-            <VolumeX className="w-5 h-5 text-muted-foreground" />
-            <Slider
-              value={[volume]}
-              onValueChange={handleVolumeChange}
-              max={100}
-              step={1}
-              className="flex-1"
-            />
-            <Volume2 className="w-5 h-5 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground w-12">{volume}%</span>
-          </div>
-          
-          <div className="flex justify-between items-center">
-            <p className="text-sm text-muted-foreground">
-              Active sounds: {activeSounds.length}
-            </p>
-            {activeSounds.length > 0 && (
-              <Button variant="outline" size="sm" onClick={stopAllSounds}>
-                Stop All
-              </Button>
-            )}
-          </div>
-        </div>
-
-        {/* Sound Buttons Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {sounds.map((sound) => {
-            const isActive = activeSounds.includes(sound.id);
-            return (
-              <Button
-                key={sound.id}
-                variant={isActive ? "default" : "outline"}
-                size="lg"
-                onClick={() => toggleSound(sound.id)}
-                className={`h-24 flex flex-col gap-2 text-base transition-all ${
-                  isActive 
-                    ? "bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg" 
-                    : "hover:bg-accent hover:text-accent-foreground"
-                }`}
-              >
-                <span className="text-2xl">{sound.emoji}</span>
-                <span className="font-medium">{sound.name}</span>
-                {isActive && (
-                  <span className="text-xs opacity-75">Playing</span>
-                )}
-              </Button>
-            );
-          })}
-        </div>
+        <AmbientPlayer />
 
         {/* Instructions */}
         <div className="bg-muted/30 rounded-xl p-4 border border-border/10">
-          <h3 className="font-medium text-foreground mb-2">🎧 How to use</h3>
-          <ul className="text-sm text-muted-foreground space-y-1">
-            <li>• Click any sound button to start/stop ambient audio</li>
-            <li>• Mix multiple sounds together for your perfect atmosphere</li>
-            <li>• Adjust the volume slider to control all active sounds</li>
+          <h3 className="font-medium text-main mb-2">🎧 How to use</h3>
+          <ul className="text-sm text-muted space-y-1">
+            <li>• Click any preset to start ambient video soundscape</li>
+            <li>• Use custom YouTube URLs for personalized ambience</li>
+            <li>• Control volume and mute settings</li>
+            <li>• Optionally use the video as your office background</li>
             <li>• Your preferences are automatically saved</li>
           </ul>
         </div>
