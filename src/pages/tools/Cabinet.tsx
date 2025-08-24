@@ -98,8 +98,8 @@ export default function Cabinet() {
     <ToolShell title="Positivity Filing Cabinet">
       <div className="space-y-6">
         <div className="bg-gradient-peach rounded-2xl p-6">
-          <h2 className="text-xl font-semibold text-accent-foreground mb-3">📁 Store Your Treasures</h2>
-          <p className="text-accent-foreground/80">
+          <h2 className="text-xl font-semibold text-white mb-3">📁 Store Your Treasures</h2>
+          <p className="text-white/90">
             A beautiful digital filing system for all your positive memories, testimonials, kind words, and achievements. Never lose sight of how amazing you are!
           </p>
         </div>

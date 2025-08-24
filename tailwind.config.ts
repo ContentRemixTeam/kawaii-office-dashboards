@@ -95,6 +95,8 @@ export default {
 			},
 			backgroundImage: {
 				'gradient-kawaii': 'var(--gradient-kawaii)',
+				'gradient-kawaii-light': 'var(--gradient-kawaii-light)',
+				'gradient-primary': 'var(--gradient-primary)',
 				'gradient-background': 'var(--gradient-background)',
 				'gradient-card': 'var(--gradient-card)',
 				'gradient-mint': 'var(--gradient-mint)',

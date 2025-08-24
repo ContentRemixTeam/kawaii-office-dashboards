@@ -110,8 +110,8 @@ export default function Wins() {
     <ToolShell title="Daily Wins Feed">
       <div className="space-y-6">
         <div className="bg-gradient-kawaii rounded-2xl p-6">
-          <h2 className="text-xl font-semibold text-primary-foreground mb-3">🏆 Celebrate Your Wins</h2>
-          <p className="text-primary-foreground/90">
+          <h2 className="text-xl font-semibold text-white mb-3">🏆 Celebrate Your Wins</h2>
+          <p className="text-white/90">
             End each day by capturing what went well. Build a beautiful collection of your achievements and proud moments!
           </p>
         </div>

@@ -110,8 +110,8 @@ export default function Vision() {
     <ToolShell title="Vision Board">
       <div className="space-y-6">
         <div className="bg-gradient-kawaii rounded-2xl p-6">
-          <h2 className="text-xl font-semibold text-primary-foreground mb-3">🎨 Manifest Your Dreams</h2>
-          <p className="text-primary-foreground/90">
+          <h2 className="text-xl font-semibold text-white mb-3">🎨 Manifest Your Dreams</h2>
+          <p className="text-white/90">
             Create a beautiful visual representation of your goals and dreams. Add inspiring images and watch your vision come to life!
           </p>
         </div>

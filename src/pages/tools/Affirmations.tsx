@@ -144,8 +144,8 @@ export default function Affirmations() {
     <ToolShell title="Affirmation Cards">
       <div className="space-y-6">
         <div className="bg-gradient-peach rounded-2xl p-6">
-          <h2 className="text-xl font-semibold text-main mb-3">🃏 Daily Inspiration</h2>
-          <p className="text-muted">
+          <h2 className="text-xl font-semibold text-white mb-3">🃏 Daily Inspiration</h2>
+          <p className="text-white/90">
             Draw a beautiful affirmation card each day to set positive intentions and remind yourself of your inner strength and worth.
           </p>
         </div>

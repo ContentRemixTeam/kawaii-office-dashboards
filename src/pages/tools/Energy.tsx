@@ -124,8 +124,8 @@ export default function Energy() {
         {todayWord && <CurrentWordDisplay word={todayWord.word} />}
         
         <div className="bg-gradient-mint rounded-2xl p-6">
-          <h2 className="text-xl font-semibold text-main mb-3">⚡ Daily Energy Word</h2>
-          <p className="text-muted">
+          <h2 className="text-xl font-semibold text-white mb-3">⚡ Daily Energy Word</h2>
+          <p className="text-white/90">
             Choose a powerful word that embodies the energy you want to carry throughout your day. Let it guide your actions and mindset.
           </p>
         </div>

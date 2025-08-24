@@ -246,8 +246,8 @@ export default function Money() {
     <ToolShell title="Money Celebration Tracker">
       <div className="space-y-6">
         <div className="bg-gradient-kawaii rounded-2xl p-6">
-          <h2 className="text-xl font-semibold text-primary-foreground mb-3">🐷 Financial Joy</h2>
-          <p className="text-primary-foreground/90">
+          <h2 className="text-xl font-semibold text-white mb-3">🐷 Financial Joy</h2>
+          <p className="text-white/90">
             Celebrate every financial milestone, no matter how small! Track your money wins and watch your digital piggy bank grow with each achievement.
           </p>
         </div>

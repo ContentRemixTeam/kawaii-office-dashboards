@@ -5,8 +5,8 @@ export default function Breaks() {
     <ToolShell title="Mini Guided Breaks">
       <div className="space-y-6">
         <div className="bg-gradient-peach rounded-2xl p-6">
-          <h2 className="text-xl font-semibold text-accent-foreground mb-3">🧘‍♀️ Mindful Moments</h2>
-          <p className="text-accent-foreground/80">
+          <h2 className="text-xl font-semibold text-white mb-3">🧘‍♀️ Mindful Moments</h2>
+          <p className="text-white/90">
             Take gentle, guided micro-breaks to refresh your mind and body. Just 2-5 minutes can help you reset and return to your tasks with renewed energy.
           </p>
         </div>

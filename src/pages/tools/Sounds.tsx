@@ -6,8 +6,8 @@ export default function Sounds() {
     <ToolShell title="Ambient Soundscapes">
       <div className="space-y-6">
         <div className="bg-gradient-mint rounded-2xl p-6">
-          <h2 className="text-xl font-semibold text-main mb-3">🎵 YouTube Ambient Player</h2>
-          <p className="text-muted">
+          <h2 className="text-xl font-semibold text-white mb-3">🎵 YouTube Ambient Player</h2>
+          <p className="text-white/90">
             Create the perfect working atmosphere with ambient YouTube videos. Choose from curated presets or add your own custom ambient videos for focus and relaxation.
           </p>
         </div>
