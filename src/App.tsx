@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import GlobalEnergyWordBadge from "@/components/GlobalEnergyWordBadge";
+import ProductivityBar from "@/components/ProductivityBar";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Tasks from "./pages/tools/Tasks";
@@ -26,6 +27,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <GlobalEnergyWordBadge />
+        <ProductivityBar />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/tools/tasks" element={<Tasks />} />
