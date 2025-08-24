@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Play, Pause, RotateCcw, Settings, Sparkles, ChevronDown, ChevronUp } from "lucide-react";
 import { safeGet, safeSet } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
@@ -42,9 +44,40 @@ const DEFAULT_SETTINGS: ProductivitySettings = {
   enabled: true
 };
 
+interface PositivityData {
+  energyWord?: string;
+  affirmation?: string;
+  pet?: {
+    animal: string;
+    stage: number;
+    emoji: string;
+  };
+}
+
 const getTodayISO = () => new Date().toISOString().split('T')[0];
 
+const ANIMAL_STAGES = {
+  0: { emoji: "🥚", label: "Egg" },
+  1: { emoji: "🐣", label: "Baby" }, 
+  2: { emoji: "🐥", label: "Growing" },
+  3: { emoji: "✨", label: "Magical" }
+};
+
+const ANIMALS = {
+  unicorn: { base: "🦄", stages: ["🥚", "🦄", "🦄", "🌟🦄✨"] },
+  dragon: { base: "🐉", stages: ["🥚", "🐲", "🐉", "🔥🐉🔥"] },
+  cat: { base: "🐱", stages: ["🥚", "🐱", "😸", "👑🐱👑"] },
+  dog: { base: "🐶", stages: ["🥚", "🐶", "🐕", "⭐🐕⭐"] },
+  bunny: { base: "🐰", stages: ["🥚", "🐰", "🐇", "🌙🐇🌙"] },
+  fox: { base: "🦊", stages: ["🥚", "🦊", "🦊", "🍂🦊🍂"] },
+  panda: { base: "🐼", stages: ["🥚", "🐼", "🐼", "🎋🐼🎋"] },
+  penguin: { base: "🐧", stages: ["🥚", "🐧", "🐧", "❄️🐧❄️"] },
+  owl: { base: "🦉", stages: ["🥚", "🦉", "🦉", "🌟🦉🌟"] },
+  hamster: { base: "🐹", stages: ["🥚", "🐹", "🐹", "🌻🐹🌻"] }
+};
+
 export default function ProductivityBar() {
+  const navigate = useNavigate();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [settings, setSettings] = useState<ProductivitySettings>(DEFAULT_SETTINGS);
@@ -67,42 +100,129 @@ export default function ProductivityBar() {
   const [lastStretchTime, setLastStretchTime] = useState<number>(Date.now());
   const [showWaterReminder, setShowWaterReminder] = useState(false);
   const [showStretchReminder, setShowStretchReminder] = useState(false);
+  const [positivityData, setPositivityData] = useState<PositivityData>({});
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
 
-  // Load saved data
+  // Load saved data and positivity data
   useEffect(() => {
-    const savedSettings = safeGet<ProductivitySettings>('fm_productivity_settings_v1', DEFAULT_SETTINGS);
-    const savedProgress = safeGet<DailyProgress>('fm_productivity_day_v1', {
-      date: getTodayISO(),
-      focusSessions: 0,
-      waters: 0,
-      stretches: 0,
-      currentRound: 1
-    });
-
-    setSettings(savedSettings);
-    
-    // Reset progress if it's a new day
-    const today = getTodayISO();
-    if (savedProgress.date !== today) {
-      const newProgress = {
-        date: today,
+    const loadData = () => {
+      const savedSettings = safeGet<ProductivitySettings>('fm_productivity_settings_v1', DEFAULT_SETTINGS);
+      const savedProgress = safeGet<DailyProgress>('fm_productivity_day_v1', {
+        date: getTodayISO(),
         focusSessions: 0,
         waters: 0,
         stretches: 0,
         currentRound: 1
-      };
-      setDailyProgress(newProgress);
-      safeSet('fm_productivity_day_v1', newProgress);
-    } else {
-      setDailyProgress(savedProgress);
+      });
+
+      setSettings(savedSettings);
+      
+      // Reset progress if it's a new day
+      const today = getTodayISO();
+      if (savedProgress.date !== today) {
+        const newProgress = {
+          date: today,
+          focusSessions: 0,
+          waters: 0,
+          stretches: 0,
+          currentRound: 1
+        };
+        setDailyProgress(newProgress);
+        safeSet('fm_productivity_day_v1', newProgress);
+      } else {
+        setDailyProgress(savedProgress);
+      }
+
+      // Set initial timer duration
+      setTimer(prev => ({ ...prev, timeLeft: savedSettings.focusMinutes * 60 }));
+
+      // Load positivity data
+      loadPositivityData();
+    };
+
+    loadData();
+    
+    // Listen for storage changes to update positivity data
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'fm_energy_v1' || e.key === 'fm_affirmations_v1' || e.key === 'fm_tasks_v1') {
+        loadPositivityData();
+      }
+    };
+
+    // Listen for custom events
+    const handleUpdates = () => loadPositivityData();
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('energyWordUpdated', handleUpdates);
+    window.addEventListener('affirmationUpdated', handleUpdates);
+    window.addEventListener('tasksUpdated', handleUpdates);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('energyWordUpdated', handleUpdates);
+      window.removeEventListener('affirmationUpdated', handleUpdates);
+      window.removeEventListener('tasksUpdated', handleUpdates);
+    };
+  }, []);
+
+  const loadPositivityData = () => {
+    const today = getTodayISO();
+    const newPositivityData: PositivityData = {};
+
+    // Load Energy Word
+    try {
+      const energyRaw = localStorage.getItem('fm_energy_v1');
+      if (energyRaw) {
+        const energyData = JSON.parse(energyRaw);
+        if (energyData.date === today && energyData.word) {
+          newPositivityData.energyWord = energyData.word;
+        }
+      }
+    } catch (error) {
+      console.debug('Error loading energy word:', error);
     }
 
-    // Set initial timer duration
-    setTimer(prev => ({ ...prev, timeLeft: savedSettings.focusMinutes * 60 }));
-  }, []);
+    // Load Affirmation
+    try {
+      const affirmationRaw = localStorage.getItem('fm_affirmations_v1');
+      if (affirmationRaw) {
+        const affirmationData = JSON.parse(affirmationRaw);
+        if (affirmationData.date === today && affirmationData.affirmation) {
+          newPositivityData.affirmation = affirmationData.affirmation;
+        }
+      }
+    } catch (error) {
+      console.debug('Error loading affirmation:', error);
+    }
+
+    // Load Pet Data
+    try {
+      const tasksRaw = localStorage.getItem('fm_tasks_v1');
+      if (tasksRaw) {
+        const tasksData = JSON.parse(tasksRaw);
+        if (tasksData.date === today && tasksData.selectedAnimal) {
+          const completedTasks = (tasksData.tasks || []).filter((task: any) => task.completed).length;
+          const stage = Math.min(3, completedTasks);
+          const animalKey = tasksData.selectedAnimal;
+          const animalData = ANIMALS[animalKey as keyof typeof ANIMALS];
+          
+          if (animalData) {
+            newPositivityData.pet = {
+              animal: animalKey,
+              stage,
+              emoji: animalData.stages[stage] || animalData.base
+            };
+          }
+        }
+      }
+    } catch (error) {
+      console.debug('Error loading pet data:', error);
+    }
+
+    setPositivityData(newPositivityData);
+  };
 
   // Timer logic
   useEffect(() => {
@@ -278,8 +398,9 @@ export default function ProductivityBar() {
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 p-4">
-      <div className="max-w-6xl mx-auto">
+    <TooltipProvider>
+      <div className="fixed bottom-0 left-0 right-0 z-40 p-4">
+        <div className="max-w-6xl mx-auto">
         <div className="bg-gradient-to-r from-pink-100 via-purple-50 to-emerald-100 dark:from-pink-900/30 dark:via-purple-900/30 dark:to-emerald-900/30 backdrop-blur-lg border border-pink-200/50 dark:border-pink-700/50 rounded-2xl shadow-lg p-4">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-semibold text-pink-800 dark:text-pink-200">✨ Kawaii Productivity</h3>
@@ -369,8 +490,10 @@ export default function ProductivityBar() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {/* Timer Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {/* Left Side - Productivity Trackers */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {/* Timer Section */}
             <div className="flex items-center gap-3 p-3 bg-white/50 dark:bg-black/20 rounded-xl">
               <div className="text-2xl">⏱️</div>
               <div className="flex-1">
@@ -393,8 +516,8 @@ export default function ProductivityBar() {
               </div>
             </div>
 
-            {/* Water Tracker */}
-            <div className="flex items-center gap-3 p-3 bg-white/50 dark:bg-black/20 rounded-xl">
+              {/* Water Tracker */}
+              <div className="flex items-center gap-3 p-3 bg-white/50 dark:bg-black/20 rounded-xl">
               <div className={`text-2xl ${showWaterReminder ? 'animate-bounce' : ''}`}>💧</div>
               <div className="flex-1">
                 <div className="text-xs text-muted-foreground mb-2">Hydration {dailyProgress.waters}/8</div>
@@ -415,13 +538,13 @@ export default function ProductivityBar() {
                 {showWaterReminder && (
                   <div className="text-xs text-blue-600 dark:text-blue-400 mt-1 animate-pulse">
                     💧 Time to hydrate!
-                  </div>
+              </div>
                 )}
               </div>
             </div>
 
-            {/* Stretch Reminder */}
-            <div className="flex items-center gap-3 p-3 bg-white/50 dark:bg-black/20 rounded-xl">
+              {/* Stretch Reminder */}
+              <div className="flex items-center gap-3 p-3 bg-white/50 dark:bg-black/20 rounded-xl">
               <button
                 onClick={addStretch}
                 className={`text-2xl transition-transform hover:scale-110 ${
@@ -439,12 +562,99 @@ export default function ProductivityBar() {
                 </div>
                 <div className="text-xs text-muted-foreground">
                   Focus sessions: {dailyProgress.focusSessions}
+              </div>
+              </div>
+              </div>
+            </div>
+
+            {/* Right Side - Positivity Anchors */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {/* Energy Word */}
+              <div className="flex items-center gap-3 p-3 bg-white/50 dark:bg-black/20 rounded-xl">
+                <div className="text-2xl">🌟</div>
+                <div className="flex-1">
+                  <div className="text-xs text-muted-foreground mb-1">Energy Word</div>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-auto p-0 text-left justify-start"
+                        onClick={() => navigate('/tools/energy')}
+                      >
+                        <Badge 
+                          variant="secondary" 
+                          className="bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-200 border border-pink-200 dark:border-pink-700"
+                        >
+                          {positivityData.energyWord || 'Choose your word ✨'}
+                        </Badge>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Your energy word for today</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+              </div>
+
+              {/* Affirmation Card */}
+              <div className="flex items-center gap-3 p-3 bg-white/50 dark:bg-black/20 rounded-xl">
+                <div className="text-2xl">🃏</div>
+                <div className="flex-1">
+                  <div className="text-xs text-muted-foreground mb-1">Affirmation</div>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-auto p-2 text-left justify-start border border-purple-200 dark:border-purple-700 bg-purple-50 dark:bg-purple-900/20 hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded-md"
+                        onClick={() => navigate('/tools/affirmations')}
+                      >
+                        <div className="text-xs text-purple-800 dark:text-purple-200 line-clamp-2 leading-tight">
+                          {positivityData.affirmation || 'Draw your card ✨'}
+                        </div>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Today's affirmation card</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+              </div>
+
+              {/* Pet of the Day */}
+              <div className="flex items-center gap-3 p-3 bg-white/50 dark:bg-black/20 rounded-xl">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-2xl p-1 hover:scale-110 transition-transform"
+                      onClick={() => navigate('/tools/tasks')}
+                    >
+                      {positivityData.pet ? positivityData.pet.emoji : '🥚'}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Your daily companion</p>
+                  </TooltipContent>
+                </Tooltip>
+                <div className="flex-1">
+                  <div className="text-xs text-muted-foreground mb-1">Daily Pet</div>
+                  <div className="text-xs text-green-600 dark:text-green-400">
+                    {positivityData.pet ? (
+                      `${positivityData.pet.animal} • Stage ${positivityData.pet.stage + 1}`
+                    ) : (
+                      'Choose your pet ✨'
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+        </div>
       </div>
-    </div>
+    </TooltipProvider>
   );
 }
