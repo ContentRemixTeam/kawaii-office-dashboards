@@ -26,7 +26,8 @@ export default {
 				foreground: 'hsl(var(--foreground))',
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
+					foreground: 'hsl(var(--primary-foreground))',
+					glow: 'hsl(var(--primary-glow))'
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
@@ -88,7 +89,25 @@ export default {
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'bounce-cute': 'bounce 2s ease-in-out infinite',
+				'pulse-soft': 'pulse 3s ease-in-out infinite'
+			},
+			backgroundImage: {
+				'gradient-kawaii': 'var(--gradient-kawaii)',
+				'gradient-background': 'var(--gradient-background)',
+				'gradient-card': 'var(--gradient-card)',
+				'gradient-mint': 'var(--gradient-mint)',
+				'gradient-peach': 'var(--gradient-peach)'
+			},
+			boxShadow: {
+				'soft': 'var(--shadow-soft)',
+				'glow': 'var(--shadow-glow)',
+				'cute': 'var(--shadow-cute)'
+			},
+			transitionTimingFunction: {
+				'bounce': 'var(--transition-bounce)',
+				'smooth': 'var(--transition-smooth)'
 			}
 		}
 	},
