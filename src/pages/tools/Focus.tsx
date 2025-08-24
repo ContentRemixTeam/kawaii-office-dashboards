@@ -160,16 +160,16 @@ export default function Focus() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="text-center">
                 <div className="text-3xl font-bold text-primary">{todayStats.focusBlocks}</div>
-                <div className="text-sm text-muted">Focus Sessions</div>
+                <div className="text-sm text-muted-foreground">Focus Sessions</div>
                 {goalMet && <Badge className="mt-1">Goal Met! 🎉</Badge>}
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-primary">{todayStats.minutesFocused}</div>
-                <div className="text-sm text-muted">Minutes Focused</div>
+                <div className="text-sm text-muted-foreground">Minutes Focused</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-primary">{streak}</div>
-                <div className="text-sm text-muted">Day Streak</div>
+                <div className="text-sm text-muted-foreground">Day Streak</div>
               </div>
             </div>
           </CardContent>
@@ -208,8 +208,8 @@ export default function Focus() {
                         <h3 className="font-semibold">{preset.name}</h3>
                         {config.workflow === key && <Badge>Active</Badge>}
                       </div>
-                      <p className="text-sm text-muted mb-2">{preset.description}</p>
-                      <div className="text-xs text-muted">
+                      <p className="text-sm text-muted-foreground mb-2">{preset.description}</p>
+                      <div className="text-xs text-muted-foreground">
                         {preset.focusMin}m focus • {preset.shortMin}m short • {preset.longMin}m long
                       </div>
                     </div>
@@ -239,7 +239,7 @@ export default function Focus() {
                       value={config.focusMin}
                       onChange={(e) => updateConfig({ focusMin: Math.max(1, Math.min(120, parseInt(e.target.value) || 1)) })}
                     />
-                    <div className="text-xs text-muted">{config.focusMin} minutes</div>
+                    <div className="text-xs text-muted-foreground">{config.focusMin} minutes</div>
                   </div>
 
                   <div className="space-y-2">
@@ -251,7 +251,7 @@ export default function Focus() {
                       value={config.shortMin}
                       onChange={(e) => updateConfig({ shortMin: Math.max(1, Math.min(120, parseInt(e.target.value) || 1)) })}
                     />
-                    <div className="text-xs text-muted">{config.shortMin} minutes</div>
+                    <div className="text-xs text-muted-foreground">{config.shortMin} minutes</div>
                   </div>
 
                   <div className="space-y-2">
@@ -263,7 +263,7 @@ export default function Focus() {
                       value={config.longMin}
                       onChange={(e) => updateConfig({ longMin: Math.max(1, Math.min(120, parseInt(e.target.value) || 1)) })}
                     />
-                    <div className="text-xs text-muted">{config.longMin} minutes</div>
+                    <div className="text-xs text-muted-foreground">{config.longMin} minutes</div>
                   </div>
                 </div>
 
@@ -321,7 +321,7 @@ export default function Focus() {
                   <div className="flex items-center justify-between">
                     <div>
                       <Label>Phase Transition Sound</Label>
-                      <p className="text-xs text-muted">Play sound when phases complete</p>
+                      <p className="text-xs text-muted-foreground">Play sound when phases complete</p>
                     </div>
                     <Select value={config.sound} onValueChange={(value: SoundType) => updateConfig({ sound: value })}>
                       <SelectTrigger className="w-32">
@@ -338,7 +338,7 @@ export default function Focus() {
                   <div className="flex items-center justify-between">
                     <div>
                       <Label>Tick Sound</Label>
-                      <p className="text-xs text-muted">Subtle tick every second</p>
+                      <p className="text-xs text-muted-foreground">Subtle tick every second</p>
                     </div>
                     <Switch
                       checked={config.tickSound}
@@ -354,7 +354,7 @@ export default function Focus() {
                         <Bell className="w-4 h-4" />
                         Browser Notifications
                       </Label>
-                      <p className="text-xs text-muted">Show notifications when phases complete</p>
+                      <p className="text-xs text-muted-foreground">Show notifications when phases complete</p>
                     </div>
                     <Switch
                       checked={config.notify}
@@ -368,7 +368,7 @@ export default function Focus() {
                         <Smartphone className="w-4 h-4" />
                         Vibration (Mobile)
                       </Label>
-                      <p className="text-xs text-muted">Vibrate device on phase transitions</p>
+                      <p className="text-xs text-muted-foreground">Vibrate device on phase transitions</p>
                     </div>
                     <Switch
                       checked={config.vibrate}
@@ -379,7 +379,7 @@ export default function Focus() {
 
                 {config.sound !== "off" && (
                   <div className="bg-muted/30 rounded-lg p-4">
-                    <p className="text-sm text-muted mb-2">
+                    <p className="text-sm text-muted-foreground mb-2">
                       ⚠️ Browsers require user interaction to play audio
                     </p>
                     <Button size="sm" onClick={enableAudio}>
@@ -405,7 +405,7 @@ export default function Focus() {
                   <div className="flex items-center justify-between">
                     <div>
                       <Label>Auto-start Breaks</Label>
-                      <p className="text-xs text-muted">Automatically start break when focus ends</p>
+                      <p className="text-xs text-muted-foreground">Automatically start break when focus ends</p>
                     </div>
                     <Switch
                       checked={config.autoStartBreak}
@@ -416,7 +416,7 @@ export default function Focus() {
                   <div className="flex items-center justify-between">
                     <div>
                       <Label>Auto-start Focus</Label>
-                      <p className="text-xs text-muted">Automatically start focus when break ends</p>
+                      <p className="text-xs text-muted-foreground">Automatically start focus when break ends</p>
                     </div>
                     <Switch
                       checked={config.autoStartFocus}
@@ -429,7 +429,7 @@ export default function Focus() {
                   <div className="flex items-center justify-between">
                     <div>
                       <Label>Quiet Mode</Label>
-                      <p className="text-xs text-muted">Suppress encouragement popups during focus</p>
+                      <p className="text-xs text-muted-foreground">Suppress encouragement popups during focus</p>
                     </div>
                     <Switch
                       checked={focusTimer.getState().phase === "focus" ? true : config.autoStartBreak}
@@ -445,7 +445,7 @@ export default function Focus() {
                   <div className="flex items-center justify-between">
                     <div>
                       <Label className="text-destructive">Reset Today</Label>
-                      <p className="text-xs text-muted">Clear today's progress and stop timer</p>
+                      <p className="text-xs text-muted-foreground">Clear today's progress and stop timer</p>
                     </div>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
@@ -490,17 +490,17 @@ export default function Focus() {
                     .map(([date, stats]) => (
                       <div key={date} className="flex items-center justify-between py-2 border-b border-border/20 last:border-0">
                         <div className="flex items-center gap-2">
-                          <Calendar className="w-4 h-4 text-muted" />
+                          <Calendar className="w-4 h-4 text-muted-foreground" />
                           <span className="text-sm">{new Date(date).toLocaleDateString()}</span>
                           {stats.focusBlocks >= dailyGoal && <Badge variant="secondary" className="text-xs">Goal ✓</Badge>}
                         </div>
-                        <div className="text-sm text-muted">
+                        <div className="text-sm text-muted-foreground">
                           {stats.focusBlocks} sessions • {stats.minutesFocused}m
                         </div>
                       </div>
                     ))}
                   {Object.keys(history).length === 0 && (
-                    <p className="text-sm text-muted text-center py-4">
+                    <p className="text-sm text-muted-foreground text-center py-4">
                       No focus sessions yet. Start your first timer to see stats here!
                     </p>
                   )}
