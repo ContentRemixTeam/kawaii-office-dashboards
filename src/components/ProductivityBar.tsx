@@ -707,58 +707,64 @@ export default function ProductivityBar() {
             </div>
 
             {/* Right Side - Positivity Anchors */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {/* Energy Word */}
-              <div className="flex items-center gap-2 min-w-0 overflow-hidden rounded-xl px-3 py-2 bg-white/70 border shadow-sm">
-                <span aria-hidden="true" className="text-lg flex-shrink-0">🌟</span>
-                <div className="flex-1 min-w-0">
-                  <div className="text-xs text-muted-foreground leading-tight">Energy</div>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-auto p-0 text-left justify-start font-medium leading-tight"
-                        onClick={() => navigate('/tools/energy')}
-                        title={energyWord || 'Choose your word ✨'}
-                      >
-                        <span className="truncate leading-tight max-w-[16rem] md:max-w-[14rem] sm:max-w-[12rem] text-sm">
-                          {energyWord || 'Choose your word ✨'}
-                        </span>
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{energyWord || 'Choose your word ✨'}</p>
-                    </TooltipContent>
-                  </Tooltip>
+            <div className="flex flex-col gap-2">
+              {/* Top Row - Energy & Affirmation with more space */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {/* Energy Word */}
+                <div className="flex items-center gap-2 min-w-0 overflow-hidden rounded-xl px-3 py-2 bg-white/70 border shadow-sm">
+                  <span aria-hidden="true" className="text-lg flex-shrink-0">🌟</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs text-muted-foreground leading-tight">Energy</div>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-auto p-0 text-left justify-start font-medium leading-tight w-full"
+                          onClick={() => navigate('/tools/energy')}
+                          title={energyWord || 'Choose your word ✨'}
+                        >
+                          <span className="truncate leading-tight text-sm line-clamp-2 text-left w-full">
+                            {energyWord || 'Choose your word ✨'}
+                          </span>
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{energyWord || 'Choose your word ✨'}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                </div>
+
+                {/* Affirmation Card */}
+                <div className="flex items-center gap-2 min-w-0 overflow-hidden rounded-xl px-3 py-2 bg-white/70 border shadow-sm">
+                  <span aria-hidden="true" className="text-lg flex-shrink-0">🃏</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs text-muted-foreground leading-tight">Affirmation</div>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-auto p-0 text-left justify-start font-medium leading-tight w-full"
+                          onClick={() => navigate('/tools/affirmations')}
+                          title={affirmText || 'Draw your card 🃏'}
+                        >
+                          <span className="truncate leading-tight text-sm line-clamp-2 text-left w-full">
+                            {affirmText || 'Draw your card 🃏'}
+                          </span>
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{affirmText || 'Draw your card 🃏'}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
                 </div>
               </div>
 
-              {/* Affirmation Card */}
-              <div className="flex items-center gap-2 min-w-0 overflow-hidden rounded-xl px-3 py-2 bg-white/70 border shadow-sm">
-                <span aria-hidden="true" className="text-lg flex-shrink-0">🃏</span>
-                <div className="flex-1 min-w-0">
-                  <div className="text-xs text-muted-foreground leading-tight">Affirmation</div>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-auto p-0 text-left justify-start font-medium leading-tight"
-                        onClick={() => navigate('/tools/affirmations')}
-                        title={affirmText || 'Draw your card 🃏'}
-                      >
-                        <span className="truncate leading-tight max-w-[16rem] md:max-w-[14rem] sm:max-w-[12rem] text-sm">
-                          {affirmText || 'Draw your card 🃏'}
-                        </span>
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{affirmText || 'Draw your card 🃏'}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-              </div>
+              {/* Bottom Row - Pet & Wins */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 
               {/* Pet of the Day */}
               <div 
@@ -818,6 +824,7 @@ export default function ProductivityBar() {
                     </TooltipContent>
                   </Tooltip>
                 </div>
+              </div>
               </div>
               </div>
             </div>
