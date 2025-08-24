@@ -100,11 +100,11 @@ export default function TopControlBar() {
               onClick={() => navigate("/tools/tasks")}
               className="inline-flex items-center gap-2 rounded-full border border-border/20 bg-card/60 backdrop-blur-sm px-3 py-1.5 shadow-sm hover:shadow-md hover:bg-card/80 transition-all duration-200"
             >
-              <span className="text-sm">🐾</span>
+              <span className="text-sm">⭐</span>
               <div className="min-w-0">
-                <div className="text-xs text-muted-foreground/80">Pet</div>
+                <div className="text-xs text-muted-foreground/80">Big Three</div>
                 <div className="text-xs font-medium text-foreground">
-                  Stage {pet.stage}/3
+                  {pet.stage}/3
                 </div>
               </div>
             </button>

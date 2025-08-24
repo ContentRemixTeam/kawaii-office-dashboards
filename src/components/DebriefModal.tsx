@@ -2,6 +2,7 @@ import React from "react";
 import { writeTodayDebrief } from "@/lib/dailyFlow";
 import { emitChanged } from "@/lib/bus";
 import { clearEarnedAnimals } from "@/lib/topbarState";
+import DailySummary from "@/components/DailySummary";
 
 export default function DebriefModal({ open, onClose }:{ open:boolean; onClose:()=>void; }){
   const [w1,setW1]=React.useState("");
@@ -21,6 +22,9 @@ export default function DebriefModal({ open, onClose }:{ open:boolean; onClose:(
           <p className="text-sm text-muted-foreground">Close the loop and set tomorrow up for success.</p>
         </div>
         <div className="p-5 space-y-4">
+          {/* Daily Summary */}
+          <DailySummary />
+          
           <div>
             <label className="text-sm text-muted-foreground block mb-1">Wins (up to 3)</label>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
