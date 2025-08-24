@@ -19,7 +19,6 @@ import Sounds from "./pages/tools/Sounds";
 import Affirmations from "./pages/tools/Affirmations";
 import Money from "./pages/tools/Money";
 import Energy from "./pages/tools/Energy";
-import Breaks from "./pages/tools/Breaks";
 import Habits from "./pages/tools/Habits";
 import Wins from "./pages/tools/Wins";
 import Theme from "./pages/tools/Theme";
@@ -60,7 +59,7 @@ const App = () => {
               <Route path="/tools/affirmations" element={<Affirmations />} />
               <Route path="/tools/money" element={<Money />} />
               <Route path="/tools/energy" element={<Energy />} />
-              <Route path="/tools/breaks" element={<Breaks />} />
+              
               <Route path="/tools/habits" element={<Habits />} />
               <Route path="/tools/wins" element={<Wins />} />
               <Route path="/tools/theme" element={<Theme />} />

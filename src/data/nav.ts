@@ -15,13 +15,6 @@ export interface NavSection {
 
 export const NAV_SECTIONS: NavSection[] = [
   {
-    title: "Dashboard",
-    emoji: "🏠",
-    items: [
-      { label: "Home", href: "/", emoji: "🏠", icon: Home }
-    ]
-  },
-  {
     title: "Daily Habits",
     emoji: "🌱",
     items: [
@@ -47,8 +40,7 @@ export const NAV_SECTIONS: NavSection[] = [
       { label: "Vision Board", href: "/tools/vision", emoji: "🌈" },
       { label: "Positivity Cabinet", href: "/tools/cabinet", emoji: "📦" },
       { label: "Soundscapes", href: "/tools/sounds", emoji: "🎵" },
-      { label: "Theme", href: "/tools/theme", emoji: "🎨" },
-      { label: "Breaks", href: "/tools/breaks", emoji: "🧘" }
+      { label: "Theme", href: "/tools/theme", emoji: "🎨" }
     ]
   }
 ];

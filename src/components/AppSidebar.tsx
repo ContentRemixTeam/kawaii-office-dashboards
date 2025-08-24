@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { Home } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -9,7 +10,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -30,6 +30,69 @@ export function AppSidebar() {
     navigate(href);
   };
 
+  const HomeButton = () => {
+    const active = isActive("/");
+    
+    const button = (
+      <SidebarMenuButton 
+        asChild
+        className={`
+          group relative h-12 transition-all duration-200 hover:scale-[1.02] mx-2 rounded-xl mb-4
+          ${active 
+            ? "bg-primary text-primary-foreground shadow-soft hover:bg-primary/90 ring-2 ring-primary/20" 
+            : "hover:bg-accent/50 hover:shadow-sm hover:border-primary/20"
+          }
+          ${isCollapsed ? "justify-center px-2" : "justify-start px-3"}
+        `}
+      >
+        <button
+          onClick={() => handleNavigate("/")}
+          className="flex items-center w-full gap-3"
+        >
+          <span 
+            className={`
+              text-lg transition-transform duration-200 flex-shrink-0
+              ${active ? "" : "group-hover:scale-110 group-hover:rotate-3"}
+            `}
+          >
+            🏠
+          </span>
+          {!isCollapsed && (
+            <span className="font-medium text-sm truncate">
+              Home
+            </span>
+          )}
+          
+          {/* Active indicator */}
+          {active && (
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary-foreground rounded-r-full" />
+          )}
+        </button>
+      </SidebarMenuButton>
+    );
+
+    // Wrap in tooltip when collapsed
+    if (isCollapsed) {
+      return (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            {button}
+          </TooltipTrigger>
+          <TooltipContent 
+            side="right" 
+            className="font-medium"
+            sideOffset={8}
+          >
+            <span className="mr-2">🏠</span>
+            Home
+          </TooltipContent>
+        </Tooltip>
+      );
+    }
+
+    return button;
+  };
+
   return (
     <Sidebar 
       className={`
@@ -39,7 +102,15 @@ export function AppSidebar() {
       `}
       collapsible="icon"
     >
-      <SidebarContent className="gap-0">
+      <SidebarContent className="gap-0 py-4">
+        {/* Home Button at Top */}
+        <div className="px-2">
+          <HomeButton />
+        </div>
+        
+        {/* Divider */}
+        <div className="mx-4 mb-6 border-t border-border/20" />
+        
         {NAV_SECTIONS.map((section, sectionIndex) => {
           const hasActiveItem = section.items.some(item => isActive(item.href));
           
@@ -47,8 +118,8 @@ export function AppSidebar() {
             <SidebarGroup 
               key={section.title}
               className={`
-                ${sectionIndex > 0 ? "border-t border-border/10" : ""}
-                ${sectionIndex === 0 ? "pt-4" : "pt-6"}
+                ${sectionIndex > 0 ? "border-t border-border/10 pt-6" : ""}
+                mb-4
               `}
             >
               {!isCollapsed && (
@@ -59,7 +130,7 @@ export function AppSidebar() {
               )}
               
               <SidebarGroupContent>
-                <SidebarMenu className="gap-1">
+                <SidebarMenu className="gap-2">
                   {section.items.map((item) => {
                     const active = isActive(item.href);
                     
