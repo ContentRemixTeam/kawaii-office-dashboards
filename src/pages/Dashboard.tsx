@@ -4,6 +4,7 @@ import BackgroundManager from "@/components/BackgroundManager";
 import HomeHero from "@/components/HomeHero";
 import VisionStrip from "@/components/VisionStrip";
 import ThemedToolSections from "@/components/ThemedToolSections";
+import BigThreeTasksSection from "@/components/BigThreeTasksSection";
 
 export default function Dashboard() {
   return (
@@ -44,6 +45,9 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+
+        {/* Big Three Tasks */}
+        <BigThreeTasksSection />
 
         {/* Vision Board Strip */}
         <VisionStrip />
