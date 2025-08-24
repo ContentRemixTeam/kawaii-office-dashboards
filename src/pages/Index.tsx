@@ -6,10 +6,12 @@ import BigThreeTasksSection from "@/components/BigThreeTasksSection";
 import { HOTSPOTS, OFFICE_ALT, OFFICE_IMAGE_SRC } from "@/data/hotspots";
 import { getHomeTitle, getHomeSubtitle } from "@/lib/storage";
 import { Sparkles, Heart } from "lucide-react";
+import useDailyFlow from "@/hooks/useDailyFlow";
 
 const Index = () => {
   const [homeTitle, setHomeTitle] = useState(() => getHomeTitle());
   const [homeSubtitle, setHomeSubtitle] = useState(() => getHomeSubtitle());
+  const f = useDailyFlow();
   
   useEffect(() => {
     setHomeTitle(getHomeTitle());
@@ -61,6 +63,41 @@ const Index = () => {
           <p className="text-sm text-muted">Choose your tool to get started</p>
         </div>
         <NavPills />
+      </div>
+
+      {/* Daily Settings */}
+      <div className="w-full max-w-6xl mb-8 rounded-2xl bg-card/60 backdrop-blur-sm border border-border/20 shadow-lg p-4">
+        <div className="text-center mb-4">
+          <h3 className="text-lg font-semibold text-card-foreground mb-1">🌙 Daily Settings</h3>
+          <p className="text-sm text-muted-foreground">Configure your daily workflow</p>
+        </div>
+        
+        <div className="flex flex-col md:flex-row items-center justify-center gap-4">
+          {/* Sign-off Time Setting */}
+          <div className="flex items-center gap-2 text-sm">
+            <label className="text-muted-foreground">Daily sign-off time:</label>
+            <input 
+              defaultValue={f.prefs.signoffTime} 
+              onBlur={e => f.setSignoffTime(e.currentTarget.value)}
+              className="w-24 rounded-lg border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" 
+              type="time" 
+            />
+            <span className="text-xs text-muted-foreground/70">Debrief will prompt at this time</span>
+          </div>
+          
+          {/* Auto Prompt Setting */}
+          <div className="flex items-center gap-2 text-sm">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input 
+                type="checkbox" 
+                defaultChecked={f.prefs.autoPrompt} 
+                onChange={e => f.setAutoPrompt(e.currentTarget.checked)}
+                className="rounded border-input w-4 h-4"
+              />
+              <span className="text-muted-foreground">Auto-prompt daily workflows</span>
+            </label>
+          </div>
+        </div>
       </div>
 
       <div className="text-center space-y-3">

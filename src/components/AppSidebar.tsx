@@ -104,9 +104,38 @@ export function AppSidebar() {
     >
       <SidebarContent className="gap-0 py-4">
         {/* Home Button at Top */}
-        <div className="px-2">
-          <HomeButton />
-        </div>
+        <SidebarMenu className="mb-4 px-2">
+          <SidebarMenuItem>
+            <SidebarMenuButton 
+              asChild
+              className={`
+                group relative h-12 transition-all duration-200 hover:scale-[1.02] rounded-xl
+                ${isActive("/") 
+                  ? "bg-primary text-primary-foreground shadow-soft hover:bg-primary/90 ring-2 ring-primary/20" 
+                  : "hover:bg-accent/50 hover:shadow-sm hover:border-primary/20"
+                }
+                ${isCollapsed ? "justify-center px-2" : "justify-start px-3"}
+              `}
+            >
+              <button
+                onClick={() => handleNavigate("/")}
+                className="flex items-center w-full gap-3"
+              >
+                <Home className="h-4 w-4 flex-shrink-0" />
+                {!isCollapsed && (
+                  <span className="font-medium text-sm truncate">
+                    Home
+                  </span>
+                )}
+                
+                {/* Active indicator */}
+                {isActive("/") && (
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary-foreground rounded-r-full" />
+                )}
+              </button>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
         
         {/* Divider */}
         <div className="mx-4 mb-6 border-t border-border/20" />
