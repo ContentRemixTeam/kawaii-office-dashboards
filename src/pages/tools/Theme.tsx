@@ -144,7 +144,18 @@ const THEME_PRESETS = [
 ];
 
 function hslToHex(hslString: string): string {
+  // Handle undefined/null values
+  if (!hslString || typeof hslString !== 'string') {
+    return '#000000'; // fallback to black
+  }
+  
   const [h, s, l] = hslString.split(' ').map(v => parseFloat(v.replace('%', '')));
+  
+  // Handle invalid parsing
+  if (isNaN(h) || isNaN(s) || isNaN(l)) {
+    return '#000000'; // fallback to black
+  }
+  
   const sNorm = s / 100;
   const lNorm = l / 100;
 
@@ -222,9 +233,18 @@ export default function Theme() {
   // Load saved theme
   useEffect(() => {
     const saved = safeGet<ThemeData>('fm_theme_v1', DEFAULT_THEME);
-    setCurrentTheme(saved);
-    setTempTheme(saved);
-    applyTheme(saved);
+    // Merge with defaults to ensure all required properties exist
+    const mergedTheme = {
+      ...DEFAULT_THEME,
+      ...saved,
+      vars: {
+        ...DEFAULT_THEME.vars,
+        ...saved.vars
+      }
+    };
+    setCurrentTheme(mergedTheme);
+    setTempTheme(mergedTheme);
+    applyTheme(mergedTheme);
     setHeroState(loadHero());
     setYoutubeUrl(loadHero().youtubeUrl || "");
   }, []);
@@ -234,9 +254,18 @@ export default function Theme() {
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'fm_theme_v1') {
         const saved = safeGet<ThemeData>('fm_theme_v1', DEFAULT_THEME);
-        setCurrentTheme(saved);
-        setTempTheme(saved);
-        applyTheme(saved);
+        // Merge with defaults to ensure all required properties exist
+        const mergedTheme = {
+          ...DEFAULT_THEME,
+          ...saved,
+          vars: {
+            ...DEFAULT_THEME.vars,
+            ...saved.vars
+          }
+        };
+        setCurrentTheme(mergedTheme);
+        setTempTheme(mergedTheme);
+        applyTheme(mergedTheme);
       }
     };
 
