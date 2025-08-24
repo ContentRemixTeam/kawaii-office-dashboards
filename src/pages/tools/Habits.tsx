@@ -11,6 +11,8 @@ import ToolShell from "@/components/ToolShell";
 import { safeGet, safeSet, generateId, getTodayISO } from "@/lib/storage";
 import { cn } from "@/lib/utils";
 
+// Force cache refresh
+
 interface Habit {
   id: string;
   name: string;
