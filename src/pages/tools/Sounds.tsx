@@ -37,19 +37,50 @@ export default function Sounds() {
       const audio = new Audio(sound.file);
       audio.loop = true;
       audio.preload = "metadata";
+      audio.volume = volume / 100;
+      
+      // Add error handling for missing files
+      audio.addEventListener('error', () => {
+        toast({
+          title: `⚠️ Missing sound file: ${sound.name}.mp3`,
+          description: "Please upload it to /public/sounds/",
+          variant: "destructive"
+        });
+      });
+      
+      // Add load success handler  
+      audio.addEventListener('canplaythrough', () => {
+        console.log(`✅ Sound loaded: ${sound.name}`);
+      });
+      
       elements[sound.id] = audio;
       audioRefs.current[sound.id] = audio;
     });
     
     setAudioElements(elements);
-  }, []);
+  }, [volume, toast]);
 
-  // Load saved state
+  // Load saved state and restore playing sounds
   useEffect(() => {
     const savedState = safeGet<SoundState>(STORAGE_KEY, { activeSounds: [], volume: 50 });
     setActiveSounds(savedState.activeSounds);
     setVolume(savedState.volume);
-  }, []);
+    
+    // Restore playing sounds after audio elements are loaded
+    if (Object.keys(audioRefs.current).length > 0 && savedState.activeSounds.length > 0) {
+      savedState.activeSounds.forEach(soundId => {
+        const audio = audioRefs.current[soundId];
+        if (audio) {
+          audio.volume = savedState.volume / 100;
+          audio.play().catch(error => {
+            console.log(`Could not auto-play ${soundId}:`, error);
+            // Remove from active sounds if autoplay fails
+            setActiveSounds(prev => prev.filter(id => id !== soundId));
+          });
+        }
+      });
+    }
+  }, [audioElements]);
 
   // Update volume for all audio elements
   useEffect(() => {
@@ -94,10 +125,10 @@ export default function Sounds() {
         });
       }
     } catch (error) {
-      console.error('Error playing audio:', error);
+      const soundName = sounds.find(s => s.id === soundId)?.name || soundId;
       toast({
-        title: "Audio error",
-        description: "Unable to play this sound. Please try again.",
+        title: `⚠️ Could not play ${soundName}`,
+        description: "Check if the sound file exists in /public/sounds/",
         variant: "destructive"
       });
     }
