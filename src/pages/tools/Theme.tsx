@@ -17,9 +17,13 @@ interface ThemeData {
     "--bg-start": string;
     "--bg-end": string;
     "--brand": string;
+    "--brand-fg": string;
     "--accent": string;
+    "--accent-fg": string;
     "--card": string;
     "--text": string;
+    "--muted": string;
+    "--ring": string;
   };
   backgroundImage?: string;
   useImage?: boolean;
@@ -30,9 +34,13 @@ const DEFAULT_THEME: ThemeData = {
     "--bg-start": "350 100% 98%",    // pastel pink
     "--bg-end": "150 40% 96%",       // mint
     "--brand": "340 75% 75%",        // pink accent
-    "--accent": "150 60% 85%",       // mint accent
+    "--brand-fg": "0 0% 100%",       // white text on brand
+    "--accent": "150 60% 65%",       // mint accent
+    "--accent-fg": "160 30% 25%",    // dark text on accent
     "--card": "0 0% 100%",           // white
-    "--text": "340 15% 25%"          // dark gray
+    "--text": "340 15% 25%",         // dark gray
+    "--muted": "340 10% 45%",        // secondary text
+    "--ring": "340 75% 85%"          // focus ring
   }
 };
 
@@ -44,9 +52,13 @@ const THEME_PRESETS = [
       "--bg-start": "350 100% 98%",
       "--bg-end": "280 40% 96%",
       "--brand": "340 75% 75%",
+      "--brand-fg": "0 0% 100%",
       "--accent": "280 60% 85%",
+      "--accent-fg": "280 30% 25%",
       "--card": "0 0% 100%",
-      "--text": "340 15% 25%"
+      "--text": "340 15% 25%",
+      "--muted": "340 10% 45%",
+      "--ring": "340 75% 85%"
     }
   },
   {
@@ -56,9 +68,13 @@ const THEME_PRESETS = [
       "--bg-start": "120 40% 96%",
       "--bg-end": "160 40% 94%",
       "--brand": "150 60% 65%",
+      "--brand-fg": "0 0% 100%",
       "--accent": "120 50% 75%",
+      "--accent-fg": "120 30% 20%",
       "--card": "120 20% 99%",
-      "--text": "160 30% 20%"
+      "--text": "160 30% 20%",
+      "--muted": "160 15% 40%",
+      "--ring": "150 60% 80%"
     }
   },
   {
@@ -68,9 +84,13 @@ const THEME_PRESETS = [
       "--bg-start": "25 90% 95%",
       "--bg-end": "10 85% 92%",
       "--brand": "15 85% 70%",
+      "--brand-fg": "0 0% 100%",
       "--accent": "35 80% 75%",
+      "--accent-fg": "35 30% 25%",
       "--card": "25 40% 98%",
-      "--text": "25 30% 25%"
+      "--text": "25 30% 25%",
+      "--muted": "25 15% 45%",
+      "--ring": "15 85% 85%"
     }
   },
   {
@@ -80,9 +100,13 @@ const THEME_PRESETS = [
       "--bg-start": "200 80% 96%",
       "--bg-end": "220 60% 94%",
       "--brand": "210 70% 70%",
+      "--brand-fg": "0 0% 100%",
       "--accent": "195 65% 75%",
+      "--accent-fg": "195 30% 25%",
       "--card": "210 30% 99%",
-      "--text": "220 30% 25%"
+      "--text": "220 30% 25%",
+      "--muted": "220 15% 45%",
+      "--ring": "210 70% 85%"
     }
   },
   {
@@ -92,9 +116,13 @@ const THEME_PRESETS = [
       "--bg-start": "280 60% 96%",
       "--bg-end": "300 50% 94%",
       "--brand": "290 65% 70%",
+      "--brand-fg": "0 0% 100%",
       "--accent": "270 55% 75%",
+      "--accent-fg": "270 30% 25%",
       "--card": "285 20% 99%",
-      "--text": "300 25% 25%"
+      "--text": "300 25% 25%",
+      "--muted": "300 15% 45%",
+      "--ring": "290 65% 85%"
     }
   },
   {
@@ -104,9 +132,13 @@ const THEME_PRESETS = [
       "--bg-start": "220 25% 15%",
       "--bg-end": "240 30% 10%",
       "--brand": "260 70% 60%",
+      "--brand-fg": "0 0% 100%",
       "--accent": "200 60% 50%",
+      "--accent-fg": "0 0% 100%",
       "--card": "225 20% 20%",
-      "--text": "210 20% 85%"
+      "--text": "210 20% 85%",
+      "--muted": "210 15% 65%",
+      "--ring": "260 70% 75%"
     }
   }
 ];
@@ -214,9 +246,20 @@ export default function Theme() {
 
   const applyTheme = (theme: ThemeData) => {
     const root = document.documentElement;
+    
+    // Apply all theme variables
     Object.entries(theme.vars).forEach(([key, value]) => {
       root.style.setProperty(key, value);
     });
+
+    // Also update the main CSS system variables to match theme
+    root.style.setProperty('--primary', theme.vars['--brand']);
+    root.style.setProperty('--primary-foreground', theme.vars['--brand-fg']);
+    root.style.setProperty('--secondary', theme.vars['--accent']);
+    root.style.setProperty('--secondary-foreground', theme.vars['--accent-fg']);
+    root.style.setProperty('--background', theme.vars['--bg-start']);
+    root.style.setProperty('--foreground', theme.vars['--text']);
+    root.style.setProperty('--muted-foreground', theme.vars['--muted']);
 
     if (theme.useImage && theme.backgroundImage) {
       document.body.style.backgroundImage = `url(${theme.backgroundImage})`;
@@ -238,6 +281,16 @@ export default function Theme() {
       ...tempTheme,
       vars: { ...tempTheme.vars, [key]: hexToHsl(value) }
     };
+    
+    // Auto-calculate foreground colors for better contrast
+    if (key === "--brand") {
+      newTheme.vars["--brand-fg"] = "0 0% 100%"; // White text on brand
+    } else if (key === "--accent") {
+      // Calculate if we need dark or light text
+      const [, , l] = hexToHsl(value).split(' ').map(v => parseFloat(v.replace('%', '')));
+      newTheme.vars["--accent-fg"] = l > 50 ? "0 0% 20%" : "0 0% 100%";
+    }
+    
     setTempTheme(newTheme);
     applyTheme(newTheme);
   };
@@ -293,8 +346,8 @@ export default function Theme() {
                 <h3 className="text-lg font-semibold text-main mb-2">Sample Card</h3>
                 <p className="text-main/80 mb-3">This is how your theme will look across the app.</p>
                 <div className="flex gap-2">
-                  <Button className="brand-bg text-white">Primary Button</Button>
-                  <Button variant="outline" className="accent-bg">Secondary</Button>
+                  <Button>Primary Button</Button>
+                  <Button variant="secondary">Secondary</Button>
                 </div>
               </div>
             </div>
@@ -372,8 +425,6 @@ export default function Theme() {
                     className="h-12"
                   />
                 </div>
-              </div>
-              <div className="space-y-4">
                 <div>
                   <Label htmlFor="accent">Accent Color</Label>
                   <Input
@@ -384,6 +435,18 @@ export default function Theme() {
                     className="h-12"
                   />
                 </div>
+                <div>
+                  <Label htmlFor="muted">Secondary Text</Label>
+                  <Input
+                    id="muted"
+                    type="color"
+                    value={hslToHex(tempTheme.vars["--muted"])}
+                    onChange={(e) => updateTempVar("--muted", e.target.value)}
+                    className="h-12"
+                  />
+                </div>
+              </div>
+              <div className="space-y-4">
                 <div>
                   <Label htmlFor="card">Card Background</Label>
                   <Input
@@ -401,6 +464,16 @@ export default function Theme() {
                     type="color"
                     value={hslToHex(tempTheme.vars["--text"])}
                     onChange={(e) => updateTempVar("--text", e.target.value)}
+                    className="h-12"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="ring">Focus Ring</Label>
+                  <Input
+                    id="ring"
+                    type="color"
+                    value={hslToHex(tempTheme.vars["--ring"])}
+                    onChange={(e) => updateTempVar("--ring", e.target.value)}
                     className="h-12"
                   />
                 </div>
