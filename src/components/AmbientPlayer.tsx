@@ -240,12 +240,26 @@ export default function AmbientPlayer() {
             </div>
           </div>
         </div>
+      ) : activeUrl ? (
+        <div className="text-center py-12 border-2 border-dashed border-red-200 rounded-xl bg-red-50">
+          <div className="text-4xl mb-4">⚠️</div>
+          <p className="text-sm text-red-600 font-medium mb-2">Invalid or unsupported YouTube link</p>
+          <p className="text-xs text-red-500">Try a standard watch/shorts/live/playlist URL</p>
+          {process.env.NODE_ENV !== "production" && (
+            <p className="text-xs text-muted break-all mt-2">Debug URL: {activeUrl}</p>
+          )}
+        </div>
       ) : (
         <div className="text-center py-12 border-2 border-dashed border-border rounded-xl">
           <div className="text-4xl mb-4">🎵</div>
           <p className="text-main font-medium mb-2">No ambient soundscape selected</p>
           <p className="text-sm text-muted">Choose a preset or enter a YouTube link above</p>
         </div>
+      )}
+
+      {/* Optional: tiny debug in dev */}
+      {process.env.NODE_ENV !== "production" && embedSrc && (
+        <p className="mt-1 text-xs text-muted break-all">Embed: {embedSrc}</p>
       )}
     </div>
   );
