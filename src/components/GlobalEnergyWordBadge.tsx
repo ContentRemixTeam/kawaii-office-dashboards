@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { X } from "lucide-react";
 
 interface EnergyData {
@@ -17,12 +17,24 @@ const isToday = (dateISO: string): boolean => {
 };
 
 export default function GlobalEnergyWordBadge() {
+  // Add safety check for router context
+  let navigate;
+  let location;
+  
+  try {
+    navigate = useNavigate();
+    location = useLocation();
+    console.log('GlobalEnergyWordBadge: Router context available');
+  } catch (error) {
+    console.error('GlobalEnergyWordBadge: Router context not available', error);
+    return null; // Don't render if no router context
+  }
+
   const [energyData, setEnergyData] = useState<EnergyData | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
   const badgeRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
 
   const loadEnergyData = () => {
     try {
