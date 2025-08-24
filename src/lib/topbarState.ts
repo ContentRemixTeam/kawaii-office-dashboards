@@ -1,5 +1,7 @@
 import { toLocalISODate } from "./localDate";
 
+const todayISO = () => toLocalISODate();
+
 export const KEY_ENERGY  = "fm_energy_v1";
 export const KEY_AFFIRM  = "fm_affirmations_v1";
 export const KEY_TASKS   = "fm_tasks_v1";
@@ -10,7 +12,7 @@ export const KEY_VISION  = "fm_vision_v1";
 export function readEnergy() {
   try { 
     const d = JSON.parse(localStorage.getItem(KEY_ENERGY)||"{}");
-    if (d?.date === toLocalISODate()) return d.word || null; 
+    if (d?.date === todayISO()) return d.word || null; 
     return null; 
   } catch { 
     return null; 
@@ -20,7 +22,7 @@ export function readEnergy() {
 export function readAffirmationFull(): { text:string|null; title?:string|null } {
   try {
     const d = JSON.parse(localStorage.getItem(KEY_AFFIRM)||"{}");
-    if (d?.date === toLocalISODate()) {
+    if (d?.date === todayISO()) {
       // support either {text} or {card:{text,title}}
       const text = d.text ?? d.card?.text ?? null;
       const title = d.title ?? d.card?.title ?? null;
@@ -35,7 +37,7 @@ export function readAffirmationFull(): { text:string|null; title?:string|null } 
 export function readPetStage() {
   try {
     const d = JSON.parse(localStorage.getItem(KEY_TASKS)||"{}");
-    if (d?.date !== toLocalISODate()) return { animal:null, stage:0 };
+    if (d?.date !== todayISO()) return { animal:null, stage:0 };
     const done = Array.isArray(d.completed) ? d.completed.filter(Boolean).length : 0;
     return { animal: d.selectedAnimal || null, stage: Math.min(3, done) };
   } catch { 
@@ -46,7 +48,7 @@ export function readPetStage() {
 export function readWinsToday() {
   try {
     const arr = JSON.parse(localStorage.getItem(KEY_WINS)||"[]");
-    const t = toLocalISODate();
+    const t = todayISO();
     return arr.filter((w:any)=> (w?.date||"").slice(0,10) === t).length;
   } catch { 
     return 0; 
