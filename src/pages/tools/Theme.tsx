@@ -10,6 +10,7 @@ import { Palette, RotateCcw, Save, Upload } from "lucide-react";
 import ToolShell from "@/components/ToolShell";
 import { safeGet, safeSet } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
+import { loadHero, saveHero, OFFICE_IMAGES, HeroState } from "@/lib/heroStore";
 
 interface ThemeData {
   vars: {
@@ -182,6 +183,8 @@ function calculateContrast(text: string, bg: string): number {
 export default function Theme() {
   const [currentTheme, setCurrentTheme] = useState<ThemeData>(DEFAULT_THEME);
   const [tempTheme, setTempTheme] = useState<ThemeData>(DEFAULT_THEME);
+  const [heroState, setHeroState] = useState<HeroState>(loadHero());
+  const [youtubeUrl, setYoutubeUrl] = useState("");
   const { toast } = useToast();
 
   // Load saved theme
@@ -190,6 +193,8 @@ export default function Theme() {
     setCurrentTheme(saved);
     setTempTheme(saved);
     applyTheme(saved);
+    setHeroState(loadHero());
+    setYoutubeUrl(loadHero().youtubeUrl || "");
   }, []);
 
   // Listen for storage changes
@@ -302,10 +307,11 @@ export default function Theme() {
         </Card>
 
         <Tabs defaultValue="presets" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="presets">Presets</TabsTrigger>
             <TabsTrigger value="colors">Custom Colors</TabsTrigger>
             <TabsTrigger value="background">Background</TabsTrigger>
+            <TabsTrigger value="hero">Hero</TabsTrigger>
           </TabsList>
 
           <TabsContent value="presets" className="space-y-4">
@@ -436,6 +442,133 @@ export default function Theme() {
                   </p>
                 </div>
               )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="hero" className="space-y-6">
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-semibold text-main mb-4">🖼️ Hero Display</h3>
+                <p className="text-muted mb-4">Choose what appears as the main hero image on your office page.</p>
+                
+                <div className="space-y-4">
+                  {/* Hero Type Selection */}
+                  <div className="flex gap-4">
+                    <button
+                      onClick={() => {
+                        const newState = { ...heroState, kind: "image" as const };
+                        setHeroState(newState);
+                        saveHero(newState);
+                      }}
+                      className={`flex-1 p-4 rounded-xl border-2 transition-all ${
+                        heroState.kind === "image" || !heroState.kind
+                          ? "border-primary bg-primary/10"
+                          : "border-border hover:border-primary/50"
+                      }`}
+                    >
+                      <div className="text-2xl mb-2">🖼️</div>
+                      <div className="font-medium">Office Image</div>
+                      <div className="text-sm text-muted-foreground">Static office photos</div>
+                    </button>
+                    
+                    <button
+                      onClick={() => {
+                        const newState = { ...heroState, kind: "youtube" as const };
+                        setHeroState(newState);
+                        saveHero(newState);
+                      }}
+                      className={`flex-1 p-4 rounded-xl border-2 transition-all ${
+                        heroState.kind === "youtube"
+                          ? "border-primary bg-primary/10"
+                          : "border-border hover:border-primary/50"
+                      }`}
+                    >
+                      <div className="text-2xl mb-2">📺</div>
+                      <div className="font-medium">YouTube Video</div>
+                      <div className="text-sm text-muted-foreground">Ambient videos</div>
+                    </button>
+                  </div>
+
+                  {/* Image Selection */}
+                  {(heroState.kind === "image" || !heroState.kind) && (
+                    <div className="space-y-3">
+                      <Label>Choose Office Image</Label>
+                      <div className="grid grid-cols-2 gap-3">
+                        {OFFICE_IMAGES.map((image) => (
+                          <button
+                            key={image.id}
+                            onClick={() => {
+                              const newState = { ...heroState, kind: "image" as const, imageSrc: image.src };
+                              setHeroState(newState);
+                              saveHero(newState);
+                              toast({ title: `🏢 Office updated to ${image.name}` });
+                            }}
+                            className={`p-3 rounded-xl border-2 transition-all hover:scale-105 ${
+                              heroState.imageSrc === image.src
+                                ? "border-primary bg-primary/10"
+                                : "border-border hover:border-primary/50"
+                            }`}
+                          >
+                            <div className="aspect-video bg-muted rounded-lg mb-2 overflow-hidden">
+                              <img 
+                                src={image.src} 
+                                alt={image.name}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  target.style.display = 'none';
+                                  target.parentElement!.innerHTML = '<div class="flex items-center justify-center h-full text-muted-foreground text-sm">Image not found</div>';
+                                }}
+                              />
+                            </div>
+                            <div className="text-sm font-medium">{image.name}</div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* YouTube URL Input */}
+                  {heroState.kind === "youtube" && (
+                    <div className="space-y-3">
+                      <Label htmlFor="youtube-url">YouTube Video URL</Label>
+                      <div className="flex gap-2">
+                        <Input
+                          id="youtube-url"
+                          type="url"
+                          placeholder="https://www.youtube.com/watch?v=..."
+                          value={youtubeUrl}
+                          onChange={(e) => setYoutubeUrl(e.target.value)}
+                          className="flex-1"
+                        />
+                        <Button
+                          onClick={() => {
+                            if (youtubeUrl && youtubeUrl.includes("youtu")) {
+                              const newState = { ...heroState, kind: "youtube" as const, youtubeUrl };
+                              setHeroState(newState);
+                              saveHero(newState);
+                              toast({ title: "📺 YouTube video updated!" });
+                            } else {
+                              toast({ 
+                                title: "❌ Invalid URL", 
+                                description: "Please enter a valid YouTube URL",
+                                variant: "destructive"
+                              });
+                            }
+                          }}
+                          disabled={!youtubeUrl || !youtubeUrl.includes("youtu")}
+                          className="btn btn-primary"
+                        >
+                          Save
+                        </Button>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        💡 Tip: Try ambient office videos, lofi music, or nature sounds for a calming atmosphere
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </TabsContent>
         </Tabs>

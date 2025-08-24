@@ -1,4 +1,4 @@
-import HotspotImage from "@/components/HotspotImage";
+import OfficeHero from "@/components/OfficeHero";
 import VisionPreviewOverlay from "@/components/VisionPreviewOverlay";
 import NavPills from "@/components/NavPills";
 import { HOTSPOTS, OFFICE_ALT, OFFICE_IMAGE_SRC } from "@/data/hotspots";
@@ -22,10 +22,10 @@ const Index = () => {
       </div>
 
       <div className="w-full max-w-6xl mb-8 relative">
-        <HotspotImage
-          src={OFFICE_IMAGE_SRC}
-          alt={OFFICE_ALT}
+        <OfficeHero
           hotspots={HOTSPOTS}
+          fallbackSrc={OFFICE_IMAGE_SRC}
+          alt={OFFICE_ALT}
           aspectRatio={16/9}
         />
         <VisionPreviewOverlay boardBox={boardHotspot} />
