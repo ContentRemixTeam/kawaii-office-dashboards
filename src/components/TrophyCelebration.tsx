@@ -58,13 +58,15 @@ interface TrophyCelebrationProps {
   message: string;
   isVisible: boolean;
   onClose: () => void;
+  encouragement?: string;
 }
 
 export default function TrophyCelebration({ 
   trophy, 
   message, 
   isVisible, 
-  onClose 
+  onClose,
+  encouragement
 }: TrophyCelebrationProps) {
   const [animate, setAnimate] = useState(false);
 
@@ -116,6 +118,19 @@ export default function TrophyCelebration({
             {message}
           </p>
         </div>
+
+        {/* Personal Encouragement */}
+        {encouragement && (
+          <div className="bg-gradient-subtle border border-border/20 rounded-xl p-3 mb-4">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-xs">💌</span>
+              <span className="text-xs font-medium text-muted-foreground">From Future You</span>
+            </div>
+            <p className="text-main text-sm italic leading-relaxed">
+              {encouragement}
+            </p>
+          </div>
+        )}
         
         {/* Streak Info */}
         {trophy.sessionStreak > 1 && (

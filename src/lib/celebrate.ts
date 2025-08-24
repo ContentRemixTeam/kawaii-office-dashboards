@@ -1,10 +1,12 @@
-import { getCelebrationsEnabled } from "@/lib/storage";
+import { getCelebrationsEnabled, getEncouragementsEnabled } from "@/lib/storage";
+import { getRandomEncouragement } from "@/lib/encouragement";
 
 export interface CelebratePayload {
   type: 'trophy' | 'task' | 'confetti' | 'general';
   message?: string;
   emoji?: string;
   data?: any;
+  encouragement?: string;
 }
 
 type CelebrationSubscriber = (payload: CelebratePayload) => void;
@@ -22,8 +24,16 @@ export function subscribe(fn: CelebrationSubscriber): () => void {
 }
 
 export function celebrate(payload: CelebratePayload): void {
-  if (!getCelebrationsEnabled()) return; // Skip if disabled
-  subscribers.forEach(fn => fn(payload));
+  // Skip if both celebrations and encouragements are disabled
+  if (!getCelebrationsEnabled() && !getEncouragementsEnabled()) return;
+  
+  // Add encouragement if enabled
+  const enrichedPayload = {
+    ...payload,
+    encouragement: getEncouragementsEnabled() ? getRandomEncouragement() : undefined
+  };
+  
+  subscribers.forEach(fn => fn(enrichedPayload));
 }
 
 // Convenience functions for common celebrations

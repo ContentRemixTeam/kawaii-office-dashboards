@@ -68,3 +68,19 @@ export function setCelebrationsEnabled(enabled: boolean): void {
     localStorage.setItem("fm_celebrate_enabled", enabled ? "true" : "false"); 
   } catch {}
 }
+
+// Encouragement settings
+export function getEncouragementsEnabled(): boolean {
+  try {
+    const val = localStorage.getItem("fm_encouragements_enabled");
+    return val === null ? true : val === "true";
+  } catch { 
+    return true; 
+  }
+}
+
+export function setEncouragementsEnabled(enabled: boolean): void {
+  try { 
+    localStorage.setItem("fm_encouragements_enabled", enabled ? "true" : "false"); 
+  } catch {}
+}

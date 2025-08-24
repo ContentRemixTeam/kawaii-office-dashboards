@@ -39,6 +39,7 @@ export const NAV_SECTIONS: NavSection[] = [
     items: [
       { label: "Vision Board", href: "/tools/vision", emoji: "🌈" },
       { label: "Positivity Cabinet", href: "/tools/cabinet", emoji: "📦" },
+      { label: "Future-You Notes", href: "/tools/future", emoji: "💌" },
       { label: "Soundscapes", href: "/tools/sounds", emoji: "🎵" },
       { label: "Theme", href: "/tools/theme", emoji: "🎨" }
     ]

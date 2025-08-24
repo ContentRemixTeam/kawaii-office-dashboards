@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Palette, RotateCcw, Save, Upload } from "lucide-react";
 import ToolShell from "@/components/ToolShell";
-import { safeGet, safeSet, getCelebrationsEnabled, setCelebrationsEnabled } from "@/lib/storage";
+import { safeGet, safeSet, getCelebrationsEnabled, setCelebrationsEnabled, getEncouragementsEnabled, setEncouragementsEnabled } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 import { loadHero, saveHero, OFFICE_IMAGES, HeroState } from "@/lib/heroStore";
 
@@ -257,6 +257,7 @@ export default function Theme() {
   const [currentTheme, setCurrentTheme] = useState<ThemeData>(DEFAULT_THEME);
   const [tempTheme, setTempTheme] = useState<ThemeData>(DEFAULT_THEME);
   const [celebrationsEnabled, setCelebrationsEnabledState] = useState(true);
+  const [encouragementsEnabled, setEncouragementsEnabledState] = useState(true);
   const [heroState, setHeroState] = useState<HeroState>(loadHero());
   const [youtubeUrl, setYoutubeUrl] = useState("");
   const { toast } = useToast();
@@ -283,6 +284,7 @@ export default function Theme() {
     setHeroState(loadHero());
     setYoutubeUrl(loadHero().youtubeUrl || "");
     setCelebrationsEnabledState(getCelebrationsEnabled());
+    setEncouragementsEnabledState(getEncouragementsEnabled());
   }, []);
 
   // Listen for storage changes
@@ -1033,6 +1035,25 @@ export default function Theme() {
                   onCheckedChange={(checked) => {
                     setCelebrationsEnabledState(checked);
                     setCelebrationsEnabled(checked);
+                  }}
+                />
+              </div>
+              
+              <div className="flex items-center justify-between p-4 border border-border rounded-lg">
+                <div className="space-y-1">
+                  <Label htmlFor="encouragements-toggle" className="text-sm font-medium">
+                    Encouragement Messages
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Show random encouraging notes from yourself during celebrations
+                  </p>
+                </div>
+                <Switch
+                  id="encouragements-toggle"
+                  checked={encouragementsEnabled}
+                  onCheckedChange={(checked) => {
+                    setEncouragementsEnabledState(checked);
+                    setEncouragementsEnabled(checked);
                   }}
                 />
               </div>
