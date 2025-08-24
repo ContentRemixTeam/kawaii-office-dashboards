@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Play, Pause, RotateCcw, Settings, Sparkles, ChevronDown, ChevronUp } from "lucide-react";
+import { Play, Pause, RotateCcw, Settings, Sparkles, ChevronDown, ChevronUp, Palette } from "lucide-react";
 import { safeGet, safeSet } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 import { onDataChanged } from "@/lib/bus";
@@ -442,6 +442,14 @@ export default function ProductivityBar() {
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-semibold text-pink-800 dark:text-pink-200">✨ Kawaii Productivity</h3>
             <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-pink-700 hover:text-pink-800"
+                onClick={() => navigate('/tools/theme')}
+              >
+                <Palette className="w-4 h-4" />
+              </Button>
               <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
                 <DialogTrigger asChild>
                   <Button variant="ghost" size="sm" className="text-pink-700 hover:text-pink-800">

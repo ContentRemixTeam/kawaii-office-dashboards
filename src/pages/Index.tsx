@@ -7,7 +7,7 @@ import { Sparkles, Heart } from "lucide-react";
 const Index = () => {
   const boardHotspot = HOTSPOTS.find(h => h.id === 'board')!;
   return (
-    <main className="min-h-screen bg-gradient-background flex flex-col items-center py-10 px-4">
+    <main className="min-h-screen body-gradient flex flex-col items-center py-10 px-4">
       <div className="text-center mb-12 space-y-4">
         <div className="flex items-center justify-center gap-3 mb-6">
           <Sparkles className="w-8 h-8 text-primary animate-pulse-soft" />
@@ -43,7 +43,7 @@ const Index = () => {
         <div className="flex items-center justify-center gap-6 text-xs text-muted-foreground/80">
           <span>🐱 Task Pets</span>
           <span>📁 Positivity Cabinet</span>
-          <span>🎨 Vision Board</span>
+          <span>🎨 Customize your theme in Settings</span>
           <span>🌱 Habit Garden</span>
         </div>
       </div>

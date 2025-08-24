@@ -8,5 +8,6 @@ export const NAV_ITEMS = [
   { label: "Daily Wins", href: "/tools/wins", emoji: "🏆" },
   { label: "Energy Word", href: "/tools/energy", emoji: "🌟" },
   { label: "Soundscapes", href: "/tools/sounds", emoji: "🎧" },
-  { label: "Breaks", href: "/tools/breaks", emoji: "🧘" }
+  { label: "Breaks", href: "/tools/breaks", emoji: "🧘" },
+  { label: "Theme", href: "/tools/theme", emoji: "🎨" }
 ];
