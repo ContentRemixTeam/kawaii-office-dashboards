@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { getDailyData, setDailyData } from "@/lib/storage";
+import { notifyDataChanged } from "@/lib/bus";
 import { useToast } from "@/hooks/use-toast";
 import ToolShell from "@/components/ToolShell";
 
@@ -343,6 +344,7 @@ export default function Tasks() {
     // Dispatch events for real-time updates
     window.dispatchEvent(new CustomEvent('tasksUpdated'));
     window.dispatchEvent(new Event('storage'));
+    notifyDataChanged(["fm_tasks_v1"]);
   };
 
   const handleTaskChange = (index: number, value: string) => {

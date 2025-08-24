@@ -10,6 +10,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Play, Pause, RotateCcw, Settings, Sparkles, ChevronDown, ChevronUp } from "lucide-react";
 import { safeGet, safeSet } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
+import { onDataChanged } from "@/lib/bus";
 
 interface ProductivitySettings {
   focusMinutes: number;
@@ -145,58 +146,70 @@ export default function ProductivityBar() {
 
     loadData();
     
-    // Listen for storage changes to update positivity data
+    // Listen for storage changes AND bus events for real-time updates
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'fm_energy_v1' || e.key === 'fm_affirmations_v1' || e.key === 'fm_tasks_v1' || e.key === 'fm_wins_v1') {
         loadPositivityData();
       }
     };
 
-    // Listen for custom events AND storage events for same-tab updates
-    const handleUpdates = () => loadPositivityData();
-    const handleGenericStorage = () => loadPositivityData(); // For manual storage events
+    const handleBusChange = (keys: string[]) => {
+      const relevantKeys = ['fm_energy_v1', 'fm_affirmations_v1', 'fm_tasks_v1', 'fm_wins_v1'];
+      if (keys.some(key => relevantKeys.includes(key))) {
+        loadPositivityData();
+      }
+    };
 
     window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('storage', handleGenericStorage); // Listen for manual storage events
-    window.addEventListener('energyWordUpdated', handleUpdates);
-    window.addEventListener('affirmationUpdated', handleUpdates);
-    window.addEventListener('tasksUpdated', handleUpdates);
-    window.addEventListener('winsUpdated', handleUpdates);
+    const unsubscribeBus = onDataChanged(handleBusChange);
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('storage', handleGenericStorage);
-      window.removeEventListener('energyWordUpdated', handleUpdates);
-      window.removeEventListener('affirmationUpdated', handleUpdates);
-      window.removeEventListener('tasksUpdated', handleUpdates);
-      window.removeEventListener('winsUpdated', handleUpdates);
+      unsubscribeBus();
     };
   }, []);
 
   const loadPositivityData = () => {
+    if (typeof window === 'undefined') return; // SSR guard
+    
     const today = getTodayISO();
     const newPositivityData: PositivityData = {};
 
-    // Load Energy Word
+    // Load Energy Word - handle both shapes
     try {
       const energyRaw = localStorage.getItem('fm_energy_v1');
       if (energyRaw) {
         const energyData = JSON.parse(energyRaw);
+        
+        // Shape A: { date, word, pinned? }
         if (energyData.date === today && energyData.word) {
           newPositivityData.energyWord = energyData.word;
+        }
+        // Shape B: { pinned?, recent: [{date,word}, ...] }
+        else if (Array.isArray(energyData.recent) && energyData.recent.length > 0) {
+          const todayEntry = energyData.recent.find((entry: any) => entry.date === today);
+          if (todayEntry?.word) {
+            newPositivityData.energyWord = todayEntry.word;
+          }
         }
       }
     } catch (error) {
       console.debug('Error loading energy word:', error);
     }
 
-    // Load Affirmation
+    // Load Affirmation - handle both shapes
     try {
       const affirmationRaw = localStorage.getItem('fm_affirmations_v1');
       if (affirmationRaw) {
         const affirmationData = JSON.parse(affirmationRaw);
-        if (affirmationData.date === today && affirmationData.affirmation) {
-          newPositivityData.affirmation = affirmationData.affirmation;
+        
+        // Shape A: { date, cardIndex, text }
+        if (affirmationData.date === today && affirmationData.text) {
+          newPositivityData.affirmation = affirmationData.text;
+        }
+        // Shape B: { today: {date,text}, history:[...] }
+        else if (affirmationData.today?.date === today && affirmationData.today?.text) {
+          newPositivityData.affirmation = affirmationData.today.text;
         }
       }
     } catch (error) {
@@ -423,7 +436,7 @@ export default function ProductivityBar() {
 
   return (
     <TooltipProvider>
-      <div className="fixed bottom-0 left-0 right-0 z-40 p-4">
+    <div className="fixed bottom-0 left-0 right-0 z-40 p-4">
         <div className="max-w-6xl mx-auto">
           <div className="bg-gradient-to-r from-pink-100 via-purple-50 to-emerald-100 dark:from-pink-900/30 dark:via-purple-900/30 dark:to-emerald-900/30 backdrop-blur-lg border border-pink-200/50 dark:border-pink-700/50 rounded-2xl shadow-lg p-4">
           <div className="flex items-center justify-between mb-2">
@@ -594,66 +607,65 @@ export default function ProductivityBar() {
             {/* Right Side - Positivity Anchors */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {/* Energy Word */}
-              <div className="flex items-center gap-3 p-3 bg-white/50 dark:bg-black/20 rounded-xl">
-                <div className="text-2xl">🌟</div>
-                <div className="flex-1">
-                  <div className="text-xs text-muted-foreground mb-1">Energy Word</div>
+              <div className="flex items-center gap-2 min-w-0 overflow-hidden rounded-xl px-3 py-2 bg-white/50 dark:bg-black/20 border border-border/10">
+                <span aria-hidden="true" className="text-lg flex-shrink-0">🌟</span>
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs text-muted-foreground leading-tight">Energy</div>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-auto p-0 text-left justify-start"
+                        className="h-auto p-0 text-left justify-start font-medium leading-tight"
                         onClick={() => navigate('/tools/energy')}
+                        title={positivityData.energyWord || 'Choose your word ✨'}
                       >
-                        <Badge 
-                          variant="secondary" 
-                          className="bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-200 border border-pink-200 dark:border-pink-700"
-                        >
+                        <span className="truncate max-w-[10rem] sm:max-w-[7.5rem] text-sm">
                           {positivityData.energyWord || 'Choose your word ✨'}
-                        </Badge>
+                        </span>
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>Your energy word for today</p>
+                      <p>{positivityData.energyWord || 'Choose your word ✨'}</p>
                     </TooltipContent>
                   </Tooltip>
                 </div>
               </div>
 
               {/* Affirmation Card */}
-              <div className="flex items-center gap-3 p-3 bg-white/50 dark:bg-black/20 rounded-xl">
-                <div className="text-2xl">🃏</div>
-                <div className="flex-1">
-                  <div className="text-xs text-muted-foreground mb-1">Affirmation</div>
+              <div className="flex items-center gap-2 min-w-0 overflow-hidden rounded-xl px-3 py-2 bg-white/50 dark:bg-black/20 border border-border/10">
+                <span aria-hidden="true" className="text-lg flex-shrink-0">🃏</span>
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs text-muted-foreground leading-tight">Affirmation</div>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-auto p-2 text-left justify-start border border-purple-200 dark:border-purple-700 bg-purple-50 dark:bg-purple-900/20 hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded-md"
+                        className="h-auto p-0 text-left justify-start font-medium leading-tight"
                         onClick={() => navigate('/tools/affirmations')}
+                        title={positivityData.affirmation || 'Draw your card 🃏'}
                       >
-                        <div className="text-xs text-purple-800 dark:text-purple-200 line-clamp-2 leading-tight">
+                        <span className="truncate max-w-[10rem] sm:max-w-[7.5rem] text-sm">
                           {positivityData.affirmation || 'Draw your card 🃏'}
-                        </div>
+                        </span>
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>Today's affirmation card</p>
+                      <p>{positivityData.affirmation || 'Draw your card 🃏'}</p>
                     </TooltipContent>
                   </Tooltip>
                 </div>
               </div>
 
               {/* Pet of the Day */}
-              <div className="flex items-center gap-3 p-3 bg-white/50 dark:bg-black/20 rounded-xl">
+              <div className="flex items-center gap-2 min-w-0 overflow-hidden rounded-xl px-3 py-2 bg-white/50 dark:bg-black/20 border border-border/10">
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="text-2xl p-1 hover:scale-110 transition-transform"
+                      className="text-lg p-1 hover:scale-110 transition-transform flex-shrink-0"
                       onClick={() => navigate('/tools/tasks')}
                     >
                       {positivityData.pet ? positivityData.pet.emoji : '🦄'}
@@ -663,11 +675,11 @@ export default function ProductivityBar() {
                     <p>Your daily companion</p>
                   </TooltipContent>
                 </Tooltip>
-                <div className="flex-1">
-                  <div className="text-xs text-muted-foreground mb-1">Daily Pet</div>
-                  <div className="text-xs text-green-600 dark:text-green-400">
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs text-muted-foreground leading-tight">Pet</div>
+                  <div className="text-xs text-green-600 dark:text-green-400 font-medium leading-tight truncate max-w-[8rem] sm:max-w-[6rem]">
                     {positivityData.pet ? (
-                      `${positivityData.pet.animal} • Stage ${positivityData.pet.stage + 1}`
+                      `${positivityData.pet.animal} • Lv${positivityData.pet.stage + 1}`
                     ) : (
                       'Choose your pet 🦄'
                     )}
@@ -676,31 +688,32 @@ export default function ProductivityBar() {
               </div>
 
               {/* Daily Wins */}
-              <div className="flex items-center gap-3 p-3 bg-white/50 dark:bg-black/20 rounded-xl">
-                <div className="text-2xl">🏆</div>
-                <div className="flex-1">
-                  <div className="text-xs text-muted-foreground mb-1">Daily Wins</div>
+              <div className="flex items-center gap-2 min-w-0 overflow-hidden rounded-xl px-3 py-2 bg-white/50 dark:bg-black/20 border border-border/10">
+                <span aria-hidden="true" className="text-lg flex-shrink-0">🏆</span>
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs text-muted-foreground leading-tight">Wins</div>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-auto p-0 text-left justify-start"
+                        className="h-auto p-0 text-left justify-start font-medium leading-tight"
                         onClick={() => navigate('/tools/wins')}
+                        title={positivityData.winsCount && positivityData.winsCount > 0 
+                          ? `${positivityData.winsCount} win${positivityData.winsCount > 1 ? 's' : ''} today!`
+                          : 'Log a win 🏆'
+                        }
                       >
-                        <Badge 
-                          variant="secondary" 
-                          className={`${
-                            positivityData.winsCount && positivityData.winsCount > 0
-                              ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200 border border-yellow-200 dark:border-yellow-700 animate-pulse'
-                              : 'bg-gray-100 text-gray-500 dark:bg-gray-800/30 dark:text-gray-400 border border-gray-200 dark:border-gray-700 opacity-60'
-                          }`}
-                        >
+                        <span className={`text-sm truncate max-w-[8rem] sm:max-w-[6rem] ${
+                          positivityData.winsCount && positivityData.winsCount > 0
+                            ? 'text-yellow-600 dark:text-yellow-400 font-bold'
+                            : 'text-muted-foreground'
+                        }`}>
                           {positivityData.winsCount && positivityData.winsCount > 0 
                             ? `${positivityData.winsCount} Win${positivityData.winsCount > 1 ? 's' : ''}` 
                             : 'Log a win 🏆'
                           }
-                        </Badge>
+                        </span>
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
@@ -710,10 +723,10 @@ export default function ProductivityBar() {
                           : 'Log your daily wins and celebrations'
                         }
                       </p>
-                     </TooltipContent>
-                   </Tooltip>
-                 </div>
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
+              </div>
               </div>
             </div>
           </div>

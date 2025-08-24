@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Sparkles, RotateCw, Calendar, Heart } from "lucide-react";
 import ToolShell from "@/components/ToolShell";
 import { getDailyData, setDailyData, safeGet, safeSet } from "@/lib/storage";
+import { notifyDataChanged } from "@/lib/bus";
 
 const AFFIRMATIONS = [
   "I am worthy of love and happiness",
@@ -121,6 +122,7 @@ export default function Affirmations() {
       // Dispatch events for real-time updates
       window.dispatchEvent(new CustomEvent('affirmationUpdated'));
       window.dispatchEvent(new Event('storage'));
+      notifyDataChanged(["fm_affirmations_v1"]);
     }, 1000);
   };
 

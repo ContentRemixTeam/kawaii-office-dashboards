@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import ToolShell from "@/components/ToolShell";
 import { getDailyData, setDailyData, safeGet, safeSet, generateId, getTodayISO } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
-import ToolShell from "@/components/ToolShell";
+import { notifyDataChanged } from "@/lib/bus";
 
 interface Win {
   id: string;
@@ -84,6 +87,7 @@ export default function Wins() {
     // Dispatch events for real-time updates
     window.dispatchEvent(new CustomEvent('winsUpdated'));
     window.dispatchEvent(new Event('storage'));
+    notifyDataChanged(["fm_wins_v1"]);
 
     toast({
       title: "✨ Win captured!",
