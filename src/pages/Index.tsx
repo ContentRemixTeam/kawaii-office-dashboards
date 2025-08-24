@@ -8,8 +8,8 @@ import { getHomeTitle, getHomeSubtitle } from "@/lib/storage";
 import { Sparkles, Heart } from "lucide-react";
 
 const Index = () => {
-  const [homeTitle, setHomeTitle] = useState("");
-  const [homeSubtitle, setHomeSubtitle] = useState("");
+  const [homeTitle, setHomeTitle] = useState(() => getHomeTitle());
+  const [homeSubtitle, setHomeSubtitle] = useState(() => getHomeSubtitle());
   
   useEffect(() => {
     setHomeTitle(getHomeTitle());
