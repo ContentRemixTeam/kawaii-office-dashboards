@@ -566,14 +566,10 @@ class FocusTimer {
   }
 
   updateConfig(updates: Partial<FocusConfig>) {
-    // Apply workflow preset if changed
-    if (updates.workflow && updates.workflow !== this.state.config.workflow) {
-      const preset = WORKFLOW_PRESETS[updates.workflow];
-      Object.assign(updates, preset);
-    }
-    
     this.state.config = { ...this.state.config, ...updates };
     this.saveState();
+    // Force state update for UI components
+    this.emit('tick', this.getState());
   }
 
   setDailyGoal(goal: number) {

@@ -11,9 +11,9 @@ export const AMBIENT_PRESETS: AmbientPreset[] = [
   { key: 'lofi_girl', title: 'Lofi Study', id: 'jfKfPfyJRdk', emoji: '🎵' },
   { key: 'coffee_shop', title: 'Cozy Café', id: 'lTRiuFIWV54', emoji: '☕' },
   { key: 'fireplace', title: 'Fireplace', id: 'eyU3bRy2x44', emoji: '🔥' },
-  { key: 'ocean', title: 'Ocean Waves', id: 'X2H65r-7J3w', emoji: '🌊' },
+  { key: 'ocean', title: 'Ocean Waves', id: 'UOxp8A5_ArM', emoji: '🌊' },
   { key: 'rain', title: 'Rain Window', id: '7NOSDKb0HlU', emoji: '🌧️' },
-  { key: 'birds', title: 'Morning Birds', id: '6zGQSWib32s', emoji: '🐦' },
+  { key: 'birds', title: 'Morning Birds', id: 'KE0mVMrVWso', emoji: '🐦' },
 ];
 
 // Get preset by key
