@@ -12,6 +12,66 @@ import { safeGet, safeSet } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 import { onDataChanged } from "@/lib/bus";
 
+// Pet data types and helpers
+type TaskState = {
+  selectedAnimal?: string;
+  tasks?: { text?: string; done?: boolean }[] | string[];
+  completed?: boolean[]; // fallback
+};
+
+type PetStage = 0 | 1 | 2 | 3; // 0=egg, 1=baby, 2=growing, 3=full
+
+const TASKS_KEY = "fm_tasks_v1";
+
+function readTasks(): { animal?: string; completedCount: number; total: number } {
+  if (typeof window === "undefined") return { completedCount: 0, total: 3 };
+  try {
+    const raw = localStorage.getItem(TASKS_KEY);
+    if (!raw) return { completedCount: 0, total: 3 };
+    const data = JSON.parse(raw) as TaskState;
+    const animal = data.selectedAnimal;
+
+    // normalize completion array
+    let doneFlags: boolean[] = [];
+    if (Array.isArray(data.tasks)) {
+      doneFlags = (data.tasks as any[]).map(t =>
+        typeof t === "object" ? !!t?.done : false
+      );
+    } else if (Array.isArray(data.completed)) {
+      doneFlags = data.completed.map(Boolean);
+    }
+    const total = Math.max(3, doneFlags.length || 3);
+    const completedCount = doneFlags.filter(Boolean).length;
+
+    return { animal, completedCount, total };
+  } catch {
+    return { completedCount: 0, total: 3 };
+  }
+}
+
+function getPetStage(count: number): PetStage {
+  if (count <= 0) return 0;
+  if (count === 1) return 1;
+  if (count === 2) return 2;
+  return 3; // 3+
+}
+
+const stageIcon: Record<PetStage, string> = { 0:"🥚", 1:"🐣", 2:"🫶", 3:"✨" };
+const stageLabel: Record<PetStage, string> = { 0:"Sleeping", 1:"Baby", 2:"Growing", 3:"Full" };
+
+const animalIcons: Record<string, string> = {
+  unicorn: "🦄",
+  dragon: "🐉", 
+  cat: "🐱",
+  dog: "🐶",
+  bunny: "🐰",
+  fox: "🦊",
+  panda: "🐼",
+  penguin: "🐧",
+  owl: "🦉",
+  hamster: "🐹"
+};
+
 interface ProductivitySettings {
   focusMinutes: number;
   breakMinutes: number;
@@ -48,11 +108,6 @@ const DEFAULT_SETTINGS: ProductivitySettings = {
 interface PositivityData {
   energyWord?: string;
   affirmation?: string;
-  pet?: {
-    animal: string;
-    stage: number;
-    emoji: string;
-  };
   winsCount?: number;
 }
 
@@ -103,9 +158,20 @@ export default function ProductivityBar() {
   const [showWaterReminder, setShowWaterReminder] = useState(false);
   const [showStretchReminder, setShowStretchReminder] = useState(false);
   const [positivityData, setPositivityData] = useState<PositivityData>({});
+  const [petInfo, setPetInfo] = useState<{animal?: string; count: number; total: number}>({ count: 0, total: 3 });
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
+
+  // Load pet data
+  const loadPet = () => {
+    const taskData = readTasks();
+    setPetInfo({ 
+      animal: taskData.animal, 
+      count: taskData.completedCount, 
+      total: taskData.total 
+    });
+  };
 
   // Load saved data and positivity data
   useEffect(() => {
@@ -140,8 +206,9 @@ export default function ProductivityBar() {
       // Set initial timer duration
       setTimer(prev => ({ ...prev, timeLeft: savedSettings.focusMinutes * 60 }));
 
-      // Load positivity data
+      // Load positivity data and pet info
       loadPositivityData();
+      loadPet();
     };
 
     loadData();
@@ -150,6 +217,9 @@ export default function ProductivityBar() {
     const handleStorageChange = (e: StorageEvent) => {
       const relevantKeys = ['fm_energy_v1', 'fm_affirmations_v1', 'fm_tasks_v1', 'fm_wins_v1'];
       if (relevantKeys.includes(e.key || '')) {
+        if (e.key === 'fm_tasks_v1') {
+          loadPet();
+        }
         loadPositivityData();
       }
     };
@@ -157,6 +227,9 @@ export default function ProductivityBar() {
     const handleBusChange = (keys: string[]) => {
       const relevantKeys = ['fm_energy_v1', 'fm_affirmations_v1', 'fm_tasks_v1', 'fm_wins_v1'];
       if (keys.some(key => relevantKeys.includes(key))) {
+        if (keys.includes('fm_tasks_v1')) {
+          loadPet();
+        }
         loadPositivityData();
       }
     };
@@ -164,12 +237,14 @@ export default function ProductivityBar() {
     const handleVisibilityChange = () => {
       if (!document.hidden) {
         loadPositivityData(); // Reload when tab becomes visible
+        loadPet();
       }
     };
 
     // Fallback polling every 10s to catch any missed events
     const pollInterval = setInterval(() => {
       loadPositivityData();
+      loadPet();
     }, 10000);
 
     window.addEventListener('storage', handleStorageChange);
@@ -239,46 +314,7 @@ export default function ProductivityBar() {
       console.debug('Error loading affirmation:', error);
     }
 
-    // Load Pet Data from tasks
-    try {
-      const tasksRaw = localStorage.getItem('fm_tasks_v1');
-      if (tasksRaw) {
-        const tasksData = JSON.parse(tasksRaw);
-        
-        // Check if it's today's data and has animal selection
-        if (tasksData.date === today && tasksData.selectedAnimal) {
-          const completedTasks = (tasksData.tasks || []).filter((task: any) => task.completed).length;
-          const stage = Math.min(3, completedTasks);
-          const animalKey = tasksData.selectedAnimal;
-          const animalData = ANIMALS[animalKey as keyof typeof ANIMALS];
-          
-          if (animalData) {
-            newPositivityData.pet = {
-              animal: animalKey,
-              stage,
-              emoji: animalData.stages[stage] || animalData.base
-            };
-          }
-        }
-        // Handle format without date field
-        else if (tasksData.selectedAnimal && tasksData.completed) {
-          const completedCount = tasksData.completed.filter(Boolean).length;
-          const stage = Math.min(3, completedCount);
-          const animalKey = tasksData.selectedAnimal;
-          const animalData = ANIMALS[animalKey as keyof typeof ANIMALS];
-          
-          if (animalData) {
-            newPositivityData.pet = {
-              animal: animalKey,
-              stage,
-              emoji: animalData.stages[stage] || animalData.base
-            };
-          }
-        }
-      }
-    } catch (error) {
-      console.debug('Error loading pet data:', error);
-    }
+    // Load Pet Data is now handled by loadPet() function separately
 
     // Load Daily Wins - handle array format
     try {
@@ -711,32 +747,22 @@ export default function ProductivityBar() {
               </div>
 
               {/* Pet of the Day */}
-              <div className="flex items-center gap-2 min-w-0 overflow-hidden rounded-xl px-3 py-2 bg-white/50 dark:bg-black/20 border border-border/10">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-lg p-1 hover:scale-110 transition-transform flex-shrink-0"
-                      onClick={() => navigate('/tools/tasks')}
-                    >
-                      {positivityData.pet ? positivityData.pet.emoji : '🦄'}
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Your daily companion</p>
-                  </TooltipContent>
-                </Tooltip>
+              <div 
+                className="flex items-center gap-2 min-w-0 overflow-hidden rounded-xl px-3 py-2 bg-white/50 dark:bg-black/20 border border-border/10 cursor-pointer hover:bg-white/70 transition-colors"
+                onClick={() => navigate('/tools/tasks')}
+                title={`${petInfo.animal || "Pet"} • ${stageLabel[getPetStage(petInfo.count)]} • ${petInfo.count}/${petInfo.total}`}
+              >
+                <span aria-hidden="true" className="shrink-0 text-lg">
+                  {petInfo.animal && animalIcons[petInfo.animal.toLowerCase()] || "🐾"}
+                </span>
                 <div className="flex-1 min-w-0">
                   <div className="text-xs text-muted-foreground leading-tight">Pet</div>
-                  <div className="text-xs text-green-600 dark:text-green-400 font-medium leading-tight truncate max-w-[8rem] sm:max-w-[6rem]">
-                    {positivityData.pet ? (
-                      `${positivityData.pet.animal} • Lv${positivityData.pet.stage + 1}`
-                    ) : (
-                      'Choose your pet 🦄'
-                    )}
+                  <div className="flex items-center gap-1 truncate max-w-[9rem] sm:max-w-[7rem]">
+                    <span aria-hidden="true">{stageIcon[getPetStage(petInfo.count)]}</span>
+                    <span className="font-medium text-sm leading-tight">{stageLabel[getPetStage(petInfo.count)]}</span>
                   </div>
                 </div>
+                <span className="ml-auto text-xs text-muted-foreground font-medium">{petInfo.count}/{petInfo.total}</span>
               </div>
 
               {/* Daily Wins */}
