@@ -1,8 +1,10 @@
 import HotspotImage from "@/components/HotspotImage";
+import VisionPreviewOverlay from "@/components/VisionPreviewOverlay";
 import { HOTSPOTS, OFFICE_ALT, OFFICE_IMAGE_SRC } from "@/data/hotspots";
 import { Sparkles, Heart } from "lucide-react";
 
 const Index = () => {
+  const boardHotspot = HOTSPOTS.find(h => h.id === 'board')!;
   return (
     <main className="min-h-screen bg-gradient-background flex flex-col items-center py-10 px-4">
       <div className="text-center mb-12 space-y-4">
@@ -18,13 +20,14 @@ const Index = () => {
         </p>
       </div>
 
-      <div className="w-full max-w-6xl mb-8">
+      <div className="w-full max-w-6xl mb-8 relative">
         <HotspotImage
           src={OFFICE_IMAGE_SRC}
           alt={OFFICE_ALT}
           hotspots={HOTSPOTS}
           aspectRatio={16/9}
         />
+        <VisionPreviewOverlay boardBox={boardHotspot} />
       </div>
 
       <div className="text-center space-y-3">

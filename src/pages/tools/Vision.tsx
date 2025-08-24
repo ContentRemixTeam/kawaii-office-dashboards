@@ -29,6 +29,9 @@ export default function Vision() {
   const saveImages = (newImages: VisionImage[]) => {
     setImages(newImages);
     safeSet(STORAGE_KEY, newImages);
+    
+    // Dispatch custom event for same-tab updates
+    window.dispatchEvent(new CustomEvent('visionBoardUpdated'));
   };
 
   const addImageFromUrl = () => {
