@@ -14,17 +14,17 @@ export default function ToolShell({ title, children }: ToolShellProps) {
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3">
               <Sparkles className="w-6 h-6 text-primary" />
-              <h1 className="text-2xl md:text-3xl font-bold text-foreground">{title}</h1>
+              <h1 className="text-2xl md:text-3xl font-bold text-main">{title}</h1>
             </div>
             <Link 
               to="/" 
-              className="flex items-center gap-2 text-primary hover:text-primary-glow transition-colors duration-300 font-medium"
+              className="btn btn-secondary text-sm"
             >
               <ArrowLeft className="w-4 h-4" />
               Back to Office
             </Link>
           </div>
-          <div className="text-foreground/80 leading-relaxed">
+          <div className="text-main leading-relaxed">
             {children}
           </div>
         </div>

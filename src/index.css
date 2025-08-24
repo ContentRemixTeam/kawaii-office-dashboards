@@ -10,15 +10,17 @@
     --bg-start: 350 100% 98%;        /* pastel pink */
     --bg-end: 150 40% 96%;           /* mint */
     --brand: 340 75% 75%;            /* pink accent */
-    --accent: 150 60% 85%;           /* mint accent */
+    --brand-fg: 0 0% 100%;           /* white text on brand */
+    --accent: 150 60% 65%;           /* mint accent */
+    --accent-fg: 160 30% 25%;        /* dark text on accent */
     --card: 0 0% 100%;               /* surface */
-    --text: 340 15% 25%;             /* gray-800 */
+    --text: 340 15% 25%;             /* main text */
+    --muted: 340 10% 45%;            /* secondary text */
+    --ring: 340 75% 85%;             /* focus ring */
 
     /* Kawaii Color Palette - Now derived from theme vars where possible */
     --background: var(--bg-start);
     --foreground: var(--text);
-
-    --card: 0 0% 100%;
     --card-foreground: 340 15% 25%;
 
     --popover: 0 0% 100%;
@@ -127,6 +129,45 @@
     @apply border-border;
   }
 
+  /* Global text colors driven by vars */
+  body { color: hsl(var(--text)); }
+
+  /* Surface utility */
+  .card-surface { background-color: hsl(var(--card)); }
+
+  /* Buttons */
+  .btn { 
+    @apply inline-flex items-center justify-center rounded-xl px-3 py-2 text-sm font-medium shadow-sm transition;
+    outline: none;
+  }
+  .btn:focus { box-shadow: 0 0 0 3px color-mix(in srgb, hsl(var(--ring)) 50%, transparent); }
+
+  /* Primary (brand) button */
+  .btn-primary {
+    background: hsl(var(--brand));
+    color: hsl(var(--brand-fg));
+  }
+  .btn-primary:hover { filter: brightness(0.95); }
+  .btn-primary:active { filter: brightness(0.9); }
+
+  /* Secondary (accent) button */
+  .btn-secondary {
+    background: color-mix(in srgb, hsl(var(--accent)) 14%, hsl(var(--card)));
+    color: hsl(var(--accent-fg));
+    border: 1px solid color-mix(in srgb, hsl(var(--accent)) 40%, transparent);
+  }
+  .btn-secondary:hover { filter: saturate(1.05); }
+
+  /* Text utilities */
+  .text-main  { color: hsl(var(--text)); }
+  .text-muted { color: hsl(var(--muted)); }
+
+  /* Allow Tailwind arbitrary color fallbacks when needed */
+  :root .bg-brand   { background-color: hsl(var(--brand)); }
+  :root .text-brand { color: hsl(var(--brand)); }
+  :root .bg-accent  { background-color: hsl(var(--accent)); }
+  :root .text-accent{ color: hsl(var(--accent)); }
+
   /* Theme utility classes */
   .body-gradient { 
     background: linear-gradient(180deg, hsl(var(--bg-start)), hsl(var(--bg-end))); 
@@ -134,7 +175,6 @@
   .brand-bg     { background-color: hsl(var(--brand)); }
   .accent-bg    { background-color: hsl(var(--accent)); }
   .card-surface { background-color: hsl(var(--card)); }
-  .text-main    { color: hsl(var(--text)); }
 
   @keyframes shake {
     10%, 90% { transform: translateX(-1px); }

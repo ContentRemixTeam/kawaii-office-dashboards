@@ -16,7 +16,7 @@ const Index = () => {
           </h1>
           <Heart className="w-8 h-8 text-primary animate-bounce-cute" />
         </div>
-        <p className="text-xl text-foreground/70 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-xl text-muted max-w-2xl mx-auto leading-relaxed">
           Welcome to your cozy digital workspace! ✨ Click on any object in the office to access your favorite productivity and positivity tools.
         </p>
       </div>

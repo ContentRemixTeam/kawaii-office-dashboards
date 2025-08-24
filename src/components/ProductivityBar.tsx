@@ -714,7 +714,7 @@ export default function ProductivityBar() {
                 <div className="flex items-center gap-2 min-w-0 overflow-hidden rounded-xl px-3 py-2 bg-white/70 border shadow-sm">
                   <span aria-hidden="true" className="text-lg flex-shrink-0">🌟</span>
                   <div className="flex-1 min-w-0">
-                    <div className="text-xs text-muted-foreground leading-tight">Power Word</div>
+                    <div className="text-xs text-muted leading-tight">Power Word</div>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Button
@@ -740,7 +740,7 @@ export default function ProductivityBar() {
                 <div className="flex items-center gap-2 min-w-0 overflow-hidden rounded-xl px-3 py-2 bg-white/70 border shadow-sm">
                   <span aria-hidden="true" className="text-lg flex-shrink-0">🃏</span>
                   <div className="flex-1 min-w-0">
-                    <div className="text-xs text-muted-foreground leading-tight">Affirmation</div>
+                    <div className="text-xs text-muted leading-tight">Affirmation</div>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Button

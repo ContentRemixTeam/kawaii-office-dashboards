@@ -124,8 +124,8 @@ export default function Energy() {
         {todayWord && <CurrentWordDisplay word={todayWord.word} />}
         
         <div className="bg-gradient-mint rounded-2xl p-6">
-          <h2 className="text-xl font-semibold text-secondary-foreground mb-3">⚡ Daily Energy Word</h2>
-          <p className="text-secondary-foreground/80">
+          <h2 className="text-xl font-semibold text-main mb-3">⚡ Daily Energy Word</h2>
+          <p className="text-muted">
             Choose a powerful word that embodies the energy you want to carry throughout your day. Let it guide your actions and mindset.
           </p>
         </div>
@@ -165,7 +165,7 @@ export default function Energy() {
           <>
             <div className="grid md:grid-cols-3 gap-6">
               <div className="bg-card rounded-xl p-6 border border-border/20">
-                <h3 className="font-semibold text-card-foreground mb-4 flex items-center gap-2">
+                <h3 className="font-semibold text-main mb-4 flex items-center gap-2">
                   🌟 Inspiring
                 </h3>
                 <div className="flex flex-wrap gap-2">
@@ -173,7 +173,7 @@ export default function Energy() {
                     <button
                       key={word}
                       onClick={() => selectWord(word)}
-                      className="transition-transform hover:scale-105"
+                      className="btn btn-secondary"
                     >
                       <WordBadge word={word} isSelected={false} />
                     </button>
@@ -232,7 +232,7 @@ export default function Energy() {
                 <Button 
                   onClick={selectCustomWord}
                   disabled={!customWord.trim()}
-                  className="self-end"
+                  className="btn btn-primary self-end"
                 >
                   Choose
                 </Button>
