@@ -1,15 +1,29 @@
-export type AmbientPreset = {
-  id: string;            // slug key
-  title: string;         // display name
-  youtube: string;       // full URL to video or playlist
-  emoji: string;         // icon
-};
+// Curated ambient YouTube presets with verified embeddable videos
+
+export interface AmbientPreset {
+  key: string;
+  title: string;
+  id: string;        // YouTube video ID
+  emoji?: string;
+}
 
 export const AMBIENT_PRESETS: AmbientPreset[] = [
-  { id: "rain",      title: "Rain Window",   emoji: "🌧️", youtube: "https://www.youtube.com/watch?v=mvz0EezsWLo" },
-  { id: "cafe",      title: "Cozy Café",     emoji: "☕",  youtube: "https://www.youtube.com/watch?v=7NOSDKb0HlU" },
-  { id: "fireplace", title: "Fireplace",     emoji: "🔥",  youtube: "https://www.youtube.com/watch?v=Uxq2bQfJHyI" },
-  { id: "ocean",     title: "Ocean Waves",   emoji: "🌊",  youtube: "https://www.youtube.com/watch?v=DVQ3-Xe_suY" },
-  { id: "birds",     title: "Morning Birds", emoji: "🐦",  youtube: "https://www.youtube.com/watch?v=3wP1cZJ1lNs" },
-  { id: "lofi",      title: "Lo-Fi Beats",   emoji: "🎵",  youtube: "https://www.youtube.com/watch?v=jfKfPfyJRdk" },
+  { key: 'lofi_girl', title: 'Lofi Study', id: 'jfKfPfyJRdk', emoji: '🎵' },
+  { key: 'coffee_shop', title: 'Cozy Café', id: 'lTRiuFIWV54', emoji: '☕' },
+  { key: 'fireplace', title: 'Fireplace', id: 'eyU3bRy2x44', emoji: '🔥' },
+  { key: 'ocean', title: 'Ocean Waves', id: 'X2H65r-7J3w', emoji: '🌊' },
+  { key: 'rain', title: 'Rain Window', id: '7NOSDKb0HlU', emoji: '🌧️' },
+  { key: 'birds', title: 'Morning Birds', id: '6zGQSWib32s', emoji: '🐦' },
 ];
+
+// Get preset by key
+export function getPresetById(key: string): AmbientPreset | undefined {
+  return AMBIENT_PRESETS.find(preset => preset.key === key);
+}
+
+// Get next preset for fallback
+export function getNextPreset(currentKey: string): AmbientPreset {
+  const currentIndex = AMBIENT_PRESETS.findIndex(preset => preset.key === currentKey);
+  const nextIndex = (currentIndex + 1) % AMBIENT_PRESETS.length;
+  return AMBIENT_PRESETS[nextIndex];
+}

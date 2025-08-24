@@ -1,245 +1,193 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
-import { Volume2, VolumeX } from "lucide-react";
-import { AMBIENT_PRESETS } from "@/data/ambientPresets";
-import { loadAmbient, saveAmbient, AMBIENT_KEY } from "@/lib/ambientStore";
-import { buildEmbedSrc } from "@/lib/youtube";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { ExternalLink, AlertCircle } from "lucide-react";
+import YouTubeAmbient from "@/components/YouTubeAmbient";
+import { AMBIENT_PRESETS, getNextPreset } from "@/data/ambientPresets";
+import { extractYouTubeId } from "@/lib/youtube";
+import { loadAmbient, saveAmbient, AmbientState } from "@/lib/ambientStore";
 import { useToast } from "@/hooks/use-toast";
 
 export default function AmbientPlayer() {
-  const [state, setState] = React.useState(loadAmbient());
-  const [customInput, setCustomInput] = React.useState(state.customUrl || "");
   const { toast } = useToast();
-  
-  const volumePct = Math.round((state.volume ?? 0.5) * 100);
+  const [state, setState] = useState<AmbientState>(() => loadAmbient());
+  const [customUrl, setCustomUrl] = useState(state.customUrl || "");
+  const [currentVideoId, setCurrentVideoId] = useState<string>("");
+  const [urlError, setUrlError] = useState<string>("");
 
-  React.useEffect(() => {
-    const onBus = (e: any) => {
-      const keys = e?.detail?.keys || [e.key];
-      if (keys?.includes?.(AMBIENT_KEY)) {
-        setState(loadAmbient());
+  // Determine current video ID
+  useEffect(() => {
+    let videoId = "";
+    
+    if (state.activeId === "custom" && state.customUrl) {
+      videoId = extractYouTubeId(state.customUrl) || "";
+    } else {
+      const preset = AMBIENT_PRESETS.find(p => p.key === state.activeId);
+      if (preset) {
+        videoId = preset.id;
       }
-    };
-    window.addEventListener("fm:data-changed", onBus as any);
-    window.addEventListener("storage", onBus as any);
-    return () => {
-      window.removeEventListener("fm:data-changed", onBus as any);
-      window.removeEventListener("storage", onBus as any);
-    };
-  }, []);
+    }
+    
+    setCurrentVideoId(videoId);
+  }, [state]);
 
-  const activePreset = AMBIENT_PRESETS.find(p => p.id === state.activeId);
-  const activeUrl = state.activeId === "custom" ? state.customUrl : activePreset?.youtube;
-  const embedSrc = activeUrl ? buildEmbedSrc(activeUrl, { 
-    autoplay: 1, 
-    mute: state.muted ? 1 : 0, 
-    loop: 1 
-  }) : "";
-
-  function choose(id: string) {
-    const newState = { ...state, activeId: id };
+  const selectPreset = (presetKey: string) => {
+    const preset = AMBIENT_PRESETS.find(p => p.key === presetKey);
+    if (!preset) return;
+    
+    const newState = { ...state, activeId: presetKey };
     setState(newState);
     saveAmbient(newState);
-    
-    const preset = AMBIENT_PRESETS.find(p => p.id === id);
-    if (preset) {
-      toast({
-        title: `${preset.emoji} ${preset.title}`,
-        description: "Ambient soundscape activated"
-      });
-    }
-  }
+    setUrlError("");
+  };
 
-  function setCustom(url: string) {
-    if (!url.includes("youtu")) {
-      toast({
-        title: "❌ Invalid URL",
-        description: "Please enter a valid YouTube URL",
-        variant: "destructive"
-      });
+  const handleCustomUrlSubmit = () => {
+    const trimmedUrl = customUrl.trim();
+    if (!trimmedUrl) {
+      setUrlError("Please enter a YouTube URL");
       return;
     }
-    
-    const newState = { ...state, activeId: "custom", customUrl: url };
+
+    const videoId = extractYouTubeId(trimmedUrl);
+    if (!videoId) {
+      setUrlError("Invalid YouTube URL. Please check the format.");
+      return;
+    }
+
+    const newState = { ...state, activeId: "custom", customUrl: trimmedUrl };
     setState(newState);
     saveAmbient(newState);
+    setUrlError("");
+    
     toast({
-      title: "🎬 Custom ambient video",
+      title: "✅ Custom video set",
       description: "Your YouTube video has been set as the ambient background"
     });
-  }
+  };
 
-  function setMuted(muted: boolean) {
-    const newState = { ...state, muted };
-    setState(newState);
-    saveAmbient(newState);
-  }
-
-  function setVolumePct(pct: number) {
-    const newState = { ...state, volume: Math.max(0, Math.min(1, pct / 100)) };
-    setState(newState);
-    saveAmbient(newState);
-  }
-
-  // toggleHero function removed - videos automatically become office background
-
-  function stopAmbient() {
-    const newState = { ...state, activeId: undefined };
-    setState(newState);
-    saveAmbient(newState);
+  const handleVideoError = (errorCode: number) => {
+    console.warn(`YouTube error ${errorCode} for video ${currentVideoId}`);
+    
+    // If we're on a preset, try the next one
+    if (state.activeId !== "custom") {
+      const nextPreset = getNextPreset(state.activeId);
+      if (nextPreset && nextPreset.key !== state.activeId) {
+        const newState = { ...state, activeId: nextPreset.key };
+        setState(newState);
+        saveAmbient(newState);
+        
+        toast({
+          title: "Video unavailable",
+          description: `That video blocks embeds. Switched to ${nextPreset.title}.`,
+          duration: 4000
+        });
+        return;
+      }
+    }
+    
+    // Show error for custom URLs or if all presets fail
     toast({
-      title: "🔇 Ambient stopped",
-      description: "Soundscape cleared"
+      title: "Video Error",
+      description: "This video cannot be embedded. Try a different one.",
+      variant: "destructive",
+      duration: 5000
     });
-  }
+  };
 
   return (
     <div className="space-y-6">
-      {/* Preset Selection */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-        {AMBIENT_PRESETS.map(preset => {
-          const active = state.activeId === preset.id;
-          return (
-            <button
-              key={preset.id}
-              onClick={() => choose(preset.id)}
-              className={`rounded-xl border px-4 py-3 text-left shadow-sm transition-all hover:scale-105 ${
-                active 
-                  ? "bg-primary/10 border-primary ring-2 ring-primary/20" 
-                  : "bg-white/80 border-border hover:bg-white hover:border-primary/50"
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <span className="text-xl">{preset.emoji}</span>
-                <div>
-                  <div className="font-medium text-main">{preset.title}</div>
-                  {active && <div className="text-xs text-primary">Playing</div>}
-                </div>
-              </div>
-            </button>
-          );
-        })}
-      </div>
+      {/* Preset Buttons */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            🌟 Curated Presets
+          </CardTitle>
+          <CardDescription>
+            Verified ambient videos perfect for focus and relaxation
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {AMBIENT_PRESETS.map((preset) => (
+              <Button
+                key={preset.key}
+                variant={state.activeId === preset.key ? "default" : "outline"}
+                onClick={() => selectPreset(preset.key)}
+                className="flex flex-col h-auto p-4 text-center relative"
+              >
+                <span className="text-2xl mb-2">{preset.emoji}</span>
+                <span className="font-medium text-sm">{preset.title}</span>
+                {state.activeId === preset.key && (
+                  <Badge className="absolute -top-1 -right-1 h-5 text-xs">
+                    Active
+                  </Badge>
+                )}
+              </Button>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Custom YouTube URL */}
-      <div className="rounded-xl border bg-card p-4 shadow-sm">
-        <Label className="text-sm font-medium text-main mb-2 block">
-          🎬 Custom YouTube URL
-        </Label>
-        <div className="flex gap-2">
-          <Input
-            type="url"
-            placeholder="https://www.youtube.com/watch?v=..."
-            value={customInput}
-            onChange={(e) => setCustomInput(e.target.value)}
-            className="flex-1"
-          />
-          <Button 
-            onClick={() => setCustom(customInput)}
-            disabled={!customInput.includes("youtu")}
-            className="btn btn-primary"
-          >
-            Use
-          </Button>
-        </div>
-        <p className="text-xs text-muted mt-2">
-          💡 Try ambient office videos, lofi music, or nature sounds
-        </p>
-      </div>
-
-      {/* Controls */}
-      <div className="rounded-xl border bg-card p-4 shadow-sm space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="font-medium text-main">🎛️ Controls</h3>
-          {state.activeId && (
-            <Button variant="outline" size="sm" onClick={stopAmbient}>
-              Stop
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            🎬 Custom YouTube URL
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex gap-2">
+            <Input
+              placeholder="https://www.youtube.com/watch?v=..."
+              value={customUrl}
+              onChange={(e) => {
+                setCustomUrl(e.target.value);
+                setUrlError("");
+              }}
+              className={urlError ? "border-destructive" : ""}
+            />
+            <Button onClick={handleCustomUrlSubmit}>
+              Set Video
             </Button>
+          </div>
+          {urlError && (
+            <p className="text-sm text-destructive flex items-center gap-1">
+              <AlertCircle className="w-4 h-4" />
+              {urlError}
+            </p>
           )}
-        </div>
-        
-        <div className="flex items-center gap-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setMuted(!state.muted)}
-            className="flex items-center gap-2"
-          >
-            {state.muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-            {state.muted ? "Unmute" : "Mute"}
-          </Button>
-          
-          <div className="flex-1 flex items-center gap-2">
-            <VolumeX className="w-4 h-4 text-muted-foreground" />
-            <Slider
-              value={[volumePct]}
-              onValueChange={(value) => setVolumePct(value[0])}
-              max={100}
-              step={1}
-              className="flex-1"
-            />
-            <Volume2 className="w-4 h-4 text-muted-foreground" />
-            <span className="text-sm text-muted w-12">{volumePct}%</span>
-          </div>
-        </div>
-
-        {/* Switch removed - videos automatically become office background */}
-      </div>
-
-      {/* Player */}
-      {embedSrc ? (
-        <div className="relative rounded-2xl overflow-hidden shadow-lg border">
-          <div className="relative pt-[56.25%] bg-black/5">
-            <iframe
-              className="absolute inset-0 w-full h-full"
-              src={embedSrc}
-              title="Ambient Player"
-              allow="autoplay; encrypted-media; picture-in-picture"
-              allowFullScreen
-            />
-          </div>
-          <div className="px-4 py-3 bg-card border-t">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-main">
-                  {activePreset ? `${activePreset.emoji} ${activePreset.title}` : "🎬 Custom Video"}
-                </span>
-                {!state.muted && (
-                  <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded">
-                    Playing
-                  </span>
-                )}
-              </div>
-              <p className="text-xs text-muted">
-                Tip: Video autoplays muted. Click "Unmute" to hear it.
-              </p>
-            </div>
-          </div>
-        </div>
-      ) : activeUrl ? (
-        <div className="text-center py-12 border-2 border-dashed border-red-200 rounded-xl bg-red-50">
-          <div className="text-4xl mb-4">⚠️</div>
-          <p className="text-sm text-red-600 font-medium mb-2">Invalid or unsupported YouTube link</p>
-          <p className="text-xs text-red-500">Try a standard watch/shorts/live/playlist URL</p>
-          {process.env.NODE_ENV !== "production" && (
-            <p className="text-xs text-muted break-all mt-2">Debug URL: {activeUrl}</p>
+          {state.activeId === "custom" && (
+            <Badge variant="secondary" className="w-fit">
+              Using custom video
+            </Badge>
           )}
-        </div>
+        </CardContent>
+      </Card>
+
+      {/* Video Player */}
+      {currentVideoId ? (
+        <Card>
+          <CardContent className="p-6">
+            <YouTubeAmbient
+              videoId={currentVideoId}
+              onError={handleVideoError}
+              startMuted={false}
+              className="w-full"
+            />
+          </CardContent>
+        </Card>
       ) : (
-        <div className="text-center py-12 border-2 border-dashed border-border rounded-xl">
-          <div className="text-4xl mb-4">🎵</div>
-          <p className="text-main font-medium mb-2">No ambient soundscape selected</p>
-          <p className="text-sm text-muted">Choose a preset or enter a YouTube link above</p>
-        </div>
-      )}
-
-      {/* Optional: tiny debug in dev */}
-      {process.env.NODE_ENV !== "production" && embedSrc && (
-        <p className="mt-1 text-xs text-muted break-all">Embed: {embedSrc}</p>
+        <Card>
+          <CardContent className="p-8 text-center">
+            <div className="text-muted-foreground">
+              <p className="text-sm mb-2">Choose a preset or enter a YouTube link above</p>
+              <p className="text-xs">Your ambient video will appear here</p>
+            </div>
+          </CardContent>
+        </Card>
       )}
     </div>
   );

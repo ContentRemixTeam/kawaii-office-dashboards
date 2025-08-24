@@ -1,64 +1,72 @@
-export type YTTarget =
-  | { kind: "video"; id: string }
-  | { kind: "playlist"; list: string };
+// YouTube URL parsing utilities
 
-export function parseYouTubeTarget(url: string): YTTarget | null {
-  try {
-    const u = new URL(url.trim());
-
-    // Playlist (works with watch?list=..., /playlist?list=..., etc.)
-    const list = u.searchParams.get("list");
-    if (list) return { kind: "playlist", list };
-
-    // youtu.be/<id>
-    if (u.hostname.includes("youtu.be")) {
-      const id = u.pathname.replace(/^\/+/, "").split("/")[0];
-      return id ? { kind: "video", id } : null;
+export function extractYouTubeId(input: string): string | null {
+  if (!input || typeof input !== 'string') return null;
+  
+  // Clean the input
+  const url = input.trim();
+  
+  // Regular expression patterns for different YouTube URL formats
+  const patterns = [
+    // https://www.youtube.com/watch?v=ID
+    /(?:youtube\.com\/watch\?v=)([a-zA-Z0-9_-]+)/,
+    // https://youtu.be/ID
+    /(?:youtu\.be\/)([a-zA-Z0-9_-]+)/,
+    // https://www.youtube.com/embed/ID
+    /(?:youtube\.com\/embed\/)([a-zA-Z0-9_-]+)/,
+    // Any URL with ?v=ID in query string
+    /[?&]v=([a-zA-Z0-9_-]+)/,
+    // Just the ID if it's 11 characters long (YouTube video ID length)
+    /^([a-zA-Z0-9_-]{11})$/
+  ];
+  
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match && match[1]) {
+      return match[1];
     }
-
-    // youtube.com/watch?v=<id>
-    const v = u.searchParams.get("v");
-    if (v) return { kind: "video", id: v };
-
-    // /embed/<id>
-    let m = u.pathname.match(/\/embed\/([^/?#]+)/);
-    if (m?.[1]) return { kind: "video", id: m[1] };
-
-    // /live/<id>
-    m = u.pathname.match(/\/live\/([^/?#]+)/);
-    if (m?.[1]) return { kind: "video", id: m[1] };
-
-    // /shorts/<id>
-    m = u.pathname.match(/\/shorts\/([^/?#]+)/);
-    if (m?.[1]) return { kind: "video", id: m[1] };
-
-    return null;
-  } catch {
-    return null;
   }
-}
-
-export function buildEmbedSrc(inputUrl: string, opts?: { autoplay?: 0|1; mute?: 0|1; loop?: 0|1 }) {
-  const t = parseYouTubeTarget(inputUrl);
-  if (!t) return "";
-
-  const ap = opts?.autoplay ?? 1;
-  const mt = opts?.mute ?? 1;
-  const lp = opts?.loop ?? 1;
-
-  if (t.kind === "playlist") {
-    // Privacy-enhanced domain; videoseries is required for playlists.
-    const base = "https://www.youtube-nocookie.com/embed/videoseries";
-    return `${base}?list=${encodeURIComponent(t.list)}&autoplay=${ap}&mute=${mt}&loop=${lp}&controls=0&modestbranding=1&playsinline=1&rel=0`;
-  } else {
-    const base = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(t.id);
-    // For looping single video, YouTube requires playlist=<same id>
-    return `${base}?autoplay=${ap}&mute=${mt}&loop=${lp}&playlist=${encodeURIComponent(t.id)}&controls=0&modestbranding=1&playsinline=1&rel=0`;
-  }
+  
+  return null;
 }
 
 // Legacy function for backward compatibility
 export function getYouTubeId(url: string): string | null {
-  const target = parseYouTubeTarget(url);
-  return target?.kind === "video" ? target.id : null;
+  return extractYouTubeId(url);
+}
+
+// Build embed URL (keeping existing function for compatibility)
+export function buildEmbedSrc(inputUrl: string, options: Record<string, any> = {}): string {
+  const videoId = extractYouTubeId(inputUrl);
+  if (!videoId) return '';
+  
+  const params = new URLSearchParams({
+    rel: '0',
+    showinfo: '0',
+    iv_load_policy: '3',
+    modestbranding: '1',
+    disablekb: '1',
+    fs: '0',
+    cc_load_policy: '0',
+    playsinline: '1',
+    ...options
+  });
+  
+  return `https://www.youtube-nocookie.com/embed/${videoId}?${params.toString()}`;
+}
+
+// Parse YouTube target (keeping for compatibility)
+export interface YTTarget {
+  id: string;
+  isPlaylist: boolean;
+}
+
+export function parseYouTubeTarget(url: string): YTTarget | null {
+  const videoId = extractYouTubeId(url);
+  if (!videoId) return null;
+  
+  return {
+    id: videoId,
+    isPlaylist: false
+  };
 }

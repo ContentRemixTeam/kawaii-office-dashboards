@@ -40,8 +40,8 @@ export default function OfficeHero({ hotspots, fallbackSrc, alt, aspectRatio = 1
   const useAmbientAsHero = ambientState.activeId;
   
   if (useAmbientAsHero) {
-    const activePreset = AMBIENT_PRESETS.find(p => p.id === ambientState.activeId);
-    const activeUrl = ambientState.activeId === "custom" ? ambientState.customUrl : activePreset?.youtube;
+    const activePreset = AMBIENT_PRESETS.find(p => p.key === ambientState.activeId);
+    const activeUrl = ambientState.activeId === "custom" ? ambientState.customUrl : (activePreset ? `https://www.youtube.com/watch?v=${activePreset.id}` : null);
     
     if (activeUrl) {
       const embedSrc = buildEmbedSrc(activeUrl, { 
