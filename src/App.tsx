@@ -23,6 +23,7 @@ import Habits from "./pages/tools/Habits";
 import Wins from "./pages/tools/Wins";
 import Theme from "./pages/tools/Theme";
 import Focus from "./pages/tools/Focus";
+import BeatClock from "./pages/tools/BeatClock";
 import Future from "./pages/tools/Future";
 
 const queryClient = new QueryClient();
@@ -65,6 +66,7 @@ const App = () => {
               <Route path="/tools/wins" element={<Wins />} />
               <Route path="/tools/theme" element={<Theme />} />
               <Route path="/tools/focus" element={<Focus />} />
+              <Route path="/tools/beat-clock" element={<BeatClock />} />
               <Route path="/tools/future" element={<Future />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

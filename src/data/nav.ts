@@ -29,6 +29,7 @@ export const NAV_SECTIONS: NavSection[] = [
     emoji: "🎮",
     items: [
       { label: "Pomodoro Timer", href: "/tools/focus", emoji: "⏰" },
+      { label: "Beat the Clock", href: "/tools/beat-clock", emoji: "🚀" },
       { label: "Daily Wins", href: "/tools/wins", emoji: "🏆" },
       { label: "Money Tracker", href: "/tools/money", emoji: "💰" }
     ]
