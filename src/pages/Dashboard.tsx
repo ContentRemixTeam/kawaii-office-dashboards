@@ -3,6 +3,7 @@ import { Sparkles, Heart } from "lucide-react";
 import BackgroundManager from "@/components/BackgroundManager";
 import HomeHero from "@/components/HomeHero";
 import ToolDock from "@/components/ToolDock";
+import VisionPanel from "@/components/VisionPanel";
 
 export default function Dashboard() {
   return (
@@ -26,11 +27,26 @@ export default function Dashboard() {
           </p>
         </div>
 
-        {/* Hero ambient video */}
-        <HomeHero />
+        {/* Layout that supports a side panel on wide screens */}
+        <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-6 max-w-6xl mx-auto">
+          <div className="space-y-8">
+            {/* Hero ambient video */}
+            <HomeHero />
+            
+            {/* Vision panel below video on small/medium screens */}
+            <div className="xl:hidden">
+              <VisionPanel />
+            </div>
+            
+            {/* Tool dock */}
+            <ToolDock />
+          </div>
 
-        {/* Tool dock */}
-        <ToolDock />
+          {/* Vision panel as a side panel on xl+ screens */}
+          <aside className="hidden xl:block">
+            <VisionPanel side />
+          </aside>
+        </div>
         
         {/* Helpful tip */}
         <div className="text-center mt-8">

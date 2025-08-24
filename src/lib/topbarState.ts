@@ -49,7 +49,7 @@ export function readPetStage() {
 }
 
 /** Return up to N image URLs saved by Vision Board */
-export function readVisionThumbs(max = 3): string[] {
+export function readVisionThumbs(max = 6): string[] {
   try {
     const v = JSON.parse(localStorage.getItem(KEY_VISION) || "null");
     const items = Array.isArray(v?.items) ? v.items : [];
