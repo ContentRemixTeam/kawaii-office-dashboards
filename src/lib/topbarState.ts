@@ -14,7 +14,11 @@ export function readEnergy() {
   try {
     const d = JSON.parse(localStorage.getItem(KEY_ENERGY) || "null");
     console.log('Energy data:', d, 'Today:', todayISO());
-    return d?.date === todayISO() ? d.word ?? null : null;
+    // Handle both legacy format and new setDailyData format
+    if (d?.date === todayISO()) {
+      return d.data?.word ?? d.word ?? null;
+    }
+    return null;
   } catch { return null; }
 }
 
@@ -23,9 +27,11 @@ export function readAffirmation() {
     const d = JSON.parse(localStorage.getItem(KEY_AFFIRM) || "null");
     console.log('Affirmation data:', d, 'Today:', todayISO());
     if (d?.date !== todayISO()) return { text: null, title: null };
+    // Handle both legacy format and new setDailyData format
+    const text = d.data?.text ?? d.text ?? null;
     return {
-      text: d.text ?? null,
-      title: d.text ?? null, // Use text as title for display
+      text: text,
+      title: text, // Use text as title for display
     };
   } catch { return { text: null, title: null }; }
 }
@@ -34,8 +40,10 @@ export function readPetStage() {
   try {
     const d = JSON.parse(localStorage.getItem(KEY_TASKS) || "null");
     if (d?.date !== todayISO()) return { animal: null, stage: 0 };
-    const done = Array.isArray(d.completed) ? d.completed.filter(Boolean).length : 0;
-    return { animal: d.selectedAnimal ?? null, stage: Math.min(3, done) };
+    // Handle both legacy format and new setDailyData format
+    const taskData = d.data ?? d;
+    const done = Array.isArray(taskData.completed) ? taskData.completed.filter(Boolean).length : 0;
+    return { animal: taskData.selectedAnimal ?? null, stage: Math.min(3, done) };
   } catch { return { animal: null, stage: 0 }; }
 }
 

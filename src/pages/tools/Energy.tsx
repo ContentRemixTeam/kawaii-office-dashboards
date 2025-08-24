@@ -81,8 +81,6 @@ export default function Energy() {
     // Dispatch custom event for badge updates
     window.dispatchEvent(new CustomEvent('energyWordUpdated'));
     window.dispatchEvent(new Event('storage'));
-    // Notify via event bus
-    emitChanged([KEY_ENERGY]);
 
     // Add to history
     const historyEntry = { ...wordData, date: new Date().toISOString().split('T')[0] };
