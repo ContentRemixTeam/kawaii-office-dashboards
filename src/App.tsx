@@ -18,6 +18,7 @@ import Breaks from "./pages/tools/Breaks";
 import Habits from "./pages/tools/Habits";
 import Wins from "./pages/tools/Wins";
 import Theme from "./pages/tools/Theme";
+import Focus from "./pages/tools/Focus";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,7 @@ const App = () => (
             <Route path="/tools/habits" element={<Habits />} />
             <Route path="/tools/wins" element={<Wins />} />
             <Route path="/tools/theme" element={<Theme />} />
+            <Route path="/tools/focus" element={<Focus />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
