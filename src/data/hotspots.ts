@@ -95,4 +95,14 @@ export const HOTSPOTS: Hotspot[] = [
     height: 18,
     aria: "Open Habit Garden"
   },
+  {
+    id: "wins",
+    label: "Daily Wins Feed",
+    href: "/tools/wins",
+    top: 30,
+    left: 75,
+    width: 10,
+    height: 15,
+    aria: "Open Daily Wins Feed"
+  },
 ];

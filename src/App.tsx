@@ -14,6 +14,7 @@ import Money from "./pages/tools/Money";
 import Energy from "./pages/tools/Energy";
 import Breaks from "./pages/tools/Breaks";
 import Habits from "./pages/tools/Habits";
+import Wins from "./pages/tools/Wins";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,7 @@ const App = () => (
           <Route path="/tools/energy" element={<Energy />} />
           <Route path="/tools/breaks" element={<Breaks />} />
           <Route path="/tools/habits" element={<Habits />} />
+          <Route path="/tools/wins" element={<Wins />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
