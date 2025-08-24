@@ -146,9 +146,10 @@ export default function ProductivityBar() {
 
     loadData();
     
-    // Listen for storage changes AND bus events for real-time updates
+    // Listen for ALL data change events for real-time updates
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'fm_energy_v1' || e.key === 'fm_affirmations_v1' || e.key === 'fm_tasks_v1' || e.key === 'fm_wins_v1') {
+      const relevantKeys = ['fm_energy_v1', 'fm_affirmations_v1', 'fm_tasks_v1', 'fm_wins_v1'];
+      if (relevantKeys.includes(e.key || '')) {
         loadPositivityData();
       }
     };
@@ -160,11 +161,25 @@ export default function ProductivityBar() {
       }
     };
 
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        loadPositivityData(); // Reload when tab becomes visible
+      }
+    };
+
+    // Fallback polling every 10s to catch any missed events
+    const pollInterval = setInterval(() => {
+      loadPositivityData();
+    }, 10000);
+
     window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('visibilitychange', handleVisibilityChange);
     const unsubscribeBus = onDataChanged(handleBusChange);
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('visibilitychange', handleVisibilityChange);
+      clearInterval(pollInterval);
       unsubscribeBus();
     };
   }, []);
@@ -175,55 +190,80 @@ export default function ProductivityBar() {
     const today = getTodayISO();
     const newPositivityData: PositivityData = {};
 
-    // Load Energy Word - handle both shapes
+    // Load Energy Word - handle multiple shapes robustly
     try {
       const energyRaw = localStorage.getItem('fm_energy_v1');
       if (energyRaw) {
         const energyData = JSON.parse(energyRaw);
         
-        // Shape A: { date, word, pinned? }
+        // Shape A: { date, word, pinned? } - daily format
         if (energyData.date === today && energyData.word) {
           newPositivityData.energyWord = energyData.word;
         }
-        // Shape B: { pinned?, recent: [{date,word}, ...] }
+        // Shape B: { pinned?, recent: [{date,word}, ...] } - history format
         else if (Array.isArray(energyData.recent) && energyData.recent.length > 0) {
           const todayEntry = energyData.recent.find((entry: any) => entry.date === today);
           if (todayEntry?.word) {
             newPositivityData.energyWord = todayEntry.word;
           }
         }
+        // Shape C: Direct { word, isCustom, pinned } format
+        else if (energyData.word && !energyData.date) {
+          newPositivityData.energyWord = energyData.word;
+        }
       }
     } catch (error) {
       console.debug('Error loading energy word:', error);
     }
 
-    // Load Affirmation - handle both shapes
+    // Load Affirmation - handle multiple shapes robustly  
     try {
       const affirmationRaw = localStorage.getItem('fm_affirmations_v1');
       if (affirmationRaw) {
         const affirmationData = JSON.parse(affirmationRaw);
         
-        // Shape A: { date, cardIndex, text }
+        // Shape A: { date, cardIndex, text } - daily format
         if (affirmationData.date === today && affirmationData.text) {
           newPositivityData.affirmation = affirmationData.text;
         }
-        // Shape B: { today: {date,text}, history:[...] }
+        // Shape B: { today: {date,text}, history:[...] } - structured format
         else if (affirmationData.today?.date === today && affirmationData.today?.text) {
           newPositivityData.affirmation = affirmationData.today.text;
+        }
+        // Shape C: Direct { text, cardIndex } format
+        else if (affirmationData.text && !affirmationData.date) {
+          newPositivityData.affirmation = affirmationData.text;
         }
       }
     } catch (error) {
       console.debug('Error loading affirmation:', error);
     }
 
-    // Load Pet Data
+    // Load Pet Data from tasks
     try {
       const tasksRaw = localStorage.getItem('fm_tasks_v1');
       if (tasksRaw) {
         const tasksData = JSON.parse(tasksRaw);
+        
+        // Check if it's today's data and has animal selection
         if (tasksData.date === today && tasksData.selectedAnimal) {
           const completedTasks = (tasksData.tasks || []).filter((task: any) => task.completed).length;
           const stage = Math.min(3, completedTasks);
+          const animalKey = tasksData.selectedAnimal;
+          const animalData = ANIMALS[animalKey as keyof typeof ANIMALS];
+          
+          if (animalData) {
+            newPositivityData.pet = {
+              animal: animalKey,
+              stage,
+              emoji: animalData.stages[stage] || animalData.base
+            };
+          }
+        }
+        // Handle format without date field
+        else if (tasksData.selectedAnimal && tasksData.completed) {
+          const completedCount = tasksData.completed.filter(Boolean).length;
+          const stage = Math.min(3, completedCount);
           const animalKey = tasksData.selectedAnimal;
           const animalData = ANIMALS[animalKey as keyof typeof ANIMALS];
           
@@ -240,17 +280,21 @@ export default function ProductivityBar() {
       console.debug('Error loading pet data:', error);
     }
 
-    // Load Daily Wins
+    // Load Daily Wins - handle array format
     try {
       const winsRaw = localStorage.getItem('fm_wins_v1');
       if (winsRaw) {
         const winsData = JSON.parse(winsRaw);
         if (Array.isArray(winsData)) {
-          // Count wins from today
+          // Count wins from today - handle multiple date formats
           const todayWins = winsData.filter((win: any) => {
-            const winDate = new Date(win.createdAt || win.date || win.timestamp);
-            return winDate.toISOString().split('T')[0] === today;
+            if (!win.date && !win.createdAt && !win.timestamp) return false;
+            
+            const winDate = new Date(win.date || win.createdAt || win.timestamp);
+            const winDateISO = winDate.toISOString().split('T')[0];
+            return winDateISO === today;
           }).length;
+          
           newPositivityData.winsCount = todayWins;
         }
       }
@@ -436,7 +480,7 @@ export default function ProductivityBar() {
 
   return (
     <TooltipProvider>
-    <div className="fixed bottom-0 left-0 right-0 z-40 p-4">
+    <div className="fixed bottom-0 left-0 right-0 z-40 p-4 overflow-visible">
         <div className="max-w-6xl mx-auto">
           <div className="bg-gradient-to-r from-pink-100 via-purple-50 to-emerald-100 dark:from-pink-900/30 dark:via-purple-900/30 dark:to-emerald-900/30 backdrop-blur-lg border border-pink-200/50 dark:border-pink-700/50 rounded-2xl shadow-lg p-4">
           <div className="flex items-center justify-between mb-2">
