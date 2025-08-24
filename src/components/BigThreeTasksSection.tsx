@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { getDailyData, setDailyData } from "@/lib/storage";
+import { getDailyData, setDailyData, getCelebrationsEnabled } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 import { emitChanged, KEY_TASKS, addEarnedAnimal } from "@/lib/topbarState";
 
@@ -120,8 +120,10 @@ export default function BigThreeTasksSection() {
     
     // Check for all tasks completed
     if (completedCount === 3 && previousCompletedCount < 3) {
-      setShowCelebration(true);
-      setTimeout(() => setShowCelebration(false), 4000);
+      if (getCelebrationsEnabled()) {
+        setShowCelebration(true);
+        setTimeout(() => setShowCelebration(false), 4000);
+      }
       
       const animal = ANIMALS.find(a => a.id === taskData.selectedAnimal) || ANIMALS[0];
       addEarnedAnimal(animal.id, animal.emoji);

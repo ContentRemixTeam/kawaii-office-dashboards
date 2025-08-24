@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Palette, RotateCcw, Save, Upload } from "lucide-react";
 import ToolShell from "@/components/ToolShell";
-import { safeGet, safeSet } from "@/lib/storage";
+import { safeGet, safeSet, getCelebrationsEnabled, setCelebrationsEnabled } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 import { loadHero, saveHero, OFFICE_IMAGES, HeroState } from "@/lib/heroStore";
 
@@ -256,6 +256,7 @@ function calculateContrast(text: string, bg: string): number {
 export default function Theme() {
   const [currentTheme, setCurrentTheme] = useState<ThemeData>(DEFAULT_THEME);
   const [tempTheme, setTempTheme] = useState<ThemeData>(DEFAULT_THEME);
+  const [celebrationsEnabled, setCelebrationsEnabledState] = useState(true);
   const [heroState, setHeroState] = useState<HeroState>(loadHero());
   const [youtubeUrl, setYoutubeUrl] = useState("");
   const { toast } = useToast();
@@ -281,6 +282,7 @@ export default function Theme() {
     applyTheme(mergedTheme);
     setHeroState(loadHero());
     setYoutubeUrl(loadHero().youtubeUrl || "");
+    setCelebrationsEnabledState(getCelebrationsEnabled());
   }, []);
 
   // Listen for storage changes
@@ -427,12 +429,13 @@ export default function Theme() {
         </Card>
 
         <Tabs defaultValue="presets" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="presets">Presets</TabsTrigger>
             <TabsTrigger value="colors">Custom Colors</TabsTrigger>
             <TabsTrigger value="background">Background</TabsTrigger>
             <TabsTrigger value="hero">Hero</TabsTrigger>
             <TabsTrigger value="features">Features</TabsTrigger>
+            <TabsTrigger value="effects">Effects</TabsTrigger>
           </TabsList>
 
           <TabsContent value="presets" className="space-y-4">
@@ -1007,6 +1010,56 @@ export default function Theme() {
                     </div>
                   </div>
                 </Card>
+              </div>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="effects" className="space-y-6">
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium">Animation Effects</h3>
+              
+              <div className="flex items-center justify-between p-4 border border-border rounded-lg">
+                <div className="space-y-1">
+                  <Label htmlFor="celebrations-toggle" className="text-sm font-medium">
+                    Celebration GIFs
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Enable confetti and celebration animations when completing tasks and earning trophies
+                  </p>
+                </div>
+                <Switch
+                  id="celebrations-toggle"
+                  checked={celebrationsEnabled}
+                  onCheckedChange={(checked) => {
+                    setCelebrationsEnabledState(checked);
+                    setCelebrationsEnabled(checked);
+                  }}
+                />
+              </div>
+              
+              <div className="flex items-center justify-between p-4 border border-border rounded-lg">
+                <div className="space-y-1">
+                  <Label htmlFor="celebration-modals-toggle" className="text-sm font-medium">
+                    Celebration Modals
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Show celebration popup modals for completed tasks
+                  </p>
+                </div>
+                <Switch
+                  id="celebration-modals-toggle"
+                  checked={!tempTheme.hiddenFeatures?.celebrationModals}
+                  onCheckedChange={(checked) => {
+                    const newTheme = {
+                      ...tempTheme,
+                      hiddenFeatures: {
+                        ...tempTheme.hiddenFeatures,
+                        celebrationModals: !checked
+                      }
+                    };
+                    setTempTheme(newTheme);
+                  }}
+                />
               </div>
             </div>
           </TabsContent>

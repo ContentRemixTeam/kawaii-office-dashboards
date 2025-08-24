@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Trophy } from "@/lib/trophySystem";
+import { getCelebrationsEnabled } from "@/lib/storage";
 
 // Simple confetti animation using CSS instead of external library
 const triggerConfetti = () => {
+  // Skip if celebrations are disabled
+  if (!getCelebrationsEnabled()) return;
+  
   // Create confetti elements
   const colors = ['#ff69b4', '#87ceeb', '#98fb98', '#ffd700', '#ff6347'];
   

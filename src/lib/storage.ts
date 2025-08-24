@@ -52,3 +52,19 @@ export function setDailyData<T>(key: string, value: T): boolean {
 export function generateId(): string {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
 }
+
+// Celebration settings
+export function getCelebrationsEnabled(): boolean {
+  try {
+    const val = localStorage.getItem("fm_celebrate_enabled");
+    return val === null ? true : val === "true";
+  } catch { 
+    return true; 
+  }
+}
+
+export function setCelebrationsEnabled(enabled: boolean): void {
+  try { 
+    localStorage.setItem("fm_celebrate_enabled", enabled ? "true" : "false"); 
+  } catch {}
+}
