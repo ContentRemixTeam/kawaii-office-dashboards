@@ -32,6 +32,7 @@ interface ThemeData {
     topBarAffirmations?: boolean;
     topBarTaskPet?: boolean;
     topBarEarnedAnimals?: boolean;
+    topBarTrophies?: boolean;
     homeVisionStrip?: boolean;
     homeDailyHabits?: boolean;
     homeGameified?: boolean;
@@ -61,6 +62,7 @@ const DEFAULT_THEME: ThemeData = {
     topBarAffirmations: false,
     topBarTaskPet: false,
     topBarEarnedAnimals: false,
+    topBarTrophies: false,
     homeVisionStrip: false,
     homeDailyHabits: false,
     homeGameified: false,
@@ -779,6 +781,26 @@ export default function Theme() {
                             hiddenFeatures: {
                               ...tempTheme.hiddenFeatures,
                               topBarTaskPet: !checked
+                            }
+                          };
+                          setTempTheme(newTheme);
+                        }}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label htmlFor="hide-trophies">🏆 Trophy Counter</Label>
+                        <p className="text-xs text-muted-foreground">Show your earned trophies count</p>
+                      </div>
+                      <Switch
+                        id="hide-trophies"
+                        checked={!tempTheme.hiddenFeatures?.topBarTrophies}
+                        onCheckedChange={(checked) => {
+                          const newTheme = {
+                            ...tempTheme,
+                            hiddenFeatures: {
+                              ...tempTheme.hiddenFeatures,
+                              topBarTrophies: !checked
                             }
                           };
                           setTempTheme(newTheme);

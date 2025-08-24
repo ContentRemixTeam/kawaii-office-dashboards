@@ -269,6 +269,11 @@ class FocusTimer {
     if (oldPhase === "focus") {
       this.state.cycleCount++;
       this.updateHistory();
+      
+      // Award trophy for focus completion
+      if (this.isLeader) {
+        this.awardTrophy();
+      }
     }
     this.state.sessionCount++;
 
@@ -300,6 +305,25 @@ class FocusTimer {
 
     this.emit("phase", this.state.phase, oldPhase);
     this.saveState();
+  }
+
+  private awardTrophy() {
+    try {
+      // Import trophy system dynamically to avoid circular dependencies
+      import("./trophySystem").then(({ awardTrophy }) => {
+        const result = awardTrophy(this.state.config.focusMin);
+        
+        // Emit trophy event for UI celebration
+        this.emit("complete", this.state.phase);
+        
+        // Custom event for trophy celebration
+        window.dispatchEvent(new CustomEvent("fm:trophy-earned", {
+          detail: result
+        }));
+      });
+    } catch (e) {
+      console.warn("Failed to award trophy:", e);
+    }
   }
 
   private getNextPhase(currentPhase: FocusPhase): FocusPhase {

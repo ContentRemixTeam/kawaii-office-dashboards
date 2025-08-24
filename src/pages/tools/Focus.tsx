@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { RotateCcw, Volume2, VolumeX, Bell, Smartphone, Target, Calendar, TrendingUp } from "lucide-react";
 import ToolShell from "@/components/ToolShell";
+import PomodoroTimer from "@/components/PomodoroTimer";
 import focusTimer, { FocusConfig, WorkflowType, SoundType } from "@/lib/focusTimer";
 import { useToast } from "@/hooks/use-toast";
 import { toLocalISODate } from "@/lib/localDate";
@@ -138,42 +139,50 @@ export default function Focus() {
   }
 
   return (
-    <ToolShell title="Focus Timer Settings">
+    <ToolShell title="Focus Timer">
       <div className="space-y-6">
         {/* Header */}
         <div className="bg-gradient-primary rounded-2xl p-6 text-white">
           <h2 className="text-2xl font-bold mb-2">🎯 Focus Timer</h2>
           <p className="text-white/90">
-            Configure your Pomodoro technique for maximum productivity and focus
+            Complete Pomodoro sessions to earn trophies and build your focus streak
           </p>
         </div>
 
-        {/* Current Status */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Target className="w-5 h-5" />
-              Today's Progress
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-primary">{todayStats.focusBlocks}</div>
-                <div className="text-sm text-muted-foreground">Focus Sessions</div>
-                {goalMet && <Badge className="mt-1">Goal Met! 🎉</Badge>}
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-primary">{todayStats.minutesFocused}</div>
-                <div className="text-sm text-muted-foreground">Minutes Focused</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-primary">{streak}</div>
-                <div className="text-sm text-muted-foreground">Day Streak</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Timer Interface */}
+          <div>
+            <PomodoroTimer />
+          </div>
+
+          {/* Settings and Stats */}
+          <div className="space-y-6">
+            {/* Current Status */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Target className="w-5 h-5" />
+                  Today's Progress
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-primary">{todayStats.focusBlocks}</div>
+                    <div className="text-sm text-muted-foreground">Focus Sessions</div>
+                    {goalMet && <Badge className="mt-1">Goal Met! 🎉</Badge>}
+                  </div>
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-primary">{todayStats.minutesFocused}</div>
+                    <div className="text-sm text-muted-foreground">Minutes Focused</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-primary">{streak}</div>
+                    <div className="text-sm text-muted-foreground">Day Streak</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
         <Tabs defaultValue="presets" className="w-full">
           <TabsList className="grid w-full grid-cols-4">
@@ -509,6 +518,8 @@ export default function Focus() {
             </Card>
           </TabsContent>
         </Tabs>
+          </div>
+        </div>
       </div>
     </ToolShell>
   );

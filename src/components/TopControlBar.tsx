@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { readEnergy, readAffirmation, readPetStage, readVisionThumbs, readEarnedAnimals } from "../lib/topbarState";
 import { onChanged } from "../lib/bus";
 import { isFeatureVisible } from "../lib/theme";
+import TrophyCounter from "./TrophyCounter";
 import TopBarPetChip from "./TopBarPetChip";
 import TopBarDailyButtons from "./TopBarDailyButtons";
 
@@ -62,7 +63,9 @@ export default function TopControlBar() {
           keys.includes("fm_vision_v1") ||
           keys.includes("fm_daily_intention_v1") ||
           keys.includes("fm_daily_debrief_v1") ||
-          keys.includes("fm_earned_animals_v1")) {
+          keys.includes("fm_earned_animals_v1") ||
+          keys.includes("fm_trophies_v1") ||
+          keys.includes("fm_trophy_stats_v1")) {
         refresh();
       }
     });
@@ -107,6 +110,10 @@ export default function TopControlBar() {
             </button>
           )}
           
+          {/* Trophy Counter */}
+          <TrophyCounter />
+          
+          {/* Earned Animals Row */}
           {isFeatureVisible('topBarEarnedAnimals') && earnedAnimals.length > 0 && (
             <div className="inline-flex items-center gap-1 rounded-full border border-border/20 bg-gradient-to-r from-primary/10 to-primary/5 backdrop-blur-sm px-3 py-1.5 shadow-sm">
               <span className="text-xs text-muted-foreground/80">Earned:</span>

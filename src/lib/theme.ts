@@ -21,6 +21,7 @@ interface ThemeData {
     topBarAffirmations?: boolean;
     topBarTaskPet?: boolean;
     topBarEarnedAnimals?: boolean;
+    topBarTrophies?: boolean;
     homeVisionStrip?: boolean;
     homeDailyHabits?: boolean;
     homeGameified?: boolean;
@@ -50,6 +51,7 @@ const DEFAULT_THEME: ThemeData = {
     topBarAffirmations: false,
     topBarTaskPet: false,
     topBarEarnedAnimals: false,
+    topBarTrophies: false,
     homeVisionStrip: false,
     homeDailyHabits: false,
     homeGameified: false,
