@@ -39,6 +39,15 @@ export function readPet(): { animal: string; stage: number } {
 }
 
 export function readTrophies(): number {
+  // Try new trophy system first
+  try {
+    const stats = ls<any>("fm_trophy_stats_v1", null);
+    if (stats && stats.todayTrophies !== undefined) {
+      return stats.todayTrophies;
+    }
+  } catch {}
+  
+  // Fallback to old system
   const v = ls<any>(K_TROPHIES, null);
   return v && isToday(v.date) && Number.isFinite(v.count) ? v.count : 0;
 }

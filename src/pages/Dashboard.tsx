@@ -15,6 +15,7 @@ import QuickActionsPanel from "@/components/QuickActionsPanel";
 import DailyProgressPanel from "@/components/DailyProgressPanel";
 import InspirationCorner from "@/components/InspirationCorner";
 import FocusInsightsPanel from "@/components/FocusInsightsPanel";
+import PetStatusCard from "@/components/PetStatusCard";
 import { getDailyData, setDailyData } from "@/lib/storage";
 import { readVisionThumbs, readPetStage } from "@/lib/topbarState";
 import { readTodayIntention } from "@/lib/dailyFlow";
@@ -27,6 +28,12 @@ import { getPresetById } from "@/data/ambientPresets";
 interface DashboardData {
   streak: number;
   lastCompletedDate: string;
+}
+
+interface TaskData {
+  tasks: string[];
+  completed: boolean[];
+  selectedAnimal: string;
 }
 
 const ANIMALS = [
@@ -47,6 +54,7 @@ export default function Dashboard() {
   const [trophyCount, setTrophyCount] = useState(0);
   const [streakData, setStreakData] = useState<DashboardData>({ streak: 0, lastCompletedDate: "" });
   const [petData, setPetData] = useState({ animal: null, stage: 0 });
+  const [taskData, setTaskData] = useState<TaskData>({ tasks: ["", "", ""], completed: [false, false, false], selectedAnimal: "unicorn" });
   const [todayIntention, setTodayIntention] = useState(null);
 
   // Load data on mount
@@ -55,6 +63,10 @@ export default function Dashboard() {
     
     const dashData = getDailyData("fm_dashboard_v1", streakData);
     setStreakData(dashData);
+    
+    const taskFallback = { tasks: ["", "", ""], completed: [false, false, false], selectedAnimal: "unicorn" };
+    const loadedTaskData = getDailyData("fm_tasks_v1", taskFallback);
+    setTaskData(loadedTaskData);
     
     setVisionImages(readVisionThumbs(4));
     setTrophyCount(readTrophies());
@@ -76,8 +88,12 @@ export default function Dashboard() {
       }
       if (keys.includes("fm_tasks_v1")) {
         const newPetData = readPetStage();
+        const taskFallback = { tasks: ["", "", ""], completed: [false, false, false], selectedAnimal: "unicorn" };
+        const newTaskData = getDailyData("fm_tasks_v1", taskFallback);
         console.log('Dashboard - Updated pet data:', newPetData);
+        console.log('Dashboard - Updated task data:', newTaskData);
         setPetData(newPetData);
+        setTaskData(newTaskData);
       }
       if (keys.includes("fm_daily_intention_v1")) {
         setTodayIntention(readTodayIntention());
@@ -227,40 +243,14 @@ export default function Dashboard() {
             </Card>
 
             {/* Motivation Panel */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               
-              {/* Pet of the Day */}
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Card 
-                      className="cursor-pointer hover:scale-105 transition-transform bg-gradient-to-br from-pink-50/50 to-purple-50/50 border-pink-200/50"
-                      onClick={() => navigate('/tools/tasks')}
-                    >
-                      <CardContent className="p-4 text-center">
-                        <div className="text-2xl mb-2">
-                          {petData.animal ? 
-                            ANIMALS.find(a => a.id === petData.animal)?.stages[petData.stage] || "🐾" 
-                            : "🐾"
-                          }
-                        </div>
-                        <div className="text-sm font-medium text-foreground mb-1">
-                          {petData.animal ? 
-                            ANIMALS.find(a => a.id === petData.animal)?.name || "Pet" 
-                            : "Choose Pet"
-                          }
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          {petData.animal ? `Stage ${petData.stage + 1}/4` : "Select companion"}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Click to view Task Pets</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              {/* Pet Status Card */}
+              <PetStatusCard 
+                petData={petData}
+                completedTasks={taskData.completed.filter(Boolean).length}
+                totalTasks={3}
+              />
 
               {/* Trophies Earned Today */}
               <TooltipProvider>
@@ -287,35 +277,35 @@ export default function Dashboard() {
                 </Tooltip>
               </TooltipProvider>
 
-              {/* Today's Intention */}
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Card 
-                      className="cursor-pointer hover:scale-105 transition-transform bg-gradient-to-br from-blue-50/50 to-indigo-50/50 border-blue-200/50"
-                      onClick={() => navigate('/tools/tasks')}
-                    >
-                      <CardContent className="p-4 text-center">
-                        <div className="text-2xl mb-2">✨</div>
-                        <div className="text-sm font-medium text-foreground mb-1">
-                          Today's Intention
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          {todayIntention?.feel ? 
-                            `Feel ${todayIntention.feel}` 
-                            : "Set your intention"
-                          }
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Click to set intention</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-
             </div>
+
+            {/* Today's Intention Card */}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Card 
+                    className="cursor-pointer hover:scale-105 transition-transform bg-gradient-to-br from-blue-50/50 to-indigo-50/50 border-blue-200/50"
+                    onClick={() => navigate('/tools/tasks')}
+                  >
+                    <CardContent className="p-4 text-center">
+                      <div className="text-2xl mb-2">✨</div>
+                      <div className="text-sm font-medium text-foreground mb-1">
+                        Today's Intention
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {todayIntention?.feel ? 
+                          `Feel ${todayIntention.feel}` 
+                          : "Set your intention"
+                        }
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Click to set intention</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
 
             {/* Focus Insights Panel */}
             <FocusInsightsPanel />
