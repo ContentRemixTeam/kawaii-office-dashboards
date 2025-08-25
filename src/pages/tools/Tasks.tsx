@@ -8,6 +8,7 @@ import { emitChanged, KEY_TASKS, addEarnedAnimal } from "@/lib/topbarState";
 import { useToast } from "@/hooks/use-toast";
 import ToolShell from "@/components/ToolShell";
 import CelebrationModal from "@/components/CelebrationModal";
+import { readTodayIntention } from "@/lib/dailyFlow";
 
 interface TaskData {
   tasks: string[];
@@ -343,7 +344,27 @@ export default function Tasks() {
       roundsCompleted: 0,
       totalTasksCompleted: 0
     });
-    setTaskData(data);
+
+    // Check if we should populate from daily intention
+    const intention = readTodayIntention();
+    let initialTasks = data.tasks || ["", "", ""];
+    
+    // If tasks are empty and we have intention data, populate from intention
+    const hasEmptyTasks = initialTasks.every(task => !task.trim());
+    if (hasEmptyTasks && intention?.top3?.length) {
+      initialTasks = [
+        intention.top3[0] || "",
+        intention.top3[1] || "",
+        intention.top3[2] || ""
+      ];
+      
+      // Update the data with intention tasks
+      const updatedData = { ...data, tasks: initialTasks };
+      setTaskData(updatedData);
+      setDailyData("fm_tasks_v1", updatedData);
+    } else {
+      setTaskData(data);
+    }
   }, []);
 
   const saveData = (data: TaskData) => {

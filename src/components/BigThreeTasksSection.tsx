@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { getDailyData, setDailyData, getCelebrationsEnabled } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 import { emitChanged, KEY_TASKS, addEarnedAnimal } from "@/lib/topbarState";
+import { readTodayIntention } from "@/lib/dailyFlow";
 
 interface TaskData {
   tasks: string[];
@@ -94,8 +95,23 @@ export default function BigThreeTasksSection() {
         roundsCompleted: 0,
         totalTasksCompleted: 0
       });
+
+      // Check if we should populate from daily intention
+      const intention = readTodayIntention();
+      let initialTasks = data.tasks || ["", "", ""];
+      
+      // If tasks are empty and we have intention data, populate from intention
+      const hasEmptyTasks = initialTasks.every(task => !task.trim());
+      if (hasEmptyTasks && intention?.top3?.length) {
+        initialTasks = [
+          intention.top3[0] || "",
+          intention.top3[1] || "",
+          intention.top3[2] || ""
+        ];
+      }
+
       setTaskData({
-        tasks: data.tasks || ["", "", ""],
+        tasks: initialTasks,
         completed: data.completed || [false, false, false],
         selectedAnimal: data.selectedAnimal || "unicorn"
       });
