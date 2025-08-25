@@ -95,7 +95,6 @@ export default function BigThreeTasksSection() {
   // Load tasks data from the Task Pets page storage
   useEffect(() => {
     const loadTasks = () => {
-      console.log("loadTasks: Starting to load data");
       const fallbackData = {
         tasks: ["", "", ""],
         reflections: ["", "", ""],
@@ -107,12 +106,9 @@ export default function BigThreeTasksSection() {
       
       const data = getDailyData("fm_tasks_v1", fallbackData);
       
-      console.log("loadTasks: Data received:", data);
-      console.log("loadTasks: Data.tasks:", data?.tasks);
-      
-      // Ensure data is valid
-      if (!data || typeof data !== 'object') {
-        console.warn("loadTasks: Invalid data received, using fallback");
+      // Ensure data is valid and has required properties
+      if (!data || !Array.isArray(data.tasks) || !Array.isArray(data.completed)) {
+        console.warn("loadTasks: Invalid data structure, using fallback");
         setTaskData({
           tasks: fallbackData.tasks,
           completed: fallbackData.completed,
@@ -202,10 +198,8 @@ export default function BigThreeTasksSection() {
   };
 
   const handleTaskChange = (index: number, value: string) => {
-    console.log("handleTaskChange: taskData before:", taskData);
-    console.log("handleTaskChange: taskData.tasks:", taskData?.tasks);
-    if (!taskData?.tasks) {
-      console.error("handleTaskChange: taskData.tasks is undefined!");
+    if (!taskData?.tasks || !Array.isArray(taskData.tasks)) {
+      console.error("handleTaskChange: taskData.tasks is not a valid array!");
       return;
     }
     const newTasks = taskData.tasks.map((task, i) => i === index ? value : task);

@@ -147,8 +147,43 @@ class SafeStorage {
 
 export const storage = new SafeStorage();
 
+// Create a backward-compatible schema map for common keys
+const SCHEMA_MAP = {
+  // Tasks system
+  "fm_tasks_v1": z.object({
+    tasks: z.array(z.string()).default(["", "", ""]),
+    reflections: z.array(z.string()).default(["", "", ""]),
+    completed: z.array(z.boolean()).default([false, false, false]),
+    selectedAnimal: z.string().default("unicorn"),
+    roundsCompleted: z.number().default(0),
+    totalTasksCompleted: z.number().default(0),
+  }),
+  
+  // Dashboard data
+  "fm_dashboard_v1": z.object({
+    streak: z.number().default(0),
+    lastCompletedDate: z.string().default(''),
+  }),
+  
+  // Ambient settings
+  "fm_ambient_settings_v1": z.object({
+    videoId: z.string().default('jfKfPfyJRdk'),
+    useAsBackground: z.boolean().default(false),
+    volume: z.number().default(50),
+    muted: z.boolean().default(true),
+  }),
+  
+  // Default fallback schema for unknown keys
+  default: z.any(),
+};
+
+// Backward-compatible getDailyData that auto-applies schemas
+export function getDailyData<T>(key: string, fallback: T): T {
+  const schema = SCHEMA_MAP[key as keyof typeof SCHEMA_MAP] || SCHEMA_MAP.default;
+  return storage.getDailyItem(key, schema, fallback);
+}
+
 // Re-export for backward compatibility
-export const getDailyData = storage.getDailyItem.bind(storage);
 export const setDailyData = storage.setDailyItem.bind(storage);
 
 // Legacy API for backward compatibility
