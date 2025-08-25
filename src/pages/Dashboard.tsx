@@ -14,6 +14,7 @@ import YouTubeAmbient from "@/components/YouTubeAmbient";
 import QuickActionsPanel from "@/components/QuickActionsPanel";
 import DailyProgressPanel from "@/components/DailyProgressPanel";
 import InspirationCorner from "@/components/InspirationCorner";
+import FocusInsightsPanel from "@/components/FocusInsightsPanel";
 import { getDailyData, setDailyData } from "@/lib/storage";
 import { readVisionThumbs, readPetStage } from "@/lib/topbarState";
 import { readTodayIntention } from "@/lib/dailyFlow";
@@ -147,7 +148,7 @@ export default function Dashboard() {
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 py-6 space-y-6">
         
         {/* Focus Hub Layout */}
-        <div className="grid lg:grid-cols-[1fr_0.6fr_0.4fr] gap-6">
+        <div className="grid lg:grid-cols-[1fr_0.6fr_0.4fr_0.3fr] gap-6">
           
           {/* Left Section: Video + Motivation Panel */}
           <div className="space-y-6">
@@ -407,6 +408,11 @@ export default function Dashboard() {
             <QuickActionsPanel />
             <DailyProgressPanel />
             <InspirationCorner />
+          </div>
+
+          {/* Far Right Section: Focus Insights Panel */}
+          <div className="space-y-4 hidden lg:block">
+            <FocusInsightsPanel />
           </div>
         </div>
 
