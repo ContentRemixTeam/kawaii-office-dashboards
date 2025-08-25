@@ -211,10 +211,10 @@ const Dashboard = () => {
       {/* Main content */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 py-6 space-y-6">
         
-        {/* Focus Hub Layout */}
-        <div className="grid lg:grid-cols-[1fr_0.6fr_0.4fr] gap-6">
+        {/* Top Grid: Ambient Player + Big Three Tasks */}
+        <div className="grid lg:grid-cols-[1fr_1.2fr] gap-6 mb-6">
           
-          {/* Left Section: Video + Motivation Panel */}
+          {/* Left Section: Ambient Player */}
           <div className="space-y-6">
             
             {/* Ambient YouTube Player */}
@@ -317,7 +317,7 @@ const Dashboard = () => {
               </Tooltip>
             </TooltipProvider>
 
-            {/* Today's Earned Pets - Moved here from right section */}
+            {/* Today's Earned Pets */}
             {earnedAnimals.length > 0 && (
               <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
                 <CardHeader className="pb-3">
@@ -344,18 +344,48 @@ const Dashboard = () => {
                 </CardContent>
               </Card>
             )}
+          </div>
+          
+          {/* Right Section: Big Three Tasks - Now taking more space */}
+          <div className="space-y-4">
+            
+            {/* Big Three Tasks - Now prominently featured */}
+            <Card className="h-full bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-xl">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-xl">
+                  <span className="text-2xl">⭐</span>
+                  The Big Three
+                </CardTitle>
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">
+                    Streak: {streakData.streak} days
+                  </span>
+                </div>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="p-6">
+                  <BigThreeTasksSection />
+                </div>
+              </CardContent>
+            </Card>
+            
+          </div>
+        </div>
 
-            {/* Dashboard Habit Tracker - Added under earned pets */}
+        {/* Secondary Grid: Focus Timer + Quick Actions */}
+        <div className="grid lg:grid-cols-[1fr_0.6fr_0.4fr] gap-6">
+          
+          {/* Left Section: Dashboard Components */}
+          <div className="space-y-6">
             <DashboardHabitTracker />
-
-            {/* Dashboard Trophy Case - Added under habit tracker */}
             <DashboardTrophyCase />
           </div>
           
-          {/* Right Section: Focus Panel */}
+          {/* Middle Section: Focus Panel */}
           <div className="space-y-4 h-full flex flex-col">
             
-            {/* Pomodoro Timer - Moved Above Big Three */}
+            {/* Pomodoro Timer */}
             <Card className="overflow-hidden">
               <CardHeader className={`bg-gradient-to-r ${getPhaseColor()} pb-4`}>
                 <CardTitle className="flex items-center justify-between">
@@ -420,27 +450,6 @@ const Dashboard = () => {
                     <div className="text-lg font-bold text-primary">{timerState.cycleCount}</div>
                     <div className="text-muted-foreground">Today</div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Big Three Tasks */}
-            <Card className="flex-1">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2">
-                  <span className="text-xl">⭐</span>
-                  Big Three Today
-                </CardTitle>
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">
-                    Streak: {streakData.streak} days
-                  </span>
-                </div>
-              </CardHeader>
-              <CardContent className="p-0">
-                <div className="p-6">
-                  <BigThreeTasksSection />
                 </div>
               </CardContent>
             </Card>
