@@ -82,7 +82,7 @@ export default function Affirmations() {
 
   useEffect(() => {
     // Load today's card if already drawn
-    const existingCard = getDailyData<DailyCard | null>("fm_affirmations_v1", null);
+    const existingCard = getDailyData("fm_affirmations_v1", null as DailyCard | null);
     if (existingCard) {
       setTodaysCard(existingCard);
       setHasDrawnToday(true);
