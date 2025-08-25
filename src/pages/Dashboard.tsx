@@ -442,26 +442,24 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Secondary Grid: Focus Timer + Quick Actions */}
-        <div className="grid lg:grid-cols-[1fr_0.6fr_0.4fr] gap-6">
+        {/* Secondary Grid: Distributed Components */}
+        <div className="grid lg:grid-cols-3 gap-6">
           
-          {/* Left Section: Dashboard Components */}
+          {/* Left Section: Quick Actions + Daily Progress */}
+          <div className="space-y-6">
+            <QuickActionsPanel />
+            <DailyProgressPanel />
+          </div>
+          
+          {/* Middle Section: Habit Tracker */}
           <div className="space-y-6">
             <DashboardHabitTracker />
-            <DashboardTrophyCase />
-          </div>
-          
-          {/* Middle Section: Quick Actions - Timer removed */}
-          <div className="space-y-4 h-full flex flex-col">
-            <QuickActionsPanel />
-            <DailyProgressPanel />
+            <InspirationCorner />
           </div>
 
-          {/* Right Section: Multi-Widget Panel */}
-          <div className="space-y-4 hidden lg:block">
-            <QuickActionsPanel />
-            <DailyProgressPanel />
-            <InspirationCorner />
+          {/* Right Section: Trophy Case */}
+          <div className="space-y-6">
+            <DashboardTrophyCase />
           </div>
 
         </div>
