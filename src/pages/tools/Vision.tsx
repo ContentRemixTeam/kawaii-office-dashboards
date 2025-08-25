@@ -2,10 +2,18 @@ import { useState, useEffect, useRef } from "react";
 import ToolShell from "@/components/ToolShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { X, Upload, Link2 } from "lucide-react";
+import { X, Upload, Link2, Sparkles } from "lucide-react";
 import { safeGet, safeSet, generateId } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 import { emitChanged, KEY_VISION } from "@/lib/topbarState";
+
+// Import starter images
+import mountainLakeImage from "@/assets/vision-starter-mountain-lake.jpg";
+import dreamBigImage from "@/assets/vision-starter-dream-big.jpg";
+import tropicalParadiseImage from "@/assets/vision-starter-tropical-paradise.jpg";
+import successQuoteImage from "@/assets/vision-starter-success-quote.jpg";
+import citySkylineImage from "@/assets/vision-starter-city-skyline.jpg";
+import limitQuoteImage from "@/assets/vision-starter-limit-quote.jpg";
 
 interface VisionImage {
   id: string;
@@ -22,6 +30,33 @@ interface VisionData {
     createdAt: string;
   }>;
 }
+
+const STARTER_IMAGES = [
+  {
+    url: mountainLakeImage,
+    title: "Mountain Lake Serenity"
+  },
+  {
+    url: dreamBigImage,
+    title: "Dream Big Work Hard"
+  },
+  {
+    url: tropicalParadiseImage,
+    title: "Tropical Paradise"
+  },
+  {
+    url: successQuoteImage,
+    title: "Success Quote"
+  },
+  {
+    url: citySkylineImage,
+    title: "City Success"
+  },
+  {
+    url: limitQuoteImage,
+    title: "No Limits"
+  }
+];
 
 export default function Vision() {
   const [images, setImages] = useState<VisionImage[]>([]);
@@ -152,6 +187,22 @@ export default function Vision() {
     });
   };
 
+  const addStarterImages = () => {
+    const newImages: VisionImage[] = STARTER_IMAGES.map(starter => ({
+      id: generateId(),
+      url: starter.url,
+      createdAt: new Date().toISOString()
+    }));
+
+    const updatedImages = [...images, ...newImages];
+    saveImages(updatedImages);
+    
+    toast({
+      title: "Starter images added! ✨",
+      description: "Your vision board now has inspiring examples to get you started."
+    });
+  };
+
   return (
     <ToolShell title="Vision Board">
       <div className="space-y-6">
@@ -184,6 +235,16 @@ export default function Vision() {
               <Link2 className="w-4 h-4 mr-2" />
               Add URL
             </Button>
+
+            {images.length === 0 && (
+              <Button
+                onClick={addStarterImages}
+                className="flex-1 bg-gradient-to-r from-primary to-primary/80"
+              >
+                <Sparkles className="w-4 h-4 mr-2" />
+                Add Starter Pack
+              </Button>
+            )}
           </div>
 
           {isAddingUrl && (
@@ -217,7 +278,19 @@ export default function Vision() {
           {images.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               <p className="text-lg mb-2">🌟 Your vision board is waiting</p>
-              <p>Add some inspiring images to get started!</p>
+              <p className="mb-4">Add some inspiring images to get started!</p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-md mx-auto">
+                {STARTER_IMAGES.slice(0, 6).map((starter, index) => (
+                  <div key={index} className="aspect-square rounded-lg overflow-hidden bg-muted border border-border/20 opacity-50">
+                    <img
+                      src={starter.url}
+                      alt={starter.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
+              <p className="mt-4 text-sm">Click "Add Starter Pack" to include these inspiring images!</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
