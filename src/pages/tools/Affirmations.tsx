@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Sparkles, RotateCw, Calendar, Heart } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { RotateCcw, Calendar, Sparkles, RotateCw, Heart } from "lucide-react";
 import ToolShell from "@/components/ToolShell";
 import { getDailyData, setDailyData, safeGet, safeSet } from "@/lib/storage";
-import { emitChanged, KEY_AFFIRM } from "@/lib/topbarState";
+import { useToast } from "@/hooks/use-toast";
+import { emitChanged } from "@/lib/bus";
+import { K_AFFIRM } from "@/lib/topbar.readers";
 
 const AFFIRMATIONS = [
   "I am worthy of love and happiness",
@@ -111,7 +113,7 @@ export default function Affirmations() {
       setDailyData("fm_affirmations_v1", newCard);
       
       // Emit change for TopBar updates
-      emitChanged([KEY_AFFIRM]);
+      emitChanged([K_AFFIRM]);
       
       // Save to history
       const updatedHistory = { ...cardHistory, [today]: newCard };
@@ -125,7 +127,7 @@ export default function Affirmations() {
       // Dispatch events for real-time updates
       window.dispatchEvent(new CustomEvent('affirmationUpdated'));
       window.dispatchEvent(new Event('storage'));
-      emitChanged([KEY_AFFIRM]);
+      // (removing duplicate event emit)
     }, 1000);
   };
 

@@ -1,12 +1,17 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
+import { Shuffle, Pin, PinOff } from "lucide-react";
+import ToolShell from "@/components/ToolShell";
 import { getDailyData, setDailyData, safeGet, safeSet } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
-import { emitChanged, KEY_ENERGY } from "@/lib/topbarState";
-import ToolShell from "@/components/ToolShell";
+import { emitChanged } from "@/lib/bus";
+import { K_ENERGY } from "@/lib/topbar.readers";
 
 interface EnergyWordData {
   word: string;
@@ -76,7 +81,7 @@ export default function Energy() {
     setDailyData("fm_energy_v1", wordData);
     
     // Emit change for TopBar updates
-    emitChanged([KEY_ENERGY]);
+    emitChanged([K_ENERGY]);
 
     // Dispatch custom event for badge updates
     window.dispatchEvent(new CustomEvent('energyWordUpdated'));
@@ -114,7 +119,7 @@ export default function Energy() {
       setDailyData("fm_energy_v1", updatedData);
       window.dispatchEvent(new CustomEvent('energyWordUpdated'));
       window.dispatchEvent(new Event('storage'));
-      emitChanged([KEY_ENERGY]);
+      emitChanged([K_ENERGY]);
     }
   };
 

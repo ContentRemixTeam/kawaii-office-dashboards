@@ -7,7 +7,8 @@ import { Progress } from "@/components/ui/progress";
 import { Play, Pause, Square, Timer } from "lucide-react";
 import { getDailyData, setDailyData, getCelebrationsEnabled } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
-import { emitChanged, KEY_TASKS, addEarnedAnimal } from "@/lib/topbarState";
+import { emitChanged, addEarnedAnimal } from "@/lib/topbarState";
+import { K_TASKS } from "@/lib/topbar.readers";
 import { readTodayIntention } from "@/lib/dailyFlow";
 import focusTimer from "@/lib/focusTimer";
 
@@ -180,7 +181,7 @@ export default function BigThreeTasksSection() {
     // Dispatch events for real-time updates
     window.dispatchEvent(new CustomEvent('tasksUpdated'));
     window.dispatchEvent(new Event('storage'));
-    emitChanged([KEY_TASKS]);
+    emitChanged([K_TASKS]);
   };
 
   const handleTaskChange = (index: number, value: string) => {

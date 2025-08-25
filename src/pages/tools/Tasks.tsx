@@ -4,7 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { getDailyData, setDailyData } from "@/lib/storage";
-import { emitChanged, KEY_TASKS, addEarnedAnimal } from "@/lib/topbarState";
+import { emitChanged, addEarnedAnimal } from "@/lib/topbarState";
+import { K_TASKS } from "@/lib/topbar.readers";
 import { useToast } from "@/hooks/use-toast";
 import ToolShell from "@/components/ToolShell";
 import CelebrationModal from "@/components/CelebrationModal";
@@ -373,7 +374,7 @@ export default function Tasks() {
     // Dispatch events for real-time updates
     window.dispatchEvent(new CustomEvent('tasksUpdated'));
     window.dispatchEvent(new Event('storage'));
-    emitChanged([KEY_TASKS]);
+    emitChanged([K_TASKS]);
   };
 
   const handleTaskChange = (index: number, value: string) => {

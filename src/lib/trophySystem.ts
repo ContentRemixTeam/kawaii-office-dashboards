@@ -31,6 +31,7 @@ export interface SessionLog {
 const TROPHY_KEY = "fm_trophies_v1";
 const TROPHY_STATS_KEY = "fm_trophy_stats_v1";
 const SESSION_LOG_KEY = "fm_session_log_v1";
+const POMO_COUNT_KEY = "fm_pomo_trophies_v1"; // For topbar reader compatibility
 
 // Trophy types and thresholds
 const TROPHY_TYPES = {
@@ -125,8 +126,11 @@ export function awardTrophy(durationMinutes: number): {
   }
   safeSet(SESSION_LOG_KEY, sessionLog);
   
+  // Also maintain simple count for topbar compatibility
+  safeSet(POMO_COUNT_KEY, { date: today, count: newStats.todayTrophies });
+  
   // Emit changes
-  emitChanged([TROPHY_KEY, TROPHY_STATS_KEY, SESSION_LOG_KEY]);
+  emitChanged([TROPHY_KEY, TROPHY_STATS_KEY, SESSION_LOG_KEY, POMO_COUNT_KEY]);
   
   // Get encouragement message
   const messages = ENCOURAGEMENT_MESSAGES[trophy.type];
