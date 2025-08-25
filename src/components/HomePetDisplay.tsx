@@ -249,12 +249,41 @@ export default function HomePetDisplay() {
     );
   }
 
+  const stages = [
+    { 
+      name: "Sleeping Baby", 
+      desc: "Dreaming of adventures...",
+      size: "text-6xl",
+      animation: ""
+    },
+    { 
+      name: "Awake Baby", 
+      desc: "Ready to grow with you!",
+      size: "text-7xl",
+      animation: "animate-bounce"
+    },
+    { 
+      name: "Growing Strong", 
+      desc: "Getting stronger every task!",
+      size: "text-8xl",
+      animation: "animate-pulse"
+    },
+    { 
+      name: "Fully Grown Magical", 
+      desc: "Maximum power achieved!",
+      size: "text-9xl",
+      animation: "animate-bounce"
+    }
+  ];
+  
+  const currentStage = stages[stage];
+
   return (
-    <div className="text-center p-6 bg-gradient-to-br from-background to-muted/30 rounded-2xl border-2 border-border/50 shadow-lg relative overflow-hidden">
+    <div className="text-center p-8 bg-gradient-to-br from-background to-muted/30 rounded-3xl border-2 border-border/50 shadow-lg relative overflow-hidden">
       {getSpecialEffects()}
       
       <div className="mb-4 relative">
-        <div className={`${getSizeClass()} mb-2 transition-all duration-500`}>
+        <div className={`${currentStage.size} mb-2 ${currentStage.animation} transition-all duration-500`}>
           {currentEmoji}
         </div>
         
@@ -265,27 +294,25 @@ export default function HomePetDisplay() {
         )}
       </div>
       
-      <h3 className="text-lg font-semibold text-foreground mb-2">
-        Your Daily {animal.name}
+      <h3 className="text-xl font-bold text-foreground mb-2">
+        {currentStage.name}
       </h3>
       
-      <p className="text-sm text-muted-foreground mb-3 font-medium">
+      <p className="text-muted-foreground text-sm mb-2 font-medium">
         {getKawaiiMessage()}
       </p>
       
-      <div className="flex items-center justify-center gap-2 mb-3">
-        <div className="text-xs text-muted-foreground/70">
-          {completedCount}/3 tasks completed
-        </div>
+      <div className="text-muted-foreground/70 text-xs mb-3">
+        {completedCount}/3 tasks completed
         {taskData.roundsCompleted > 0 && (
-          <div className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full">
+          <span className="ml-2 bg-primary/20 text-primary px-2 py-1 rounded-full">
             {taskData.roundsCompleted} rounds today
-          </div>
+          </span>
         )}
       </div>
       
       {/* Progress bar */}
-      <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+      <div className="w-full bg-muted rounded-full h-3 mt-4 overflow-hidden">
         <div 
           className="bg-gradient-to-r from-primary to-primary/80 h-full rounded-full transition-all duration-700 ease-out relative"
           style={{ width: `${(completedCount / 3) * 100}%` }}
