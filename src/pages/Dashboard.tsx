@@ -11,6 +11,9 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import BackgroundManager from "@/components/BackgroundManager";
 import BigThreeTasksSection from "@/components/BigThreeTasksSection";
 import YouTubeAmbient from "@/components/YouTubeAmbient";
+import QuickActionsPanel from "@/components/QuickActionsPanel";
+import DailyProgressPanel from "@/components/DailyProgressPanel";
+import InspirationCorner from "@/components/InspirationCorner";
 import { getDailyData, setDailyData } from "@/lib/storage";
 import { readVisionThumbs, readPetStage } from "@/lib/topbarState";
 import { readTodayIntention } from "@/lib/dailyFlow";
@@ -144,7 +147,7 @@ export default function Dashboard() {
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 py-6 space-y-6">
         
         {/* Focus Hub Layout */}
-        <div className="grid lg:grid-cols-[1fr_0.6fr] gap-6">
+        <div className="grid lg:grid-cols-[1fr_0.6fr_0.4fr] gap-6">
           
           {/* Left Section: Video + Motivation Panel */}
           <div className="space-y-6">
@@ -397,6 +400,13 @@ export default function Dashboard() {
                 </div>
               </CardContent>
             </Card>
+          </div>
+
+          {/* Right Section: Multi-Widget Panel */}
+          <div className="space-y-4 hidden lg:block">
+            <QuickActionsPanel />
+            <DailyProgressPanel />
+            <InspirationCorner />
           </div>
         </div>
 
