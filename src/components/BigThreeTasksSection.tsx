@@ -390,6 +390,94 @@ export default function BigThreeTasksSection() {
         </div>
 
 
+        {/* Pet Stage Display */}
+        <div className="text-center p-8 bg-gradient-to-br from-background to-muted/30 rounded-3xl border-2 border-border/50 shadow-lg relative overflow-hidden">
+          {/* Special Effects */}
+          {completedCount > 0 && (
+            <div className="absolute inset-0 pointer-events-none">
+              {(() => {
+                const effects = {
+                  unicorn: ["🌈", "✨", "⭐", "💫"],
+                  dragon: ["🔥", "⚡", "💥", "🌟"],
+                  cat: ["💕", "🐾", "✨", "💖"],
+                  dog: ["❤️", "🌟", "⭐", "💫"],
+                  rabbit: ["🌸", "🌺", "✨", "💕"],
+                  fox: ["🍂", "✨", "🌟", "💫"],
+                  panda: ["🎋", "💚", "✨", "🌟"],
+                  penguin: ["❄️", "💎", "⭐", "✨"],
+                  owl: ["🌙", "📚", "✨", "🌟"],
+                  hamster: ["🌻", "💫", "⭐", "✨"]
+                };
+                const animalEffects = effects[selectedAnimal.id as keyof typeof effects] || effects.unicorn;
+                return animalEffects.slice(0, completedCount).map((effect, i) => (
+                  <div
+                    key={i}
+                    className="absolute text-lg animate-bounce"
+                    style={{
+                      left: `${15 + i * 20}%`,
+                      top: `${10 + i * 15}%`,
+                      animationDelay: `${i * 0.5}s`,
+                      animationDuration: "2s"
+                    }}
+                  >
+                    {effect}
+                  </div>
+                ));
+              })()}
+            </div>
+          )}
+          
+          <div className="mb-4 relative">
+            <div className={`${petStage === 0 ? 'text-6xl' : petStage === 1 ? 'text-7xl animate-bounce' : petStage === 2 ? 'text-8xl animate-pulse' : 'text-9xl animate-bounce'} mb-2 transition-all duration-500`}>
+              {selectedAnimal.stages[petStage]}
+            </div>
+            
+            {completedCount > 0 && (
+              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 text-xl">
+                <span className="text-primary">◡ ◡</span>
+              </div>
+            )}
+          </div>
+          
+          <h3 className="text-xl font-bold text-foreground mb-2">
+            {petStage === 0 ? "Sleeping Baby" : petStage === 1 ? "Awake Baby" : petStage === 2 ? "Growing Strong" : "Fully Grown Magical"}
+          </h3>
+          
+          <p className="text-muted-foreground text-sm mb-2 font-medium">
+            {completedCount === 0 ? `${selectedAnimal.name} is sleeping... zzz 💤` : 
+             completedCount === 1 ? `${selectedAnimal.name} is awakening! Ready to grow! ✨` :
+             completedCount === 2 ? `${selectedAnimal.name} is getting stronger! 💪` : 
+             `${selectedAnimal.name} has reached maximum power! 🌟`}
+          </p>
+          
+          <div className="text-muted-foreground/70 text-xs mb-3">
+            {completedCount}/3 tasks completed
+          </div>
+          
+          {/* Progress bar */}
+          <div className="w-full bg-muted rounded-full h-3 overflow-hidden">
+            <div 
+              className="bg-gradient-to-r from-primary to-primary/80 h-full rounded-full transition-all duration-700 ease-out relative"
+              style={{ width: `${(completedCount / 3) * 100}%` }}
+            >
+              {completedCount > 0 && (
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse"></div>
+              )}
+            </div>
+          </div>
+          
+          {completedCount === 3 && (
+            <div className="mt-4 animate-bounce">
+              <div className="text-sm text-primary font-semibold">
+                Perfect day achieved! ✨
+              </div>
+              <div className="text-xs text-muted-foreground mt-1">
+                Your {selectedAnimal.name.toLowerCase()} is absolutely magical! 💕
+              </div>
+            </div>
+          )}
+        </div>
+
         {/* Progress Graph */}
         <TaskProgressGraph completedCount={completedCount} totalTasks={3} />
 
