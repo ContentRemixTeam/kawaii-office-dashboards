@@ -76,7 +76,7 @@ export default function BreakPlayer() {
 
   const handleVideoError = (errorCode: number) => {
     console.error("YouTube video error:", errorCode);
-    toast.error("Video unavailable. Try another option.");
+    toast.error("This video isn't available, try another.");
   };
 
   return (
@@ -159,9 +159,6 @@ export default function BreakPlayer() {
                       className="h-auto p-3 flex flex-col items-start text-left"
                     >
                       <div className="font-medium text-sm">{preset.title}</div>
-                      {preset.duration && (
-                        <div className="text-xs opacity-70 mt-1">{preset.duration}</div>
-                      )}
                     </Button>
                   ))}
                 </div>

@@ -1,10 +1,9 @@
-// Break Room YouTube presets organized by category
+// Break Room YouTube presets - Curated and verified videos
 
 export interface BreakPreset {
   key: string;
   title: string;
-  id: string;        // YouTube video ID
-  duration?: string; // e.g., "5 min"
+  id: string;        // YouTube video ID  
 }
 
 export interface BreakCategory {
@@ -16,6 +15,42 @@ export interface BreakCategory {
   presets: BreakPreset[];
 }
 
+// Exact curated YouTube video presets as requested
+export const BREAKROOM_PRESETS = {
+  pepTalk: [
+    { title: "Mel Robbins – Quick Pep Talk", videoId: "5Dqtu0X-gCE" },
+    { title: "You Got This Motivation", videoId: "2Lz0VOltZKA" },
+    { title: "5-Min Confidence Boost", videoId: "d-dlbz3zGWA" }
+  ],
+  meditation: [
+    { title: "5-Minute Breathing Meditation", videoId: "inpok4MKVLM" },
+    { title: "Quick Focus Meditation", videoId: "ZToicYcHIOU" },
+    { title: "Calm Mind Reset", videoId: "O-6f5wQXSu8" }
+  ],
+  stretch: [
+    { title: "Desk Stretches – 5 Minutes", videoId: "EaTf1BB7hi0" },
+    { title: "Stretch Break for Focus", videoId: "2L2lnxIcNmo" },
+    { title: "Seated Office Stretches", videoId: "XCIviBT3Txc" }
+  ],
+  shortWorkout: [
+    { title: "5-Minute Office Workout", videoId: "ml6cT4AZdqI" },
+    { title: "Quick Cardio Blast", videoId: "mlU6D3LRJ7s" },
+    { title: "7-Min Energizer", videoId: "2pLT-olgUJs" }
+  ],
+  eftTapping: [
+    { title: "Tapping for Stress Relief", videoId: "ml6WkJtXWlI" },
+    { title: "EFT for Anxiety", videoId: "pAclBdj20ZU" },
+    { title: "Quick Focus Tapping", videoId: "U3tY3Q_njG8" }
+  ],
+  danceParty: [
+    { title: "Happy Dance Break Song", videoId: "RU9nF-cUwTU" },
+    { title: "Lofi Dance Energy", videoId: "qCLV0Iaq4Wg" },
+    { title: "Feel Good 5-Minute Dance", videoId: "hr6FfGJz0p8" },
+    { title: "Longer Energy Boost Dance Mix", videoId: "t59GJ_rXCAM" }
+  ]
+};
+
+// Convert to the expected format for the UI
 export const BREAK_CATEGORIES: BreakCategory[] = [
   {
     key: 'pep_talk',
@@ -23,12 +58,11 @@ export const BREAK_CATEGORIES: BreakCategory[] = [
     emoji: '🎤',
     color: 'bg-gradient-to-br from-pink-100 to-pink-200 dark:from-pink-900/20 dark:to-pink-800/20',
     description: 'Quick motivational boosts',
-    presets: [
-      { key: 'you_got_this', title: 'You Got This!', id: 'KxGRhd_iWuE', duration: '3 min' },
-      { key: 'growth_mindset', title: 'Growth Mindset', id: 'hiiEeMN7vbQ', duration: '4 min' },
-      { key: 'confidence_boost', title: 'Confidence Boost', id: 'ZXsQAXx_ao0', duration: '5 min' },
-      { key: 'daily_affirmations', title: 'Daily Affirmations', id: 'KO0rDbkXw8o', duration: '10 min' }
-    ]
+    presets: BREAKROOM_PRESETS.pepTalk.map((preset, index) => ({
+      key: `pep_talk_${index}`,
+      title: preset.title,
+      id: preset.videoId
+    }))
   },
   {
     key: 'meditation',
@@ -36,12 +70,11 @@ export const BREAK_CATEGORIES: BreakCategory[] = [
     emoji: '🧘',
     color: 'bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/20 dark:to-blue-800/20',
     description: 'Quick mindful moments',
-    presets: [
-      { key: 'breathing_focus', title: 'Breathing Focus', id: 'ZToicYcHIOU', duration: '5 min' },
-      { key: 'body_scan', title: 'Body Scan', id: 'O-6f5wQXSu8', duration: '10 min' },
-      { key: 'stress_relief', title: 'Stress Relief', id: 'inpok4MKVLM', duration: '8 min' },
-      { key: 'mindful_moment', title: 'Mindful Moment', id: 'cEqZthCaMpo', duration: '3 min' }
-    ]
+    presets: BREAKROOM_PRESETS.meditation.map((preset, index) => ({
+      key: `meditation_${index}`,
+      title: preset.title,
+      id: preset.videoId
+    }))
   },
   {
     key: 'stretch',
@@ -49,12 +82,11 @@ export const BREAK_CATEGORIES: BreakCategory[] = [
     emoji: '🧍',
     color: 'bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900/20 dark:to-green-800/20',
     description: 'Desk-friendly movement',
-    presets: [
-      { key: 'desk_stretch', title: 'Desk Stretch', id: 'RqcOCBb4arc', duration: '7 min' },
-      { key: 'shoulder_rolls', title: 'Shoulder Release', id: 'xFjf4B8FjS4', duration: '5 min' },
-      { key: 'neck_relief', title: 'Neck Relief', id: 'S9nGjjIhZko', duration: '6 min' },
-      { key: 'posture_reset', title: 'Posture Reset', id: 'FtvGaR6haRk', duration: '8 min' }
-    ]
+    presets: BREAKROOM_PRESETS.stretch.map((preset, index) => ({
+      key: `stretch_${index}`,
+      title: preset.title,
+      id: preset.videoId
+    }))
   },
   {
     key: 'workout',
@@ -62,12 +94,11 @@ export const BREAK_CATEGORIES: BreakCategory[] = [
     emoji: '💪',
     color: 'bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900/20 dark:to-orange-800/20',
     description: 'Quick energizers',
-    presets: [
-      { key: 'desk_cardio', title: 'Desk Cardio', id: 'Eg8B3iMKOuI', duration: '5 min' },
-      { key: 'light_yoga', title: 'Office Yoga', id: 'M-8LCs8IXNS', duration: '10 min' },
-      { key: 'hiit_quick', title: '5-Min HIIT', id: 'Nz5QGCgF3WE', duration: '5 min' },
-      { key: 'energizer', title: 'Energy Boost', id: 'sTANio_2E0Q', duration: '7 min' }
-    ]
+    presets: BREAKROOM_PRESETS.shortWorkout.map((preset, index) => ({
+      key: `workout_${index}`,
+      title: preset.title,
+      id: preset.videoId
+    }))
   },
   {
     key: 'eft_tapping',
@@ -75,12 +106,11 @@ export const BREAK_CATEGORIES: BreakCategory[] = [
     emoji: '✋',
     color: 'bg-gradient-to-br from-purple-100 to-purple-200 dark:from-purple-900/20 dark:to-purple-800/20',
     description: 'Emotional freedom technique',
-    presets: [
-      { key: 'stress_release', title: 'Stress Release', id: 'PcGIeWRyOhE', duration: '8 min' },
-      { key: 'focus_tapping', title: 'Focus Tapping', id: 'xtDQlXd9u7U', duration: '6 min' },
-      { key: 'anxiety_calm', title: 'Calm Anxiety', id: 'vps_3lADyYw', duration: '10 min' },
-      { key: 'confidence_tap', title: 'Confidence Tap', id: 'KO0rDbkXw8o', duration: '7 min' }
-    ]
+    presets: BREAKROOM_PRESETS.eftTapping.map((preset, index) => ({
+      key: `eft_tapping_${index}`,
+      title: preset.title,
+      id: preset.videoId
+    }))
   },
   {
     key: 'dance_party',
@@ -88,12 +118,11 @@ export const BREAK_CATEGORIES: BreakCategory[] = [
     emoji: '🎶',
     color: 'bg-gradient-to-br from-yellow-100 to-yellow-200 dark:from-yellow-900/20 dark:to-yellow-800/20',
     description: 'Shake out the energy',
-    presets: [
-      { key: 'happy_pop', title: 'Happy Pop Mix', id: 'ZbZSe6N_BXs', duration: '4 min' },
-      { key: 'lofi_dance', title: 'Lofi Dance Beats', id: 'lTRiuFIWV54', duration: '3 min' },
-      { key: 'feel_good', title: 'Feel Good Vibes', id: 'ru0K8uYEZWw', duration: '5 min' },
-      { key: 'movement_fun', title: 'Movement Fun', id: 'KI8H6wGzAKo', duration: '6 min' }
-    ]
+    presets: BREAKROOM_PRESETS.danceParty.map((preset, index) => ({
+      key: `dance_party_${index}`,
+      title: preset.title,
+      id: preset.videoId
+    }))
   }
 ];
 
