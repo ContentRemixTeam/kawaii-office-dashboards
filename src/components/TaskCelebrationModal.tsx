@@ -4,9 +4,12 @@
 import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { X } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { X, Trophy } from 'lucide-react';
 import { storage } from '@/lib/storage';
 import { z } from 'zod';
+import { awardTrophy } from '@/lib/trophySystem';
+import { getDailyData, setDailyData } from '@/lib/storage';
 
 interface TaskCelebrationModalProps {
   isOpen: boolean;
@@ -57,6 +60,8 @@ export default function TaskCelebrationModal({
 }: TaskCelebrationModalProps) {
   const [settings, setSettings] = useState({ showGifs: true, playSound: true });
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [microWin, setMicroWin] = useState("");
+  const [hasSubmitted, setHasSubmitted] = useState(false);
   
   useEffect(() => {
     // Load celebration settings
@@ -76,10 +81,37 @@ export default function TaskCelebrationModal({
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
+  const handleSubmitMicroWin = () => {
+    if (!microWin.trim()) return;
+    
+    // Get current wins data
+    const winsData = getDailyData("fm_wins_v1", { wins: [] });
+    
+    // Add new micro win
+    const newWin = {
+      id: Date.now().toString(),
+      text: microWin.trim(),
+      timestamp: new Date().toISOString(),
+      category: 'task-completion'
+    };
+    
+    const updatedWins = [...winsData.wins, newWin];
+    setDailyData("fm_wins_v1", { wins: updatedWins });
+    
+    // Award trophy
+    awardTrophy(1);
+    
+    setHasSubmitted(true);
+    setMicroWin("");
+    
+    // Auto-close after short delay
+    setTimeout(onClose, 1500);
+  };
+
   useEffect(() => {
     if (isOpen) {
-      // Auto-dismiss after 2.5 seconds
-      const timer = setTimeout(onClose, 2500);
+      setMicroWin("");
+      setHasSubmitted(false);
       
       // Play celebration sound if enabled
       if (settings.playSound) {
@@ -93,10 +125,8 @@ export default function TaskCelebrationModal({
           // Ignore audio errors
         }
       }
-      
-      return () => clearTimeout(timer);
     }
-  }, [isOpen, settings.playSound, onClose]);
+  }, [isOpen, settings.playSound]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -155,13 +185,57 @@ export default function TaskCelebrationModal({
             )}
           </div>
           
-          <h3 className="text-lg font-semibold text-foreground mb-2">
-            Nice! Task complete 🎉
-          </h3>
-          
-          <p className="text-sm text-muted-foreground">
-            {message}
-          </p>
+          {!hasSubmitted ? (
+            <>
+              <h3 className="text-lg font-semibold text-foreground mb-2">
+                Task Complete! 🎉
+              </h3>
+              
+              <p className="text-sm text-muted-foreground mb-4">
+                Celebrate your micro win to earn a trophy! 🏆
+              </p>
+              
+              <div className="space-y-3">
+                <Input
+                  placeholder="What are you celebrating? (e.g., Made progress on my project!)"
+                  value={microWin}
+                  onChange={(e) => setMicroWin(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSubmitMicroWin()}
+                  className="text-sm"
+                  maxLength={200}
+                />
+                
+                <div className="flex gap-2">
+                  <Button 
+                    onClick={handleSubmitMicroWin}
+                    disabled={!microWin.trim()}
+                    className="flex-1 bg-primary hover:bg-primary/90"
+                    size="sm"
+                  >
+                    <Trophy className="w-4 h-4 mr-2" />
+                    Celebrate & Earn Trophy
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    onClick={onClose}
+                    size="sm"
+                  >
+                    Skip
+                  </Button>
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <h3 className="text-lg font-semibold text-foreground mb-2">
+                Trophy Earned! 🏆
+              </h3>
+              
+              <p className="text-sm text-muted-foreground">
+                Great work! Your celebration has been saved.
+              </p>
+            </>
+          )}
         </div>
       </Card>
     </div>

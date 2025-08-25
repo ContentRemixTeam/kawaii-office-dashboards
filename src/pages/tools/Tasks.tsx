@@ -9,6 +9,7 @@ import { K_TASKS } from "@/lib/topbar.readers";
 import { useToast } from "@/hooks/use-toast";
 import ToolShell from "@/components/ToolShell";
 import CelebrationModal from "@/components/CelebrationModal";
+import TaskCelebrationModal from "@/components/TaskCelebrationModal";
 import { readTodayIntention } from "@/lib/dailyFlow";
 
 interface TaskData {
@@ -335,6 +336,8 @@ export default function Tasks() {
   });
   const [showConfetti, setShowConfetti] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [showTaskCelebration, setShowTaskCelebration] = useState(false);
+  const [completedTaskIndex, setCompletedTaskIndex] = useState(0);
 
   useEffect(() => {
     const data = getDailyData("fm_tasks_v1", {
@@ -414,12 +417,10 @@ export default function Tasks() {
     // Show individual task completion celebration
     if (newCompleted[index] && !taskData.completed[index]) {
       const animal = ANIMALS.find(a => a.id === taskData.selectedAnimal) || ANIMALS[0];
-      const encouragementIndex = Math.min(completedCount - 1, animal.encouragement.length - 1);
       
-      toast({
-        title: animal.encouragement[encouragementIndex],
-        description: `Task ${index + 1} completed! Your ${animal.name.toLowerCase()} is growing! ✨`
-      });
+      // Show the task celebration modal instead of just a toast
+      setCompletedTaskIndex(index);
+      setShowTaskCelebration(true);
     }
     
     // Show full completion celebration
@@ -571,6 +572,13 @@ export default function Tasks() {
           animalName={selectedAnimal.name}
           animalEmoji={selectedAnimal.emoji}
           onReset={resetForNewRound}
+        />
+        
+        <TaskCelebrationModal
+          isOpen={showTaskCelebration}
+          onClose={() => setShowTaskCelebration(false)}
+          petType={taskData.selectedAnimal}
+          taskIndex={completedTaskIndex}
         />
       </div>
     </ToolShell>
