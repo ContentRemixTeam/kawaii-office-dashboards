@@ -15,6 +15,8 @@ import { K_TASKS } from "@/lib/topbar.readers";
 import focusTimer from "@/lib/focusTimer";
 import { useGiphyCelebration } from "@/hooks/useGiphyCelebration";
 import GiphyCelebration from "@/components/GiphyCelebration";
+import { useCelebration } from "@/hooks/useCelebration";
+import { CelebrationPopup } from "@/components/CelebrationPopup";
 import TaskCelebrationModal from "./TaskCelebrationModal";
 import AllTasksCompletedModal from "./AllTasksCompletedModal";
 import TaskProgressGraph from "./TaskProgressGraph";
@@ -92,12 +94,20 @@ const ANIMALS = [
 export default function BigThreeTasksSection() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  // Celebration hooks - both legacy and new system
+  const { 
+    currentCelebration: giphyCelebration, 
+    celebrateTask: celebrateGiphyTask, 
+    celebrateAllTasks: celebrateGiphyAllTasks, 
+    clearCelebration: clearGiphyCelebration 
+  } = useGiphyCelebration();
+  
   const { 
     currentCelebration, 
     celebrateTask, 
-    celebrateAllTasks, 
-    clearCelebration 
-  } = useGiphyCelebration();
+    clearCelebration, 
+    isEnabled: celebrationEnabled 
+  } = useCelebration();
   
   const [taskData, setTaskData] = useState<TaskData>({
     tasks: ["", "", ""],
@@ -258,8 +268,13 @@ export default function BigThreeTasksSection() {
     if (isNowCompleted) {
       const taskNumber = index + 1;
       
-      // Trigger GIPHY celebration
-      celebrateTask(taskData.selectedAnimal, taskNumber);
+      // Show new safe celebration system
+      if (celebrationEnabled) {
+        celebrateTask(taskData.selectedAnimal as any);
+      }
+      
+      // Trigger legacy GIPHY celebration
+      celebrateGiphyTask(taskData.selectedAnimal, taskNumber);
       
       if (getCelebrationsEnabled()) {
         toast({
@@ -282,8 +297,8 @@ export default function BigThreeTasksSection() {
       
       if (allCompleted && !wasAllCompleted) {
         console.log("BigThreeTasksSection: All tasks completed! Showing modal");
-        // Trigger GIPHY celebration for all tasks
-        celebrateAllTasks(taskData.selectedAnimal);
+        // Trigger legacy GIPHY celebration for all tasks
+        celebrateGiphyAllTasks(taskData.selectedAnimal);
         // Show the all-tasks-completed modal
         setShowAllTasksCompleted(true);
       }
@@ -525,10 +540,18 @@ export default function BigThreeTasksSection() {
         petEmoji={selectedAnimal.emoji}
       />
       
-      {/* GIPHY Celebration Component */}
-      <GiphyCelebration
-        payload={currentCelebration}
+      {/* Safe Celebration System */}
+      <CelebrationPopup
+        gif={currentCelebration?.gif || null}
+        customMessage={currentCelebration?.customMessage}
+        isVisible={!!currentCelebration}
         onClose={clearCelebration}
+      />
+      
+      {/* Legacy GIPHY Celebration Component */}
+      <GiphyCelebration
+        payload={giphyCelebration}
+        onClose={clearGiphyCelebration}
       />
     </>
   );

@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Palette, RotateCcw, Save, Upload } from "lucide-react";
 import ToolShell from "@/components/ToolShell";
-import { safeGet, safeSet, getCelebrationsEnabled, setCelebrationsEnabled, getEncouragementsEnabled, setEncouragementsEnabled, getHomeTitle, setHomeTitle, getHomeSubtitle, setHomeSubtitle, getGiphyCelebrationsEnabled, setGiphyCelebrationsEnabled } from "@/lib/storage";
+import { safeGet, safeSet, getCelebrationsEnabled, setCelebrationsEnabled, getEncouragementsEnabled, setEncouragementsEnabled, getHomeTitle, setHomeTitle, getHomeSubtitle, setHomeSubtitle, getGiphyCelebrationsEnabled, setGiphyCelebrationsEnabled, getCelebrationSettings, setCelebrationSettings, CelebrationSettings } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 import { loadHero, saveHero, OFFICE_IMAGES, HeroState } from "@/lib/heroStore";
 
@@ -259,6 +259,7 @@ export default function Theme() {
   const [celebrationsEnabledState, setCelebrationsEnabledState] = useState(getCelebrationsEnabled());
   const [encouragementsEnabledState, setEncouragementsEnabledState] = useState(getEncouragementsEnabled());
   const [giphyCelebrationsEnabledState, setGiphyCelebrationsEnabledState] = useState(getGiphyCelebrationsEnabled());
+  const [celebrationSettings, setCelebrationSettingsState] = useState<CelebrationSettings>(getCelebrationSettings());
   const [homeTitleState, setHomeTitleState] = useState(getHomeTitle());
   const [homeSubtitleState, setHomeSubtitleState] = useState(getHomeSubtitle());
   const [heroState, setHeroState] = useState<HeroState>(loadHero());
@@ -1064,13 +1065,74 @@ export default function Theme() {
                 />
               </div>
               
+              {/* New Safe Celebration Settings */}
+              <div className="flex items-center justify-between p-4 border border-border rounded-lg">
+                <div className="space-y-1">
+                  <Label htmlFor="safe-celebrations-toggle" className="text-sm font-medium">
+                    🎉 Safe Celebration Popups
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Show curated, local GIF celebrations when completing tasks and focus sessions
+                  </p>
+                </div>
+                <Switch
+                  id="safe-celebrations-toggle"
+                  checked={celebrationSettings.enabled}
+                  onCheckedChange={(checked) => {
+                    const updated = { ...celebrationSettings, enabled: checked };
+                    setCelebrationSettingsState(updated);
+                    setCelebrationSettings({ enabled: checked });
+                  }}
+                />
+              </div>
+              
+              <div className="flex items-center justify-between p-4 border border-border rounded-lg">
+                <div className="space-y-1">
+                  <Label htmlFor="celebration-sound-toggle" className="text-sm font-medium">
+                    🔊 Celebration Sounds
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Play gentle chime sounds during celebrations
+                  </p>
+                </div>
+                <Switch
+                  id="celebration-sound-toggle"
+                  checked={celebrationSettings.soundEnabled}
+                  onCheckedChange={(checked) => {
+                    const updated = { ...celebrationSettings, soundEnabled: checked };
+                    setCelebrationSettingsState(updated);
+                    setCelebrationSettings({ soundEnabled: checked });
+                  }}
+                />
+              </div>
+              
+              <div className="flex items-center justify-between p-4 border border-border rounded-lg">
+                <div className="space-y-1">
+                  <Label htmlFor="minimal-mode-toggle" className="text-sm font-medium">
+                    🔇 Minimal Mode
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Hide all celebration popups (still logs achievements)
+                  </p>
+                </div>
+                <Switch
+                  id="minimal-mode-toggle"
+                  checked={celebrationSettings.minimalMode}
+                  onCheckedChange={(checked) => {
+                    const updated = { ...celebrationSettings, minimalMode: checked };
+                    setCelebrationSettingsState(updated);
+                    setCelebrationSettings({ minimalMode: checked });
+                  }}
+                />
+              </div>
+
               <div className="flex items-center justify-between p-4 border border-border rounded-lg">
                 <div className="space-y-1">
                   <Label htmlFor="giphy-toggle" className="text-sm font-medium">
-                    🎉 GIPHY Celebration Popups
+                    🎉 Legacy GIPHY Popups (Deprecated)
                   </Label>
                   <p className="text-xs text-muted-foreground">
-                    Show animated GIF celebrations when completing tasks and focus sessions
+                    Old GIPHY system - use Safe Celebrations instead
                   </p>
                 </div>
                 <Switch

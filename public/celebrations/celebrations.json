@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "pets": {
+    "unicorn": [
+      { "id": "uni01", "url": "/gifs/unicorn_celebrate.gif", "msg": "Sparkle power! ✨🦄", "credit": "internal" }
+    ],
+    "dragon": [
+      { "id": "drg01", "url": "/gifs/dragon_fireworks.gif", "msg": "You're breathing fire into your goals! 🔥🐉", "credit": "internal" }
+    ],
+    "cat": [
+      { "id": "cat01", "url": "/gifs/cat_happy.gif", "msg": "Purr-fect move! 😺", "credit": "internal" }
+    ],
+    "dog": [
+      { "id": "dog01", "url": "/gifs/dog_party.gif", "msg": "Such focus. Much wow. 🐶", "credit": "internal" }
+    ],
+    "bunny": [
+      { "id": "bun01", "url": "/gifs/bunny_jump.gif", "msg": "Bunny boost! 🐇", "credit": "internal" }
+    ],
+    "fox": [
+      { "id": "fox01", "url": "/gifs/fox_spin.webp", "msg": "Sly and swift! 🦊", "credit": "internal" }
+    ],
+    "panda": [
+      { "id": "pan01", "url": "/gifs/panda_clap.webp", "msg": "Panda applause! 🐼👏", "credit": "internal" }
+    ],
+    "penguin": [
+      { "id": "png01", "url": "/gifs/penguin_slide.webp", "msg": "Slide into success! 🐧", "credit": "internal" }
+    ],
+    "owl": [
+      { "id": "owl01", "url": "/gifs/owl_wink.webp", "msg": "Wise win! 🦉", "credit": "internal" }
+    ],
+    "hamster": [
+      { "id": "ham01", "url": "/gifs/hamster_bounce.webp", "msg": "Tiny but mighty! 🐹", "credit": "internal" }
+    ],
+    "general": [
+      { "id": "gen01", "url": "/gifs/celebrate_generic.gif", "msg": "Nice! Keep going 🎉", "credit": "internal" },
+      { "id": "gen02", "url": "/gifs/balloons.webp", "msg": "You did it! 🎈", "credit": "internal" }
+    ]
+  },
+  "occasions": {
+    "taskComplete": ["unicorn","dragon","cat","dog","bunny","fox","panda","penguin","owl","hamster","general"],
+    "pomodoroComplete": ["general","unicorn","dragon"],
+    "microWinLogged": ["general"]
+  },
+  "blockedKeywords": ["beer","wine","whiskey","alcohol","drunk","sexy","violence","gun","blood"]
+}

@@ -254,7 +254,47 @@ export function setHomeSubtitle(subtitle: string): void {
   safeSet('fm_home_subtitle_v1', subtitle);
 }
 
-// GIPHY celebrations setting
+// Celebration settings
+export interface CelebrationSettings {
+  enabled: boolean;
+  soundEnabled: boolean;
+  throttleSeconds: number;
+  minimalMode: boolean;
+}
+
+export function getCelebrationSettings(): CelebrationSettings {
+  const defaults: CelebrationSettings = {
+    enabled: true,
+    soundEnabled: false,
+    throttleSeconds: 10,
+    minimalMode: false
+  };
+
+  try {
+    const stored = localStorage.getItem('fm_settings_v2');
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      return { ...defaults, ...parsed.encouragement };
+    }
+  } catch (error) {
+    console.warn('Failed to load celebration settings:', error);
+  }
+  
+  return defaults;
+}
+
+export function setCelebrationSettings(settings: Partial<CelebrationSettings>): void {
+  try {
+    const stored = localStorage.getItem('fm_settings_v2') || '{}';
+    const parsed = JSON.parse(stored);
+    parsed.encouragement = { ...getCelebrationSettings(), ...settings };
+    localStorage.setItem('fm_settings_v2', JSON.stringify(parsed));
+  } catch (error) {
+    console.warn('Failed to save celebration settings:', error);
+  }
+}
+
+// Legacy GIPHY celebrations setting (kept for backward compatibility)
 export function getGiphyCelebrationsEnabled(): boolean {
   try {
     const stored = localStorage.getItem("fm_giphy_celebrations_enabled");
