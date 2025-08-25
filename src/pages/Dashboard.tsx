@@ -101,6 +101,13 @@ const Dashboard = () => {
   useEffect(() => {
     const unsubscribe = onChanged(keys => {
       console.log('Dashboard - Changed keys:', keys);
+      console.log('Dashboard - Current state before update:', {
+        taskData,
+        petData,
+        trophyCount,
+        earnedAnimals
+      });
+      
       if (keys.includes("fm_vision_v1")) {
         setVisionImages(readVisionThumbs(4));
       }
@@ -110,16 +117,21 @@ const Dashboard = () => {
         setTrophyCount(newTrophyCount);
       }
       if (keys.includes("fm_tasks_v1")) {
+        console.log('Dashboard - Updating task and pet data...');
         const newPetData = readPetStage();
         const taskFallback = { tasks: ["", "", ""], completed: [false, false, false], selectedAnimal: "unicorn" };
         const newTaskData = getDailyData("fm_tasks_v1", taskFallback);
         console.log('Dashboard - Updated pet data:', newPetData);
         console.log('Dashboard - Updated task data:', newTaskData);
+        console.log('Dashboard - Raw localStorage fm_tasks_v1:', localStorage.getItem('fm_tasks_v1:' + new Date().toISOString().split('T')[0]));
         setPetData(newPetData);
         setTaskData(newTaskData);
       }
       if (keys.includes("fm_daily_intention_v1")) {
-        setTodayIntention(readTodayIntention());
+        console.log('Dashboard - Updating intention data...');
+        const newIntention = readTodayIntention();
+        console.log('Dashboard - New intention:', newIntention);
+        setTodayIntention(newIntention);
       }
       if (keys.includes("fm_ambient_v1")) {
         setAmbientState(loadAmbient());

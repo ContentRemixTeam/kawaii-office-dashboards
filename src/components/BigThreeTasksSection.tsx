@@ -210,6 +210,8 @@ export default function BigThreeTasksSection() {
 
   const saveTaskData = (updates: Partial<TaskData>) => {
     const newData = { ...taskData, ...updates };
+    console.log('[BigThreeTasksSection] Saving task data:', newData);
+    
     setTaskData(newData);
     setDailyData("fm_tasks_v1", {
       tasks: newData.tasks,
@@ -219,7 +221,12 @@ export default function BigThreeTasksSection() {
       roundsCompleted: 0,
       totalTasksCompleted: newData.completed.filter(Boolean).length
     });
+    
+    console.log('[BigThreeTasksSection] Emitting change event for K_TASKS:', K_TASKS);
     emitChanged([K_TASKS]);
+    
+    // Also emit storage event for cross-tab sync
+    window.dispatchEvent(new Event('storage'));
   };
 
   const handleTaskChange = (index: number, value: string) => {
