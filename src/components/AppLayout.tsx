@@ -2,6 +2,7 @@ import React from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import TopControlBar from "./TopControlBar";
+import BackgroundManager from "./BackgroundManager";
 import { Menu } from "lucide-react";
 
 interface AppLayoutProps {
@@ -14,7 +15,8 @@ export default function AppLayout({ children }: AppLayoutProps) {
       defaultOpen={false}
       className="min-h-screen"
     >
-      <div className="flex min-h-screen w-full bg-gradient-background">
+      <BackgroundManager />
+      <div className="flex min-h-screen w-full">
         <AppSidebar />
         
         <div className="flex-1 flex flex-col min-h-screen">

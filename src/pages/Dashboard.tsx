@@ -8,7 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import BackgroundManager from "@/components/BackgroundManager";
+
 import BigThreeTasksSection from "@/components/BigThreeTasksSection";
 import YouTubeAmbient from "@/components/YouTubeAmbient";
 import QuickActionsPanel from "@/components/QuickActionsPanel";
@@ -139,7 +139,6 @@ export default function Dashboard() {
 
   return (
     <main className="min-h-screen relative">
-      {!ambientSettings.useAsBackground && <BackgroundManager />}
       
       {/* Top spacing for fixed bar */}
       <div className="h-16" />
