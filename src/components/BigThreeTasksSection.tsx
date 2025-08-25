@@ -143,9 +143,12 @@ export default function BigThreeTasksSection() {
       const intention = readTodayIntention();
       const allTasksEmpty = data.tasks.every((task: string) => task.trim() === "");
       
-      if (intention && allTasksEmpty) {
-        const intentionText = `Feel ${intention.feel}`;
-        const newTasks = [intentionText, "", ""];
+      if (intention && allTasksEmpty && intention.top3?.length) {
+        const newTasks = [
+          intention.top3[0] || "",
+          intention.top3[1] || "", 
+          intention.top3[2] || ""
+        ];
         setTaskData({
           tasks: newTasks,
           completed: data.completed,

@@ -314,9 +314,17 @@ const Dashboard = () => {
                         Today's Intention
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        {todayIntention?.feel ? 
-                          `Feel ${todayIntention.feel}` 
-                          : "Set your intention"
+                        {todayIntention ? (
+                          <div className="space-y-1">
+                            <div>Feel: {todayIntention.feel}</div>
+                            {todayIntention.focus && (
+                              <div>Focus: {todayIntention.focus}</div>
+                            )}
+                            {todayIntention.top3?.length > 0 && (
+                              <div>{todayIntention.top3.length} tasks set</div>
+                            )}
+                          </div>
+                        ) : "Set your intention"
                         }
                       </div>
                     </CardContent>
