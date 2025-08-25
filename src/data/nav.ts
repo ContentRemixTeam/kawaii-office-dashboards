@@ -20,27 +20,23 @@ export const NAV_SECTIONS: NavSection[] = [
     items: [
       { label: "Task Pets", href: "/tools/tasks", emoji: "🐾" },
       { label: "Energy Word", href: "/tools/energy", emoji: "⚡" },
-      { label: "Affirmations", href: "/tools/affirmations", emoji: "🃏" },
       { label: "Habit Garden", href: "/tools/habits", emoji: "🌿" }
     ]
   },
   {
-    title: "Gamified Tools",
-    emoji: "🎮",
+    title: "Focus Tools", 
+    emoji: "🎯",
     items: [
       { label: "Pomodoro Timer", href: "/tools/focus", emoji: "⏰" },
-      { label: "Beat the Clock", href: "/tools/beat-clock", emoji: "🚀" },
-      { label: "Daily Wins", href: "/tools/wins", emoji: "🏆" },
-      { label: "Money Tracker", href: "/tools/money", emoji: "💰" }
+      { label: "Beat the Clock", href: "/tools/beat-clock", emoji: "🚀" }
     ]
   },
   {
-    title: "Customization",
+    title: "Positivity Hub",
     emoji: "✨",
     items: [
+      { label: "Positivity Cabinet", href: "/tools/positivity-cabinet", emoji: "💖" },
       { label: "Vision Board", href: "/tools/vision", emoji: "🌈" },
-      { label: "Positivity Cabinet", href: "/tools/cabinet", emoji: "📦" },
-      { label: "Future-You Notes", href: "/tools/future", emoji: "💌" },
       { label: "Soundscapes", href: "/tools/sounds", emoji: "🎵" },
       { label: "Theme", href: "/tools/theme", emoji: "🎨" }
     ]

@@ -13,18 +13,14 @@ import focusTimer from "@/lib/focusTimer";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import Tasks from "./pages/tools/Tasks";
-import Cabinet from "./pages/tools/Cabinet";
 import Vision from "./pages/tools/Vision";
 import Sounds from "./pages/tools/Sounds";
-import Affirmations from "./pages/tools/Affirmations";
-import Money from "./pages/tools/Money";
 import Energy from "./pages/tools/Energy";
 import Habits from "./pages/tools/Habits";
-import Wins from "./pages/tools/Wins";
 import Theme from "./pages/tools/Theme";
 import Focus from "./pages/tools/Focus";
 import BeatClock from "./pages/tools/BeatClock";
-import Future from "./pages/tools/Future";
+import PositivityCabinet from "./pages/tools/PositivityCabinet";
 
 const queryClient = new QueryClient();
 
@@ -55,19 +51,14 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/tools/tasks" element={<Tasks />} />
-              <Route path="/tools/cabinet" element={<Cabinet />} />
+              <Route path="/tools/positivity-cabinet" element={<PositivityCabinet />} />
               <Route path="/tools/vision" element={<Vision />} />
               <Route path="/tools/sounds" element={<Sounds />} />
-              <Route path="/tools/affirmations" element={<Affirmations />} />
-              <Route path="/tools/money" element={<Money />} />
               <Route path="/tools/energy" element={<Energy />} />
-              
               <Route path="/tools/habits" element={<Habits />} />
-              <Route path="/tools/wins" element={<Wins />} />
               <Route path="/tools/theme" element={<Theme />} />
               <Route path="/tools/focus" element={<Focus />} />
               <Route path="/tools/beat-clock" element={<BeatClock />} />
-              <Route path="/tools/future" element={<Future />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
