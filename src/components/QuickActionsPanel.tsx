@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
-import { Timer, Target, Sparkles, Music, BookOpen, Trophy } from "lucide-react";
+import { Timer, Target, Sparkles, Music, BookOpen, Trophy, Coffee } from "lucide-react";
 
 export default function QuickActionsPanel() {
   const navigate = useNavigate();
@@ -46,6 +46,14 @@ export default function QuickActionsPanel() {
       onClick: () => navigate('/tools/vision'),
       gradient: "from-orange-500/10 to-orange-600/10",
       iconColor: "text-orange-600"
+    },
+    {
+      icon: Coffee,
+      label: "Take a Break",
+      description: "Mindful break room",
+      onClick: () => navigate('/tools/break-room'),
+      gradient: "from-teal-500/10 to-teal-600/10",
+      iconColor: "text-teal-600"
     },
     {
       icon: Trophy,
