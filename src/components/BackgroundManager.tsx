@@ -1,9 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, memo, useRef } from "react";
 import { loadAmbient } from "@/lib/ambientStore";
 import { loadHero, OFFICE_IMAGES } from "@/lib/heroStore";
 import { getYouTubeId } from "@/lib/youtube";
+import { log } from "@/lib/log";
 
 const BG_KEY = "fm_background_v1";
+const BG_STATE_CACHE_KEY = "fm_background_state_cache_v1";
 
 type BackgroundType = "default" | "solid" | "gradient" | "image" | "youtube";
 
@@ -42,49 +44,77 @@ function loadBackground(): BackgroundState {
 
 function saveBackground(state: BackgroundState) {
   localStorage.setItem(BG_KEY, JSON.stringify(state));
+  // Also cache the current active state
+  localStorage.setItem(BG_STATE_CACHE_KEY, JSON.stringify(state));
   window.dispatchEvent(new CustomEvent("fm:data-changed", { detail: { keys: [BG_KEY] } }));
 }
 
-export default function BackgroundManager() {
-  const [background, setBackground] = useState<BackgroundState>({ type: "default" });
-  const [isActive, setIsActive] = useState(false);
+function loadBackgroundStateCache(): BackgroundState | null {
+  try {
+    const raw = localStorage.getItem(BG_STATE_CACHE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
 
-  useEffect(() => {
-    const updateBackground = () => {
-      console.log("BackgroundManager: Updating background state");
+function saveBackgroundStateCache(state: BackgroundState) {
+  try {
+    localStorage.setItem(BG_STATE_CACHE_KEY, JSON.stringify(state));
+  } catch {
+    // Ignore cache save errors
+  }
+}
+
+const BackgroundManager = memo(function BackgroundManager() {
+  const [background, setBackground] = useState<BackgroundState>(() => {
+    // Initialize from cache to prevent flash to default
+    const cached = loadBackgroundStateCache();
+    return cached || { type: "default" };
+  });
+  const [isActive, setIsActive] = useState(false);
+  const mountTimeRef = useRef(Date.now());
+  const updateCountRef = useRef(0);
+
+  const updateBackground = useCallback(() => {
+    updateCountRef.current += 1;
+    const updateId = updateCountRef.current;
+    
+    log.debug(`BackgroundManager: Update #${updateId} (mounted ${Date.now() - mountTimeRef.current}ms ago)`);
+    
+    try {
       const loadedBg = loadBackground();
       
       // Check if we should use ambient video as background
       const ambient = loadAmbient();
       const hero = loadHero();
       
-      console.log("BackgroundManager: ambient", ambient);
-      console.log("BackgroundManager: hero", hero);
-      console.log("BackgroundManager: loadedBg", loadedBg);
+      log.debug("BackgroundManager: Data loaded", { ambient, hero, loadedBg });
       
       // Determine which background to use with priority order
       let newBackground = loadedBg;
       let shouldBeActive = false;
       
       if (ambient.activeId && ambient.customUrl && ambient.useAsHero) {
-        console.log("BackgroundManager: Setting ambient video as background");
+        log.info("BackgroundManager: Setting ambient video as background");
         newBackground = {
           type: "youtube",
           youtubeUrl: ambient.customUrl
         };
         shouldBeActive = true;
       } else if (hero.kind === "youtube" && hero.youtubeUrl) {
-        console.log("BackgroundManager: Setting hero video as background");
+        log.info("BackgroundManager: Setting hero video as background");
         newBackground = {
           type: "youtube", 
           youtubeUrl: hero.youtubeUrl
         };
         shouldBeActive = true;
       } else if (loadedBg.type !== "default") {
-        console.log("BackgroundManager: Setting custom background");
+        log.info("BackgroundManager: Setting custom background", loadedBg);
         shouldBeActive = true;
       } else {
-        console.log("BackgroundManager: Using default background");
+        log.debug("BackgroundManager: Using default background");
         shouldBeActive = false;
       }
       
@@ -92,34 +122,58 @@ export default function BackgroundManager() {
       setBackground(prevBg => {
         const hasChanged = JSON.stringify(prevBg) !== JSON.stringify(newBackground);
         if (hasChanged) {
-          console.log("BackgroundManager: Background changed from", prevBg, "to", newBackground);
+          log.info(`BackgroundManager: Background changed from`, prevBg, "to", newBackground);
+          // Cache the new state immediately
+          saveBackgroundStateCache(newBackground);
+        } else {
+          log.debug(`BackgroundManager: No background change needed for update #${updateId}`);
         }
-        return newBackground;
+        return hasChanged ? newBackground : prevBg;
       });
-      setIsActive(shouldBeActive);
-    };
+      
+      setIsActive(prevActive => {
+        if (prevActive !== shouldBeActive) {
+          log.info(`BackgroundManager: Activity changed from ${prevActive} to ${shouldBeActive}`);
+        }
+        return shouldBeActive;
+      });
+      
+    } catch (error) {
+      log.error("BackgroundManager: Error during background update", error);
+      // Fallback to cached state if available
+      const cached = loadBackgroundStateCache();
+      if (cached && cached.type !== "default") {
+        log.info("BackgroundManager: Recovering from cache", cached);
+        setBackground(cached);
+        setIsActive(true);
+      }
+    }
+  }, []);
 
-    // Initial load
-    updateBackground();
+  useEffect(() => {
+    log.info("BackgroundManager: Component mounted");
 
-    // Listen for storage changes - be more selective about what triggers updates
+    // Initial load with slight delay to ensure other components are mounted
+    const initialTimeout = setTimeout(updateBackground, 50);
+
+    // Listen for storage changes - be very selective about what triggers updates
     const handleDataChange = (event: CustomEvent) => {
       const keys = event.detail?.keys || [];
       const relevantKeys = [BG_KEY, "fm_ambient_v1", "fm_hero_v1"];
       const hasRelevantChange = keys.some(key => relevantKeys.includes(key));
       
       if (hasRelevantChange) {
-        console.log("BackgroundManager: Relevant storage changed, updating background", keys);
+        log.info("BackgroundManager: Relevant storage changed, updating background", keys);
         updateBackground();
       } else {
-        console.log("BackgroundManager: Ignoring unrelated storage change", keys);
+        log.debug("BackgroundManager: Ignoring unrelated storage change", keys);
       }
     };
 
     const handleStorageChange = (event: StorageEvent) => {
       const relevantKeys = [BG_KEY, "fm_ambient_v1", "fm_hero_v1"];
       if (event.key && relevantKeys.includes(event.key)) {
-        console.log("BackgroundManager: Storage event, updating background", event.key);
+        log.info("BackgroundManager: Storage event, updating background", event.key);
         updateBackground();
       }
     };
@@ -128,10 +182,12 @@ export default function BackgroundManager() {
     window.addEventListener("storage", handleStorageChange);
 
     return () => {
+      clearTimeout(initialTimeout);
+      log.info("BackgroundManager: Component unmounting");
       window.removeEventListener("fm:data-changed", handleDataChange as EventListener);
       window.removeEventListener("storage", handleStorageChange);
     };
-  }, []);
+  }, [updateBackground]);
 
   const getBackgroundStyle = (): React.CSSProperties => {
     switch (background.type) {
@@ -159,12 +215,15 @@ export default function BackgroundManager() {
     if (background.type !== "youtube" || !background.youtubeUrl) return null;
     
     const videoId = getYouTubeId(background.youtubeUrl);
-    if (!videoId) return null;
+    if (!videoId) {
+      log.warn("BackgroundManager: Invalid YouTube URL", background.youtubeUrl);
+      return null;
+    }
 
-    console.log("BackgroundManager: Rendering YouTube background", videoId);
+    log.debug("BackgroundManager: Rendering YouTube background", videoId);
 
     return (
-      <div className="absolute inset-0 overflow-hidden -z-50">
+      <div className="absolute inset-0 overflow-hidden" style={{ zIndex: -100 }}>
         <iframe
           src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&disablekb=1&fs=0&cc_load_policy=0&playsinline=1&enablejsapi=0`}
           className="absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-h-[100vh] min-w-[177.77vh] transform -translate-x-1/2 -translate-y-1/2"
@@ -175,31 +234,42 @@ export default function BackgroundManager() {
             zIndex: -100
           }}
         />
-        <div className="absolute inset-0 bg-black/10 -z-40" />
+        <div className="absolute inset-0 bg-black/10" style={{ zIndex: -99 }} />
       </div>
     );
   };
 
   if (!isActive) {
     // Return default kawaii gradient
+    log.debug("BackgroundManager: Rendering default gradient background");
     return (
       <div 
-        className="fixed inset-0 -z-10"
-        style={{ background: "var(--gradient-background)" }}
+        className="fixed inset-0"
+        style={{ 
+          background: "var(--gradient-background)",
+          zIndex: -100
+        }}
       />
     );
   }
 
+  log.debug("BackgroundManager: Rendering active background", { type: background.type, isActive });
+
   return (
-    <div className="fixed inset-0 -z-50" style={{ zIndex: -100 }}>
+    <div className="fixed inset-0" style={{ zIndex: -100 }}>
       {background.type === "youtube" ? (
         renderYouTubeBackground()
       ) : (
         <div 
-          className="absolute inset-0 -z-40"
-          style={getBackgroundStyle()}
+          className="absolute inset-0"
+          style={{
+            ...getBackgroundStyle(),
+            zIndex: -99
+          }}
         />
       )}
     </div>
   );
-}
+});
+
+export default BackgroundManager;
