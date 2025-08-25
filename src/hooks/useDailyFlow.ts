@@ -10,27 +10,18 @@ export default function useDailyFlow(){
     if (shouldShowIntention()) setShowIntention(true);
   },[]);
 
-  // soft scheduler: checks every minute while the app is open
+  // Disable automatic debrief popup - user requested to stop it popping up while working
   useEffect(()=>{
-    const id = setInterval(()=>{
-      // Check if debrief auto-show is enabled in theme settings
-      const debriefAutoEnabled = isFeatureVisible('debriefAuto');
-      const shouldShow = shouldShowDebrief(new Date());
-      
-      console.log('[useDailyFlow] Debrief check:', {
-        debriefAutoEnabled,
-        shouldShow,
-        prefs: readPrefs(),
-        currentTime: new Date().toLocaleTimeString(),
-        hasDebrief: !!readTodayDebrief()
-      });
-      
-      if (debriefAutoEnabled && shouldShow) {
-        console.log('[useDailyFlow] Triggering debrief modal');
-        setShowDebrief(true);
-      }
-    }, 60_000);
-    return ()=> clearInterval(id);
+    // Commented out the auto-debrief functionality
+    // const id = setInterval(()=>{
+    //   const debriefAutoEnabled = isFeatureVisible('debriefAuto');
+    //   const shouldShow = shouldShowDebrief(new Date());
+    //   
+    //   if (debriefAutoEnabled && shouldShow) {
+    //     setShowDebrief(true);
+    //   }
+    // }, 60_000);
+    // return ()=> clearInterval(id);
   },[]);
 
   const prefs = readPrefs();

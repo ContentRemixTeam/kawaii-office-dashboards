@@ -14,7 +14,6 @@ import YouTubeAmbient from "@/components/YouTubeAmbient";
 import QuickActionsPanel from "@/components/QuickActionsPanel";
 import DailyProgressPanel from "@/components/DailyProgressPanel";
 import InspirationCorner from "@/components/InspirationCorner";
-import FocusInsightsPanel from "@/components/FocusInsightsPanel";
 import PetStatusCard from "@/components/PetStatusCard";
 import { useGiphyCelebration } from "@/hooks/useGiphyCelebration";
 import GiphyCelebration from "@/components/GiphyCelebration";
@@ -280,43 +279,6 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
-            {/* Motivation Panel */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              
-              {/* Pet Status Card */}
-              <PetStatusCard 
-                petData={petData}
-                completedTasks={taskData.completed.filter(Boolean).length}
-                totalTasks={3}
-              />
-
-              {/* Micro Wins Today */}
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Card 
-                      className="cursor-pointer hover:scale-105 transition-transform bg-gradient-to-br from-yellow-50/50 to-orange-50/50 border-yellow-200/50"
-                      onClick={() => navigate('/tools/positivity-cabinet')}
-                    >
-                      <CardContent className="p-4 text-center">
-                        <div className="text-2xl mb-2">🎉</div>
-                        <div className="text-sm font-medium text-foreground mb-1">
-                          Micro Wins
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          Celebrate progress
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Click to view Positivity Cabinet</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-
-            </div>
-
             {/* Today's Intention Card */}
             <TooltipProvider>
               <Tooltip>
@@ -353,8 +315,33 @@ const Dashboard = () => {
               </Tooltip>
             </TooltipProvider>
 
-            {/* Focus Insights Panel */}
-            <FocusInsightsPanel />
+            {/* Today's Earned Pets - Moved here from right section */}
+            {earnedAnimals.length > 0 && (
+              <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    🏆 Today's Earned Pets
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-4">
+                  <div className="flex flex-wrap gap-3 justify-center">
+                    {earnedAnimals.map((animal, index) => (
+                      <div 
+                        key={`${animal.id}-${index}`}
+                        className="text-4xl animate-bounce hover:scale-110 transition-transform cursor-default"
+                        style={{ animationDelay: `${index * 0.3}s` }}
+                        title={`Earned ${animal.id}!`}
+                      >
+                        {animal.emoji}
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-center text-sm text-muted-foreground mt-3">
+                    Complete tasks to earn more pets! 🎉
+                  </p>
+                </CardContent>
+              </Card>
+            )}
           </div>
           
           {/* Right Section: Focus Panel */}
@@ -449,35 +436,7 @@ const Dashboard = () => {
                 </div>
               </CardContent>
             </Card>
-
             
-            {/* Earned Animals Display */}
-            {earnedAnimals.length > 0 && (
-              <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    🏆 Today's Earned Pets
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-4">
-                  <div className="flex flex-wrap gap-3 justify-center">
-                    {earnedAnimals.map((animal, index) => (
-                      <div 
-                        key={`${animal.id}-${index}`}
-                        className="text-4xl animate-bounce hover:scale-110 transition-transform cursor-default"
-                        style={{ animationDelay: `${index * 0.3}s` }}
-                        title={`Earned ${animal.id}!`}
-                      >
-                        {animal.emoji}
-                      </div>
-                    ))}
-                  </div>
-                  <p className="text-center text-sm text-muted-foreground mt-3">
-                    Complete tasks to earn more pets! 🎉
-                  </p>
-                </CardContent>
-              </Card>
-            )}
           </div>
 
           {/* Right Section: Multi-Widget Panel */}
