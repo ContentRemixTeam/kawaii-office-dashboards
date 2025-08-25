@@ -147,7 +147,7 @@ export default function Dashboard() {
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 py-6 space-y-6">
         
         {/* Focus Hub Layout */}
-        <div className="grid lg:grid-cols-[1fr_0.6fr_0.4fr_0.3fr] gap-6">
+        <div className="grid lg:grid-cols-[1fr_0.6fr_0.4fr] gap-6">
           
           {/* Left Section: Video + Motivation Panel */}
           <div className="space-y-6">
@@ -306,6 +306,9 @@ export default function Dashboard() {
               </TooltipProvider>
 
             </div>
+
+            {/* Focus Insights Panel */}
+            <FocusInsightsPanel />
           </div>
           
           {/* Right Section: Focus Panel */}
@@ -409,10 +412,6 @@ export default function Dashboard() {
             <InspirationCorner />
           </div>
 
-          {/* Far Right Section: Focus Insights Panel */}
-          <div className="space-y-4 hidden lg:block">
-            <FocusInsightsPanel />
-          </div>
         </div>
 
         {/* Mini Vision Board */}
