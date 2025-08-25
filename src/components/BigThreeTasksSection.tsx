@@ -2,15 +2,20 @@ import { useState, useEffect } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
-import { Play, Pause, Square, Timer } from "lucide-react";
+import { Calendar, Play, Pause, Timer, Settings, Square } from "lucide-react";
 import { getDailyData, setDailyData, getCelebrationsEnabled } from "@/lib/storage";
+import { readTodayIntention } from "@/lib/dailyFlow";
 import { useToast } from "@/hooks/use-toast";
 import { emitChanged, addEarnedAnimal } from "@/lib/topbarState";
 import { K_TASKS } from "@/lib/topbar.readers";
-import { readTodayIntention } from "@/lib/dailyFlow";
 import focusTimer from "@/lib/focusTimer";
+import TaskCelebrationModal from "./TaskCelebrationModal";
+import TaskProgressGraph from "./TaskProgressGraph";
+import { useNavigate } from "react-router-dom";
 
 interface TaskData {
   tasks: string[];
@@ -44,7 +49,7 @@ const ANIMALS = [
     stages: ["🥚", "🐶", "🦴🐕", "👑🐕⭐"]
   },
   { 
-    id: "bunny", 
+    id: "rabbit", 
     name: "Bunny", 
     emoji: "🐰",
     stages: ["🥚", "🐰", "🥕🐇", "👑🐇🌸"]
@@ -53,19 +58,19 @@ const ANIMALS = [
     id: "fox", 
     name: "Fox", 
     emoji: "🦊",
-    stages: ["🥚", "🦊", "🍂🦊", "👑🦊🔥"]
+    stages: ["🥚", "🦊", "🍂🦊", "👑🦊🌟"]
   },
   { 
     id: "panda", 
     name: "Panda", 
     emoji: "🐼",
-    stages: ["🥚", "🐼", "🎋🐼", "👑🐼🎍"]
+    stages: ["🥚", "🐼", "🎋🐼", "👑🐼✨"]
   },
   { 
     id: "penguin", 
     name: "Penguin", 
     emoji: "🐧",
-    stages: ["🥚", "🐧", "❄️🐧", "👑🐧🏔️"]
+    stages: ["🥚", "🐧", "❄️🐧", "👑🐧⭐"]
   },
   { 
     id: "owl", 
@@ -82,17 +87,24 @@ const ANIMALS = [
 ];
 
 export default function BigThreeTasksSection() {
+  const navigate = useNavigate();
   const { toast } = useToast();
+  
   const [taskData, setTaskData] = useState<TaskData>({
     tasks: ["", "", ""],
     completed: [false, false, false],
     selectedAnimal: "unicorn"
   });
+  
   const [showCelebration, setShowCelebration] = useState(false);
   const [showAnimalPicker, setShowAnimalPicker] = useState(false);
   const [timerState, setTimerState] = useState(focusTimer.getState());
+  const [showTaskCelebration, setShowTaskCelebration] = useState(false);
+  const [celebratedTaskIndex, setCelebratedTaskIndex] = useState<number>(-1);
+  const [celebratedTasks, setCelebratedTasks] = useState<Set<number>>(new Set());
+  const [streakCount, setStreakCount] = useState(0);
 
-  // Load tasks data from the Task Pets page storage
+  // Load tasks data from storage
   useEffect(() => {
     const loadTasks = () => {
       const fallbackData = {
@@ -119,81 +131,71 @@ export default function BigThreeTasksSection() {
 
       // Check if we should populate from daily intention
       const intention = readTodayIntention();
-      let initialTasks = data.tasks || ["", "", ""];
+      const allTasksEmpty = data.tasks.every((task: string) => task.trim() === "");
       
-      // If tasks are empty and we have intention data, populate from intention
-      const hasEmptyTasks = initialTasks.every(task => !task.trim());
-      if (hasEmptyTasks && intention?.top3?.length) {
-        initialTasks = [
-          intention.top3[0] || "",
-          intention.top3[1] || "",
-          intention.top3[2] || ""
-        ];
+      if (intention && allTasksEmpty) {
+        const intentionText = `Feel ${intention.feel}`;
+        const newTasks = [intentionText, "", ""];
+        setTaskData({
+          tasks: newTasks,
+          completed: data.completed,
+          selectedAnimal: data.selectedAnimal
+        });
+        // Save the updated tasks with intention
+        saveTaskData({ tasks: newTasks });
+      } else {
+        setTaskData({
+          tasks: data.tasks,
+          completed: data.completed,
+          selectedAnimal: data.selectedAnimal
+        });
       }
-
-      setTaskData({
-        tasks: initialTasks,
-        completed: data.completed || [false, false, false],
-        selectedAnimal: data.selectedAnimal || "unicorn"
-      });
     };
 
     loadTasks();
 
-    // Listen for updates from Task Pets page
-    const handleTasksUpdated = () => loadTasks();
+    // Listen for storage changes
     const handleStorageChange = () => loadTasks();
+    window.addEventListener("storage", handleStorageChange);
     
-    window.addEventListener('tasksUpdated', handleTasksUpdated);
-    window.addEventListener('storage', handleStorageChange);
+    // Load celebrated tasks for today
+    const today = new Date().toISOString().split('T')[0];
+    const celebratedToday = getDailyData(`fm_big3_celebrated_v1`, []);
+    setCelebratedTasks(new Set(celebratedToday));
     
+    // Load streak data
+    const dashData = getDailyData("fm_dashboard_v1", { streak: 0, lastCompletedDate: "" });
+    setStreakCount(dashData.streak || 0);
+
     return () => {
-      window.removeEventListener('tasksUpdated', handleTasksUpdated);
-      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener("storage", handleStorageChange);
     };
   }, []);
 
-  // Timer state management
+  // Subscribe to focus timer events
   useEffect(() => {
     const unsubscribeTick = focusTimer.on("tick", setTimerState);
     const unsubscribePhase = focusTimer.on("phase", () => {
       setTimerState(focusTimer.getState());
     });
-    
-    setTimerState(focusTimer.getState());
-    
+
     return () => {
       unsubscribeTick();
       unsubscribePhase();
     };
   }, []);
 
-  const saveTaskData = (updatedData: Partial<TaskData>) => {
-    const newData = { ...taskData, ...updatedData };
+  const saveTaskData = (updates: Partial<TaskData>) => {
+    const newData = { ...taskData, ...updates };
     setTaskData(newData);
-    
-    // Update the full tasks data structure for Task Pets page
-    const fullData = getDailyData("fm_tasks_v1", {
-      tasks: ["", "", ""],
-      reflections: ["", "", ""],
-      completed: [false, false, false],
-      selectedAnimal: "unicorn",
-      roundsCompleted: 0,
-      totalTasksCompleted: 0
-    });
-    
-    const updatedFullData = {
-      ...fullData,
+    setDailyData("fm_tasks_v1", {
       tasks: newData.tasks,
       completed: newData.completed,
-      selectedAnimal: newData.selectedAnimal
-    };
-    
-    setDailyData("fm_tasks_v1", updatedFullData);
-    
-    // Dispatch events for real-time updates
-    window.dispatchEvent(new CustomEvent('tasksUpdated'));
-    window.dispatchEvent(new Event('storage'));
+      selectedAnimal: newData.selectedAnimal,
+      reflections: ["", "", ""],
+      roundsCompleted: 0,
+      totalTasksCompleted: newData.completed.filter(Boolean).length
+    });
     emitChanged([K_TASKS]);
   };
 
@@ -211,6 +213,55 @@ export default function BigThreeTasksSection() {
     setShowAnimalPicker(false);
   };
 
+  const toggleTaskCompleted = (index: number) => {
+    if (!taskData?.completed || !Array.isArray(taskData.completed)) {
+      console.error("toggleTaskCompleted: taskData.completed is not a valid array!");
+      return;
+    }
+    
+    const newCompleted = taskData.completed.map((completed, i) => 
+      i === index ? !completed : completed
+    );
+    
+    const wasCompleted = taskData.completed[index];
+    const isNowCompleted = !wasCompleted;
+    
+    // If task is being completed for the first time today, show celebration
+    if (isNowCompleted && !celebratedTasks.has(index)) {
+      setCelebratedTaskIndex(index);
+      setShowTaskCelebration(true);
+      
+      // Mark this task as celebrated today
+      const newCelebratedTasks = new Set(celebratedTasks);
+      newCelebratedTasks.add(index);
+      setCelebratedTasks(newCelebratedTasks);
+      
+      // Persist celebrated tasks for today
+      setDailyData(`fm_big3_celebrated_v1`, Array.from(newCelebratedTasks));
+    }
+    
+    saveTaskData({ completed: newCompleted });
+
+    if (isNowCompleted) {
+      const taskNumber = index + 1;
+      if (getCelebrationsEnabled()) {
+        toast({
+          title: "Task Complete! 🎉",
+          description: `Great job finishing task #${taskNumber}!`,
+          duration: 3000,
+        });
+      }
+
+      // Show celebration animation if all three tasks are done
+      const allCompleted = newCompleted.every(Boolean);
+      if (allCompleted) {
+        setShowCelebration(true);
+        setTimeout(() => setShowCelebration(false), 3000);
+      }
+    }
+  };
+
+  // Timer helpers
   const formatTime = (ms: number): string => {
     const minutes = Math.floor(ms / 60000);
     const seconds = Math.floor((ms % 60000) / 1000);
@@ -219,10 +270,10 @@ export default function BigThreeTasksSection() {
 
   const getPhaseColor = () => {
     switch (timerState.phase) {
-      case "focus": return "from-red-500 to-red-600";
-      case "short": return "from-green-500 to-green-600";
-      case "long": return "from-blue-500 to-blue-600";
-      default: return "from-gray-500 to-gray-600";
+      case "focus": return "text-red-600";
+      case "short": return "text-green-600";
+      case "long": return "text-blue-600";
+      default: return "text-muted-foreground";
     }
   };
 
@@ -235,237 +286,186 @@ export default function BigThreeTasksSection() {
     }
   };
 
-  const toggleTaskCompleted = (index: number) => {
-    const newCompleted = taskData.completed.map((completed, i) => 
-      i === index ? !completed : completed
-    );
-    const completedCount = newCompleted.filter(Boolean).length;
-    const previousCompletedCount = taskData.completed.filter(Boolean).length;
-    
-    saveTaskData({ completed: newCompleted });
-
-    // Show task completion feedback
-    if (newCompleted[index] && !taskData.completed[index]) {
-      const animal = ANIMALS.find(a => a.id === taskData.selectedAnimal) || ANIMALS[0];
-      toast({
-        title: `Task ${index + 1} completed! ✨`,
-        description: `Your ${animal.name.toLowerCase()} is growing stronger!`
-      });
-    }
-    
-    // Check for all tasks completed
-    if (completedCount === 3 && previousCompletedCount < 3) {
-      if (getCelebrationsEnabled()) {
-        setShowCelebration(true);
-        setTimeout(() => setShowCelebration(false), 4000);
-      }
-      
-      const animal = ANIMALS.find(a => a.id === taskData.selectedAnimal) || ANIMALS[0];
-      addEarnedAnimal(animal.id, animal.emoji);
-      
-      toast({
-        title: "🎉 You completed your Big Three!",
-        description: `Your ${animal.name.toLowerCase()} has reached maximum power!`,
-        duration: 5000
-      });
-    }
-  };
-
-  const completedCount = taskData.completed.filter(Boolean).length;
   const selectedAnimal = ANIMALS.find(a => a.id === taskData.selectedAnimal) || ANIMALS[0];
-  const currentStage = Math.min(completedCount, 3);
-  const stageEmoji = selectedAnimal.stages[currentStage];
+  const completedCount = taskData.completed.filter(Boolean).length;
+  const petStage = Math.min(completedCount, 3); // Stage 0-3 based on completed tasks
+
+  if (showCelebration) {
+    return (
+      <div className="relative">
+        <div className="text-center py-8">
+          <div className="text-6xl mb-4 animate-bounce">🎉</div>
+          <h3 className="text-xl font-bold text-primary mb-2">All Tasks Complete!</h3>
+          <p className="text-muted-foreground">Amazing work today! 🌟</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="w-full max-w-4xl mx-auto mb-8">
-      {/* Celebration overlay */}
-      {showCelebration && (
-        <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-6xl animate-bounce">{selectedAnimal.emoji}</div>
-          </div>
-          <div className="absolute inset-0">
-            {"🎉✨🌟💫🎊⭐💥🔥".split("").map((emoji, i) => (
-              <div
-                key={i}
-                className="absolute text-3xl animate-bounce"
-                style={{
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                  animationDelay: `${Math.random() * 2}s`,
-                  animationDuration: "2s"
-                }}
-              >
-                {emoji}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <div className="bg-card/60 backdrop-blur-sm rounded-3xl border-2 border-primary/20 shadow-xl p-6">
-        <div className="text-center mb-6">
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <span className="text-2xl">⭐</span>
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-              The Big Three
-            </h2>
-            <button 
-              onClick={() => setShowAnimalPicker(!showAnimalPicker)}
-              className="text-4xl hover:scale-110 transition-transform cursor-pointer"
-              title="Change your pet"
+    <>
+      <div className="space-y-6">
+        {/* Enhanced Header */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Avatar 
+              className="w-10 h-10 cursor-pointer hover:scale-110 transition-transform"
+              onClick={() => navigate('/tools/tasks')}
             >
-              {stageEmoji}
-            </button>
-          </div>
-          <p className="text-muted-foreground">Your top 3 priorities for today</p>
-          <div className="text-sm text-muted-foreground/80 mt-1">
-            {selectedAnimal.name} - Stage {currentStage}/3
-          </div>
-          
-          {completedCount === 3 && (
-            <div className="mt-3 text-center animate-pulse">
-              <div className="text-lg font-bold text-primary">
-                🎉 You completed your Big Three! Your pet is growing stronger! 🎉
-              </div>
+              <AvatarFallback className="text-lg">
+                {selectedAnimal.stages[petStage]}
+              </AvatarFallback>
+            </Avatar>
+            
+            <div>
+              <h3 className="text-lg font-semibold flex items-center gap-2">
+                The Big Three ⭐
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                {selectedAnimal.name} – Stage {petStage + 1}/4
+                {streakCount > 0 && (
+                  <Badge variant="secondary" className="ml-2 text-xs">
+                    🔥 {streakCount}-day streak
+                  </Badge>
+                )}
+              </p>
             </div>
-          )}
+          </div>
         </div>
 
-        {/* Animal Picker */}
-        {showAnimalPicker && (
-          <div className="mb-6 p-4 bg-background/80 rounded-2xl border border-border/20">
-            <h3 className="text-sm font-semibold text-muted-foreground mb-3 text-center">Choose Your Pet</h3>
-            <div className="grid grid-cols-5 gap-2">
-              {ANIMALS.map((animal) => (
-                <button
-                  key={animal.id}
-                  onClick={() => handleAnimalSelect(animal.id)}
-                  className={`p-2 rounded-xl border-2 transition-all duration-200 hover:scale-105 ${
-                    taskData.selectedAnimal === animal.id
-                      ? "border-primary bg-primary/10 scale-105"
-                      : "border-border/20 hover:border-primary/50"
-                  }`}
-                >
-                  <div className="text-2xl mb-1">{animal.emoji}</div>
-                  <div className="text-xs font-medium text-muted-foreground">{animal.name}</div>
-                </button>
-              ))}
+        {/* Compact Timer Row */}
+        <div className="flex items-center justify-between p-3 bg-muted/20 rounded-xl">
+          <div className="flex items-center gap-3">
+            <span className="text-sm">{getPhaseIcon()}</span>
+            <div>
+              <div className={`font-mono font-semibold ${getPhaseColor()}`}>
+                {formatTime(timerState.msLeft)}
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {timerState.phaseLabel}
+              </div>
             </div>
-          </div>
-        )}
-
-        {/* Compact Pomodoro Timer */}
-        <div className="mb-6 p-4 bg-background/80 rounded-2xl border border-border/20">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Timer className="h-4 w-4 text-primary" />
-              <h3 className="text-sm font-semibold text-foreground">Focus Timer</h3>
-              <span className="text-lg">{getPhaseIcon()}</span>
-            </div>
-            <Badge variant="outline" className="text-xs">
-              {timerState.cycleCount}/{timerState.dailyGoal} today
-            </Badge>
           </div>
           
-          <div className="flex items-center justify-between mb-3">
-            <div className="text-2xl font-mono font-bold text-foreground">
-              {formatTime(timerState.msLeft)}
-            </div>
-            <div className="flex gap-2">
-              {!timerState.isRunning ? (
-                <Button
-                  size="sm"
-                  onClick={() => focusTimer.start(timerState.phase === "idle" ? "focus" : timerState.phase)}
-                  className="flex items-center gap-1"
-                >
-                  <Play className="w-3 h-3" />
-                  {timerState.phase === "idle" ? "Start" : "Resume"}
-                </Button>
-              ) : (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => focusTimer.pause()}
-                  className="flex items-center gap-1"
-                >
-                  <Pause className="w-3 h-3" />
-                  Pause
-                </Button>
-              )}
+          <div className="flex items-center gap-2">
+            {!timerState.isRunning ? (
+              <Button
+                size="sm"
+                onClick={() => focusTimer.start(timerState.phase === "idle" ? "focus" : timerState.phase)}
+                className="h-8"
+              >
+                <Play className="w-3 h-3 mr-1" />
+                Start
+              </Button>
+            ) : (
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => focusTimer.stop()}
-                className="flex items-center gap-1"
+                onClick={() => focusTimer.pause()}
+                className="h-8"
               >
-                <Square className="w-3 h-3" />
-                Stop
+                <Pause className="w-3 h-3 mr-1" />
+                Pause
               </Button>
-            </div>
-          </div>
-          
-          <div className="space-y-2">
-            <Progress value={timerState.progress * 100} className="h-2" />
-            <div className="text-xs text-center text-muted-foreground">
-              {timerState.phaseLabel}
-            </div>
+            )}
+            
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => navigate('/tools/focus')}
+              className="h-8"
+            >
+              <Timer className="w-3 h-3" />
+            </Button>
           </div>
         </div>
 
+        {/* Progress Graph */}
+        <TaskProgressGraph completedCount={completedCount} totalTasks={3} />
+
+        {/* Task List */}
         <div className="space-y-4">
           {taskData?.tasks?.map((task, index) => (
             <div
               key={index}
-               className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all duration-300 ${
-                 taskData?.completed?.[index]
-                   ? "bg-primary/5 border-primary/30 shadow-sm"
-                   : "bg-background/80 border-border/20 hover:border-primary/40 hover:shadow-md"
-               }`}
+              className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all duration-300 ${
+                taskData?.completed?.[index]
+                  ? "bg-primary/5 border-primary/30 shadow-sm"
+                  : "bg-background/80 border-border/20 hover:border-primary/40 hover:shadow-md"
+              }`}
             >
-               <Checkbox
-                 checked={taskData?.completed?.[index] || false}
-                 onCheckedChange={() => toggleTaskCompleted(index)}
-                 className="h-6 w-6 rounded-full"
-               />
+              <Checkbox
+                checked={taskData?.completed?.[index] || false}
+                onCheckedChange={() => toggleTaskCompleted(index)}
+                className="h-6 w-6 rounded-full"
+              />
               
               <div className="flex-1">
                 <Input
                   value={task}
                   onChange={(e) => handleTaskChange(index, e.target.value)}
                   placeholder={`Task ${index + 1} - What needs to get done?`}
-                   className={`text-lg border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 ${
-                     taskData?.completed?.[index] 
-                       ? "line-through text-muted-foreground" 
-                       : "text-foreground"
-                   }`}
+                  className={`text-lg border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 ${
+                    taskData?.completed?.[index] 
+                      ? "line-through text-muted-foreground" 
+                      : "text-foreground"
+                  }`}
                 />
               </div>
               
-              <div className="text-2xl opacity-30">
+              <div className="text-sm font-medium text-muted-foreground bg-muted/20 px-3 py-1 rounded-full">
                 {index + 1}
               </div>
             </div>
           ))}
         </div>
 
-        {/* Progress indicator */}
-        <div className="mt-6 text-center">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            {[0, 1, 2].map(i => (
-              <div
-                key={i}
-                className={`h-3 w-3 rounded-full transition-all duration-300 ${
-                  i < completedCount ? "bg-primary scale-110" : "bg-muted"
+        {/* Animal Picker */}
+        {showAnimalPicker && (
+          <div className="grid grid-cols-5 gap-3 p-4 bg-muted/10 rounded-xl">
+            {ANIMALS.map((animal) => (
+              <button
+                key={animal.id}
+                onClick={() => handleAnimalSelect(animal.id)}
+                className={`p-3 rounded-xl transition-all duration-200 hover:scale-110 ${
+                  taskData.selectedAnimal === animal.id
+                    ? "bg-primary/20 ring-2 ring-primary/30"
+                    : "bg-background/80 hover:bg-muted/20"
                 }`}
-              />
+              >
+                <div className="text-2xl mb-1">{animal.emoji}</div>
+                <div className="text-xs font-medium">{animal.name}</div>
+              </button>
             ))}
           </div>
-          <div className="text-sm text-muted-foreground">
-            {completedCount}/3 tasks completed
+        )}
+
+        {/* Pet Controls */}
+        <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center gap-2">
+            <span className="text-muted-foreground">Pet Progress:</span>
+            <span className="font-medium">{selectedAnimal.stages[petStage]}</span>
+            <span className="text-muted-foreground">Stage {petStage + 1}/4</span>
           </div>
+          
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowAnimalPicker(!showAnimalPicker)}
+          >
+            <Settings className="w-4 h-4 mr-2" />
+            Change Pet
+          </Button>
         </div>
       </div>
-    </div>
+
+      {/* Task Celebration Modal */}
+      <TaskCelebrationModal
+        isOpen={showTaskCelebration}
+        onClose={() => setShowTaskCelebration(false)}
+        petType={taskData.selectedAnimal}
+        taskIndex={celebratedTaskIndex}
+      />
+    </>
   );
 }

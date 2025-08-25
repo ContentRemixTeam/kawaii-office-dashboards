@@ -1064,6 +1064,44 @@ export default function Theme() {
               
               <div className="flex items-center justify-between p-4 border border-border rounded-lg">
                 <div className="space-y-1">
+                  <Label htmlFor="gifs-toggle" className="text-sm font-medium">
+                    🎬 Pet Celebration GIFs
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Display pet-specific animations when completing Big Three tasks
+                  </p>
+                </div>
+                <Switch
+                  id="gifs-toggle"
+                  checked={safeGet('fm_settings_celebrations_v1', { showGifs: true, playSound: true }).showGifs}
+                  onCheckedChange={(checked) => {
+                    const current = safeGet('fm_settings_celebrations_v1', { showGifs: true, playSound: true });
+                    safeSet('fm_settings_celebrations_v1', { ...current, showGifs: checked });
+                  }}
+                />
+              </div>
+              
+              <div className="flex items-center justify-between p-4 border border-border rounded-lg">
+                <div className="space-y-1">
+                  <Label htmlFor="sounds-toggle" className="text-sm font-medium">
+                    🔊 Celebration Sounds
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Play gentle chime sounds when tasks are completed
+                  </p>
+                </div>
+                <Switch
+                  id="sounds-toggle"
+                  checked={safeGet('fm_settings_celebrations_v1', { showGifs: true, playSound: true }).playSound}
+                  onCheckedChange={(checked) => {
+                    const current = safeGet('fm_settings_celebrations_v1', { showGifs: true, playSound: true });
+                    safeSet('fm_settings_celebrations_v1', { ...current, playSound: checked });
+                  }}
+                />
+              </div>
+              
+              <div className="flex items-center justify-between p-4 border border-border rounded-lg">
+                <div className="space-y-1">
                   <Label htmlFor="celebration-modals-toggle" className="text-sm font-medium">
                     Celebration Modals
                   </Label>
