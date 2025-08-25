@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -117,6 +118,8 @@ const categories = [
 ];
 
 export default function PositivityCabinet() {
+  const [searchParams] = useSearchParams();
+  const defaultTab = searchParams.get('tab') || 'wins';
   const { toast } = useToast();
   
   // Future Notes state
@@ -370,7 +373,7 @@ export default function PositivityCabinet() {
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="wins" className="w-full">
+        <Tabs defaultValue={defaultTab} className="w-full">
           <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="wins">🏆 Micro Wins</TabsTrigger>
             <TabsTrigger value="gratitude">🙏 Gratitude</TabsTrigger>

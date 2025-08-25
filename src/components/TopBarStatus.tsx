@@ -87,9 +87,9 @@ export default function TopBarStatus(){
         label="Affirmation" 
         value={affirmDisplay} 
         title="Go to Affirmations" 
-        onClick={() => navigate('/tools/positivity-cabinet')}
+        onClick={() => navigate('/tools/positivity-cabinet?tab=affirmations')}
         clamp 
-        wide 
+        wide
         isEmpty={!affirm}
       />
     </div>
