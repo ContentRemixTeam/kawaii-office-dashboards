@@ -9,16 +9,13 @@ import { Progress } from "@/components/ui/progress";
 import { Calendar, Play, Pause, Timer, Settings, Square, RotateCcw } from "lucide-react";
 import { getDailyData, setDailyData, getCelebrationsEnabled } from "@/lib/storage";
 import { readTodayIntention } from "@/lib/dailyFlow";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/use-toast";
 import { emitChanged, addEarnedAnimal } from "@/lib/topbarState";
 import { K_TASKS } from "@/lib/topbar.readers";
 import focusTimer from "@/lib/focusTimer";
 import { useGiphyCelebration } from "@/hooks/useGiphyCelebration";
-import GiphyCelebration from "@/components/GiphyCelebration";
 import { useCelebration } from "@/hooks/useCelebration";
 import { CelebrationPopup } from "@/components/CelebrationPopup";
-import TaskCelebrationModal from "./TaskCelebrationModal";
-import AllTasksCompletedModal from "./AllTasksCompletedModal";
 import TaskProgressGraph from "./TaskProgressGraph";
 import { useNavigate } from "react-router-dom";
 
@@ -93,14 +90,9 @@ const ANIMALS = [
 
 export default function BigThreeTasksSection() {
   const navigate = useNavigate();
-  const { toast } = useToast();
-  // Celebration hooks - both legacy and new system
-  const { 
-    currentCelebration, 
-    celebrateTask, 
-    clearCelebration, 
-    isEnabled: celebrationEnabled 
-  } = useCelebration();
+  
+  // Celebration hooks - using GIPHY system only
+  const { celebrateTask, celebrateAllTasks } = useGiphyCelebration();
   
   const [taskData, setTaskData] = useState<TaskData>({
     tasks: ["", "", ""],
@@ -268,13 +260,9 @@ export default function BigThreeTasksSection() {
     if (isNowCompleted) {
       const taskNumber = index + 1;
       
-      // Show new safe celebration system
-      if (celebrationEnabled) {
-        console.log('[BigThreeTasksSection] Triggering safe celebration for:', taskData.selectedAnimal);
-        celebrateTask(taskData.selectedAnimal as any);
-      } else {
-        console.log('[BigThreeTasksSection] Safe celebrations disabled, enabled:', celebrationEnabled);
-      }
+      // Trigger GIPHY celebration for task completion
+      console.log('[BigThreeTasksSection] Triggering GIPHY celebration for task:', taskData.selectedAnimal, taskNumber);
+      celebrateTask(taskData.selectedAnimal, taskNumber);
       
       if (getCelebrationsEnabled()) {
         toast({
@@ -296,9 +284,9 @@ export default function BigThreeTasksSection() {
       });
       
       if (allCompleted && !wasAllCompleted) {
-        console.log("BigThreeTasksSection: All tasks completed! Showing modal");
-        // Show the all-tasks-completed modal
-        setShowAllTasksCompleted(true);
+        console.log("BigThreeTasksSection: All tasks completed! Triggering GIPHY celebration");
+        // Trigger GIPHY celebration for all tasks
+        celebrateAllTasks(taskData.selectedAnimal);
       }
     }
   };
@@ -488,30 +476,6 @@ export default function BigThreeTasksSection() {
         </div>
       </div>
 
-      {/* Task Celebration Modal */}
-      <TaskCelebrationModal
-        isOpen={showTaskCelebration}
-        onClose={() => setShowTaskCelebration(false)}
-        petType={taskData.selectedAnimal}
-        taskIndex={celebratedTaskIndex}
-      />
-
-      {/* All Tasks Completed Modal */}
-      <AllTasksCompletedModal
-        isOpen={showAllTasksCompleted}
-        onClose={() => setShowAllTasksCompleted(false)}
-        onStartNewRound={handleStartNewRound}
-        petType={taskData.selectedAnimal}
-        petEmoji={selectedAnimal.emoji}
-      />
-      
-      {/* Safe Celebration System */}
-      <CelebrationPopup
-        gif={currentCelebration?.gif || null}
-        customMessage={currentCelebration?.customMessage}
-        isVisible={!!currentCelebration}
-        onClose={clearCelebration}
-      />
     </>
   );
 }
