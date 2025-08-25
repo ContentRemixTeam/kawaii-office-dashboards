@@ -21,6 +21,7 @@ import Theme from "./pages/tools/Theme";
 import Focus from "./pages/tools/Focus";
 import BeatClock from "./pages/tools/BeatClock";
 import PositivityCabinet from "./pages/tools/PositivityCabinet";
+import BreakRoom from "./pages/tools/BreakRoom";
 
 const queryClient = new QueryClient();
 
@@ -59,6 +60,7 @@ const App = () => {
               <Route path="/tools/theme" element={<Theme />} />
               <Route path="/tools/focus" element={<Focus />} />
               <Route path="/tools/beat-clock" element={<BeatClock />} />
+              <Route path="/tools/break-room" element={<BreakRoom />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
