@@ -7,7 +7,8 @@ import { BarChart3, Flame, Sparkles, Target, TrendingUp, Clock } from "lucide-re
 import { getTrophyStats, getSessionLog } from "@/lib/trophySystem";
 import { getRandomEncouragement } from "@/lib/encouragement";
 import { onChanged } from "@/lib/bus";
-import { safeGet } from "@/lib/storage";
+import { storage } from "@/lib/storage";
+import { z } from "zod";
 
 interface WeeklyData {
   day: string;
@@ -47,10 +48,23 @@ export default function FocusInsightsPanel() {
 
     // Load streak data
     const trophyStats = getTrophyStats();
-    const taskData = safeGet("fm_tasks_v1", []);
-    // Ensure taskData is always an array
-    const tasks = Array.isArray(taskData) ? taskData : [];
-    const completedToday = tasks.filter((task: any) => task.completed).length;
+    
+    // Use simple storage access with fallback
+    const taskData = storage.getDailyItem("fm_tasks_v1", z.object({
+      tasks: z.array(z.string()).default([]),
+      completed: z.array(z.boolean()).default([]),
+      selectedAnimal: z.string().default("unicorn"),
+      roundsCompleted: z.number().default(0),
+      totalTasksCompleted: z.number().default(0)
+    }), {
+      tasks: ["", "", ""],
+      completed: [false, false, false],
+      selectedAnimal: "unicorn",
+      roundsCompleted: 0,
+      totalTasksCompleted: 0
+    });
+    
+    const completedToday = taskData.completed.filter(Boolean).length;
     
     setStreaks([
       { type: "Focus", count: trophyStats.currentStreak, icon: "🎯" },
@@ -59,7 +73,7 @@ export default function FocusInsightsPanel() {
     ]);
 
     // Load recent achievements
-    const achievements = generateRecentAchievements(sessionLog, tasks);
+    const achievements = generateRecentAchievements(sessionLog, taskData);
     setRecentAchievements(achievements);
 
     // Load productivity insights
@@ -94,7 +108,7 @@ export default function FocusInsightsPanel() {
     return weekData;
   };
 
-  const generateRecentAchievements = (sessionLog: any[], taskData: any[]): string[] => {
+  const generateRecentAchievements = (sessionLog: any[], taskData: any): string[] => {
     const achievements: string[] = [];
     
     if (sessionLog.length > 0) {
@@ -108,9 +122,8 @@ export default function FocusInsightsPanel() {
       }
     }
 
-    // Ensure taskData is an array before filtering
-    const tasks = Array.isArray(taskData) ? taskData : [];
-    const completedTasks = tasks.filter((task: any) => task.completed).length;
+    // Use the completed array from taskData
+    const completedTasks = taskData.completed.filter(Boolean).length;
     if (completedTasks > 0) {
       achievements.push(`${completedTasks} task${completedTasks > 1 ? 's' : ''} completed`);
     }
