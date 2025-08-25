@@ -28,7 +28,10 @@ export function CelebrationPopup({ gif, customMessage, isVisible, onClose }: Cel
   }, []);
 
   useEffect(() => {
+    console.log('[CelebrationPopup] useEffect triggered:', { isVisible, gif });
+    
     if (isVisible && gif) {
+      console.log('[CelebrationPopup] Starting animation for gif:', gif);
       setAnimate(true);
       setImageError(false);
       
@@ -56,6 +59,7 @@ export function CelebrationPopup({ gif, customMessage, isVisible, onClose }: Cel
   }, [isVisible, gif, onClose]);
 
   const handleImageError = () => {
+    console.log('[CelebrationPopup] Image failed to load for:', gif?.url);
     setImageError(true);
   };
 
@@ -65,7 +69,10 @@ export function CelebrationPopup({ gif, customMessage, isVisible, onClose }: Cel
     }
   };
 
-  if (!isVisible || !gif) return null;
+  if (!isVisible || !gif) {
+    console.log('[CelebrationPopup] Not rendering:', { isVisible, hasGif: !!gif });
+    return null;
+  }
 
   const celebrationContent = (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm">

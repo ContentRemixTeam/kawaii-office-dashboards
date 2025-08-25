@@ -68,20 +68,32 @@ export function useCelebration() {
   }, []);
 
   const celebrate = useCallback(async ({ occasion, pet, customMessage }: CelebrationPayload) => {
+    console.log('[useCelebration] celebrate called with:', { occasion, pet, customMessage });
+    
     // Check if celebrations are enabled
     if (!getCelebrationsEnabled() || !settings.enabled || settings.minimalMode) {
+      console.log('[useCelebration] Celebrations disabled:', {
+        globalEnabled: getCelebrationsEnabled(),
+        settingsEnabled: settings.enabled,
+        minimalMode: settings.minimalMode
+      });
       return;
     }
 
     // Check throttling
     const now = Date.now();
     if (now - lastCelebrationTime.current < settings.throttleSeconds * 1000) {
+      console.log('[useCelebration] Throttled, last celebration was too recent');
       return;
     }
 
     try {
+      console.log('[useCelebration] Calling pickGif...');
       const gif = await pickGif({ pet, occasion });
+      console.log('[useCelebration] pickGif returned:', gif);
+      
       if (gif) {
+        console.log('[useCelebration] Setting celebration state');
         setCurrentCelebration({ gif, customMessage });
         lastCelebrationTime.current = now;
         

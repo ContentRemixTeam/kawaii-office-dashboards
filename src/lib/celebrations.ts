@@ -21,16 +21,19 @@ let celebrationCache: CelebrationData | null = null;
 
 export async function loadCelebrations(): Promise<CelebrationData> {
   if (celebrationCache) {
+    console.log('[celebrations] Using cached data');
     return celebrationCache;
   }
 
   try {
+    console.log('[celebrations] Loading celebrations.json...');
     const response = await fetch('/celebrations/celebrations.json');
     if (!response.ok) {
-      throw new Error('Failed to load celebrations');
+      throw new Error(`Failed to load celebrations: ${response.status}`);
     }
     
     const data = await response.json();
+    console.log('[celebrations] Loaded celebrations data:', data);
     celebrationCache = data;
     return data;
   } catch (error) {
@@ -58,14 +61,19 @@ export async function loadCelebrations(): Promise<CelebrationData> {
 }
 
 export async function pickGif({ pet, occasion }: { pet?: PetKey | 'general'; occasion: Occasion }): Promise<GifItem | null> {
+  console.log('[celebrations] pickGif called with:', { pet, occasion });
+  
   if (!getCelebrationsEnabled()) {
+    console.log('[celebrations] Celebrations disabled globally');
     return null;
   }
 
   const data = await loadCelebrations();
+  console.log('[celebrations] Loaded data for gif selection');
   
   // Determine which pets are valid for this occasion
   const validPets = data.occasions[occasion] || ['general'];
+  console.log('[celebrations] Valid pets for', occasion, ':', validPets);
   
   // Try to use the specified pet first
   let targetPet = pet;

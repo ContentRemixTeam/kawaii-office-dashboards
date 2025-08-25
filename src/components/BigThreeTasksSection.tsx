@@ -270,10 +270,14 @@ export default function BigThreeTasksSection() {
       
       // Show new safe celebration system
       if (celebrationEnabled) {
+        console.log('[BigThreeTasksSection] Triggering safe celebration for:', taskData.selectedAnimal);
         celebrateTask(taskData.selectedAnimal as any);
+      } else {
+        console.log('[BigThreeTasksSection] Safe celebrations disabled, enabled:', celebrationEnabled);
       }
       
       // Trigger legacy GIPHY celebration
+      console.log('[BigThreeTasksSection] Triggering GIPHY celebration for:', taskData.selectedAnimal);
       celebrateGiphyTask(taskData.selectedAnimal, taskNumber);
       
       if (getCelebrationsEnabled()) {
