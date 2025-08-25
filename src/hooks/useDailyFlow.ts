@@ -1,16 +1,16 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import { shouldShowIntention, shouldShowDebrief, readPrefs, writePrefs } from "@/lib/dailyFlow";
 
 export default function useDailyFlow(){
-  const [showIntention,setShowIntention] = React.useState(false);
-  const [showDebrief,setShowDebrief]     = React.useState(false);
+  const [showIntention,setShowIntention] = useState(false);
+  const [showDebrief,setShowDebrief]     = useState(false);
 
-  React.useEffect(()=>{
+  useEffect(()=>{
     if (shouldShowIntention()) setShowIntention(true);
   },[]);
 
   // soft scheduler: checks every minute while the app is open
-  React.useEffect(()=>{
+  useEffect(()=>{
     const id = setInterval(()=>{
       if (shouldShowDebrief(new Date())) setShowDebrief(true);
     }, 60_000);
