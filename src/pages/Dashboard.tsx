@@ -14,6 +14,7 @@ import YouTubeAmbient from "@/components/YouTubeAmbient";
 import QuickActionsPanel from "@/components/QuickActionsPanel";
 import DailyProgressPanel from "@/components/DailyProgressPanel";
 import InspirationCorner from "@/components/InspirationCorner";
+import DashboardHabitTracker from "@/components/DashboardHabitTracker";
 import PetStatusCard from "@/components/PetStatusCard";
 import { useGiphyCelebration } from "@/hooks/useGiphyCelebration";
 import GiphyCelebration from "@/components/GiphyCelebration";
@@ -342,6 +343,9 @@ const Dashboard = () => {
                 </CardContent>
               </Card>
             )}
+
+            {/* Dashboard Habit Tracker - Added under earned pets */}
+            <DashboardHabitTracker />
           </div>
           
           {/* Right Section: Focus Panel */}
