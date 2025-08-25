@@ -120,6 +120,48 @@ const CURATED_GIFS = {
     'https://media.giphy.com/media/l0MYC0LajbaPoEADu/giphy.gif', // Enchanting
     'https://media.giphy.com/media/xT8qBeEqnpdMbIbtVS/giphy.gif', // Sparkly celebration
   ],
+  bunny: [
+    'https://media.giphy.com/media/3o7abGQa0aRJUurpII/giphy.gif', // Happy bunny
+    'https://media.giphy.com/media/l41lUJ1YoZB1lHVPG/giphy.gif', // Bunny hop
+    'https://media.giphy.com/media/3o6fJgEOrF1lky8WFa/giphy.gif', // Cute bunny celebration
+    'https://media.giphy.com/media/xT5LMDFZhMvFqH0wWA/giphy.gif', // Bunny dance
+    'https://media.giphy.com/media/3og0IM5Z8lLs8fFUCk/giphy.gif', // Rabbit celebration
+  ],
+  fox: [
+    'https://media.giphy.com/media/l41lFw057lAJQMwg0/giphy.gif', // Cute fox
+    'https://media.giphy.com/media/3o7abkhi8YLVGTZIQw/giphy.gif', // Fox celebration
+    'https://media.giphy.com/media/l3q2K5jinAlChoCLS/giphy.gif', // Happy fox
+    'https://media.giphy.com/media/xT5LMHxhOfscxPfIfm/giphy.gif', // Clever celebration
+    'https://media.giphy.com/media/26u4cqiYI30juCOGY/giphy.gif', // Fox party
+  ],
+  panda: [
+    'https://media.giphy.com/media/EatwJZRUIv41G/giphy.gif', // Happy panda
+    'https://media.giphy.com/media/l2YWqU7ev0l5nfYTC/giphy.gif', // Panda celebration
+    'https://media.giphy.com/media/3o7abmZiIG0jbBPl8Q/giphy.gif', // Cute panda
+    'https://media.giphy.com/media/ICOgUNjpvO0PC/giphy.gif', // Panda dance
+    'https://media.giphy.com/media/5GoVLqeAOo6PK/giphy.gif', // Panda party
+  ],
+  penguin: [
+    'https://media.giphy.com/media/l41lUJ1YoZB1lHVPG/giphy.gif', // Happy penguin
+    'https://media.giphy.com/media/xT5LMzIK1AdZJ4cYW4/giphy.gif', // Penguin waddle celebration
+    'https://media.giphy.com/media/3o6fJ1BM7R2EBRDnxK/giphy.gif', // Cute penguin
+    'https://media.giphy.com/media/l0MYGb1LuZ3n7dRnO/giphy.gif', // Penguin party
+    'https://media.giphy.com/media/26u4cqiYI30juCOGY/giphy.gif', // Penguin celebration
+  ],
+  owl: [
+    'https://media.giphy.com/media/3o7abkhi8YLVGTZIQw/giphy.gif', // Wise owl celebration
+    'https://media.giphy.com/media/l3q2K5jinAlChoCLS/giphy.gif', // Smart owl
+    'https://media.giphy.com/media/xT5LMHxhOfscxPfIfm/giphy.gif', // Owl wisdom celebration
+    'https://media.giphy.com/media/26BRuo6sLetdllPAQ/giphy.gif', // Intellectual celebration
+    'https://media.giphy.com/media/3og0IMJcSI8p6hYQXS/giphy.gif', // Owl party
+  ],
+  hamster: [
+    'https://media.giphy.com/media/3o7abGQa0aRJUurpII/giphy.gif', // Tiny celebration
+    'https://media.giphy.com/media/l41lFw057lAJQMwg0/giphy.gif', // Cute hamster
+    'https://media.giphy.com/media/3o6fJgEOrF1lky8WFa/giphy.gif', // Hamster wheel celebration
+    'https://media.giphy.com/media/xT5LMDFZhMvFqH0wWA/giphy.gif', // Adorable hamster
+    'https://media.giphy.com/media/EatwJZRUIv41G/giphy.gif', // Happy hamster
+  ],
   general: [
     'https://media.giphy.com/media/26u4cqiYI30juCOGY/giphy.gif', // Confetti celebration
     'https://media.giphy.com/media/l0MYGb1LuZ3n7dRnO/giphy.gif', // Party time
@@ -146,11 +188,16 @@ export default function GiphyCelebration({ payload, onClose }: GiphyCelebrationP
 
     // Select appropriate GIF based on pet type
     const petType = payload.petType?.toLowerCase();
+    console.log('[GiphyCelebration] Selecting GIF for pet type:', petType);
+    
     const gifs = petType && CURATED_GIFS[petType as keyof typeof CURATED_GIFS] 
       ? CURATED_GIFS[petType as keyof typeof CURATED_GIFS]
       : CURATED_GIFS.general;
     
+    console.log('[GiphyCelebration] Using GIF collection:', petType || 'general', 'with', gifs.length, 'options');
+    
     const randomGif = gifs[Math.floor(Math.random() * gifs.length)];
+    console.log('[GiphyCelebration] Selected GIF:', randomGif);
     setGifUrl(randomGif);
 
     // Generate celebration message
