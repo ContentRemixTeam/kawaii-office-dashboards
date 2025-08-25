@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Play, Pause, Volume2, VolumeX, ExternalLink, Timer, Calendar } from "lucide-react";
+import { Play, Pause, Volume2, VolumeX, ExternalLink, Timer, Calendar, Heart, Trophy, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,11 +7,13 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import BackgroundManager from "@/components/BackgroundManager";
 import BigThreeTasksSection from "@/components/BigThreeTasksSection";
 import YouTubeAmbient from "@/components/YouTubeAmbient";
 import { getDailyData, setDailyData } from "@/lib/storage";
-import { readVisionThumbs } from "@/lib/topbarState";
+import { readVisionThumbs, readPetStage } from "@/lib/topbarState";
+import { readTodayIntention } from "@/lib/dailyFlow";
 import focusTimer from "@/lib/focusTimer";
 import { onChanged } from "@/lib/bus";
 import { readTrophies } from "@/lib/topbar.readers";
@@ -28,6 +30,15 @@ interface DashboardData {
   lastCompletedDate: string;
 }
 
+const ANIMALS = [
+  { id: "unicorn", name: "Unicorn", emoji: "🦄", stages: ["🥚", "🐣", "🦄", "✨🦄✨"] },
+  { id: "dragon", name: "Dragon", emoji: "🐉", stages: ["🥚", "🐣", "🐲", "🐉"] },
+  { id: "phoenix", name: "Phoenix", emoji: "🔥", stages: ["🥚", "🐣", "🦅", "🔥"] },
+  { id: "cat", name: "Cat", emoji: "🐱", stages: ["🥚", "🐣", "🐱", "😸"] },
+  { id: "dog", name: "Dog", emoji: "🐶", stages: ["🥚", "🐣", "🐶", "🐕"] },
+  { id: "rabbit", name: "Rabbit", emoji: "🐰", stages: ["🥚", "🐣", "🐰", "🌟🐰"] }
+];
+
 export default function Dashboard() {
   const navigate = useNavigate();
   const [ambientSettings, setAmbientSettings] = useState<AmbientSettings>({
@@ -41,6 +52,8 @@ export default function Dashboard() {
   const [visionImages, setVisionImages] = useState<string[]>([]);
   const [trophyCount, setTrophyCount] = useState(0);
   const [streakData, setStreakData] = useState<DashboardData>({ streak: 0, lastCompletedDate: "" });
+  const [petData, setPetData] = useState({ animal: null, stage: 0 });
+  const [todayIntention, setTodayIntention] = useState(null);
 
   // Load data on mount
   useEffect(() => {
@@ -52,6 +65,8 @@ export default function Dashboard() {
     
     setVisionImages(readVisionThumbs(4));
     setTrophyCount(readTrophies());
+    setPetData(readPetStage());
+    setTodayIntention(readTodayIntention());
   }, []);
 
   // Listen for data changes
@@ -62,6 +77,12 @@ export default function Dashboard() {
       }
       if (keys.includes("fm_pomo_trophies_v1")) {
         setTrophyCount(readTrophies());
+      }
+      if (keys.includes("fm_tasks_v1")) {
+        setPetData(readPetStage());
+      }
+      if (keys.includes("fm_daily_intention_v1")) {
+        setTodayIntention(readTodayIntention());
       }
     });
     return unsubscribe;
@@ -122,74 +143,169 @@ export default function Dashboard() {
       {/* Main content */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 py-6 space-y-6">
         
-        {/* Focus Hub: Side-by-Side Layout */}
-        <div className="grid lg:grid-cols-2 gap-6">
+        {/* Focus Hub Layout */}
+        <div className="grid lg:grid-cols-[1fr_0.6fr] gap-6">
           
-          {/* Left Column: Ambient YouTube Player */}
-          <Card className="overflow-hidden h-full">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2">
-                  <Play className="w-5 h-5" />
-                  Ambient Player
-                </CardTitle>
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-2 text-sm">
-                    <span>Background</span>
-                    <Switch
-                      checked={ambientSettings.useAsBackground}
-                      onCheckedChange={(checked) => updateAmbientSettings({ useAsBackground: checked })}
-                    />
+          {/* Left Section: Video + Motivation Panel */}
+          <div className="space-y-6">
+            
+            {/* Ambient YouTube Player */}
+            <Card className="overflow-hidden">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2">
+                    <Play className="w-5 h-5" />
+                    Ambient Player
+                  </CardTitle>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 text-sm">
+                      <span>Background</span>
+                      <Switch
+                        checked={ambientSettings.useAsBackground}
+                        onCheckedChange={(checked) => updateAmbientSettings({ useAsBackground: checked })}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-            </CardHeader>
-            <CardContent className="p-4">
-              <div className="aspect-video rounded-xl overflow-hidden bg-muted/20">
-                <YouTubeAmbient 
-                  videoId={ambientSettings.videoId}
-                  startMuted={ambientSettings.muted}
-                  className="w-full h-full"
-                />
-              </div>
-              
-              {/* Player Controls */}
-              <div className="flex items-center justify-between mt-4 p-3 bg-muted/10 rounded-lg">
-                <div className="flex items-center gap-3">
+              </CardHeader>
+              <CardContent className="p-4">
+                <div className="aspect-video rounded-xl overflow-hidden bg-muted/20">
+                  <YouTubeAmbient 
+                    videoId={ambientSettings.videoId}
+                    startMuted={ambientSettings.muted}
+                    className="w-full h-full"
+                  />
+                </div>
+                
+                {/* Player Controls */}
+                <div className="flex items-center justify-between mt-4 p-3 bg-muted/10 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => updateAmbientSettings({ muted: !ambientSettings.muted })}
+                    >
+                      {ambientSettings.muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                    </Button>
+                    <div className="w-24">
+                      <Slider
+                        value={[ambientSettings.muted ? 0 : ambientSettings.volume]}
+                        onValueChange={(value) => updateAmbientSettings({ 
+                          volume: value[0], 
+                          muted: value[0] === 0 
+                        })}
+                        max={100}
+                        step={5}
+                        className="w-full"
+                      />
+                    </div>
+                  </div>
                   <Button
-                    variant="ghost"
+                    variant="outline"
                     size="sm"
-                    onClick={() => updateAmbientSettings({ muted: !ambientSettings.muted })}
+                    onClick={() => navigate('/tools/sounds')}
+                    className="flex items-center gap-2"
                   >
-                    {ambientSettings.muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                    <ExternalLink className="w-3 h-3" />
+                    More Sounds
                   </Button>
-                  <div className="w-24">
-                    <Slider
-                      value={[ambientSettings.muted ? 0 : ambientSettings.volume]}
-                      onValueChange={(value) => updateAmbientSettings({ 
-                        volume: value[0], 
-                        muted: value[0] === 0 
-                      })}
-                      max={100}
-                      step={5}
-                      className="w-full"
-                    />
-                  </div>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => navigate('/tools/sounds')}
-                  className="flex items-center gap-2"
-                >
-                  <ExternalLink className="w-3 h-3" />
-                  More Sounds
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+
+            {/* Motivation Panel */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              
+              {/* Pet of the Day */}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Card 
+                      className="cursor-pointer hover:scale-105 transition-transform bg-gradient-to-br from-pink-50/50 to-purple-50/50 border-pink-200/50"
+                      onClick={() => navigate('/tools/tasks')}
+                    >
+                      <CardContent className="p-4 text-center">
+                        <div className="text-2xl mb-2">
+                          {petData.animal ? 
+                            ANIMALS.find(a => a.id === petData.animal)?.stages[petData.stage] || "🐾" 
+                            : "🐾"
+                          }
+                        </div>
+                        <div className="text-sm font-medium text-foreground mb-1">
+                          {petData.animal ? 
+                            ANIMALS.find(a => a.id === petData.animal)?.name || "Pet" 
+                            : "Choose Pet"
+                          }
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {petData.animal ? `Stage ${petData.stage + 1}/4` : "Select companion"}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Click to view Task Pets</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              {/* Trophies Earned Today */}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Card 
+                      className="cursor-pointer hover:scale-105 transition-transform bg-gradient-to-br from-yellow-50/50 to-orange-50/50 border-yellow-200/50"
+                      onClick={() => navigate('/tools/wins')}
+                    >
+                      <CardContent className="p-4 text-center">
+                        <div className="text-2xl mb-2">🏆</div>
+                        <div className="text-sm font-medium text-foreground mb-1">
+                          {trophyCount} Trophies
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          Earned today
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Click to view Wins</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              {/* Today's Intention */}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Card 
+                      className="cursor-pointer hover:scale-105 transition-transform bg-gradient-to-br from-blue-50/50 to-indigo-50/50 border-blue-200/50"
+                      onClick={() => navigate('/tools/tasks')}
+                    >
+                      <CardContent className="p-4 text-center">
+                        <div className="text-2xl mb-2">✨</div>
+                        <div className="text-sm font-medium text-foreground mb-1">
+                          Today's Intention
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {todayIntention?.feel ? 
+                            `Feel ${todayIntention.feel}` 
+                            : "Set your intention"
+                          }
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Click to set intention</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+            </div>
+          </div>
           
-          {/* Right Column: Focus Panel */}
+          {/* Right Section: Focus Panel */}
           <div className="space-y-4 h-full flex flex-col">
             
             {/* Big Three Tasks */}
