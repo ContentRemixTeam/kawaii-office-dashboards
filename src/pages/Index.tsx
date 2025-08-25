@@ -44,18 +44,26 @@ const Index = () => {
         </p>
       </div>
 
-      <div className="w-full max-w-6xl mb-8 relative">
-        <OfficeHero
-          hotspots={HOTSPOTS}
-          fallbackSrc={OFFICE_IMAGE_SRC}
-          alt={OFFICE_ALT}
-          aspectRatio={16/9}
-        />
-        <VisionPreviewOverlay boardBox={boardHotspot} />
+      {/* Top Grid: Office Hero + Big Three Tasks */}
+      <div className="w-full max-w-6xl mb-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Office Hero - Left Column */}
+        <div className="lg:col-span-1 relative">
+          <OfficeHero
+            hotspots={HOTSPOTS}
+            fallbackSrc={OFFICE_IMAGE_SRC}
+            alt={OFFICE_ALT}
+            aspectRatio={16/9}
+          />
+          <VisionPreviewOverlay boardBox={boardHotspot} />
+        </div>
+        
+        {/* Big Three Tasks - Middle & Right Columns */}
+        <div className="lg:col-span-2">
+          <div className="h-full bg-card/60 backdrop-blur-sm border border-border/20 shadow-lg rounded-2xl p-6">
+            <BigThreeTasksSection />
+          </div>
+        </div>
       </div>
-
-      {/* Big Three Tasks Section */}
-      <BigThreeTasksSection />
 
       {/* Daily Pet Display */}
       <div className="w-full max-w-6xl mb-8">
