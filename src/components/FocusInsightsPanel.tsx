@@ -48,7 +48,9 @@ export default function FocusInsightsPanel() {
     // Load streak data
     const trophyStats = getTrophyStats();
     const taskData = safeGet("fm_tasks_v1", []);
-    const completedToday = taskData.filter((task: any) => task.completed).length;
+    // Ensure taskData is always an array
+    const tasks = Array.isArray(taskData) ? taskData : [];
+    const completedToday = tasks.filter((task: any) => task.completed).length;
     
     setStreaks([
       { type: "Focus", count: trophyStats.currentStreak, icon: "🎯" },
@@ -57,7 +59,7 @@ export default function FocusInsightsPanel() {
     ]);
 
     // Load recent achievements
-    const achievements = generateRecentAchievements(sessionLog, taskData);
+    const achievements = generateRecentAchievements(sessionLog, tasks);
     setRecentAchievements(achievements);
 
     // Load productivity insights
@@ -106,7 +108,9 @@ export default function FocusInsightsPanel() {
       }
     }
 
-    const completedTasks = taskData.filter((task: any) => task.completed).length;
+    // Ensure taskData is an array before filtering
+    const tasks = Array.isArray(taskData) ? taskData : [];
+    const completedTasks = tasks.filter((task: any) => task.completed).length;
     if (completedTasks > 0) {
       achievements.push(`${completedTasks} task${completedTasks > 1 ? 's' : ''} completed`);
     }
