@@ -266,6 +266,17 @@ export default function PositivityCabinet() {
     safeSet("fm_wins_v1", updatedWins);
     setNewMicroWin("");
 
+    // Award a trophy for the micro win
+    try {
+      // Import trophy system dynamically to avoid circular deps
+      import("@/lib/trophySystem").then(({ awardTrophy }) => {
+        const { trophy, message } = awardTrophy(1); // 1 minute placeholder for micro win
+        console.log('Trophy awarded for micro win:', trophy, message);
+      });
+    } catch (error) {
+      console.log('Error awarding trophy for micro win:', error);
+    }
+
     // Dispatch events for real-time updates
     window.dispatchEvent(new CustomEvent('winsUpdated'));
     window.dispatchEvent(new Event('storage'));
