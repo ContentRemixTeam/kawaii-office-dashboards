@@ -522,6 +522,7 @@ export default function BigThreeTasksSection() {
         onClose={() => setShowAllTasksCompleted(false)}
         onStartNewRound={handleStartNewRound}
         petType={taskData.selectedAnimal}
+        petEmoji={selectedAnimal.emoji}
       />
       
       {/* GIPHY Celebration Component */}

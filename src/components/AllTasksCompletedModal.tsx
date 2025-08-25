@@ -6,7 +6,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { X, Sparkles } from 'lucide-react';
-import { storage } from '@/lib/storage';
+import { storage, setDailyData } from '@/lib/storage';
+import { addEarnedAnimal } from '@/lib/topbarState';
+import { awardTrophy } from '@/lib/trophySystem';
 import { z } from 'zod';
 
 interface AllTasksCompletedModalProps {
@@ -14,13 +16,15 @@ interface AllTasksCompletedModalProps {
   onClose: () => void;
   onStartNewRound: () => void;
   petType: string;
+  petEmoji: string;
 }
 
 export default function AllTasksCompletedModal({ 
   isOpen, 
   onClose, 
   onStartNewRound,
-  petType 
+  petType,
+  petEmoji 
 }: AllTasksCompletedModalProps) {
   const [settings, setSettings] = useState({ showGifs: true, playSound: true });
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
@@ -46,6 +50,9 @@ export default function AllTasksCompletedModal({
 
   useEffect(() => {
     if (isOpen) {
+      // Save the earned animal emoji
+      addEarnedAnimal(petType, petEmoji);
+      
       // Play celebration sound if enabled
       if (settings.playSound) {
         try {
@@ -59,7 +66,7 @@ export default function AllTasksCompletedModal({
         }
       }
     }
-  }, [isOpen, settings.playSound]);
+  }, [isOpen, settings.playSound, petType, petEmoji]);
 
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Escape') {
@@ -75,6 +82,22 @@ export default function AllTasksCompletedModal({
   }, [isOpen]);
 
   const handleStartNewRound = () => {
+    // Save celebration if provided and award trophy
+    if (celebration.trim()) {
+      const wins = storage.getItem('fm_wins_v1', z.array(z.any()), []);
+      const newWin = {
+        id: Date.now().toString(),
+        text: celebration.trim(),
+        date: new Date().toISOString(),
+        category: 'Big Three Complete'
+      };
+      wins.push(newWin);
+      setDailyData('fm_wins_v1', wins);
+      
+      // Award trophy for micro win
+      awardTrophy(5); // 5 minutes as default duration
+    }
+    
     onStartNewRound();
     onClose();
   };
@@ -131,14 +154,14 @@ export default function AllTasksCompletedModal({
             </h2>
             
             <p className="text-muted-foreground">
-              Your unicorn has reached maximum power! 🎉
+              Your {petType} has reached maximum power! 🎉
             </p>
           </div>
           
-          {/* Optional celebration input */}
+          {/* Celebration input to earn trophy */}
           <div className="space-y-2">
             <label className="text-sm text-muted-foreground">
-              Celebrate your achievement (optional)
+              🏆 Write a celebration to earn a trophy!
             </label>
             <Textarea
               value={celebration}
