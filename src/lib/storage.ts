@@ -125,6 +125,15 @@ class SafeStorage {
   ): void {
     const dailyKey = this.dailyKey(baseKey, dateISO);
     this.setItem(dailyKey, value);
+    
+    // Emit change event for components listening to data changes
+    try {
+      window.dispatchEvent(new CustomEvent("fm:data-changed", { 
+        detail: { keys: [dailyKey, baseKey] } 
+      }));
+    } catch {
+      // Ignore if window is not available
+    }
   }
 
   // Clear old daily data (keep last 30 days)

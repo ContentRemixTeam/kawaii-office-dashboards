@@ -53,7 +53,6 @@ export default function BackgroundManager() {
     const updateBackground = () => {
       console.log("BackgroundManager: Updating background state");
       const loadedBg = loadBackground();
-      setBackground(loadedBg);
       
       // Check if we should use ambient video as background
       const ambient = loadAmbient();
@@ -61,44 +60,65 @@ export default function BackgroundManager() {
       
       console.log("BackgroundManager: ambient", ambient);
       console.log("BackgroundManager: hero", hero);
+      console.log("BackgroundManager: loadedBg", loadedBg);
+      
+      // Determine which background to use with priority order
+      let newBackground = loadedBg;
+      let shouldBeActive = false;
       
       if (ambient.activeId && ambient.customUrl && ambient.useAsHero) {
         console.log("BackgroundManager: Setting ambient video as background");
-        setBackground({
+        newBackground = {
           type: "youtube",
           youtubeUrl: ambient.customUrl
-        });
-        setIsActive(true);
+        };
+        shouldBeActive = true;
       } else if (hero.kind === "youtube" && hero.youtubeUrl) {
         console.log("BackgroundManager: Setting hero video as background");
-        setBackground({
+        newBackground = {
           type: "youtube", 
           youtubeUrl: hero.youtubeUrl
-        });
-        setIsActive(true);
+        };
+        shouldBeActive = true;
       } else if (loadedBg.type !== "default") {
         console.log("BackgroundManager: Setting custom background");
-        setIsActive(true);
+        shouldBeActive = true;
       } else {
         console.log("BackgroundManager: Using default background");
-        setIsActive(false);
+        shouldBeActive = false;
       }
+      
+      // Only update if there's an actual change to prevent unnecessary re-renders
+      setBackground(prevBg => {
+        const hasChanged = JSON.stringify(prevBg) !== JSON.stringify(newBackground);
+        if (hasChanged) {
+          console.log("BackgroundManager: Background changed from", prevBg, "to", newBackground);
+        }
+        return newBackground;
+      });
+      setIsActive(shouldBeActive);
     };
 
     // Initial load
     updateBackground();
 
-    // Listen for storage changes
+    // Listen for storage changes - be more selective about what triggers updates
     const handleDataChange = (event: CustomEvent) => {
       const keys = event.detail?.keys || [];
-      if (keys.includes(BG_KEY) || keys.includes("fm_ambient_v1") || keys.includes("fm_hero_v1")) {
-        console.log("BackgroundManager: Storage changed, updating background", keys);
+      const relevantKeys = [BG_KEY, "fm_ambient_v1", "fm_hero_v1"];
+      const hasRelevantChange = keys.some(key => relevantKeys.includes(key));
+      
+      if (hasRelevantChange) {
+        console.log("BackgroundManager: Relevant storage changed, updating background", keys);
         updateBackground();
+      } else {
+        console.log("BackgroundManager: Ignoring unrelated storage change", keys);
       }
     };
 
     const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === BG_KEY || event.key === "fm_ambient_v1" || event.key === "fm_hero_v1") {
+      const relevantKeys = [BG_KEY, "fm_ambient_v1", "fm_hero_v1"];
+      if (event.key && relevantKeys.includes(event.key)) {
         console.log("BackgroundManager: Storage event, updating background", event.key);
         updateBackground();
       }
