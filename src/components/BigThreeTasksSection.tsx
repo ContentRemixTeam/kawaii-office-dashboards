@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
-import { Calendar, Play, Pause, Timer, Settings, Square } from "lucide-react";
+import { Calendar, Play, Pause, Timer, Settings, Square, RotateCcw } from "lucide-react";
 import { getDailyData, setDailyData, getCelebrationsEnabled } from "@/lib/storage";
 import { readTodayIntention } from "@/lib/dailyFlow";
 import { useToast } from "@/hooks/use-toast";
@@ -523,6 +523,19 @@ export default function BigThreeTasksSection() {
           >
             <Settings className="w-4 h-4 mr-2" />
             Change Pet
+          </Button>
+        </div>
+
+        {/* Reset Button */}
+        <div className="flex justify-center pt-4 border-t border-border/20">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleStartNewRound}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <RotateCcw className="w-4 h-4 mr-2" />
+            Reset Tasks
           </Button>
         </div>
       </div>
