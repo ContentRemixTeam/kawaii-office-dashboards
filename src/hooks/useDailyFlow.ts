@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { shouldShowIntention, shouldShowDebrief, readPrefs, writePrefs } from "@/lib/dailyFlow";
+import { shouldShowIntention, shouldShowDebrief, readPrefs, writePrefs, readTodayDebrief } from "@/lib/dailyFlow";
+import { isFeatureVisible } from "@/lib/theme";
 
 export default function useDailyFlow(){
   const [showIntention,setShowIntention] = useState(false);
@@ -12,7 +13,22 @@ export default function useDailyFlow(){
   // soft scheduler: checks every minute while the app is open
   useEffect(()=>{
     const id = setInterval(()=>{
-      if (shouldShowDebrief(new Date())) setShowDebrief(true);
+      // Check if debrief auto-show is enabled in theme settings
+      const debriefAutoEnabled = isFeatureVisible('debriefAuto');
+      const shouldShow = shouldShowDebrief(new Date());
+      
+      console.log('[useDailyFlow] Debrief check:', {
+        debriefAutoEnabled,
+        shouldShow,
+        prefs: readPrefs(),
+        currentTime: new Date().toLocaleTimeString(),
+        hasDebrief: !!readTodayDebrief()
+      });
+      
+      if (debriefAutoEnabled && shouldShow) {
+        console.log('[useDailyFlow] Triggering debrief modal');
+        setShowDebrief(true);
+      }
     }, 60_000);
     return ()=> clearInterval(id);
   },[]);
