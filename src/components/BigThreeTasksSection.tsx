@@ -14,6 +14,7 @@ import { emitChanged, addEarnedAnimal } from "@/lib/topbarState";
 import { K_TASKS } from "@/lib/topbar.readers";
 import focusTimer from "@/lib/focusTimer";
 import TaskCelebrationModal from "./TaskCelebrationModal";
+import AllTasksCompletedModal from "./AllTasksCompletedModal";
 import TaskProgressGraph from "./TaskProgressGraph";
 import { useNavigate } from "react-router-dom";
 
@@ -97,6 +98,7 @@ export default function BigThreeTasksSection() {
   });
   
   const [showCelebration, setShowCelebration] = useState(false);
+  const [showAllTasksCompleted, setShowAllTasksCompleted] = useState(false);
   const [showAnimalPicker, setShowAnimalPicker] = useState(false);
   const [timerState, setTimerState] = useState(focusTimer.getState());
   const [showTaskCelebration, setShowTaskCelebration] = useState(false);
@@ -252,13 +254,35 @@ export default function BigThreeTasksSection() {
         });
       }
 
-      // Show celebration animation if all three tasks are done
+      // Check if all tasks are completed for the first time
       const allCompleted = newCompleted.every(Boolean);
-      if (allCompleted) {
-        setShowCelebration(true);
-        setTimeout(() => setShowCelebration(false), 3000);
+      const wasAllCompleted = taskData.completed.every(Boolean);
+      
+      if (allCompleted && !wasAllCompleted) {
+        // Show the all-tasks-completed modal
+        setShowAllTasksCompleted(true);
       }
     }
+  };
+
+  const handleStartNewRound = () => {
+    // Reset all tasks
+    const resetData = {
+      tasks: ["", "", ""],
+      completed: [false, false, false]
+    };
+    saveTaskData(resetData);
+    
+    // Clear celebrated tasks for new round
+    setCelebratedTasks(new Set());
+    setDailyData(`fm_big3_celebrated_v1`, []);
+    
+    // Show success toast
+    toast({
+      title: "New Round Started! 🚀",
+      description: "Ready for your next Big Three tasks!",
+      duration: 3000,
+    });
   };
 
   // Timer helpers
@@ -465,6 +489,14 @@ export default function BigThreeTasksSection() {
         onClose={() => setShowTaskCelebration(false)}
         petType={taskData.selectedAnimal}
         taskIndex={celebratedTaskIndex}
+      />
+
+      {/* All Tasks Completed Modal */}
+      <AllTasksCompletedModal
+        isOpen={showAllTasksCompleted}
+        onClose={() => setShowAllTasksCompleted(false)}
+        onStartNewRound={handleStartNewRound}
+        petType={taskData.selectedAnimal}
       />
     </>
   );
