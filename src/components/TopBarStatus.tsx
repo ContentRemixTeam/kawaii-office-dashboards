@@ -47,6 +47,14 @@ export default function TopBarStatus(){
   const petDisplay = pet.animal ? `${pet.animal} · S${stageLabel}` : "No pet";
   const wordDisplay = word || "Choose Word";
   const affirmDisplay = affirm || "Draw Card";
+  
+  // Get pet emoji map for display
+  const petEmojiMap: { [key: string]: string } = { 
+    unicorn: "🦄", dragon: "🐉", cat: "🐱", dog: "🐶", 
+    bunny: "🐰", fox: "🦊", panda: "🐼", penguin: "🐧", 
+    owl: "🦉", hamster: "🐹" 
+  };
+  const petEmoji = pet.animal ? petEmojiMap[pet.animal.toLowerCase()] || "🐾" : "🐾";
 
   return (
     <div className="flex items-center gap-2 overflow-x-auto max-w-full">
@@ -58,7 +66,7 @@ export default function TopBarStatus(){
         onClick={() => navigate('/tools/positivity-cabinet')}
       />
       <Pill 
-        icon="🐾" 
+        icon={petEmoji} 
         label="Pet" 
         value={petDisplay} 
         title="Go to Task Pets" 
