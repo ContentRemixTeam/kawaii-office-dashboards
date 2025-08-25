@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Home } from "lucide-react";
 import {
@@ -14,12 +14,28 @@ import {
 } from "@/components/ui/sidebar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { NAV_SECTIONS } from "@/data/nav";
+import { readEarnedAnimals } from "@/lib/topbarState";
+import { onChanged } from "@/lib/bus";
 
 export function AppSidebar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
+  const [earnedAnimals, setEarnedAnimals] = useState<Array<{ id: string; emoji: string }>>([]);
+  
+  // Load earned animals
+  useEffect(() => {
+    setEarnedAnimals(readEarnedAnimals());
+    
+    const unsubscribe = onChanged(keys => {
+      if (keys.includes("fm_earned_animals_v1")) {
+        setEarnedAnimals(readEarnedAnimals());
+      }
+    });
+    
+    return unsubscribe;
+  }, []);
   
   const isActive = (href: string) => {
     if (href === "/") return location.pathname === "/";
@@ -164,12 +180,45 @@ export function AppSidebar() {
                         {menuButton}
                       </SidebarMenuItem>
                     );
-                  })}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          );
-        })}
+         })}
+        </SidebarMenu>
+      </SidebarGroupContent>
+    </SidebarGroup>
+  );
+})}
+
+{/* Earned Animals Section */}
+{earnedAnimals.length > 0 && (
+  <SidebarGroup className="border-t border-border/10 pt-6">
+    {!isCollapsed && (
+      <SidebarGroupLabel className="px-3 py-2 text-xs font-semibold text-muted-foreground/80 uppercase tracking-wider">
+        <span className="mr-2">🏆</span>
+        Today's Pets
+      </SidebarGroupLabel>
+    )}
+    
+    <SidebarGroupContent>
+      <div className={`mx-2 p-3 rounded-xl bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 ${
+        isCollapsed ? "flex justify-center" : ""
+      }`}>
+        <div className={`flex gap-2 ${isCollapsed ? "flex-col items-center" : "flex-wrap"}`}>
+          {earnedAnimals.map((animal, index) => (
+            <Tooltip key={`${animal.id}-${index}`}>
+              <TooltipTrigger asChild>
+                <div className="text-2xl animate-bounce" style={{ animationDelay: `${index * 0.2}s` }}>
+                  {animal.emoji}
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="right" className="font-medium">
+                Earned {animal.id}!
+              </TooltipContent>
+            </Tooltip>
+          ))}
+        </div>
+      </div>
+    </SidebarGroupContent>
+  </SidebarGroup>
+)}
       </SidebarContent>
     </Sidebar>
   );

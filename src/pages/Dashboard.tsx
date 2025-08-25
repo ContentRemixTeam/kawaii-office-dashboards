@@ -20,7 +20,7 @@ import { useGiphyCelebration } from "@/hooks/useGiphyCelebration";
 import GiphyCelebration from "@/components/GiphyCelebration";
 import { eventBus } from "@/lib/eventBus";
 import { getDailyData, setDailyData } from "@/lib/storage";
-import { readVisionThumbs, readPetStage } from "@/lib/topbarState";
+import { readVisionThumbs, readPetStage, readEarnedAnimals } from "@/lib/topbarState";
 import { readTodayIntention } from "@/lib/dailyFlow";
 import focusTimer from "@/lib/focusTimer";
 import { onChanged } from "@/lib/bus";
@@ -66,6 +66,7 @@ const Dashboard = () => {
   const [petData, setPetData] = useState({ animal: null, stage: 0 });
   const [taskData, setTaskData] = useState<TaskData>({ tasks: ["", "", ""], completed: [false, false, false], selectedAnimal: "unicorn" });
   const [todayIntention, setTodayIntention] = useState(null);
+  const [earnedAnimals, setEarnedAnimals] = useState<Array<{ id: string; emoji: string }>>([]);
 
   // Load initial data
   useEffect(() => {
@@ -91,6 +92,7 @@ const Dashboard = () => {
     setTrophyCount(readTrophies());
     setPetData(readPetStage());
     setTodayIntention(readTodayIntention());
+    setEarnedAnimals(readEarnedAnimals());
     
     return unsubscribeFocus;
   }, [celebratePomodoro]);
@@ -121,6 +123,9 @@ const Dashboard = () => {
       }
       if (keys.includes("fm_ambient_v1")) {
         setAmbientState(loadAmbient());
+      }
+      if (keys.includes("fm_earned_animals_v1")) {
+        setEarnedAnimals(readEarnedAnimals());
       }
     });
     return unsubscribe;
@@ -432,6 +437,34 @@ const Dashboard = () => {
                 </div>
               </CardContent>
             </Card>
+            
+            {/* Earned Animals Display */}
+            {earnedAnimals.length > 0 && (
+              <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    🏆 Today's Earned Pets
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-4">
+                  <div className="flex flex-wrap gap-3 justify-center">
+                    {earnedAnimals.map((animal, index) => (
+                      <div 
+                        key={`${animal.id}-${index}`}
+                        className="text-4xl animate-bounce hover:scale-110 transition-transform cursor-default"
+                        style={{ animationDelay: `${index * 0.3}s` }}
+                        title={`Earned ${animal.id}!`}
+                      >
+                        {animal.emoji}
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-center text-sm text-muted-foreground mt-3">
+                    Complete tasks to earn more pets! 🎉
+                  </p>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
           {/* Right Section: Multi-Widget Panel */}
