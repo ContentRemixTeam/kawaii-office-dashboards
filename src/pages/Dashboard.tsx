@@ -15,6 +15,7 @@ import QuickActionsPanel from "@/components/QuickActionsPanel";
 import DailyProgressPanel from "@/components/DailyProgressPanel";
 import InspirationCorner from "@/components/InspirationCorner";
 import DashboardHabitTracker from "@/components/DashboardHabitTracker";
+import DashboardTrophyCase from "@/components/DashboardTrophyCase";
 import PetStatusCard from "@/components/PetStatusCard";
 import { useGiphyCelebration } from "@/hooks/useGiphyCelebration";
 import GiphyCelebration from "@/components/GiphyCelebration";
@@ -346,6 +347,9 @@ const Dashboard = () => {
 
             {/* Dashboard Habit Tracker - Added under earned pets */}
             <DashboardHabitTracker />
+
+            {/* Dashboard Trophy Case - Added under habit tracker */}
+            <DashboardTrophyCase />
           </div>
           
           {/* Right Section: Focus Panel */}
