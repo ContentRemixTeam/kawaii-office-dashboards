@@ -98,13 +98,6 @@ export default function TaskCelebrationModal({
     }
   }, [isOpen, settings.playSound, onClose]);
 
-  if (!isOpen || !settings.showGifs) return null;
-
-  const gifSrc = PET_GIFS[petType as keyof typeof PET_GIFS] || PET_GIFS.unicorn;
-  const fallbackGif = '/gifs/celebrate_generic.gif';
-  const petName = PET_NAMES[petType as keyof typeof PET_NAMES] || 'Pet';
-  const message = ENCOURAGEMENT_MESSAGES[Math.floor(Math.random() * ENCOURAGEMENT_MESSAGES.length)];
-
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -117,6 +110,13 @@ export default function TaskCelebrationModal({
       return () => document.removeEventListener('keydown', handleKeyDown);
     }
   }, [isOpen, onClose]);
+
+  if (!isOpen || !settings.showGifs) return null;
+
+  const gifSrc = PET_GIFS[petType as keyof typeof PET_GIFS] || PET_GIFS.unicorn;
+  const fallbackGif = '/gifs/celebrate_generic.gif';
+  const petName = PET_NAMES[petType as keyof typeof PET_NAMES] || 'Pet';
+  const message = ENCOURAGEMENT_MESSAGES[Math.floor(Math.random() * ENCOURAGEMENT_MESSAGES.length)];
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center p-4 pointer-events-none">
