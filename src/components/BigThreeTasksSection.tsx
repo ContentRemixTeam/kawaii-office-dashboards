@@ -95,14 +95,31 @@ export default function BigThreeTasksSection() {
   // Load tasks data from the Task Pets page storage
   useEffect(() => {
     const loadTasks = () => {
-      const data = getDailyData("fm_tasks_v1", {
+      console.log("loadTasks: Starting to load data");
+      const fallbackData = {
         tasks: ["", "", ""],
         reflections: ["", "", ""],
         completed: [false, false, false],
         selectedAnimal: "unicorn",
         roundsCompleted: 0,
         totalTasksCompleted: 0
-      });
+      };
+      
+      const data = getDailyData("fm_tasks_v1", fallbackData);
+      
+      console.log("loadTasks: Data received:", data);
+      console.log("loadTasks: Data.tasks:", data?.tasks);
+      
+      // Ensure data is valid
+      if (!data || typeof data !== 'object') {
+        console.warn("loadTasks: Invalid data received, using fallback");
+        setTaskData({
+          tasks: fallbackData.tasks,
+          completed: fallbackData.completed,
+          selectedAnimal: fallbackData.selectedAnimal
+        });
+        return;
+      }
 
       // Check if we should populate from daily intention
       const intention = readTodayIntention();
@@ -185,6 +202,12 @@ export default function BigThreeTasksSection() {
   };
 
   const handleTaskChange = (index: number, value: string) => {
+    console.log("handleTaskChange: taskData before:", taskData);
+    console.log("handleTaskChange: taskData.tasks:", taskData?.tasks);
+    if (!taskData?.tasks) {
+      console.error("handleTaskChange: taskData.tasks is undefined!");
+      return;
+    }
     const newTasks = taskData.tasks.map((task, i) => i === index ? value : task);
     saveTaskData({ tasks: newTasks });
   };
@@ -397,31 +420,31 @@ export default function BigThreeTasksSection() {
         </div>
 
         <div className="space-y-4">
-          {taskData.tasks.map((task, index) => (
+          {taskData?.tasks?.map((task, index) => (
             <div
               key={index}
-              className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all duration-300 ${
-                taskData.completed[index]
-                  ? "bg-primary/5 border-primary/30 shadow-sm"
-                  : "bg-background/80 border-border/20 hover:border-primary/40 hover:shadow-md"
-              }`}
+               className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all duration-300 ${
+                 taskData?.completed?.[index]
+                   ? "bg-primary/5 border-primary/30 shadow-sm"
+                   : "bg-background/80 border-border/20 hover:border-primary/40 hover:shadow-md"
+               }`}
             >
-              <Checkbox
-                checked={taskData.completed[index]}
-                onCheckedChange={() => toggleTaskCompleted(index)}
-                className="h-6 w-6 rounded-full"
-              />
+               <Checkbox
+                 checked={taskData?.completed?.[index] || false}
+                 onCheckedChange={() => toggleTaskCompleted(index)}
+                 className="h-6 w-6 rounded-full"
+               />
               
               <div className="flex-1">
                 <Input
                   value={task}
                   onChange={(e) => handleTaskChange(index, e.target.value)}
                   placeholder={`Task ${index + 1} - What needs to get done?`}
-                  className={`text-lg border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 ${
-                    taskData.completed[index] 
-                      ? "line-through text-muted-foreground" 
-                      : "text-foreground"
-                  }`}
+                   className={`text-lg border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 ${
+                     taskData?.completed?.[index] 
+                       ? "line-through text-muted-foreground" 
+                       : "text-foreground"
+                   }`}
                 />
               </div>
               
