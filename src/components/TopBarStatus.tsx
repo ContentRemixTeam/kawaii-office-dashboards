@@ -13,7 +13,8 @@ export default function TopBarStatus(){
 
   const refresh = React.useCallback(()=>{
     console.log('TopBarStatus refreshing data...');
-    console.log('TopBarStatus - localStorage keys containing "energy":', Object.keys(localStorage).filter(k => k.includes('energy')));
+    console.log('TopBarStatus - localStorage keys with "affirm":', Object.keys(localStorage).filter(k => k.includes('affirm')));
+    console.log('TopBarStatus - localStorage keys with "trophy":', Object.keys(localStorage).filter(k => k.includes('trophy')));
     
     const word = readPowerWord();
     const affirmation = readAffirmation();
@@ -21,6 +22,8 @@ export default function TopBarStatus(){
     const trophies = readTrophies();
     
     console.log('TopBarStatus data:', { word, affirmation, pet, trophies });
+    console.log('TopBarStatus - raw localStorage affirmations:', localStorage.getItem('fm_affirmations_v1'));
+    console.log('TopBarStatus - raw localStorage trophies:', localStorage.getItem('fm_trophy_stats_v1'));
     
     setWord(word);
     setAffirm(affirmation);
@@ -52,7 +55,7 @@ export default function TopBarStatus(){
         label="Trophies" 
         value={String(trophies)} 
         title="Go to Wins" 
-        onClick={() => navigate('/tools/wins')}
+        onClick={() => navigate('/tools/positivity-cabinet')}
       />
       <Pill 
         icon="🐾" 
@@ -76,7 +79,7 @@ export default function TopBarStatus(){
         label="Affirmation" 
         value={affirmDisplay} 
         title="Go to Affirmations" 
-        onClick={() => navigate('/tools/affirmations')}
+        onClick={() => navigate('/tools/positivity-cabinet')}
         clamp 
         wide 
         isEmpty={!affirm}
