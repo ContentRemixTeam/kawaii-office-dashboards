@@ -12,16 +12,28 @@ export default function TopBarStatus(){
   const [trophies, setTrophies] = React.useState(0);
 
   const refresh = React.useCallback(()=>{
-    setWord(readPowerWord());
-    setAffirm(readAffirmation());
-    setPet(readPet());
-    setTrophies(readTrophies());
+    console.log('TopBarStatus refreshing data...');
+    const word = readPowerWord();
+    const affirmation = readAffirmation();
+    const pet = readPet();
+    const trophies = readTrophies();
+    
+    console.log('TopBarStatus data:', { word, affirmation, pet, trophies });
+    
+    setWord(word);
+    setAffirm(affirmation);
+    setPet(pet);
+    setTrophies(trophies);
   },[]);
 
   React.useEffect(()=>{
     refresh();
     return onChanged(keys=>{
-      if (keys.some(k => [K_ENERGY,K_AFFIRM,K_TASKS,K_TROPHIES].includes(k))) refresh();
+      console.log('TopBarStatus received change events for keys:', keys);
+      if (keys.some(k => [K_ENERGY,K_AFFIRM,K_TASKS,K_TROPHIES].includes(k))) {
+        console.log('TopBarStatus triggering refresh for matching keys');
+        refresh();
+      }
     });
   },[refresh]);
 

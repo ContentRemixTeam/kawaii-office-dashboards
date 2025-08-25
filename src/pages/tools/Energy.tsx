@@ -80,18 +80,16 @@ export default function Energy() {
     setTodayWord(wordData);
     setDailyData("fm_energy_v1", wordData);
     
-    // Emit change for TopBar updates
-    emitChanged([K_ENERGY]);
-
-    // Dispatch custom event for badge updates
-    window.dispatchEvent(new CustomEvent('energyWordUpdated'));
-    window.dispatchEvent(new Event('storage'));
-
-    // Add to history
+    // Add to history first
     const historyEntry = { ...wordData, date: new Date().toISOString().split('T')[0] };
     const updatedHistory = [historyEntry, ...history.filter(h => h.date !== historyEntry.date)];
     setHistory(updatedHistory);
     safeSet("fm_energy_history_v1", updatedHistory);
+
+    // Emit change for TopBar updates after data is saved
+    emitChanged([K_ENERGY]);
+    
+    console.log('Energy word selected, emitting events for:', K_ENERGY);
 
     toast({
       title: "✨ Energy word selected!",
@@ -117,9 +115,9 @@ export default function Energy() {
       };
       setTodayWord({ ...todayWord, pinned: newPinned });
       setDailyData("fm_energy_v1", updatedData);
-      window.dispatchEvent(new CustomEvent('energyWordUpdated'));
-      window.dispatchEvent(new Event('storage'));
       emitChanged([K_ENERGY]);
+      
+      console.log('Energy word pin toggled, emitting events for:', K_ENERGY);
     }
   };
 
@@ -170,7 +168,7 @@ export default function Energy() {
           <>
             <div className="grid md:grid-cols-3 gap-6">
               <div className="bg-card rounded-xl p-6 border border-border/20">
-                <h3 className="font-semibold text-main mb-4 flex items-center gap-2">
+                <h3 className="font-semibold text-card-foreground mb-4 flex items-center gap-2">
                   🌟 Inspiring
                 </h3>
                 <div className="flex flex-wrap gap-2">
@@ -178,7 +176,7 @@ export default function Energy() {
                     <button
                       key={word}
                       onClick={() => selectWord(word)}
-                      className="btn btn-secondary"
+                      className="transition-transform hover:scale-105"
                     >
                       <WordBadge word={word} isSelected={false} />
                     </button>

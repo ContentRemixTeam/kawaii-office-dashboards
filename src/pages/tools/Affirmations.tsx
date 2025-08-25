@@ -112,10 +112,7 @@ export default function Affirmations() {
       setTodaysCard(newCard);
       setDailyData("fm_affirmations_v1", newCard);
       
-      // Emit change for TopBar updates
-      emitChanged([K_AFFIRM]);
-      
-      // Save to history
+      // Save to history first
       const updatedHistory = { ...cardHistory, [today]: newCard };
       setCardHistory(updatedHistory);
       safeSet("fm_affirmation_history_v1", updatedHistory);
@@ -124,10 +121,10 @@ export default function Affirmations() {
       setIsCardRevealed(true);
       setIsFlipping(false);
 
-      // Dispatch events for real-time updates
-      window.dispatchEvent(new CustomEvent('affirmationUpdated'));
-      window.dispatchEvent(new Event('storage'));
-      // (removing duplicate event emit)
+      // Emit change for TopBar updates after state is set
+      emitChanged([K_AFFIRM]);
+      
+      console.log('Affirmation card drawn, emitting events for:', K_AFFIRM);
     }, 1000);
   };
 

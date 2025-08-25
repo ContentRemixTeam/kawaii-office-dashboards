@@ -39,12 +39,12 @@ export default function DailyProgressPanel() {
     // Listen for data changes using the correct storage keys
     const unsubscribe = onChanged(keys => {
       console.log('DailyProgressPanel - Changed keys:', keys);
-      if (keys.includes("fm_tasks_v1")) {
+      if (keys.includes("fm_tasks_v1") || keys.includes("fm_tasks_data_v1")) {
         const updatedPetData = readPetStage();
         console.log('Updated pet data:', updatedPetData);
         setTaskProgress((updatedPetData.stage / 3) * 100);
       }
-      if (keys.includes("fm_trophies_v1") || keys.includes("fm_trophy_stats_v1")) {
+      if (keys.includes("fm_trophies_v1") || keys.includes("fm_trophy_stats_v1") || keys.includes("fm_pomo_trophies_v1")) {
         const trophyStats = getTrophyStats();
         console.log('Updated trophy stats:', trophyStats);
         setTrophyCount(trophyStats.todayTrophies || 0);
