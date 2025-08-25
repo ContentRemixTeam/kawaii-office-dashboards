@@ -45,9 +45,9 @@ const Index = () => {
       </div>
 
       {/* Top Grid: Office Hero + Big Three Tasks */}
-      <div className="w-full max-w-6xl mb-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="w-full max-w-6xl mb-8 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
         {/* Office Hero - Left Column */}
-        <div className="lg:col-span-1 relative">
+        <div className="md:col-span-1 relative">
           <OfficeHero
             hotspots={HOTSPOTS}
             fallbackSrc={OFFICE_IMAGE_SRC}
@@ -58,8 +58,12 @@ const Index = () => {
         </div>
         
         {/* Big Three Tasks - Middle & Right Columns */}
-        <div className="lg:col-span-2">
-          <div className="h-full bg-card/60 backdrop-blur-sm border border-border/20 shadow-lg rounded-2xl p-6">
+        <div className="md:col-span-2">
+          <div className="h-full bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-2xl p-4 md:p-6">
+            <div className="text-center mb-4">
+              <h2 className="text-xl font-bold text-primary mb-1">⭐ The Big Three</h2>
+              <p className="text-sm text-muted-foreground">Your most important tasks today</p>
+            </div>
             <BigThreeTasksSection />
           </div>
         </div>
