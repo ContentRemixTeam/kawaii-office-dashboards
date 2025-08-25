@@ -21,13 +21,8 @@ import { readTodayIntention } from "@/lib/dailyFlow";
 import focusTimer from "@/lib/focusTimer";
 import { onChanged } from "@/lib/bus";
 import { readTrophies } from "@/lib/topbar.readers";
-
-interface AmbientSettings {
-  videoId: string;
-  useAsBackground: boolean;
-  volume: number;
-  muted: boolean;
-}
+import { loadAmbient, saveAmbient, type AmbientState } from "@/lib/ambientStore";
+import { getPresetById } from "@/data/ambientPresets";
 
 interface DashboardData {
   streak: number;
@@ -45,12 +40,7 @@ const ANIMALS = [
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const [ambientSettings, setAmbientSettings] = useState<AmbientSettings>({
-    videoId: "jfKfPfyJRdk", // Default lofi video
-    useAsBackground: false,
-    volume: 50,
-    muted: true
-  });
+  const [ambientState, setAmbientState] = useState<AmbientState>(loadAmbient);
   
   const [timerState, setTimerState] = useState(focusTimer.getState());
   const [visionImages, setVisionImages] = useState<string[]>([]);
@@ -61,8 +51,7 @@ export default function Dashboard() {
 
   // Load data on mount
   useEffect(() => {
-    const ambientData = getDailyData("fm_ambient_settings_v1", ambientSettings);
-    setAmbientSettings(ambientData);
+    setAmbientState(loadAmbient());
     
     const dashData = getDailyData("fm_dashboard_v1", streakData);
     setStreakData(dashData);
@@ -93,6 +82,9 @@ export default function Dashboard() {
       if (keys.includes("fm_daily_intention_v1")) {
         setTodayIntention(readTodayIntention());
       }
+      if (keys.includes("fm_ambient_v1")) {
+        setAmbientState(loadAmbient());
+      }
     });
     return unsubscribe;
   }, []);
@@ -112,10 +104,23 @@ export default function Dashboard() {
     };
   }, []);
 
-  const updateAmbientSettings = (updates: Partial<AmbientSettings>) => {
-    const newSettings = { ...ambientSettings, ...updates };
-    setAmbientSettings(newSettings);
-    setDailyData("fm_ambient_settings_v1", newSettings);
+  const updateAmbientState = (updates: Partial<AmbientState>) => {
+    const newState = { ...ambientState, ...updates };
+    setAmbientState(newState);
+    saveAmbient(newState);
+  };
+
+  // Get current video ID from ambient state
+  const getCurrentVideoId = () => {
+    if (!ambientState.activeId) return "jfKfPfyJRdk"; // Default lofi video
+    
+    if (ambientState.activeId === "custom" && ambientState.customUrl) {
+      const match = ambientState.customUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/);
+      return match ? match[1] : "jfKfPfyJRdk";
+    }
+    
+    const preset = getPresetById(ambientState.activeId);
+    return preset ? preset.id : "jfKfPfyJRdk";
   };
 
   const formatTime = (ms: number): string => {
@@ -167,10 +172,10 @@ export default function Dashboard() {
                   </CardTitle>
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2 text-sm">
-                      <span>Background</span>
+                      <span>Hero Mode</span>
                       <Switch
-                        checked={ambientSettings.useAsBackground}
-                        onCheckedChange={(checked) => updateAmbientSettings({ useAsBackground: checked })}
+                        checked={ambientState.useAsHero || false}
+                        onCheckedChange={(checked) => updateAmbientState({ useAsHero: checked })}
                       />
                     </div>
                   </div>
@@ -179,8 +184,8 @@ export default function Dashboard() {
               <CardContent className="p-4">
                 <div className="aspect-video rounded-xl overflow-hidden bg-muted/20">
                   <YouTubeAmbient 
-                    videoId={ambientSettings.videoId}
-                    startMuted={ambientSettings.muted}
+                    videoId={getCurrentVideoId()}
+                    startMuted={ambientState.muted || true}
                     className="w-full h-full"
                   />
                 </div>
@@ -191,14 +196,14 @@ export default function Dashboard() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => updateAmbientSettings({ muted: !ambientSettings.muted })}
+                      onClick={() => updateAmbientState({ muted: !ambientState.muted })}
                     >
-                      {ambientSettings.muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                      {ambientState.muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
                     </Button>
                     <div className="w-24">
                       <Slider
-                        value={[ambientSettings.muted ? 0 : ambientSettings.volume]}
-                        onValueChange={(value) => updateAmbientSettings({ 
+                        value={[ambientState.muted ? 0 : (ambientState.volume || 50)]}
+                        onValueChange={(value) => updateAmbientState({ 
                           volume: value[0], 
                           muted: value[0] === 0 
                         })}
