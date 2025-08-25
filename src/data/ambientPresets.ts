@@ -11,9 +11,12 @@ export const AMBIENT_PRESETS: AmbientPreset[] = [
   { key: 'lofi_girl', title: 'Lofi Study', id: 'jfKfPfyJRdk', emoji: '🎵' },
   { key: 'coffee_shop', title: 'Cozy Café', id: 'lTRiuFIWV54', emoji: '☕' },
   { key: 'fireplace', title: 'Fireplace', id: 'eyU3bRy2x44', emoji: '🔥' },
-  { key: 'ocean', title: 'Ocean Waves', id: 'UOxp8A5_ArM', emoji: '🌊' },
-  { key: 'rain', title: 'Rain Window', id: '7NOSDKb0HlU', emoji: '🌧️' },
-  { key: 'birds', title: 'Morning Birds', id: 'KE0mVMrVWso', emoji: '🐦' },
+  { key: 'ocean', title: 'Ocean Waves', id: 'cjqDNEN_4ro', emoji: '🌊' },
+  { key: 'rain', title: 'Rain Window', id: '2Np_UNrAaF8', emoji: '🌧️' },
+  { key: 'birds', title: 'Morning Birds', id: 'haggdJjc0zI', emoji: '🐦' },
+  { key: 'coworking', title: 'Coworking', id: 'iDuxlrrN-wM', emoji: '🎥' },
+  { key: 'body_double', title: 'Body Double', id: 'GkR-FhknLZE', emoji: '👯' },
+  { key: 'adhd_focus', title: 'ADHD Focus', id: '-bRc2jrFtzo', emoji: '🧠' },
 ];
 
 // Get preset by key

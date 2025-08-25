@@ -110,7 +110,7 @@ export default function AmbientPlayer() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             {AMBIENT_PRESETS.map((preset) => (
               <Button
                 key={preset.key}
