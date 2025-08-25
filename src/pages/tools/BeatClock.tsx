@@ -36,6 +36,9 @@ const ENCOURAGEMENTS = [
   "Stay focused, you've got this! 🌟",
   "Almost there! 🚀",
   "You're unstoppable! ⭐",
+  "Your focus is incredible! 🎯",
+  "Crushing it! 💥",
+  "Future You will thank you! 🙏"
 ];
 
 export default function BeatClock() {
@@ -203,9 +206,12 @@ export default function BeatClock() {
 
         {/* Setup State */}
         {timerState === "setup" && (
-          <Card className="max-w-md mx-auto">
-            <CardHeader>
-              <CardTitle className="text-center">🚀 Ready to Beat the Clock?</CardTitle>
+          <Card className="max-w-md mx-auto border-2 border-primary/20 shadow-lg">
+            <CardHeader className="bg-gradient-to-r from-primary/5 to-primary/10">
+              <CardTitle className="text-center flex items-center justify-center gap-2">
+                <Clock className="w-5 h-5" />
+                Ready to Beat the Clock?
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
@@ -234,9 +240,9 @@ export default function BeatClock() {
                 </Select>
               </div>
 
-              <Button onClick={startTimer} className="w-full" size="lg">
+              <Button onClick={startTimer} className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70" size="lg">
                 <Play className="w-4 h-4 mr-2" />
-                Start Timer
+                Start Timer 🚀
               </Button>
             </CardContent>
           </Card>
@@ -244,28 +250,46 @@ export default function BeatClock() {
 
         {/* Running State */}
         {timerState === "running" && (
-          <Card className="max-w-md mx-auto">
-            <CardHeader>
-              <CardTitle className="text-center text-lg">{task}</CardTitle>
+          <Card className="max-w-md mx-auto border-2 border-primary/30 shadow-xl bg-gradient-to-br from-background to-primary/5">
+            <CardHeader className="border-b border-primary/20">
+              <CardTitle className="text-center text-lg flex items-center justify-center gap-2">
+                <div className="animate-pulse">🎯</div>
+                {task}
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="text-center">
-                <div className="text-6xl font-bold text-primary mb-4">
+                <div className="text-6xl md:text-7xl font-bold text-primary mb-4 font-mono">
                   {formatTime(timeLeft)}
                 </div>
-                <Progress value={progressPercentage} className="h-3 mb-4" />
-                <p className="text-sm text-muted-foreground">
+                
+                {/* Enhanced progress bar with rocket animation */}
+                <div className="relative mb-4">
+                  <Progress value={progressPercentage} className="h-4" />
+                  <div 
+                    className="absolute -top-1 transition-all duration-1000 ease-linear"
+                    style={{ left: `calc(${progressPercentage}% - 12px)` }}
+                  >
+                    <div className="text-2xl animate-bounce">🚀</div>
+                  </div>
+                </div>
+                
+                <p className="text-sm text-muted-foreground mb-2">
                   {Math.round(progressPercentage)}% complete
+                </p>
+                <p className="text-xs text-muted-foreground/80">
+                  Beat the clock to earn a trophy! 🏆
                 </p>
               </div>
 
               <div className="flex gap-3">
-                <Button onClick={markDone} className="flex-1" size="lg">
-                  <Square className="w-4 h-4 mr-2" />
-                  Done!
+                <Button onClick={markDone} className="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700" size="lg">
+                  <Trophy className="w-4 h-4 mr-2" />
+                  Done! 🎉
                 </Button>
-                <Button onClick={reset} variant="outline" size="lg">
-                  Reset
+                <Button onClick={reset} variant="outline" size="lg" className="hover:bg-red-50 hover:border-red-200">
+                  <Square className="w-4 h-4 mr-2" />
+                  Stop
                 </Button>
               </div>
             </CardContent>
@@ -274,40 +298,49 @@ export default function BeatClock() {
 
         {/* Victory State */}
         {timerState === "victory" && (
-          <Card className="max-w-md mx-auto bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
-            <CardContent className="text-center py-8">
-              <div className="text-6xl mb-4">🏆</div>
-              <h3 className="text-2xl font-bold text-green-800 mb-2">
-                You Beat the Clock!
-              </h3>
-              <p className="text-green-700 mb-2">"{task}"</p>
-              <p className="text-sm text-green-600 mb-6">
-                Amazing work! Future You is so proud ✨
-              </p>
-              <Button onClick={reset} className="w-full">
-                Go Again! 🚀
-              </Button>
-            </CardContent>
-          </Card>
+          <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
+            <Card className="max-w-md mx-auto bg-gradient-to-br from-green-50 to-emerald-50 border-green-200 animate-scale-in">
+              <CardContent className="text-center py-8">
+                <div className="text-6xl mb-4 animate-bounce">🎉</div>
+                <h3 className="text-2xl font-bold text-green-800 mb-2">
+                  You Beat the Clock!
+                </h3>
+                <p className="text-green-700 mb-2 font-medium">"{task}"</p>
+                <p className="text-sm text-green-600 mb-2">
+                  Amazing work! Future You is so proud ✨
+                </p>
+                <div className="flex items-center justify-center gap-2 mb-6">
+                  <Trophy className="w-5 h-5 text-yellow-500" />
+                  <span className="text-sm font-semibold text-green-700">+1 Victory Trophy!</span>
+                </div>
+                <Button onClick={reset} className="w-full bg-gradient-to-r from-green-500 to-green-600">
+                  Go Again! 🚀
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
         )}
 
         {/* Oops State */}
         {timerState === "oops" && (
-          <Card className="max-w-md mx-auto bg-gradient-to-br from-orange-50 to-yellow-50 border-orange-200">
-            <CardContent className="text-center py-8">
-              <div className="text-6xl mb-4">😴</div>
-              <h3 className="text-2xl font-bold text-orange-800 mb-2">
-                Oops! Time's Up
-              </h3>
-              <p className="text-orange-700 mb-2">"{task}"</p>
-              <p className="text-sm text-orange-600 mb-6">
-                That's okay, try again later 💖
-              </p>
-              <Button onClick={reset} className="w-full">
-                Try Again! 💪
-              </Button>
-            </CardContent>
-          </Card>
+          <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
+            <Card className="max-w-md mx-auto bg-gradient-to-br from-orange-50 to-yellow-50 border-orange-200 animate-scale-in">
+              <CardContent className="text-center py-8">
+                <div className="text-6xl mb-4 animate-pulse">😴</div>
+                <h3 className="text-2xl font-bold text-orange-800 mb-2">
+                  Time's Up!
+                </h3>
+                <p className="text-orange-700 mb-2 font-medium">"{task}"</p>
+                <p className="text-sm text-orange-600 mb-6">
+                  That's okay, try again later 💖<br />
+                  Every attempt makes you stronger!
+                </p>
+                <Button onClick={reset} className="w-full bg-gradient-to-r from-orange-400 to-yellow-500">
+                  Try Again! 💪
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
         )}
 
         {/* Recent Sessions */}
