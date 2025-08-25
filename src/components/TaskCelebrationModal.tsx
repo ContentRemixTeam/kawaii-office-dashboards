@@ -121,7 +121,7 @@ export default function TaskCelebrationModal({
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center p-4 pointer-events-none">
       <Card 
-        className="max-w-sm w-full pointer-events-auto animate-fade-in bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20"
+        className="max-w-sm w-full pointer-events-auto animate-fade-in bg-card/95 border-border/20"
         role="status"
         aria-live="polite"
         aria-label={`Task completed celebration for ${petName}`}
@@ -139,7 +139,7 @@ export default function TaskCelebrationModal({
           
           <div className="mb-4">
             {prefersReducedMotion ? (
-              <div className="w-20 h-20 mx-auto bg-primary/10 rounded-full flex items-center justify-center text-3xl">
+              <div className="w-20 h-20 mx-auto bg-card/50 rounded-full flex items-center justify-center text-3xl">
                 🎉
               </div>
             ) : (
