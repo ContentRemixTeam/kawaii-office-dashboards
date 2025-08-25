@@ -76,14 +76,19 @@ export default function Dashboard() {
   // Listen for data changes
   useEffect(() => {
     const unsubscribe = onChanged(keys => {
+      console.log('Dashboard - Changed keys:', keys);
       if (keys.includes("fm_vision_v1")) {
         setVisionImages(readVisionThumbs(4));
       }
-      if (keys.includes("fm_pomo_trophies_v1")) {
-        setTrophyCount(readTrophies());
+      if (keys.includes("fm_pomo_trophies_v1") || keys.includes("fm_trophies_v1") || keys.includes("fm_trophy_stats_v1")) {
+        const newTrophyCount = readTrophies();
+        console.log('Dashboard - Updated trophy count:', newTrophyCount);
+        setTrophyCount(newTrophyCount);
       }
       if (keys.includes("fm_tasks_v1")) {
-        setPetData(readPetStage());
+        const newPetData = readPetStage();
+        console.log('Dashboard - Updated pet data:', newPetData);
+        setPetData(newPetData);
       }
       if (keys.includes("fm_daily_intention_v1")) {
         setTodayIntention(readTodayIntention());
