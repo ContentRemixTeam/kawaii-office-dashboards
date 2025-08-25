@@ -408,52 +408,6 @@ export default function BigThreeTasksSection() {
           </div>
         </div>
 
-        {/* Compact Timer Row */}
-        <div className="flex items-center justify-between p-3 bg-muted/20 rounded-xl">
-          <div className="flex items-center gap-3">
-            <span className="text-sm">{getPhaseIcon()}</span>
-            <div>
-              <div className={`font-mono font-semibold ${getPhaseColor()}`}>
-                {formatTime(timerState.msLeft)}
-              </div>
-              <div className="text-xs text-muted-foreground">
-                {timerState.phaseLabel}
-              </div>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            {!timerState.isRunning ? (
-              <Button
-                size="sm"
-                onClick={() => focusTimer.start(timerState.phase === "idle" ? "focus" : timerState.phase)}
-                className="h-8"
-              >
-                <Play className="w-3 h-3 mr-1" />
-                Start
-              </Button>
-            ) : (
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => focusTimer.pause()}
-                className="h-8"
-              >
-                <Pause className="w-3 h-3 mr-1" />
-                Pause
-              </Button>
-            )}
-            
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => navigate('/tools/focus')}
-              className="h-8"
-            >
-              <Timer className="w-3 h-3" />
-            </Button>
-          </div>
-        </div>
 
         {/* Progress Graph */}
         <TaskProgressGraph completedCount={completedCount} totalTasks={3} />

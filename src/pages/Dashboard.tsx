@@ -360,28 +360,7 @@ const Dashboard = () => {
           {/* Right Section: Focus Panel */}
           <div className="space-y-4 h-full flex flex-col">
             
-            {/* Big Three Tasks */}
-            <Card className="flex-1">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2">
-                  <span className="text-xl">⭐</span>
-                  Big Three Today
-                </CardTitle>
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">
-                    Streak: {streakData.streak} days
-                  </span>
-                </div>
-              </CardHeader>
-              <CardContent className="p-0">
-                <div className="p-6">
-                  <BigThreeTasksSection />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Pomodoro Timer */}
+            {/* Pomodoro Timer - Moved Above Big Three */}
             <Card className="overflow-hidden">
               <CardHeader className={`bg-gradient-to-r ${getPhaseColor()} pb-4`}>
                 <CardTitle className="flex items-center justify-between">
@@ -443,12 +422,34 @@ const Dashboard = () => {
                     <div className="text-muted-foreground">Sessions</div>
                   </div>
                   <div>
-                    <div className="text-lg font-bold text-primary">{timerState.dailyGoal}</div>
-                    <div className="text-muted-foreground">Goal</div>
+                    <div className="text-lg font-bold text-primary">{timerState.cycleCount}</div>
+                    <div className="text-muted-foreground">Today</div>
                   </div>
                 </div>
               </CardContent>
             </Card>
+
+            {/* Big Three Tasks */}
+            <Card className="flex-1">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2">
+                  <span className="text-xl">⭐</span>
+                  Big Three Today
+                </CardTitle>
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">
+                    Streak: {streakData.streak} days
+                  </span>
+                </div>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="p-6">
+                  <BigThreeTasksSection />
+                </div>
+              </CardContent>
+            </Card>
+
             
             {/* Earned Animals Display */}
             {earnedAnimals.length > 0 && (
