@@ -31,7 +31,7 @@ const WordBadge = ({ word, isSelected }: { word: string; isSelected: boolean }) 
     px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer
     ${isSelected 
       ? 'bg-primary text-primary-foreground scale-105 shadow-glow' 
-      : 'bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground hover:scale-105'
+      : 'bg-muted text-card-foreground hover:bg-accent hover:text-accent-foreground hover:scale-105'
     }
   `}>
     {word}

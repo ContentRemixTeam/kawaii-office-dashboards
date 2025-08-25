@@ -13,6 +13,8 @@ export default function TopBarStatus(){
 
   const refresh = React.useCallback(()=>{
     console.log('TopBarStatus refreshing data...');
+    console.log('TopBarStatus - localStorage keys containing "energy":', Object.keys(localStorage).filter(k => k.includes('energy')));
+    
     const word = readPowerWord();
     const affirmation = readAffirmation();
     const pet = readPet();

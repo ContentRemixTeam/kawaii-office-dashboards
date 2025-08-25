@@ -22,7 +22,15 @@ function isToday(d?: string): boolean {
 
 export function readPowerWord(): string {
   const v = ls<any>(K_ENERGY, null);
-  return v && isToday(v.date) && v.word ? String(v.word) : "";
+  console.log('readPowerWord - raw data:', v);
+  console.log('readPowerWord - isToday check:', v?.date, 'vs', todayISO(), '=', isToday(v?.date));
+  
+  if (!v) return "";
+  if (!isToday(v.date)) return "";
+  
+  const word = v.word || "";
+  console.log('readPowerWord - extracted word:', word);
+  return String(word);
 }
 
 export function readAffirmation(): string {
