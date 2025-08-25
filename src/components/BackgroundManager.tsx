@@ -50,28 +50,67 @@ export default function BackgroundManager() {
   const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
-    const loadedBg = loadBackground();
-    setBackground(loadedBg);
-    
-    // Check if we should use ambient video as background
-    const ambient = loadAmbient();
-    const hero = loadHero();
-    
-    if (ambient.activeId && ambient.customUrl && ambient.useAsHero) {
-      setBackground({
-        type: "youtube",
-        youtubeUrl: ambient.customUrl
-      });
-      setIsActive(true);
-    } else if (hero.kind === "youtube" && hero.youtubeUrl) {
-      setBackground({
-        type: "youtube", 
-        youtubeUrl: hero.youtubeUrl
-      });
-      setIsActive(true);
-    } else if (loadedBg.type !== "default") {
-      setIsActive(true);
-    }
+    const updateBackground = () => {
+      console.log("BackgroundManager: Updating background state");
+      const loadedBg = loadBackground();
+      setBackground(loadedBg);
+      
+      // Check if we should use ambient video as background
+      const ambient = loadAmbient();
+      const hero = loadHero();
+      
+      console.log("BackgroundManager: ambient", ambient);
+      console.log("BackgroundManager: hero", hero);
+      
+      if (ambient.activeId && ambient.customUrl && ambient.useAsHero) {
+        console.log("BackgroundManager: Setting ambient video as background");
+        setBackground({
+          type: "youtube",
+          youtubeUrl: ambient.customUrl
+        });
+        setIsActive(true);
+      } else if (hero.kind === "youtube" && hero.youtubeUrl) {
+        console.log("BackgroundManager: Setting hero video as background");
+        setBackground({
+          type: "youtube", 
+          youtubeUrl: hero.youtubeUrl
+        });
+        setIsActive(true);
+      } else if (loadedBg.type !== "default") {
+        console.log("BackgroundManager: Setting custom background");
+        setIsActive(true);
+      } else {
+        console.log("BackgroundManager: Using default background");
+        setIsActive(false);
+      }
+    };
+
+    // Initial load
+    updateBackground();
+
+    // Listen for storage changes
+    const handleDataChange = (event: CustomEvent) => {
+      const keys = event.detail?.keys || [];
+      if (keys.includes(BG_KEY) || keys.includes("fm_ambient_v1") || keys.includes("fm_hero_v1")) {
+        console.log("BackgroundManager: Storage changed, updating background", keys);
+        updateBackground();
+      }
+    };
+
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === BG_KEY || event.key === "fm_ambient_v1" || event.key === "fm_hero_v1") {
+        console.log("BackgroundManager: Storage event, updating background", event.key);
+        updateBackground();
+      }
+    };
+
+    window.addEventListener("fm:data-changed", handleDataChange as EventListener);
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("fm:data-changed", handleDataChange as EventListener);
+      window.removeEventListener("storage", handleStorageChange);
+    };
   }, []);
 
   const getBackgroundStyle = (): React.CSSProperties => {
@@ -102,18 +141,21 @@ export default function BackgroundManager() {
     const videoId = getYouTubeId(background.youtubeUrl);
     if (!videoId) return null;
 
+    console.log("BackgroundManager: Rendering YouTube background", videoId);
+
     return (
-      <div className="absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden -z-50">
         <iframe
           src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&disablekb=1&fs=0&cc_load_policy=0&playsinline=1&enablejsapi=0`}
           className="absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-h-[100vh] min-w-[177.77vh] transform -translate-x-1/2 -translate-y-1/2"
           allow="autoplay; encrypted-media"
           style={{
             border: "none",
-            pointerEvents: "none"
+            pointerEvents: "none",
+            zIndex: -100
           }}
         />
-        <div className="absolute inset-0 bg-black/10" />
+        <div className="absolute inset-0 bg-black/10 -z-40" />
       </div>
     );
   };
@@ -129,12 +171,12 @@ export default function BackgroundManager() {
   }
 
   return (
-    <div className="fixed inset-0 -z-10">
+    <div className="fixed inset-0 -z-50" style={{ zIndex: -100 }}>
       {background.type === "youtube" ? (
         renderYouTubeBackground()
       ) : (
         <div 
-          className="absolute inset-0"
+          className="absolute inset-0 -z-40"
           style={getBackgroundStyle()}
         />
       )}

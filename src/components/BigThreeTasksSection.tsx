@@ -258,7 +258,15 @@ export default function BigThreeTasksSection() {
       const allCompleted = newCompleted.every(Boolean);
       const wasAllCompleted = taskData.completed.every(Boolean);
       
+      console.log("BigThreeTasksSection: Task completion check", {
+        allCompleted,
+        wasAllCompleted,
+        index,
+        isNowCompleted
+      });
+      
       if (allCompleted && !wasAllCompleted) {
+        console.log("BigThreeTasksSection: All tasks completed! Showing modal");
         // Show the all-tasks-completed modal
         setShowAllTasksCompleted(true);
       }
