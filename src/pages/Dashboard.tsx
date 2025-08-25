@@ -281,6 +281,75 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
+            {/* Focus Timer - Now under ambient player */}
+            <Card className="overflow-hidden">
+              <CardHeader className={`bg-gradient-to-r ${getPhaseColor()} pb-4`}>
+                <CardTitle className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Timer className="w-5 h-5" />
+                    <span>Focus Timer</span>
+                    <span className="text-xl">{getPhaseIcon()}</span>
+                  </div>
+                  <Badge variant="outline" className="bg-background/80">
+                    🏆 {trophyCount} today
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4">
+                {/* Timer Display */}
+                <div className="text-center mb-4">
+                  <div className="text-3xl font-mono font-bold text-foreground mb-2">
+                    {formatTime(timerState.msLeft)}
+                  </div>
+                  <div className="text-sm text-muted-foreground mb-2">
+                    {timerState.phaseLabel}
+                  </div>
+                  <Progress value={timerState.progress * 100} className="h-2" />
+                </div>
+
+                {/* Controls */}
+                <div className="flex justify-center gap-2 mb-4">
+                  {!timerState.isRunning ? (
+                    <Button
+                      onClick={() => focusTimer.start(timerState.phase === "idle" ? "focus" : timerState.phase)}
+                      className="flex items-center gap-2"
+                    >
+                      <Play className="w-4 h-4" />
+                      {timerState.phase === "idle" ? "Start" : "Resume"}
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() => focusTimer.pause()}
+                      variant="outline"
+                      className="flex items-center gap-2"
+                    >
+                      <Pause className="w-4 h-4" />
+                      Pause
+                    </Button>
+                  )}
+                  <Button
+                    onClick={() => navigate('/tools/focus')}
+                    variant="outline"
+                    size="sm"
+                  >
+                    Full View
+                  </Button>
+                </div>
+
+                {/* Session Stats */}
+                <div className="grid grid-cols-2 gap-4 text-center text-sm">
+                  <div>
+                    <div className="text-lg font-bold text-primary">{timerState.cycleCount}</div>
+                    <div className="text-muted-foreground">Sessions</div>
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-primary">{timerState.cycleCount}</div>
+                    <div className="text-muted-foreground">Today</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Today's Intention Card */}
             <TooltipProvider>
               <Tooltip>
@@ -382,78 +451,10 @@ const Dashboard = () => {
             <DashboardTrophyCase />
           </div>
           
-          {/* Middle Section: Focus Panel */}
+          {/* Middle Section: Quick Actions - Timer removed */}
           <div className="space-y-4 h-full flex flex-col">
-            
-            {/* Pomodoro Timer */}
-            <Card className="overflow-hidden">
-              <CardHeader className={`bg-gradient-to-r ${getPhaseColor()} pb-4`}>
-                <CardTitle className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Timer className="w-5 h-5" />
-                    <span>Focus Timer</span>
-                    <span className="text-xl">{getPhaseIcon()}</span>
-                  </div>
-                  <Badge variant="outline" className="bg-background/80">
-                    🏆 {trophyCount} today
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-4">
-                {/* Timer Display */}
-                <div className="text-center mb-4">
-                  <div className="text-3xl font-mono font-bold text-foreground mb-2">
-                    {formatTime(timerState.msLeft)}
-                  </div>
-                  <div className="text-sm text-muted-foreground mb-2">
-                    {timerState.phaseLabel}
-                  </div>
-                  <Progress value={timerState.progress * 100} className="h-2" />
-                </div>
-
-                {/* Controls */}
-                <div className="flex justify-center gap-2 mb-4">
-                  {!timerState.isRunning ? (
-                    <Button
-                      onClick={() => focusTimer.start(timerState.phase === "idle" ? "focus" : timerState.phase)}
-                      className="flex items-center gap-2"
-                    >
-                      <Play className="w-4 h-4" />
-                      {timerState.phase === "idle" ? "Start" : "Resume"}
-                    </Button>
-                  ) : (
-                    <Button
-                      onClick={() => focusTimer.pause()}
-                      variant="outline"
-                      className="flex items-center gap-2"
-                    >
-                      <Pause className="w-4 h-4" />
-                      Pause
-                    </Button>
-                  )}
-                  <Button
-                    onClick={() => navigate('/tools/focus')}
-                    variant="outline"
-                    size="sm"
-                  >
-                    Full View
-                  </Button>
-                </div>
-
-                {/* Session Stats */}
-                <div className="grid grid-cols-2 gap-4 text-center text-sm">
-                  <div>
-                    <div className="text-lg font-bold text-primary">{timerState.cycleCount}</div>
-                    <div className="text-muted-foreground">Sessions</div>
-                  </div>
-                  <div>
-                    <div className="text-lg font-bold text-primary">{timerState.cycleCount}</div>
-                    <div className="text-muted-foreground">Today</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
+            <QuickActionsPanel />
+            <DailyProgressPanel />
           </div>
 
           {/* Right Section: Multi-Widget Panel */}
