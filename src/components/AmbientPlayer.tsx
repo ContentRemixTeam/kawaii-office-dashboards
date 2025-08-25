@@ -39,6 +39,7 @@ export default function AmbientPlayer() {
     if (!preset) return;
     
     const newState = { ...state, activeId: presetKey };
+    console.log("[AmbientPlayer] Selecting preset:", presetKey, "New state:", newState);
     setState(newState);
     saveAmbient(newState);
     setUrlError("");
@@ -46,21 +47,30 @@ export default function AmbientPlayer() {
 
   const handleCustomUrlSubmit = () => {
     const trimmedUrl = customUrl.trim();
+    console.log("[AmbientPlayer] Setting custom URL:", trimmedUrl);
+    
     if (!trimmedUrl) {
       setUrlError("Please enter a YouTube URL");
       return;
     }
 
     const videoId = extractYouTubeId(trimmedUrl);
+    console.log("[AmbientPlayer] Extracted video ID:", videoId);
+    
     if (!videoId) {
       setUrlError("Invalid YouTube URL. Please check the format.");
       return;
     }
 
     const newState = { ...state, activeId: "custom", customUrl: trimmedUrl };
+    console.log("[AmbientPlayer] Saving new ambient state:", newState);
     setState(newState);
     saveAmbient(newState);
     setUrlError("");
+    
+    // Verify it was saved
+    const savedState = loadAmbient();
+    console.log("[AmbientPlayer] Verified saved state:", savedState);
     
     toast({
       title: "✅ Custom video set",

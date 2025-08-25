@@ -19,13 +19,21 @@ export default function OfficeHero({ hotspots, fallbackSrc, alt, aspectRatio = 1
   const navigate = useNavigate();
 
   React.useEffect(() => {
+    console.log("[OfficeHero] Initial ambient state:", ambientState);
+    
     const onStorage = (e: any) => {
       const keys = e?.detail?.keys || [e.key];
+      console.log("[OfficeHero] Storage event triggered with keys:", keys);
+      
       if (keys?.includes?.(HERO_KEY)) {
-        setState(loadHero());
+        const newHeroState = loadHero();
+        console.log("[OfficeHero] Loading new hero state:", newHeroState);
+        setState(newHeroState);
       }
       if (keys?.includes?.(AMBIENT_KEY)) {
-        setAmbientState(loadAmbient());
+        const newAmbientState = loadAmbient();
+        console.log("[OfficeHero] Loading new ambient state:", newAmbientState);
+        setAmbientState(newAmbientState);
       }
     };
     window.addEventListener("fm:data-changed", onStorage as any);
@@ -38,10 +46,12 @@ export default function OfficeHero({ hotspots, fallbackSrc, alt, aspectRatio = 1
 
   // Always use ambient video as hero when available
   const useAmbientAsHero = ambientState.activeId;
+  console.log("[OfficeHero] useAmbientAsHero:", useAmbientAsHero, "ambient state:", ambientState);
   
   if (useAmbientAsHero) {
     const activePreset = AMBIENT_PRESETS.find(p => p.key === ambientState.activeId);
     const activeUrl = ambientState.activeId === "custom" ? ambientState.customUrl : (activePreset ? `https://www.youtube.com/watch?v=${activePreset.id}` : null);
+    console.log("[OfficeHero] Active preset:", activePreset, "Active URL:", activeUrl);
     
     if (activeUrl) {
       const embedSrc = buildEmbedSrc(activeUrl, { 
@@ -49,6 +59,7 @@ export default function OfficeHero({ hotspots, fallbackSrc, alt, aspectRatio = 1
         mute: ambientState.muted ? 1 : 0, 
         loop: 1 
       });
+      console.log("[OfficeHero] Built embed src:", embedSrc);
       
       return (
         <div className="relative w-full max-w-6xl mx-auto rounded-2xl overflow-hidden shadow-lg">
