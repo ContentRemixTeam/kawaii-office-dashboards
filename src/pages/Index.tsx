@@ -3,6 +3,7 @@ import OfficeHero from "@/components/OfficeHero";
 import VisionPreviewOverlay from "@/components/VisionPreviewOverlay";
 import NavPills from "@/components/NavPills";
 import BigThreeTasksSection from "@/components/BigThreeTasksSection";
+import HomePetDisplay from "@/components/HomePetDisplay";
 import { HOTSPOTS, OFFICE_ALT, OFFICE_IMAGE_SRC } from "@/data/hotspots";
 import { getHomeTitle, getHomeSubtitle } from "@/lib/storage";
 import { Sparkles, Heart } from "lucide-react";
@@ -55,6 +56,11 @@ const Index = () => {
 
       {/* Big Three Tasks Section */}
       <BigThreeTasksSection />
+
+      {/* Daily Pet Display */}
+      <div className="w-full max-w-6xl mb-8">
+        <HomePetDisplay />
+      </div>
 
       {/* Navigation Toolbar */}
       <div className="w-full max-w-6xl mt-8 mb-8 rounded-3xl bg-white/80 dark:bg-black/30 backdrop-blur-lg border-2 border-primary/20 shadow-2xl p-6">
