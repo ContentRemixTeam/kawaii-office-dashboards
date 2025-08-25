@@ -149,9 +149,9 @@ export default function TaskCelebrationModal({
   const message = ENCOURAGEMENT_MESSAGES[Math.floor(Math.random() * ENCOURAGEMENT_MESSAGES.length)];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center p-4 pointer-events-none">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/20 backdrop-blur-sm">
       <Card 
-        className="max-w-sm w-full pointer-events-auto animate-fade-in bg-card/95 border-border/20"
+        className="max-w-sm w-full animate-scale-in bg-card border-2 border-border shadow-lg"
         role="status"
         aria-live="polite"
         aria-label={`Task completed celebration for ${petName}`}
