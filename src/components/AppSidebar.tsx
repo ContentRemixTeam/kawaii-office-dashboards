@@ -56,6 +56,21 @@ export function AppSidebar() {
       collapsible="icon"
     >
       <SidebarContent className="gap-0 py-4">
+        {/* Expand hint when collapsed */}
+        {isCollapsed && (
+          <div className="px-2 mb-4">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="flex items-center justify-center h-8 w-12 mx-auto bg-primary/10 rounded-lg border border-primary/20 animate-pulse cursor-pointer">
+                  <span className="text-xs text-primary font-semibold">⏷</span>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="right" className="font-medium bg-primary text-primary-foreground">
+                Click the menu button to expand sidebar
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        )}
         {/* Home Button at Top */}
         <SidebarMenu className="mb-4 px-2">
           <SidebarMenuItem>
