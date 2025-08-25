@@ -1,10 +1,15 @@
 import { useState, useEffect } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Play, Pause, Square, Timer } from "lucide-react";
 import { getDailyData, setDailyData, getCelebrationsEnabled } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 import { emitChanged, KEY_TASKS, addEarnedAnimal } from "@/lib/topbarState";
 import { readTodayIntention } from "@/lib/dailyFlow";
+import focusTimer from "@/lib/focusTimer";
 
 interface TaskData {
   tasks: string[];
@@ -83,6 +88,8 @@ export default function BigThreeTasksSection() {
     selectedAnimal: "unicorn"
   });
   const [showCelebration, setShowCelebration] = useState(false);
+  const [showAnimalPicker, setShowAnimalPicker] = useState(false);
+  const [timerState, setTimerState] = useState(focusTimer.getState());
 
   // Load tasks data from the Task Pets page storage
   useEffect(() => {
@@ -132,6 +139,21 @@ export default function BigThreeTasksSection() {
     };
   }, []);
 
+  // Timer state management
+  useEffect(() => {
+    const unsubscribeTick = focusTimer.on("tick", setTimerState);
+    const unsubscribePhase = focusTimer.on("phase", () => {
+      setTimerState(focusTimer.getState());
+    });
+    
+    setTimerState(focusTimer.getState());
+    
+    return () => {
+      unsubscribeTick();
+      unsubscribePhase();
+    };
+  }, []);
+
   const saveTaskData = (updatedData: Partial<TaskData>) => {
     const newData = { ...taskData, ...updatedData };
     setTaskData(newData);
@@ -164,6 +186,35 @@ export default function BigThreeTasksSection() {
   const handleTaskChange = (index: number, value: string) => {
     const newTasks = taskData.tasks.map((task, i) => i === index ? value : task);
     saveTaskData({ tasks: newTasks });
+  };
+
+  const handleAnimalSelect = (animalId: string) => {
+    saveTaskData({ selectedAnimal: animalId });
+    setShowAnimalPicker(false);
+  };
+
+  const formatTime = (ms: number): string => {
+    const minutes = Math.floor(ms / 60000);
+    const seconds = Math.floor((ms % 60000) / 1000);
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const getPhaseColor = () => {
+    switch (timerState.phase) {
+      case "focus": return "from-red-500 to-red-600";
+      case "short": return "from-green-500 to-green-600";
+      case "long": return "from-blue-500 to-blue-600";
+      default: return "from-gray-500 to-gray-600";
+    }
+  };
+
+  const getPhaseIcon = () => {
+    switch (timerState.phase) {
+      case "focus": return "🎯";
+      case "short": return "☕";
+      case "long": return "🏖️";
+      default: return "⭐";
+    }
   };
 
   const toggleTaskCompleted = (index: number) => {
@@ -241,9 +292,13 @@ export default function BigThreeTasksSection() {
             <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
               The Big Three
             </h2>
-            <div className="text-4xl">
+            <button 
+              onClick={() => setShowAnimalPicker(!showAnimalPicker)}
+              className="text-4xl hover:scale-110 transition-transform cursor-pointer"
+              title="Change your pet"
+            >
               {stageEmoji}
-            </div>
+            </button>
           </div>
           <p className="text-muted-foreground">Your top 3 priorities for today</p>
           <div className="text-sm text-muted-foreground/80 mt-1">
@@ -257,6 +312,87 @@ export default function BigThreeTasksSection() {
               </div>
             </div>
           )}
+        </div>
+
+        {/* Animal Picker */}
+        {showAnimalPicker && (
+          <div className="mb-6 p-4 bg-background/80 rounded-2xl border border-border/20">
+            <h3 className="text-sm font-semibold text-muted-foreground mb-3 text-center">Choose Your Pet</h3>
+            <div className="grid grid-cols-5 gap-2">
+              {ANIMALS.map((animal) => (
+                <button
+                  key={animal.id}
+                  onClick={() => handleAnimalSelect(animal.id)}
+                  className={`p-2 rounded-xl border-2 transition-all duration-200 hover:scale-105 ${
+                    taskData.selectedAnimal === animal.id
+                      ? "border-primary bg-primary/10 scale-105"
+                      : "border-border/20 hover:border-primary/50"
+                  }`}
+                >
+                  <div className="text-2xl mb-1">{animal.emoji}</div>
+                  <div className="text-xs font-medium text-muted-foreground">{animal.name}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Compact Pomodoro Timer */}
+        <div className="mb-6 p-4 bg-background/80 rounded-2xl border border-border/20">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Timer className="h-4 w-4 text-primary" />
+              <h3 className="text-sm font-semibold text-foreground">Focus Timer</h3>
+              <span className="text-lg">{getPhaseIcon()}</span>
+            </div>
+            <Badge variant="outline" className="text-xs">
+              {timerState.cycleCount}/{timerState.dailyGoal} today
+            </Badge>
+          </div>
+          
+          <div className="flex items-center justify-between mb-3">
+            <div className="text-2xl font-mono font-bold text-foreground">
+              {formatTime(timerState.msLeft)}
+            </div>
+            <div className="flex gap-2">
+              {!timerState.isRunning ? (
+                <Button
+                  size="sm"
+                  onClick={() => focusTimer.start(timerState.phase === "idle" ? "focus" : timerState.phase)}
+                  className="flex items-center gap-1"
+                >
+                  <Play className="w-3 h-3" />
+                  {timerState.phase === "idle" ? "Start" : "Resume"}
+                </Button>
+              ) : (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => focusTimer.pause()}
+                  className="flex items-center gap-1"
+                >
+                  <Pause className="w-3 h-3" />
+                  Pause
+                </Button>
+              )}
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => focusTimer.stop()}
+                className="flex items-center gap-1"
+              >
+                <Square className="w-3 h-3" />
+                Stop
+              </Button>
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            <Progress value={timerState.progress * 100} className="h-2" />
+            <div className="text-xs text-center text-muted-foreground">
+              {timerState.phaseLabel}
+            </div>
+          </div>
         </div>
 
         <div className="space-y-4">
