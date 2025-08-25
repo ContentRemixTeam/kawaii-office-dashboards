@@ -309,6 +309,10 @@ export default function BigThreeTasksSection() {
     setCelebratedTasks(new Set());
     setDailyData(`fm_big3_celebrated_v1`, []);
     
+    // Emit additional events for cross-component sync
+    window.dispatchEvent(new Event('tasksUpdated'));
+    window.dispatchEvent(new CustomEvent('storage', { detail: 'fm_tasks_v1' }));
+    
     // Show success toast
     toast({
       title: "New Round Started! 🚀",
