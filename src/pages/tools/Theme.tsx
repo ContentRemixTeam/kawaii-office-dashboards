@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Palette, RotateCcw, Save, Upload } from "lucide-react";
 import ToolShell from "@/components/ToolShell";
-import { safeGet, safeSet, getCelebrationsEnabled, setCelebrationsEnabled, getEncouragementsEnabled, setEncouragementsEnabled, getHomeTitle, setHomeTitle, getHomeSubtitle, setHomeSubtitle } from "@/lib/storage";
+import { safeGet, safeSet, getCelebrationsEnabled, setCelebrationsEnabled, getEncouragementsEnabled, setEncouragementsEnabled, getHomeTitle, setHomeTitle, getHomeSubtitle, setHomeSubtitle, getGiphyCelebrationsEnabled, setGiphyCelebrationsEnabled } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 import { loadHero, saveHero, OFFICE_IMAGES, HeroState } from "@/lib/heroStore";
 
@@ -256,10 +256,11 @@ function calculateContrast(text: string, bg: string): number {
 export default function Theme() {
   const [currentTheme, setCurrentTheme] = useState<ThemeData>(DEFAULT_THEME);
   const [tempTheme, setTempTheme] = useState<ThemeData>(DEFAULT_THEME);
-  const [celebrationsEnabled, setCelebrationsEnabledState] = useState(true);
-  const [encouragementsEnabled, setEncouragementsEnabledState] = useState(true);
-  const [homeTitle, setHomeTitleState] = useState("");
-  const [homeSubtitle, setHomeSubtitleState] = useState("");
+  const [celebrationsEnabledState, setCelebrationsEnabledState] = useState(getCelebrationsEnabled());
+  const [encouragementsEnabledState, setEncouragementsEnabledState] = useState(getEncouragementsEnabled());
+  const [giphyCelebrationsEnabledState, setGiphyCelebrationsEnabledState] = useState(getGiphyCelebrationsEnabled());
+  const [homeTitleState, setHomeTitleState] = useState(getHomeTitle());
+  const [homeSubtitleState, setHomeSubtitleState] = useState(getHomeSubtitle());
   const [heroState, setHeroState] = useState<HeroState>(loadHero());
   const [youtubeUrl, setYoutubeUrl] = useState("");
   const { toast } = useToast();
@@ -287,6 +288,7 @@ export default function Theme() {
     setYoutubeUrl(loadHero().youtubeUrl || "");
     setCelebrationsEnabledState(getCelebrationsEnabled());
     setEncouragementsEnabledState(getEncouragementsEnabled());
+    setGiphyCelebrationsEnabledState(getGiphyCelebrationsEnabled());
     setHomeTitleState(getHomeTitle());
     setHomeSubtitleState(getHomeSubtitle());
   }, []);
@@ -1035,7 +1037,7 @@ export default function Theme() {
                 </div>
                 <Switch
                   id="celebrations-toggle"
-                  checked={celebrationsEnabled}
+                  checked={celebrationsEnabledState}
                   onCheckedChange={(checked) => {
                     setCelebrationsEnabledState(checked);
                     setCelebrationsEnabled(checked);
@@ -1054,7 +1056,7 @@ export default function Theme() {
                 </div>
                 <Switch
                   id="encouragements-toggle"
-                  checked={encouragementsEnabled}
+                  checked={encouragementsEnabledState}
                   onCheckedChange={(checked) => {
                     setEncouragementsEnabledState(checked);
                     setEncouragementsEnabled(checked);
@@ -1064,11 +1066,30 @@ export default function Theme() {
               
               <div className="flex items-center justify-between p-4 border border-border rounded-lg">
                 <div className="space-y-1">
-                  <Label htmlFor="gifs-toggle" className="text-sm font-medium">
-                    🎬 Pet Celebration GIFs
+                  <Label htmlFor="giphy-toggle" className="text-sm font-medium">
+                    🎉 GIPHY Celebration Popups
                   </Label>
                   <p className="text-xs text-muted-foreground">
-                    Display pet-specific animations when completing Big Three tasks
+                    Show animated GIF celebrations when completing tasks and focus sessions
+                  </p>
+                </div>
+                <Switch
+                  id="giphy-toggle"
+                  checked={giphyCelebrationsEnabledState}
+                  onCheckedChange={(checked) => {
+                    setGiphyCelebrationsEnabledState(checked);
+                    setGiphyCelebrationsEnabled(checked);
+                  }}
+                />
+              </div>
+              
+              <div className="flex items-center justify-between p-4 border border-border rounded-lg">
+                <div className="space-y-1">
+                  <Label htmlFor="gifs-toggle" className="text-sm font-medium">
+                    🎬 Task Completion GIFs
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Display task-specific animations in modals when completing Big Three tasks
                   </p>
                 </div>
                 <Switch
@@ -1133,7 +1154,7 @@ export default function Theme() {
                     <Label htmlFor="home-title">Page Title</Label>
                     <Input
                       id="home-title"
-                      value={homeTitle}
+                      value={homeTitleState}
                       onChange={(e) => setHomeTitleState(e.target.value)}
                       placeholder="Desk Quest"
                       className="mt-1"
@@ -1143,7 +1164,7 @@ export default function Theme() {
                     <Label htmlFor="home-subtitle">Page Subtitle</Label>
                     <Input
                       id="home-subtitle"
-                      value={homeSubtitle}
+                      value={homeSubtitleState}
                       onChange={(e) => setHomeSubtitleState(e.target.value)}
                       placeholder="Welcome to your cozy digital workspace! ✨"
                       className="mt-1"
@@ -1151,8 +1172,8 @@ export default function Theme() {
                   </div>
                   <Button
                     onClick={() => {
-                      setHomeTitle(homeTitle);
-                      setHomeSubtitle(homeSubtitle);
+                      setHomeTitle(homeTitleState);
+                      setHomeSubtitle(homeSubtitleState);
                       toast({
                         title: "✨ Home page updated",
                         description: "Your custom text has been saved!"

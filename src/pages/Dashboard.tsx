@@ -16,6 +16,9 @@ import DailyProgressPanel from "@/components/DailyProgressPanel";
 import InspirationCorner from "@/components/InspirationCorner";
 import FocusInsightsPanel from "@/components/FocusInsightsPanel";
 import PetStatusCard from "@/components/PetStatusCard";
+import { useGiphyCelebration } from "@/hooks/useGiphyCelebration";
+import GiphyCelebration from "@/components/GiphyCelebration";
+import { eventBus } from "@/lib/eventBus";
 import { getDailyData, setDailyData } from "@/lib/storage";
 import { readVisionThumbs, readPetStage } from "@/lib/topbarState";
 import { readTodayIntention } from "@/lib/dailyFlow";
@@ -45,8 +48,15 @@ const ANIMALS = [
   { id: "rabbit", name: "Rabbit", emoji: "🐰", stages: ["🥚", "🐣", "🐰", "🌟🐰"] }
 ];
 
-export default function Dashboard() {
+const Dashboard = () => {
   const navigate = useNavigate();
+  const { 
+    currentCelebration, 
+    celebratePomodoro, 
+    clearCelebration 
+  } = useGiphyCelebration();
+  
+  // Ambient player state
   const [ambientState, setAmbientState] = useState<AmbientState>(loadAmbient);
   
   const [timerState, setTimerState] = useState(focusTimer.getState());
@@ -57,9 +67,18 @@ export default function Dashboard() {
   const [taskData, setTaskData] = useState<TaskData>({ tasks: ["", "", ""], completed: [false, false, false], selectedAnimal: "unicorn" });
   const [todayIntention, setTodayIntention] = useState(null);
 
-  // Load data on mount
+  // Load initial data
   useEffect(() => {
     setAmbientState(loadAmbient());
+    
+    // Subscribe to event bus for focus session completions
+    const unsubscribeFocus = eventBus.on('FOCUS_SESSION_ENDED', (data) => {
+      if (data.phase === 'focus') {
+        // Get current pet for themed celebration
+        const currentPetData = readPetStage();
+        celebratePomodoro(currentPetData.animal);
+      }
+    });
     
     const dashData = getDailyData("fm_dashboard_v1", streakData);
     setStreakData(dashData);
@@ -72,7 +91,9 @@ export default function Dashboard() {
     setTrophyCount(readTrophies());
     setPetData(readPetStage());
     setTodayIntention(readTodayIntention());
-  }, []);
+    
+    return unsubscribeFocus;
+  }, [celebratePomodoro]);
 
   // Listen for data changes
   useEffect(() => {
@@ -465,6 +486,14 @@ export default function Dashboard() {
           </p>
         </div>
       </div>
+      
+      {/* GIPHY Celebration Component */}
+      <GiphyCelebration
+        payload={currentCelebration}
+        onClose={clearCelebration}
+      />
     </main>
   );
-}
+};
+
+export default Dashboard;

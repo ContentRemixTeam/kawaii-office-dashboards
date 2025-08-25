@@ -1,4 +1,7 @@
 import { toLocalISODate } from "@/lib/localDate";
+import { safeGet, safeSet } from "./storage";
+import { awardTrophy } from "./trophySystem";
+import { eventBus } from "./eventBus";
 
 // Data model for localStorage
 export type FocusPhase = "focus" | "short" | "long" | "idle";
@@ -274,6 +277,12 @@ class FocusTimer {
       if (this.isLeader) {
         this.awardTrophy();
       }
+      
+      // Emit focus session completed event for GIPHY celebrations
+      eventBus.emit('FOCUS_SESSION_ENDED', { 
+        duration: this.state.config.focusMin, 
+        phase: 'focus' 
+      });
     }
     this.state.sessionCount++;
 

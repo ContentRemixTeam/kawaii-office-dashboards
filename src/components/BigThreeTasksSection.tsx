@@ -13,6 +13,8 @@ import { useToast } from "@/hooks/use-toast";
 import { emitChanged, addEarnedAnimal } from "@/lib/topbarState";
 import { K_TASKS } from "@/lib/topbar.readers";
 import focusTimer from "@/lib/focusTimer";
+import { useGiphyCelebration } from "@/hooks/useGiphyCelebration";
+import GiphyCelebration from "@/components/GiphyCelebration";
 import TaskCelebrationModal from "./TaskCelebrationModal";
 import AllTasksCompletedModal from "./AllTasksCompletedModal";
 import TaskProgressGraph from "./TaskProgressGraph";
@@ -90,6 +92,12 @@ const ANIMALS = [
 export default function BigThreeTasksSection() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { 
+    currentCelebration, 
+    celebrateTask, 
+    celebrateAllTasks, 
+    clearCelebration 
+  } = useGiphyCelebration();
   
   const [taskData, setTaskData] = useState<TaskData>({
     tasks: ["", "", ""],
@@ -246,6 +254,10 @@ export default function BigThreeTasksSection() {
 
     if (isNowCompleted) {
       const taskNumber = index + 1;
+      
+      // Trigger GIPHY celebration
+      celebrateTask(taskData.selectedAnimal, taskNumber);
+      
       if (getCelebrationsEnabled()) {
         toast({
           title: "Task Complete! 🎉",
@@ -267,6 +279,8 @@ export default function BigThreeTasksSection() {
       
       if (allCompleted && !wasAllCompleted) {
         console.log("BigThreeTasksSection: All tasks completed! Showing modal");
+        // Trigger GIPHY celebration for all tasks
+        celebrateAllTasks(taskData.selectedAnimal);
         // Show the all-tasks-completed modal
         setShowAllTasksCompleted(true);
       }
@@ -505,6 +519,12 @@ export default function BigThreeTasksSection() {
         onClose={() => setShowAllTasksCompleted(false)}
         onStartNewRound={handleStartNewRound}
         petType={taskData.selectedAnimal}
+      />
+      
+      {/* GIPHY Celebration Component */}
+      <GiphyCelebration
+        payload={currentCelebration}
+        onClose={clearCelebration}
       />
     </>
   );

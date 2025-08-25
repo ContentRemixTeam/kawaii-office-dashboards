@@ -244,3 +244,21 @@ export function getHomeSubtitle(): string {
 export function setHomeSubtitle(subtitle: string): void {
   safeSet('fm_home_subtitle_v1', subtitle);
 }
+
+// GIPHY celebrations setting
+export function getGiphyCelebrationsEnabled(): boolean {
+  try {
+    const stored = localStorage.getItem("fm_giphy_celebrations_enabled");
+    return stored === null ? true : stored === "true"; // Default to enabled
+  } catch {
+    return true;
+  }
+}
+
+export function setGiphyCelebrationsEnabled(enabled: boolean): void {
+  try {
+    localStorage.setItem("fm_giphy_celebrations_enabled", enabled.toString());
+  } catch {
+    // Ignore localStorage errors
+  }
+}
