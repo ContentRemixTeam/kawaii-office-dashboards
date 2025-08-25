@@ -96,13 +96,6 @@ export default function BigThreeTasksSection() {
   const { toast } = useToast();
   // Celebration hooks - both legacy and new system
   const { 
-    currentCelebration: giphyCelebration, 
-    celebrateTask: celebrateGiphyTask, 
-    celebrateAllTasks: celebrateGiphyAllTasks, 
-    clearCelebration: clearGiphyCelebration 
-  } = useGiphyCelebration();
-  
-  const { 
     currentCelebration, 
     celebrateTask, 
     clearCelebration, 
@@ -283,10 +276,6 @@ export default function BigThreeTasksSection() {
         console.log('[BigThreeTasksSection] Safe celebrations disabled, enabled:', celebrationEnabled);
       }
       
-      // Trigger legacy GIPHY celebration
-      console.log('[BigThreeTasksSection] Triggering GIPHY celebration for:', taskData.selectedAnimal);
-      celebrateGiphyTask(taskData.selectedAnimal, taskNumber);
-      
       if (getCelebrationsEnabled()) {
         toast({
           title: "Task Complete! 🎉",
@@ -308,8 +297,6 @@ export default function BigThreeTasksSection() {
       
       if (allCompleted && !wasAllCompleted) {
         console.log("BigThreeTasksSection: All tasks completed! Showing modal");
-        // Trigger legacy GIPHY celebration for all tasks
-        celebrateGiphyAllTasks(taskData.selectedAnimal);
         // Show the all-tasks-completed modal
         setShowAllTasksCompleted(true);
       }
@@ -524,12 +511,6 @@ export default function BigThreeTasksSection() {
         customMessage={currentCelebration?.customMessage}
         isVisible={!!currentCelebration}
         onClose={clearCelebration}
-      />
-      
-      {/* Legacy GIPHY Celebration Component */}
-      <GiphyCelebration
-        payload={giphyCelebration}
-        onClose={clearGiphyCelebration}
       />
     </>
   );
