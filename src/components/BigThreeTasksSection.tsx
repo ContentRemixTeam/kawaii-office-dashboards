@@ -14,6 +14,7 @@ import { emitChanged, addEarnedAnimal } from "@/lib/topbarState";
 import { K_TASKS } from "@/lib/topbar.readers";
 import focusTimer from "@/lib/focusTimer";
 import { useGiphyCelebration } from "@/hooks/useGiphyCelebration";
+import GiphyCelebration from "@/components/GiphyCelebration";
 import { useCelebration } from "@/hooks/useCelebration";
 import { CelebrationPopup } from "@/components/CelebrationPopup";
 import TaskProgressGraph from "./TaskProgressGraph";
@@ -92,7 +93,12 @@ export default function BigThreeTasksSection() {
   const navigate = useNavigate();
   
   // Celebration hooks - using GIPHY system only
-  const { celebrateTask, celebrateAllTasks } = useGiphyCelebration();
+  const { 
+    currentCelebration: giphyCelebration, 
+    celebrateTask: celebrateGiphyTask, 
+    celebrateAllTasks: celebrateGiphyAllTasks, 
+    clearCelebration: clearGiphyCelebration 
+  } = useGiphyCelebration();
   
   const [taskData, setTaskData] = useState<TaskData>({
     tasks: ["", "", ""],
@@ -262,7 +268,7 @@ export default function BigThreeTasksSection() {
       
       // Trigger GIPHY celebration for task completion
       console.log('[BigThreeTasksSection] Triggering GIPHY celebration for task:', taskData.selectedAnimal, taskNumber);
-      celebrateTask(taskData.selectedAnimal, taskNumber);
+      celebrateGiphyTask(taskData.selectedAnimal, taskNumber);
       
       if (getCelebrationsEnabled()) {
         toast({
@@ -286,7 +292,7 @@ export default function BigThreeTasksSection() {
       if (allCompleted && !wasAllCompleted) {
         console.log("BigThreeTasksSection: All tasks completed! Triggering GIPHY celebration");
         // Trigger GIPHY celebration for all tasks
-        celebrateAllTasks(taskData.selectedAnimal);
+        celebrateGiphyAllTasks(taskData.selectedAnimal);
       }
     }
   };
@@ -476,6 +482,11 @@ export default function BigThreeTasksSection() {
         </div>
       </div>
 
+      {/* GIPHY Celebration Component */}
+      <GiphyCelebration
+        payload={giphyCelebration}
+        onClose={clearGiphyCelebration}
+      />
     </>
   );
 }
