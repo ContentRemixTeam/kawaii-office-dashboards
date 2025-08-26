@@ -217,11 +217,11 @@ const Dashboard = () => {
       <div className="h-16" />
       
       {/* Main content */}
-      <div className="relative z-10 w-full max-w-[1200px] mx-auto px-4 py-6 md:py-8">
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-4 py-6 md:py-8">
         <DashboardGrid>
           
-          {/* Ambient Player (medium, wide) */}
-          <DashboardCard size="m" colSpan={{ base: 1, md: 6, xl: 8 }}>
+          {/* Ambient Player */}
+          <DashboardCard fullWidth>
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
@@ -239,7 +239,7 @@ const Dashboard = () => {
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="p-0">
+            <CardContent>
               <div className="aspect-video rounded-xl overflow-hidden bg-muted/20 mb-4">
                 <YouTubeAmbient 
                   videoId={getCurrentVideoId()}
@@ -283,8 +283,8 @@ const Dashboard = () => {
             </CardContent>
           </DashboardCard>
 
-          {/* Big Three Tasks (large, medium-wide) */}
-          <DashboardCard size="l" colSpan={{ base: 1, md: 6, xl: 4 }}>
+          {/* Big Three Tasks */}
+          <DashboardCard>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-xl">
                 <span className="text-2xl">⭐</span>
@@ -297,14 +297,14 @@ const Dashboard = () => {
                 </span>
               </div>
             </CardHeader>
-            <CardContent className="p-0 min-h-[280px]">
+            <CardContent>
               <BigThreeTasksSection />
             </CardContent>
           </DashboardCard>
 
-          {/* Focus Timer (small) */}
-          <DashboardCard size="s" colSpan={{ base: 1, md: 3, xl: 4 }}>
-            <CardHeader className={`bg-gradient-to-r ${getPhaseColor()} pb-4`}>
+          {/* Focus Timer */}
+          <DashboardCard>
+            <CardHeader className={`bg-gradient-to-r ${getPhaseColor()} rounded-t-lg pb-4`}>
               <CardTitle className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Timer className="w-5 h-5" />
@@ -315,20 +315,21 @@ const Dashboard = () => {
                 </Badge>
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-2">
-              <div className="text-center mb-2">
-                <div className="text-2xl font-mono font-bold">
+            <CardContent>
+              <div className="text-center mb-4">
+                <div className="text-3xl font-mono font-bold mb-2">
                   {formatTime(timerState.msLeft)}
                 </div>
-                <Progress value={timerState.progress * 100} className="h-1 mt-2" />
+                <Progress value={timerState.progress * 100} className="h-2 mb-4" />
               </div>
-              <div className="flex justify-center gap-1">
+              <div className="flex justify-center gap-2">
                 {!timerState.isRunning ? (
                   <Button
                     onClick={() => focusTimer.start(timerState.phase === "idle" ? "focus" : timerState.phase)}
                     size="sm"
                   >
-                    <Play className="w-3 h-3" />
+                    <Play className="w-4 h-4 mr-1" />
+                    Start
                   </Button>
                 ) : (
                   <Button
@@ -336,7 +337,8 @@ const Dashboard = () => {
                     variant="outline"
                     size="sm"
                   >
-                    <Pause className="w-3 h-3" />
+                    <Pause className="w-4 h-4 mr-1" />
+                    Pause
                   </Button>
                 )}
                 <Button
@@ -344,49 +346,49 @@ const Dashboard = () => {
                   variant="outline"
                   size="sm"
                 >
-                  Full
+                  Full Timer
                 </Button>
               </div>
             </CardContent>
           </DashboardCard>
 
-          {/* Quick Actions (small) */}
-          <DashboardCard size="s" colSpan={{ base: 1, md: 3, xl: 4 }}>
+          {/* Quick Actions */}
+          <DashboardCard>
             <QuickActionsPanel />
           </DashboardCard>
 
-          {/* Daily Progress (small) */}
-          <DashboardCard size="s" colSpan={{ base: 1, md: 3, xl: 4 }}>
+          {/* Daily Progress */}
+          <DashboardCard>
             <DailyProgressPanel />
           </DashboardCard>
 
-          {/* Recent Wins (medium) */}
-          <DashboardCard size="m" colSpan={{ base: 1, md: 3, xl: 4 }}>
+          {/* Recent Wins */}
+          <DashboardCard>
             <RecentWinsPanel />
           </DashboardCard>
 
-          {/* Trophy Case (small) */}
-          <DashboardCard size="s" colSpan={{ base: 1, md: 3, xl: 4 }}>
+          {/* Trophy Case */}
+          <DashboardCard>
             <DashboardTrophyCase />
           </DashboardCard>
 
-          {/* Habits (small) */}
-          <DashboardCard size="s" colSpan={{ base: 1, md: 3, xl: 4 }}>
+          {/* Habits */}
+          <DashboardCard>
             <DashboardHabitTracker />
           </DashboardCard>
 
-          {/* Today's Intention (small) */}
-          <DashboardCard size="s" colSpan={{ base: 1, md: 3, xl: 4 }}>
+          {/* Today's Intention */}
+          <DashboardCard>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div 
-                    className="cursor-pointer hover:scale-105 transition-transform h-full flex flex-col justify-center text-center p-2"
+                    className="cursor-pointer hover:scale-105 transition-transform h-full flex flex-col justify-center text-center p-4"
                     onClick={() => navigate('/tools/tasks')}
                   >
-                    <div className="text-2xl mb-2">✨</div>
-                    <div className="text-sm font-medium mb-1">Today's Intention</div>
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-3xl mb-3">✨</div>
+                    <div className="text-lg font-medium mb-2">Today's Intention</div>
+                    <div className="text-sm text-muted-foreground">
                       {todayIntention ? (
                         <div className="space-y-1">
                           <div>Feel: {todayIntention.feel}</div>
@@ -403,15 +405,15 @@ const Dashboard = () => {
             </TooltipProvider>
           </DashboardCard>
 
-          {/* Vision Preview (medium, wide) */}
-          <DashboardCard size="m" colSpan={{ base: 1, md: 6, xl: 8 }}>
+          {/* Vision Preview */}
+          <DashboardCard fullWidth>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2">
                 <span className="text-xl">🌈</span>
                 Hold the Vision ✨
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-0">
+            <CardContent>
               {visionImages.length > 0 ? (
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
                   {visionImages.slice(0, 4).map((image, index) => (
@@ -429,9 +431,9 @@ const Dashboard = () => {
                   ))}
                 </div>
               ) : (
-                <div className="h-24 rounded-lg bg-muted/20 flex items-center justify-center mb-4">
+                <div className="h-32 rounded-lg bg-muted/20 flex items-center justify-center mb-4">
                   <div className="text-center text-muted-foreground">
-                    <div className="text-2xl mb-1">🌟</div>
+                    <div className="text-3xl mb-2">🌟</div>
                     <p className="text-xs">Add images to your vision board</p>
                   </div>
                 </div>
@@ -448,25 +450,25 @@ const Dashboard = () => {
             </CardContent>
           </DashboardCard>
 
-          {/* Inspiration Corner (small) */}
-          <DashboardCard size="s" colSpan={{ base: 1, md: 3, xl: 4 }}>
+          {/* Inspiration Corner */}
+          <DashboardCard>
             <InspirationCorner />
           </DashboardCard>
 
           {/* Today's Earned Pets */}
           {earnedAnimals.length > 0 && (
-            <DashboardCard size="s" colSpan={{ base: 1, md: 6, xl: 8 }}>
+            <DashboardCard fullWidth>
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-lg">
                   🏆 Today's Earned Pets
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-0">
-                <div className="flex flex-wrap gap-3 justify-center mb-2">
+              <CardContent>
+                <div className="flex flex-wrap gap-3 justify-center mb-4">
                   {earnedAnimals.map((animal, index) => (
                     <div 
                       key={`${animal.id}-${index}`}
-                      className="text-3xl animate-bounce hover:scale-110 transition-transform cursor-default"
+                      className="text-4xl animate-bounce hover:scale-110 transition-transform cursor-default"
                       style={{ animationDelay: `${index * 0.3}s` }}
                       title={`Earned ${animal.id}!`}
                     >
@@ -474,7 +476,7 @@ const Dashboard = () => {
                     </div>
                   ))}
                 </div>
-                <p className="text-center text-xs text-muted-foreground">
+                <p className="text-center text-sm text-muted-foreground">
                   Complete tasks to earn more pets! 🎉
                 </p>
               </CardContent>
