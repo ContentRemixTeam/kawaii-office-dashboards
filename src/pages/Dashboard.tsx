@@ -293,8 +293,8 @@ const Dashboard = () => {
             <BigThreeTasksSection />
           </Card>
 
-          {/* Focus Timer - Full width under main columns */}
-          <Card className="lg:col-span-2 xl:col-span-2 p-4 md:p-5">
+          {/* Focus Timer - Under Ambient Player (left column) */}
+          <Card className="col-span-1 lg:col-start-1 xl:col-start-1 p-4 md:p-5">
             <div className={`bg-gradient-to-r ${getPhaseColor()} rounded-lg p-4 mb-4`}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -347,11 +347,11 @@ const Dashboard = () => {
           {/* Sidebar - Third column on xl, flows below on smaller screens */}
           <aside className="xl:col-start-3 xl:row-start-1 xl:row-span-6 space-y-6">
             <Card className="p-4 md:p-5">
-              <QuickActionsPanel />
+              <DailyProgressPanel />
             </Card>
             
             <Card className="p-4 md:p-5">
-              <DailyProgressPanel />
+              <QuickActionsPanel />
             </Card>
             
             <Card className="p-4 md:p-5">
@@ -359,7 +359,7 @@ const Dashboard = () => {
             </Card>
           </aside>
 
-          {/* Recent Wins - Below timer */}
+          {/* Recent Wins - Full width below timer and big three */}
           <Card className="lg:col-span-2 xl:col-span-2 p-4 md:p-5">
             <RecentWinsPanel />
           </Card>
