@@ -54,32 +54,34 @@ export default function PetStatusCard({ petData, completedTasks, totalTasks }: P
   const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
   
   return (
-    <Card 
-      className="cursor-pointer hover:scale-[1.02] transition-all duration-200 bg-gradient-to-br from-purple-50/50 to-pink-50/50 border-purple-200/50"
+    <div 
+      className="cursor-pointer transition-all duration-200 hover:scale-[1.02] p-6 rounded-xl bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/10"
       onClick={() => navigate('/tools/tasks')}
     >
-      <CardContent className="p-4">
-        <div className="flex items-center gap-3">
-          <div className="text-3xl">
-            {currentEmoji}
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-sm font-semibold text-foreground mb-1">
+      <div className="flex items-center gap-4">
+        <div className="text-5xl p-3 rounded-2xl bg-background/50">
+          {currentEmoji}
+        </div>
+        <div className="flex-1 min-w-0 space-y-3">
+          <div>
+            <div className="text-card-title mb-1">
               {getStatusTitle()}
             </div>
-            <div className="text-xs text-muted-foreground mb-2 truncate">
+            <div className="text-subtle truncate">
               {getStatusMessage()}
             </div>
-            <div className="text-xs text-muted-foreground mb-1">
+          </div>
+          <div className="space-y-2">
+            <div className="status-indicator status-progress">
               {completedTasks}/{totalTasks} tasks completed
             </div>
             <Progress 
               value={progress} 
-              className="h-2 bg-muted/30"
+              className="h-3 bg-muted/20"
             />
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

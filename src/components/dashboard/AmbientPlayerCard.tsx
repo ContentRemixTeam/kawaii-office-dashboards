@@ -32,14 +32,14 @@ export function AmbientPlayerCard() {
   };
 
   return (
-    <Card className="p-4 md:p-5 space-y-4">
+    <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold flex items-center gap-2">
-          <Play className="w-5 h-5" />
+        <h2 className="text-card-title flex items-center gap-3">
+          <Play className="w-5 h-5 text-primary" />
           Ambient Player
         </h2>
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="status-indicator status-muted">
             <span>Hero Mode</span>
             <Switch
               checked={ambientState.useAsHero || false}
@@ -49,7 +49,7 @@ export function AmbientPlayerCard() {
         </div>
       </div>
       
-      <div className="w-full rounded-lg overflow-hidden">
+      <div className="w-full rounded-xl overflow-hidden border border-muted/20 bg-muted/5">
         <div className="aspect-video">
           <YouTubeAmbient 
             videoId={getCurrentVideoId()}
@@ -91,6 +91,6 @@ export function AmbientPlayerCard() {
           More Sounds
         </Button>
       </div>
-    </Card>
+    </div>
   );
 }

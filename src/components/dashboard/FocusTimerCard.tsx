@@ -62,33 +62,39 @@ export function FocusTimerCard() {
   };
 
   return (
-    <Card className="p-4 md:p-5 space-y-4">
-      <div className={`bg-gradient-to-r ${getPhaseColor()} rounded-lg p-4`}>
+    <div className="p-6 space-y-6">
+      <div className={`bg-gradient-to-r ${getPhaseColor()} rounded-xl p-6 border border-muted/20`}>
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Timer className="w-5 h-5" />
-            <span>{getPhaseIcon()}</span>
-            <h2 className="text-lg font-semibold">Focus Timer</h2>
+          <div className="flex items-center gap-3">
+            <Timer className="w-5 h-5 text-primary" />
+            <span className="text-2xl">{getPhaseIcon()}</span>
+            <h2 className="text-card-title">Focus Timer</h2>
           </div>
-          <Badge variant="outline" className="bg-background/80">
+          <div className="status-indicator status-success">
             🏆 {trophyCount}
-          </Badge>
+          </div>
         </div>
       </div>
-      <div className="flex items-center justify-between">
-        <div className="text-center">
-          <div className="text-3xl font-mono font-bold mb-2">
+      
+      <div className="space-y-6">
+        <div className="text-center space-y-4">
+          <div className="text-5xl font-mono font-bold text-primary">
             {formatTime(timerState.msLeft)}
           </div>
-          <Progress value={timerState.progress * 100} className="h-2 w-32" />
+          <Progress 
+            value={timerState.progress * 100} 
+            className="h-3 max-w-xs mx-auto"
+          />
         </div>
-        <div className="flex gap-2">
+        
+        <div className="flex items-center justify-center gap-3">
           {!timerState.isRunning ? (
             <Button
               onClick={() => focusTimer.start(timerState.phase === "idle" ? "focus" : timerState.phase)}
               size="sm"
+              className="gap-2"
             >
-              <Play className="w-4 h-4 mr-1" />
+              <Play className="w-4 h-4" />
               Start
             </Button>
           ) : (
@@ -96,8 +102,9 @@ export function FocusTimerCard() {
               onClick={() => focusTimer.pause()}
               variant="outline"
               size="sm"
+              className="gap-2"
             >
-              <Pause className="w-4 h-4 mr-1" />
+              <Pause className="w-4 h-4" />
               Pause
             </Button>
           )}
@@ -110,6 +117,6 @@ export function FocusTimerCard() {
           </Button>
         </div>
       </div>
-    </Card>
+    </div>
   );
 }

@@ -28,20 +28,20 @@ export function BigThreeCard() {
   }, []);
 
   return (
-    <Card className="p-4 md:p-5 space-y-4">
+    <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold flex items-center gap-2">
+        <h2 className="text-card-title flex items-center gap-3">
           <span className="text-2xl">⭐</span>
           The Big Three
         </h2>
-        <div className="flex items-center gap-2">
-          <Calendar className="w-4 h-4 text-muted-foreground" />
-          <span className="text-sm text-muted-foreground">
-            Streak: {streakData.streak} days
+        <div className="status-indicator status-success">
+          <Calendar className="w-4 h-4" />
+          <span>
+            {streakData.streak} day streak
           </span>
         </div>
       </div>
       <BigThreeTasksSection />
-    </Card>
+    </div>
   );
 }

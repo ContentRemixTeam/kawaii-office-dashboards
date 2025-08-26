@@ -48,52 +48,50 @@ export function RecentWinsPanel() {
   };
 
   return (
-    <Card className="h-full">
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <span className="flex items-center gap-2">
-            🎉 Daily Wins
-          </span>
-          {todayTrophies > 0 && (
-            <Badge variant="secondary" className="text-xs">
-              🏆 {todayTrophies} {todayTrophies === 1 ? 'trophy' : 'trophies'} today
-            </Badge>
-          )}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-3">
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-card-title flex items-center gap-3">
+          🎉 Daily Wins
+        </h2>
+        {todayTrophies > 0 && (
+          <div className="status-indicator status-success">
+            🏆 {todayTrophies} {todayTrophies === 1 ? 'trophy' : 'trophies'}
+          </div>
+        )}
+      </div>
+      <div className="space-y-4">
         {recentWins.length === 0 ? (
-          <div className="text-center py-6 text-muted-foreground">
-            <div className="text-3xl mb-2">✨</div>
-            <p className="text-sm">Complete a task to start celebrating wins!</p>
+          <div className="text-center py-8 rounded-xl bg-gradient-to-br from-muted/10 to-muted/5 border border-muted/20">
+            <div className="text-4xl mb-3">✨</div>
+            <p className="text-subtle">Complete a task to start celebrating wins!</p>
           </div>
         ) : (
-          <>
+          <div className="space-y-4">
             {recentWins.map((win) => (
-              <div key={win.id} className="space-y-1">
-                <div className="flex items-start justify-between gap-2">
-                  <p className="text-sm flex-1">{win.text}</p>
-                  <Badge variant="outline" className="text-xs whitespace-nowrap">
+              <div key={win.id} className="p-4 rounded-xl bg-muted/5 border border-muted/10 space-y-2">
+                <div className="flex items-start justify-between gap-3">
+                  <p className="text-body flex-1">{win.text}</p>
+                  <div className="status-indicator status-muted">
                     {formatDate(win.date)}
-                  </Badge>
+                  </div>
                 </div>
                 {win.source === 'task' && (
-                  <div className="text-xs text-muted-foreground flex items-center gap-1">
+                  <div className="status-indicator status-success">
                     ⭐ Task completion
                   </div>
                 )}
               </div>
             ))}
             {todayWins.length > 0 && (
-              <div className="pt-2 border-t border-border/50">
-                <p className="text-xs text-muted-foreground">
+              <div className="pt-4 mt-4 border-t border-border/20">
+                <div className="status-indicator status-progress w-full justify-center">
                   🎯 {todayWins.length} {todayWins.length === 1 ? 'win' : 'wins'} today
-                </p>
+                </div>
               </div>
             )}
-          </>
+          </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
