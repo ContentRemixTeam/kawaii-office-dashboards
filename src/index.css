@@ -223,3 +223,14 @@
     display: block;
   }
 }
+
+/* Grid Card Height Consistency */
+.grid > div {
+  height: 100%;
+}
+
+.grid > div > div {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
