@@ -257,17 +257,21 @@ export function setHomeSubtitle(subtitle: string): void {
 // Celebration settings
 export interface CelebrationSettings {
   enabled: boolean;
+  popupsEnabled: boolean;
   soundEnabled: boolean;
   throttleSeconds: number;
   minimalMode: boolean;
+  forcePetTheme: boolean;
 }
 
 export function getCelebrationSettings(): CelebrationSettings {
   const defaults: CelebrationSettings = {
     enabled: true,
+    popupsEnabled: true,
     soundEnabled: false,
     throttleSeconds: 10,
-    minimalMode: false
+    minimalMode: false,
+    forcePetTheme: true
   };
 
   try {
@@ -292,6 +296,22 @@ export function setCelebrationSettings(settings: Partial<CelebrationSettings>): 
   } catch (error) {
     console.warn('Failed to save celebration settings:', error);
   }
+}
+
+// Get all settings (for unified access)
+export function getSettings() {
+  try {
+    const stored = localStorage.getItem('fm_settings_v2');
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (error) {
+    console.warn('Failed to load settings:', error);
+  }
+  
+  return {
+    encouragement: getCelebrationSettings()
+  };
 }
 
 // Legacy GIPHY celebrations setting (kept for backward compatibility)

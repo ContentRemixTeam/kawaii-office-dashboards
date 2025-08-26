@@ -1,4 +1,5 @@
-import { getCelebrationsEnabled } from './storage';
+import { getCelebrationsEnabled, getSettings } from './storage';
+import { simpleHash, createSelectionSeed, getTodayDateString, normalizePetKey } from './pets';
 
 export interface GifItem {
   id: string;
@@ -61,52 +62,83 @@ export async function loadCelebrations(): Promise<CelebrationData> {
 }
 
 export async function pickGif({ pet, occasion }: { pet?: PetKey | 'general'; occasion: Occasion }): Promise<GifItem | null> {
-  console.log('[celebrations] pickGif called with:', { pet, occasion });
+  const isDev = import.meta.env.DEV;
+  
+  if (isDev) {
+    console.log('[celebrate] Starting selection:', { pet, occasion });
+  }
   
   if (!getCelebrationsEnabled()) {
-    console.log('[celebrations] Celebrations disabled globally');
+    if (isDev) console.log('[celebrate] Celebrations disabled globally');
     return null;
   }
 
   const data = await loadCelebrations();
-  console.log('[celebrations] Loaded data for gif selection');
+  const settings = getSettings();
+  const forcePetTheme = settings.encouragement?.forcePetTheme ?? true;
+  
+  // Normalize the pet key
+  const normalizedPet = normalizePetKey(pet);
   
   // Determine which pets are valid for this occasion
   const validPets = data.occasions[occasion] || ['general'];
-  console.log('[celebrations] Valid pets for', occasion, ':', validPets);
   
-  // Try to use the specified pet first
-  let targetPet = pet;
-  if (!targetPet || !validPets.includes(targetPet)) {
-    targetPet = 'general';
+  // Create deterministic seed for selection
+  const dateStr = getTodayDateString();
+  let selectedGif: GifItem | null = null;
+  let usedPet = 'general';
+  let pickedId = '';
+  
+  if (forcePetTheme && normalizedPet !== 'general' && validPets.includes(normalizedPet)) {
+    // Try pet-specific gifs first
+    const petGifs = data.pets[normalizedPet] || [];
+    
+    if (petGifs.length > 0) {
+      const seed = createSelectionSeed(dateStr, occasion, normalizedPet);
+      const index = simpleHash(seed) % petGifs.length;
+      selectedGif = petGifs[index];
+      usedPet = normalizedPet;
+      pickedId = selectedGif.id;
+    }
   }
   
-  // Get gifs for the target pet
-  let gifs = data.pets[targetPet] || [];
-  
-  // If no gifs for target pet, try general
-  if (gifs.length === 0) {
-    gifs = data.pets.general || [];
+  // Fallback to general if no pet-specific gif found
+  if (!selectedGif) {
+    const generalGifs = data.pets.general || [];
+    if (generalGifs.length > 0) {
+      const seed = createSelectionSeed(dateStr, occasion, 'general');
+      const index = simpleHash(seed) % generalGifs.length;
+      selectedGif = generalGifs[index];
+      usedPet = 'general';
+      pickedId = selectedGif.id;
+    }
   }
   
-  // If still no gifs, return null
-  if (gifs.length === 0) {
+  // Still no gif found
+  if (!selectedGif) {
+    if (isDev) console.warn('[celebrate] No gifs available for occasion:', occasion);
     return null;
   }
   
-  // Pick a random gif
-  const randomIndex = Math.floor(Math.random() * gifs.length);
-  const selectedGif = gifs[randomIndex];
-  
-  // Check for blocked keywords in URL or message
+  // Check for blocked keywords
   const hasBlockedContent = data.blockedKeywords.some(keyword => 
-    selectedGif.url.toLowerCase().includes(keyword.toLowerCase()) ||
-    selectedGif.msg.toLowerCase().includes(keyword.toLowerCase())
+    selectedGif!.url.toLowerCase().includes(keyword.toLowerCase()) ||
+    selectedGif!.msg.toLowerCase().includes(keyword.toLowerCase())
   );
   
   if (hasBlockedContent) {
-    console.warn('Blocked content detected, using fallback');
-    return data.pets.general?.[0] || null;
+    if (isDev) console.warn('[celebrate] Blocked content detected, using fallback');
+    const fallback = data.pets.general?.[0];
+    if (fallback) {
+      usedPet = 'general';
+      pickedId = fallback.id;
+      selectedGif = fallback;
+    }
+  }
+  
+  // Development logging
+  if (isDev && selectedGif) {
+    console.log(`[celebrate] occasion=${occasion} pet=${normalizedPet} picked=${pickedId} url=${selectedGif.url}`);
   }
   
   return selectedGif;

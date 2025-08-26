@@ -1147,6 +1147,24 @@ export default function Theme() {
               
               <div className="flex items-center justify-between p-4 border border-border rounded-lg">
                 <div className="space-y-1">
+                  <Label htmlFor="pet-theme-toggle" className="text-sm font-medium">
+                    🎨 Force Pet-Themed GIFs
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Always prioritize your selected pet's GIFs over general celebrations
+                  </p>
+                </div>
+                <Switch
+                  id="pet-theme-toggle"
+                  checked={celebrationSettings.forcePetTheme}
+                  onCheckedChange={(checked) => {
+                    setCelebrationSettings({ ...celebrationSettings, forcePetTheme: checked });
+                  }}
+                />
+              </div>
+              
+              <div className="flex items-center justify-between p-4 border border-border rounded-lg">
+                <div className="space-y-1">
                   <Label htmlFor="gifs-toggle" className="text-sm font-medium">
                     🎬 Task Completion GIFs
                   </Label>
@@ -1201,9 +1219,23 @@ export default function Theme() {
                       hiddenFeatures: {
                         ...tempTheme.hiddenFeatures,
                         celebrationModals: !checked
-                      }
-                    };
-                    setTempTheme(newTheme);
+              }
+              
+              <div className="flex items-center justify-between p-4 border border-border rounded-lg">
+                <div className="space-y-1">
+                  <Label htmlFor="sounds-toggle" className="text-sm font-medium">
+                    🔊 Celebration Sounds
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Play gentle chime sounds when tasks are completed
+                  </p>
+                </div>
+                <Switch
+                  id="sounds-toggle"
+                  checked={safeGet('fm_settings_celebrations_v1', { showGifs: true, playSound: true }).playSound}
+                  onCheckedChange={(checked) => {
+                    const current = safeGet('fm_settings_celebrations_v1', { showGifs: true, playSound: true });
+                    safeSet('fm_settings_celebrations_v1', { ...current, playSound: checked });
                   }}
                 />
               </div>

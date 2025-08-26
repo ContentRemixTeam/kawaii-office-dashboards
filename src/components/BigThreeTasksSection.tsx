@@ -24,6 +24,8 @@ import { emitChanged, addEarnedAnimal } from "@/lib/topbarState";
 import { K_TASKS } from "@/lib/topbar.readers";
 import focusTimer from "@/lib/focusTimer";
 import { useGiphyCelebration } from "@/hooks/useGiphyCelebration";
+import { useCelebrationGif } from "@/components/CelebrationGifPopup";
+import { useTodayPet } from "@/hooks/useTodayPet";
 import GiphyCelebration from "@/components/GiphyCelebration";
 import TaskProgressGraph from "./TaskProgressGraph";
 
@@ -92,14 +94,17 @@ const ANIMALS = [
 
 export default function BigThreeTasksSection() {
   const navigate = useNavigate();
+  const todayPet = useTodayPet();
   
-  // Celebration hooks - using GIPHY system only
+  // Celebration hooks
   const { 
     currentCelebration: giphyCelebration, 
     celebrateTask: celebrateGiphyTask, 
     celebrateAllTasks: celebrateGiphyAllTasks, 
     clearCelebration: clearGiphyCelebration 
   } = useGiphyCelebration();
+  
+  const { celebrate, CelebrationPopup } = useCelebrationGif();
   
   const [bigThreeTasks, setBigThreeTasksState] = useState<[any, any, any]>([null, null, null]);
   const [selectedAnimal, setSelectedAnimal] = useState("unicorn");
@@ -202,6 +207,9 @@ export default function BigThreeTasksSection() {
       }
       
       const taskNumber = index + 1;
+      
+      // Trigger new pet-themed celebration
+      celebrate('taskComplete');
       
       // Trigger GIPHY celebration for task completion
       console.log('[BigThreeTasksSection] Triggering GIPHY celebration for task:', selectedAnimal, taskNumber);
@@ -537,6 +545,9 @@ export default function BigThreeTasksSection() {
           </Card>
         )}
       </div>
+
+      {/* Pet-themed Celebrations */}
+      {CelebrationPopup}
 
       {/* GIPHY Celebrations */}
       {giphyCelebration && (
