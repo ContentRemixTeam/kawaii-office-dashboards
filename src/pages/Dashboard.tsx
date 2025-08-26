@@ -2,15 +2,13 @@ import { useState, useEffect } from "react";
 import { Play, Pause, Volume2, VolumeX, ExternalLink, Timer, Calendar, Heart, Trophy, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-import DashboardGrid from "@/components/DashboardGrid";
-import { DashboardCard } from "@/components/DashboardCard";
 import BigThreeTasksSection from "@/components/BigThreeTasksSection";
 import YouTubeAmbient from "@/components/YouTubeAmbient";
 import QuickActionsPanel from "@/components/QuickActionsPanel";
@@ -218,10 +216,10 @@ const Dashboard = () => {
       
       {/* Main content */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 py-6 md:py-8">
-        <DashboardGrid>
+        <div className="grid gap-6 grid-cols-1 lg:grid-cols-2 xl:grid-cols-[1fr_1fr_360px]">
           
           {/* Ambient Player - Left main column */}
-          <DashboardCard>
+          <Card className="p-4 md:p-5">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold flex items-center gap-2">
                 <Play className="w-5 h-5" />
@@ -237,14 +235,14 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
-            <div className="w-full aspect-video rounded-xl overflow-hidden bg-muted/20 mb-4">
+            <div className="w-full aspect-video rounded-lg overflow-hidden">
               <YouTubeAmbient 
                 videoId={getCurrentVideoId()}
                 startMuted={ambientState.muted || true}
                 className="w-full h-full"
               />
             </div>
-            <div className="flex items-center justify-between p-3 bg-muted/10 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-muted/10 rounded-lg mt-3">
               <div className="flex items-center gap-3">
                 <Button
                   variant="ghost"
@@ -276,10 +274,10 @@ const Dashboard = () => {
                 More Sounds
               </Button>
             </div>
-          </DashboardCard>
+          </Card>
 
           {/* Big Three Tasks - Right main column */}
-          <DashboardCard>
+          <Card className="p-4 md:p-5">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold flex items-center gap-2">
                 <span className="text-2xl">⭐</span>
@@ -293,10 +291,10 @@ const Dashboard = () => {
               </div>
             </div>
             <BigThreeTasksSection />
-          </DashboardCard>
+          </Card>
 
           {/* Focus Timer - Full width under main columns */}
-          <DashboardCard className="lg:col-span-2 xl:col-span-2">
+          <Card className="lg:col-span-2 xl:col-span-2 p-4 md:p-5">
             <div className={`bg-gradient-to-r ${getPhaseColor()} rounded-lg p-4 mb-4`}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -344,30 +342,30 @@ const Dashboard = () => {
                 </Button>
               </div>
             </div>
-          </DashboardCard>
+          </Card>
 
           {/* Sidebar - Third column on xl, flows below on smaller screens */}
           <aside className="xl:col-start-3 xl:row-start-1 xl:row-span-6 space-y-6">
-            <DashboardCard>
+            <Card className="p-4 md:p-5">
               <QuickActionsPanel />
-            </DashboardCard>
+            </Card>
             
-            <DashboardCard>
+            <Card className="p-4 md:p-5">
               <DailyProgressPanel />
-            </DashboardCard>
+            </Card>
             
-            <DashboardCard>
+            <Card className="p-4 md:p-5">
               <InspirationCorner />
-            </DashboardCard>
+            </Card>
           </aside>
 
           {/* Recent Wins - Below timer */}
-          <DashboardCard className="lg:col-span-2 xl:col-span-2">
+          <Card className="lg:col-span-2 xl:col-span-2 p-4 md:p-5">
             <RecentWinsPanel />
-          </DashboardCard>
+          </Card>
 
           {/* Vision Board - Below wins */}
-          <DashboardCard className="lg:col-span-2 xl:col-span-2">
+          <Card className="lg:col-span-2 xl:col-span-2 p-4 md:p-5">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold flex items-center gap-2">
                 <span className="text-xl">🌈</span>
@@ -406,20 +404,20 @@ const Dashboard = () => {
             >
               View Full Board
             </Button>
-          </DashboardCard>
+          </Card>
 
           {/* Trophy Case - Below vision */}
-          <DashboardCard className="lg:col-span-1 xl:col-span-1">
+          <Card className="lg:col-span-1 xl:col-span-1 p-4 md:p-5">
             <DashboardTrophyCase />
-          </DashboardCard>
+          </Card>
 
           {/* Habits - Next to trophy case */}
-          <DashboardCard className="lg:col-span-1 xl:col-span-1">
+          <Card className="lg:col-span-1 xl:col-span-1 p-4 md:p-5">
             <DashboardHabitTracker />
-          </DashboardCard>
+          </Card>
 
           {/* Today's Intention */}
-          <DashboardCard className="lg:col-span-1 xl:col-span-1">
+          <Card className="lg:col-span-1 xl:col-span-1 p-4 md:p-5">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -444,20 +442,20 @@ const Dashboard = () => {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-          </DashboardCard>
+          </Card>
 
-          {/* Pet Status */}
-          <DashboardCard className="lg:col-span-1 xl:col-span-1">
+          {/* Pet Status - Next to intention */}
+          <Card className="lg:col-span-1 xl:col-span-1 p-4 md:p-5">
             <PetStatusCard 
               petData={petData}
               completedTasks={taskData.completed.filter(Boolean).length}
               totalTasks={taskData.tasks.filter(task => task.trim() !== "").length}
             />
-          </DashboardCard>
+          </Card>
 
           {/* Today's Earned Pets */}
           {earnedAnimals.length > 0 && (
-            <DashboardCard className="lg:col-span-2 xl:col-span-2">
+            <Card className="lg:col-span-2 xl:col-span-2 p-4 md:p-5">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold flex items-center gap-2">
                   🏆 Today's Earned Pets
@@ -478,10 +476,10 @@ const Dashboard = () => {
               <p className="text-center text-sm text-muted-foreground">
                 Complete tasks to earn more pets! 🎉
               </p>
-            </DashboardCard>
+            </Card>
           )}
 
-        </DashboardGrid>
+        </div>
         
         {/* Footer tip */}
         <div className="text-center mt-8">
