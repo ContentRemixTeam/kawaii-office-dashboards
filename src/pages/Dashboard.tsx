@@ -2,13 +2,15 @@ import { useState, useEffect } from "react";
 import { Play, Pause, Volume2, VolumeX, ExternalLink, Timer, Calendar, Heart, Trophy, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
+import DashboardGrid from "@/components/DashboardGrid";
+import { DashboardCard } from "@/components/DashboardCard";
 import BigThreeTasksSection from "@/components/BigThreeTasksSection";
 import YouTubeAmbient from "@/components/YouTubeAmbient";
 import QuickActionsPanel from "@/components/QuickActionsPanel";
@@ -211,310 +213,275 @@ const Dashboard = () => {
 
   return (
     <main className="min-h-screen relative">
-      
       {/* Top spacing for fixed bar */}
       <div className="h-16" />
       
       {/* Main content */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 py-6 space-y-6">
-        
-        {/* Top Grid: Ambient Player + Big Three Tasks */}
-        <div className="grid lg:grid-cols-[1fr_1.2fr] gap-6 mb-6">
+      <div className="relative z-10 w-full max-w-[1200px] mx-auto px-4 py-6 md:py-8">
+        <DashboardGrid>
           
-          {/* Left Section: Ambient Player */}
-          <div className="space-y-6">
-            
-            {/* Ambient YouTube Player */}
-            <Card className="overflow-hidden">
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
-                    <Play className="w-5 h-5" />
-                    Ambient Player
-                  </CardTitle>
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2 text-sm">
-                      <span>Hero Mode</span>
-                      <Switch
-                        checked={ambientState.useAsHero || false}
-                        onCheckedChange={(checked) => updateAmbientState({ useAsHero: checked })}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="p-4">
-                <div className="aspect-video rounded-xl overflow-hidden bg-muted/20">
-                  <YouTubeAmbient 
-                    videoId={getCurrentVideoId()}
-                    startMuted={ambientState.muted || true}
-                    className="w-full h-full"
-                  />
-                </div>
-                
-                {/* Player Controls */}
-                <div className="flex items-center justify-between mt-4 p-3 bg-muted/10 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => updateAmbientState({ muted: !ambientState.muted })}
-                    >
-                      {ambientState.muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-                    </Button>
-                    <div className="w-24">
-                      <Slider
-                        value={[ambientState.muted ? 0 : (ambientState.volume || 50)]}
-                        onValueChange={(value) => updateAmbientState({ 
-                          volume: value[0], 
-                          muted: value[0] === 0 
-                        })}
-                        max={100}
-                        step={5}
-                        className="w-full"
-                      />
-                    </div>
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => navigate('/tools/sounds')}
-                    className="flex items-center gap-2"
-                  >
-                    <ExternalLink className="w-3 h-3" />
-                    More Sounds
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Focus Timer - Now under ambient player */}
-            <Card className="overflow-hidden">
-              <CardHeader className={`bg-gradient-to-r ${getPhaseColor()} pb-4`}>
-                <CardTitle className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Timer className="w-5 h-5" />
-                    <span>Focus Timer</span>
-                    <span className="text-xl">{getPhaseIcon()}</span>
-                  </div>
-                  <Badge variant="outline" className="bg-background/80">
-                    🏆 {trophyCount} today
-                  </Badge>
+          {/* Ambient Player (medium, wide) */}
+          <DashboardCard size="m" colSpan={{ base: 1, md: 6, xl: 8 }}>
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  <Play className="w-5 h-5" />
+                  Ambient Player
                 </CardTitle>
-              </CardHeader>
-              <CardContent className="p-4">
-                {/* Timer Display */}
-                <div className="text-center mb-4">
-                  <div className="text-3xl font-mono font-bold text-foreground mb-2">
-                    {formatTime(timerState.msLeft)}
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 text-sm">
+                    <span>Hero Mode</span>
+                    <Switch
+                      checked={ambientState.useAsHero || false}
+                      onCheckedChange={(checked) => updateAmbientState({ useAsHero: checked })}
+                    />
                   </div>
-                  <div className="text-sm text-muted-foreground mb-2">
-                    {timerState.phaseLabel}
-                  </div>
-                  <Progress value={timerState.progress * 100} className="h-2" />
                 </div>
-
-                {/* Controls */}
-                <div className="flex justify-center gap-2 mb-4">
-                  {!timerState.isRunning ? (
-                    <Button
-                      onClick={() => focusTimer.start(timerState.phase === "idle" ? "focus" : timerState.phase)}
-                      className="flex items-center gap-2"
-                    >
-                      <Play className="w-4 h-4" />
-                      {timerState.phase === "idle" ? "Start" : "Resume"}
-                    </Button>
-                  ) : (
-                    <Button
-                      onClick={() => focusTimer.pause()}
-                      variant="outline"
-                      className="flex items-center gap-2"
-                    >
-                      <Pause className="w-4 h-4" />
-                      Pause
-                    </Button>
-                  )}
+              </div>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="aspect-video rounded-xl overflow-hidden bg-muted/20 mb-4">
+                <YouTubeAmbient 
+                  videoId={getCurrentVideoId()}
+                  startMuted={ambientState.muted || true}
+                  className="w-full h-full"
+                />
+              </div>
+              
+              <div className="flex items-center justify-between p-3 bg-muted/10 rounded-lg">
+                <div className="flex items-center gap-3">
                   <Button
-                    onClick={() => navigate('/tools/focus')}
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => updateAmbientState({ muted: !ambientState.muted })}
+                  >
+                    {ambientState.muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                  </Button>
+                  <div className="w-24">
+                    <Slider
+                      value={[ambientState.muted ? 0 : (ambientState.volume || 50)]}
+                      onValueChange={(value) => updateAmbientState({ 
+                        volume: value[0], 
+                        muted: value[0] === 0 
+                      })}
+                      max={100}
+                      step={5}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate('/tools/sounds')}
+                  className="flex items-center gap-2"
+                >
+                  <ExternalLink className="w-3 h-3" />
+                  More Sounds
+                </Button>
+              </div>
+            </CardContent>
+          </DashboardCard>
+
+          {/* Big Three Tasks (large, medium-wide) */}
+          <DashboardCard size="l" colSpan={{ base: 1, md: 6, xl: 4 }}>
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <span className="text-2xl">⭐</span>
+                The Big Three
+              </CardTitle>
+              <div className="flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">
+                  Streak: {streakData.streak} days
+                </span>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0 min-h-[280px]">
+              <BigThreeTasksSection />
+            </CardContent>
+          </DashboardCard>
+
+          {/* Focus Timer (small) */}
+          <DashboardCard size="s" colSpan={{ base: 1, md: 3, xl: 4 }}>
+            <CardHeader className={`bg-gradient-to-r ${getPhaseColor()} pb-4`}>
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Timer className="w-5 h-5" />
+                  <span>{getPhaseIcon()}</span>
+                </div>
+                <Badge variant="outline" className="bg-background/80">
+                  🏆 {trophyCount}
+                </Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-2">
+              <div className="text-center mb-2">
+                <div className="text-2xl font-mono font-bold">
+                  {formatTime(timerState.msLeft)}
+                </div>
+                <Progress value={timerState.progress * 100} className="h-1 mt-2" />
+              </div>
+              <div className="flex justify-center gap-1">
+                {!timerState.isRunning ? (
+                  <Button
+                    onClick={() => focusTimer.start(timerState.phase === "idle" ? "focus" : timerState.phase)}
+                    size="sm"
+                  >
+                    <Play className="w-3 h-3" />
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => focusTimer.pause()}
                     variant="outline"
                     size="sm"
                   >
-                    Full View
+                    <Pause className="w-3 h-3" />
                   </Button>
-                </div>
+                )}
+                <Button
+                  onClick={() => navigate('/tools/focus')}
+                  variant="outline"
+                  size="sm"
+                >
+                  Full
+                </Button>
+              </div>
+            </CardContent>
+          </DashboardCard>
 
-                {/* Session Stats */}
-                <div className="grid grid-cols-2 gap-4 text-center text-sm">
-                  <div>
-                    <div className="text-lg font-bold text-primary">{timerState.cycleCount}</div>
-                    <div className="text-muted-foreground">Sessions</div>
-                  </div>
-                  <div>
-                    <div className="text-lg font-bold text-primary">{timerState.cycleCount}</div>
-                    <div className="text-muted-foreground">Today</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+          {/* Quick Actions (small) */}
+          <DashboardCard size="s" colSpan={{ base: 1, md: 3, xl: 4 }}>
+            <QuickActionsPanel />
+          </DashboardCard>
 
-            {/* Today's Intention Card */}
+          {/* Daily Progress (small) */}
+          <DashboardCard size="s" colSpan={{ base: 1, md: 3, xl: 4 }}>
+            <DailyProgressPanel />
+          </DashboardCard>
+
+          {/* Recent Wins (medium) */}
+          <DashboardCard size="m" colSpan={{ base: 1, md: 3, xl: 4 }}>
+            <RecentWinsPanel />
+          </DashboardCard>
+
+          {/* Trophy Case (small) */}
+          <DashboardCard size="s" colSpan={{ base: 1, md: 3, xl: 4 }}>
+            <DashboardTrophyCase />
+          </DashboardCard>
+
+          {/* Habits (small) */}
+          <DashboardCard size="s" colSpan={{ base: 1, md: 3, xl: 4 }}>
+            <DashboardHabitTracker />
+          </DashboardCard>
+
+          {/* Today's Intention (small) */}
+          <DashboardCard size="s" colSpan={{ base: 1, md: 3, xl: 4 }}>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Card 
-                    className="cursor-pointer hover:scale-105 transition-transform bg-gradient-to-br from-blue-50/50 to-indigo-50/50 border-blue-200/50"
+                  <div 
+                    className="cursor-pointer hover:scale-105 transition-transform h-full flex flex-col justify-center text-center p-2"
                     onClick={() => navigate('/tools/tasks')}
                   >
-                    <CardContent className="p-4 text-center">
-                      <div className="text-2xl mb-2">✨</div>
-                      <div className="text-sm font-medium text-foreground mb-1">
-                        Today's Intention
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {todayIntention ? (
-                          <div className="space-y-1">
-                            <div>Feel: {todayIntention.feel}</div>
-                            {todayIntention.focus && (
-                              <div>Focus: {todayIntention.focus}</div>
-                            )}
-                            {todayIntention.top3?.length > 0 && (
-                              <div>{todayIntention.top3.length} tasks set</div>
-                            )}
-                          </div>
-                        ) : "Set your intention"
-                        }
-                      </div>
-                    </CardContent>
-                  </Card>
+                    <div className="text-2xl mb-2">✨</div>
+                    <div className="text-sm font-medium mb-1">Today's Intention</div>
+                    <div className="text-xs text-muted-foreground">
+                      {todayIntention ? (
+                        <div className="space-y-1">
+                          <div>Feel: {todayIntention.feel}</div>
+                          {todayIntention.focus && <div>Focus: {todayIntention.focus}</div>}
+                        </div>
+                      ) : "Set your intention"}
+                    </div>
+                  </div>
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Click to set intention</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
+          </DashboardCard>
 
-            {/* Today's Earned Pets */}
-            {earnedAnimals.length > 0 && (
-              <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    🏆 Today's Earned Pets
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-4">
-                  <div className="flex flex-wrap gap-3 justify-center">
-                    {earnedAnimals.map((animal, index) => (
-                      <div 
-                        key={`${animal.id}-${index}`}
-                        className="text-4xl animate-bounce hover:scale-110 transition-transform cursor-default"
-                        style={{ animationDelay: `${index * 0.3}s` }}
-                        title={`Earned ${animal.id}!`}
-                      >
-                        {animal.emoji}
-                      </div>
-                    ))}
-                  </div>
-                  <p className="text-center text-sm text-muted-foreground mt-3">
-                    Complete tasks to earn more pets! 🎉
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-          
-          {/* Right Section: Big Three Tasks - Now taking more space */}
-          <div className="space-y-4">
-            
-            {/* Big Three Tasks - Now prominently featured */}
-            <Card className="h-full bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-xl">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-xl">
-                  <span className="text-2xl">⭐</span>
-                  The Big Three
-                </CardTitle>
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">
-                    Streak: {streakData.streak} days
-                  </span>
+          {/* Vision Preview (medium, wide) */}
+          <DashboardCard size="m" colSpan={{ base: 1, md: 6, xl: 8 }}>
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2">
+                <span className="text-xl">🌈</span>
+                Hold the Vision ✨
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              {visionImages.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                  {visionImages.slice(0, 4).map((image, index) => (
+                    <div
+                      key={index}
+                      className="aspect-square rounded-lg overflow-hidden bg-muted/20 cursor-pointer hover:scale-105 transition-transform"
+                      onClick={() => navigate('/tools/vision')}
+                    >
+                      <img
+                        src={image}
+                        alt={`Vision ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ))}
                 </div>
+              ) : (
+                <div className="h-24 rounded-lg bg-muted/20 flex items-center justify-center mb-4">
+                  <div className="text-center text-muted-foreground">
+                    <div className="text-2xl mb-1">🌟</div>
+                    <p className="text-xs">Add images to your vision board</p>
+                  </div>
+                </div>
+              )}
+              
+              <Button
+                onClick={() => navigate('/tools/vision')}
+                className="w-full"
+                variant="outline"
+                size="sm"
+              >
+                View Full Board
+              </Button>
+            </CardContent>
+          </DashboardCard>
+
+          {/* Inspiration Corner (small) */}
+          <DashboardCard size="s" colSpan={{ base: 1, md: 3, xl: 4 }}>
+            <InspirationCorner />
+          </DashboardCard>
+
+          {/* Today's Earned Pets */}
+          {earnedAnimals.length > 0 && (
+            <DashboardCard size="s" colSpan={{ base: 1, md: 6, xl: 8 }}>
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  🏆 Today's Earned Pets
+                </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
-                <div className="p-6">
-                  <BigThreeTasksSection />
+                <div className="flex flex-wrap gap-3 justify-center mb-2">
+                  {earnedAnimals.map((animal, index) => (
+                    <div 
+                      key={`${animal.id}-${index}`}
+                      className="text-3xl animate-bounce hover:scale-110 transition-transform cursor-default"
+                      style={{ animationDelay: `${index * 0.3}s` }}
+                      title={`Earned ${animal.id}!`}
+                    >
+                      {animal.emoji}
+                    </div>
+                  ))}
                 </div>
+                <p className="text-center text-xs text-muted-foreground">
+                  Complete tasks to earn more pets! 🎉
+                </p>
               </CardContent>
-            </Card>
-            
-          </div>
-        </div>
+            </DashboardCard>
+          )}
 
-        {/* Secondary Grid: Distributed Components */}
-        <div className="grid lg:grid-cols-3 gap-6">
-          
-          {/* Left Section: Quick Actions + Daily Progress */}
-          <div className="space-y-6">
-            <QuickActionsPanel />
-            <DailyProgressPanel />
-          </div>
-          
-          {/* Middle Section: Habit Tracker */}
-          <div className="space-y-6">
-            <DashboardHabitTracker />
-            <RecentWinsPanel />
-          </div>
-
-          {/* Right Section: Trophy Case + Inspiration */}
-          <div className="space-y-6">
-            <DashboardTrophyCase />
-            <InspirationCorner />
-          </div>
-
-        </div>
-
-        {/* Mini Vision Board */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span className="text-xl">🌈</span>
-              Hold the Vision ✨
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {visionImages.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-                {visionImages.slice(0, 4).map((image, index) => (
-                  <div
-                    key={index}
-                    className="aspect-square rounded-lg overflow-hidden bg-muted/20 cursor-pointer hover:scale-105 transition-transform"
-                    onClick={() => navigate('/tools/vision')}
-                  >
-                    <img
-                      src={image}
-                      alt={`Vision ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="h-32 rounded-lg bg-muted/20 flex items-center justify-center mb-4">
-                <div className="text-center text-muted-foreground">
-                  <div className="text-4xl mb-2">🌟</div>
-                  <p className="text-sm">Add images to your vision board</p>
-                </div>
-              </div>
-            )}
-            
-            <Button
-              onClick={() => navigate('/tools/vision')}
-              className="w-full"
-              variant="outline"
-            >
-              View Full Board
-            </Button>
-          </CardContent>
-        </Card>
+        </DashboardGrid>
         
         {/* Footer tip */}
         <div className="text-center mt-8">
