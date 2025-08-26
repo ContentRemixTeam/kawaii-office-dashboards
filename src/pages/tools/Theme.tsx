@@ -1219,7 +1219,12 @@ export default function Theme() {
                       hiddenFeatures: {
                         ...tempTheme.hiddenFeatures,
                         celebrationModals: !checked
-              }
+                      }
+                    };
+                    setTempTheme(newTheme);
+                  }}
+                />
+              </div>
               
               <div className="flex items-center justify-between p-4 border border-border rounded-lg">
                 <div className="space-y-1">
