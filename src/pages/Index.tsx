@@ -44,43 +44,48 @@ const Index = () => {
         </p>
       </div>
 
-      {/* Top Grid: Office Hero + Big Three Tasks */}
-      <div className="w-full max-w-6xl mb-8 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-        {/* Office Hero - Left Column */}
-        <div className="md:col-span-1 relative">
-          <OfficeHero
-            hotspots={HOTSPOTS}
-            fallbackSrc={OFFICE_IMAGE_SRC}
-            alt={OFFICE_ALT}
-            aspectRatio={16/9}
-          />
-          <VisionPreviewOverlay boardBox={boardHotspot} />
-        </div>
-        
-        {/* Big Three Tasks - Middle & Right Columns */}
-        <div className="md:col-span-2">
-          <div className="h-full bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-2xl p-4 md:p-6">
-            <div className="text-center mb-4">
-              <h2 className="text-xl font-bold text-primary mb-1">⭐ The Big Three</h2>
-              <p className="text-sm text-muted-foreground">Your most important tasks today</p>
+      {/* Main Dashboard Grid */}
+      <div className="w-full max-w-7xl mx-auto">
+        {/* Top Row - Office + Big Three */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
+          {/* Office Hero */}
+          <div className="lg:col-span-2">
+            <div className="h-full bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-2xl overflow-hidden">
+              <OfficeHero
+                hotspots={HOTSPOTS}
+                fallbackSrc={OFFICE_IMAGE_SRC}
+                alt={OFFICE_ALT}
+                aspectRatio={16/9}
+              />
+              <VisionPreviewOverlay boardBox={boardHotspot} />
             </div>
-            <BigThreeTasksSection />
+          </div>
+          
+          {/* Big Three Tasks */}
+          <div className="lg:col-span-3">
+            <div className="h-full bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-2xl p-6">
+              <BigThreeTasksSection />
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Daily Pet Display */}
-      <div className="w-full max-w-6xl mb-8">
-        <HomePetDisplay />
-      </div>
-
-      {/* Navigation Toolbar */}
-      <div className="w-full max-w-6xl mt-8 mb-8 rounded-3xl bg-white/80 dark:bg-black/30 backdrop-blur-lg border-2 border-primary/20 shadow-2xl p-6">
-        <div className="text-center mb-4">
-          <h2 className="text-lg font-semibold text-main mb-1">🛠️ Your Productivity Toolkit</h2>
-          <p className="text-sm text-muted">Choose your tool to get started</p>
+        {/* Bottom Row - Pet + Navigation */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+          {/* Pet Display */}
+          <div className="lg:col-span-1">
+            <div className="h-full bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-2xl p-6">
+              <HomePetDisplay />
+            </div>
+          </div>
+          
+          {/* Navigation Pills */}
+          <div className="lg:col-span-2">
+            <div className="h-full bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-2xl p-6">
+              <h2 className="text-lg font-semibold text-main mb-4 text-center">🛠️ Your Productivity Toolkit</h2>
+              <NavPills />
+            </div>
+          </div>
         </div>
-        <NavPills />
       </div>
 
       {/* Daily Settings */}
