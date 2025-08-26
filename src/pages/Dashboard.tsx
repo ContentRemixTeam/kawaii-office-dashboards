@@ -215,12 +215,13 @@ const Dashboard = () => {
       <div className="h-16" />
       
       {/* Main content */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 py-6 md:py-8">
-        <div className="grid gap-6 grid-cols-1 lg:grid-cols-2 xl:grid-cols-[1fr_1fr_360px]">
-          
-          {/* Ambient Player - Left main column */}
-          <Card className="p-4 md:p-5">
-            <div className="flex items-center justify-between mb-4">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 py-6 md:py-8 space-y-6">
+        
+        {/* TOP ROW: Ambient Player + Big Three */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+          {/* Ambient Player - Left */}
+          <Card className="p-4 md:p-5 space-y-4">
+            <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold flex items-center gap-2">
                 <Play className="w-5 h-5" />
                 Ambient Player
@@ -235,14 +236,18 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
-            <div className="w-full aspect-video rounded-lg overflow-hidden">
-              <YouTubeAmbient 
-                videoId={getCurrentVideoId()}
-                startMuted={ambientState.muted || true}
-                className="w-full h-full"
-              />
+            
+            <div className="w-full rounded-lg overflow-hidden">
+              <div className="aspect-video">
+                <YouTubeAmbient 
+                  videoId={getCurrentVideoId()}
+                  startMuted={ambientState.muted || true}
+                  className="w-full h-full"
+                />
+              </div>
             </div>
-            <div className="flex items-center justify-between p-3 bg-muted/10 rounded-lg mt-3">
+            
+            <div className="flex items-center justify-between p-3 bg-muted/10 rounded-lg">
               <div className="flex items-center gap-3">
                 <Button
                   variant="ghost"
@@ -276,7 +281,7 @@ const Dashboard = () => {
             </div>
           </Card>
 
-          {/* Big Three Tasks - Right main column */}
+          {/* Big Three Tasks - Right */}
           <Card className="p-4 md:p-5">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold flex items-center gap-2">
@@ -292,60 +297,12 @@ const Dashboard = () => {
             </div>
             <BigThreeTasksSection />
           </Card>
+        </div>
 
-          {/* Focus Timer - Under Ambient Player (left column) */}
-          <Card className="col-span-1 lg:col-start-1 xl:col-start-1 p-4 md:p-5">
-            <div className={`bg-gradient-to-r ${getPhaseColor()} rounded-lg p-4 mb-4`}>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Timer className="w-5 h-5" />
-                  <span>{getPhaseIcon()}</span>
-                  <h2 className="text-xl font-semibold">Focus Timer</h2>
-                </div>
-                <Badge variant="outline" className="bg-background/80">
-                  🏆 {trophyCount}
-                </Badge>
-              </div>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="text-center">
-                <div className="text-3xl font-mono font-bold mb-2">
-                  {formatTime(timerState.msLeft)}
-                </div>
-                <Progress value={timerState.progress * 100} className="h-2 w-32" />
-              </div>
-              <div className="flex gap-2">
-                {!timerState.isRunning ? (
-                  <Button
-                    onClick={() => focusTimer.start(timerState.phase === "idle" ? "focus" : timerState.phase)}
-                    size="sm"
-                  >
-                    <Play className="w-4 h-4 mr-1" />
-                    Start
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={() => focusTimer.pause()}
-                    variant="outline"
-                    size="sm"
-                  >
-                    <Pause className="w-4 h-4 mr-1" />
-                    Pause
-                  </Button>
-                )}
-                <Button
-                  onClick={() => navigate('/tools/focus')}
-                  variant="outline"
-                  size="sm"
-                >
-                  Full Timer
-                </Button>
-              </div>
-            </div>
-          </Card>
-
-          {/* Sidebar - Third column on xl, flows below on smaller screens */}
-          <aside className="xl:col-start-3 xl:row-start-1 xl:row-span-6 space-y-6">
+        {/* BELOW TOP ROW: Sidebar + Main content area */}
+        <div className="grid grid-cols-1 xl:grid-cols-[340px_1fr] gap-6 items-start">
+          {/* Sidebar */}
+          <aside className="space-y-6">
             <Card className="p-4 md:p-5">
               <DailyProgressPanel />
             </Card>
@@ -359,126 +316,179 @@ const Dashboard = () => {
             </Card>
           </aside>
 
-          {/* Recent Wins - Full width below timer and big three */}
-          <Card className="lg:col-span-2 xl:col-span-2 p-4 md:p-5">
-            <RecentWinsPanel />
-          </Card>
-
-          {/* Vision Board - Below wins */}
-          <Card className="lg:col-span-2 xl:col-span-2 p-4 md:p-5">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold flex items-center gap-2">
-                <span className="text-xl">🌈</span>
-                Hold the Vision ✨
-              </h2>
-            </div>
-            {visionImages.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-                {visionImages.slice(0, 4).map((image, index) => (
-                  <div
-                    key={index}
-                    className="aspect-square rounded-lg overflow-hidden bg-muted/20 cursor-pointer hover:scale-105 transition-transform"
-                    onClick={() => navigate('/tools/vision')}
-                  >
-                    <img
-                      src={image}
-                      alt={`Vision ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
+          {/* Main content area */}
+          <div className="space-y-6">
+            {/* Focus Timer */}
+            <Card className="p-4 md:p-5">
+              <div className={`bg-gradient-to-r ${getPhaseColor()} rounded-lg p-4 mb-4`}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Timer className="w-5 h-5" />
+                    <span>{getPhaseIcon()}</span>
+                    <h2 className="text-xl font-semibold">Focus Timer</h2>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="h-32 rounded-lg bg-muted/20 flex items-center justify-center mb-4">
-                <div className="text-center text-muted-foreground">
-                  <div className="text-3xl mb-2">🌟</div>
-                  <p className="text-xs">Add images to your vision board</p>
+                  <Badge variant="outline" className="bg-background/80">
+                    🏆 {trophyCount}
+                  </Badge>
                 </div>
               </div>
-            )}
-            <Button
-              onClick={() => navigate('/tools/vision')}
-              className="w-full"
-              variant="outline"
-              size="sm"
-            >
-              View Full Board
-            </Button>
-          </Card>
-
-          {/* Trophy Case - Below vision */}
-          <Card className="lg:col-span-1 xl:col-span-1 p-4 md:p-5">
-            <DashboardTrophyCase />
-          </Card>
-
-          {/* Habits - Next to trophy case */}
-          <Card className="lg:col-span-1 xl:col-span-1 p-4 md:p-5">
-            <DashboardHabitTracker />
-          </Card>
-
-          {/* Today's Intention */}
-          <Card className="lg:col-span-1 xl:col-span-1 p-4 md:p-5">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div 
-                    className="cursor-pointer hover:scale-105 transition-transform h-full flex flex-col justify-center text-center p-4"
-                    onClick={() => navigate('/tools/tasks')}
-                  >
-                    <div className="text-3xl mb-3">✨</div>
-                    <div className="text-lg font-medium mb-2">Today's Intention</div>
-                    <div className="text-sm text-muted-foreground">
-                      {todayIntention ? (
-                        <div className="space-y-1">
-                          <div>Feel: {todayIntention.feel}</div>
-                          {todayIntention.focus && <div>Focus: {todayIntention.focus}</div>}
-                        </div>
-                      ) : "Set your intention"}
-                    </div>
+              <div className="flex items-center justify-between">
+                <div className="text-center">
+                  <div className="text-3xl font-mono font-bold mb-2">
+                    {formatTime(timerState.msLeft)}
                   </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Click to set intention</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </Card>
+                  <Progress value={timerState.progress * 100} className="h-2 w-32" />
+                </div>
+                <div className="flex gap-2">
+                  {!timerState.isRunning ? (
+                    <Button
+                      onClick={() => focusTimer.start(timerState.phase === "idle" ? "focus" : timerState.phase)}
+                      size="sm"
+                    >
+                      <Play className="w-4 h-4 mr-1" />
+                      Start
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() => focusTimer.pause()}
+                      variant="outline"
+                      size="sm"
+                    >
+                      <Pause className="w-4 h-4 mr-1" />
+                      Pause
+                    </Button>
+                  )}
+                  <Button
+                    onClick={() => navigate('/tools/focus')}
+                    variant="outline"
+                    size="sm"
+                  >
+                    Full Timer
+                  </Button>
+                </div>
+              </div>
+            </Card>
+            
+            {/* Recent Wins */}
+            <Card className="p-4 md:p-5">
+              <RecentWinsPanel />
+            </Card>
 
-          {/* Pet Status - Next to intention */}
-          <Card className="lg:col-span-1 xl:col-span-1 p-4 md:p-5">
-            <PetStatusCard 
-              petData={petData}
-              completedTasks={taskData.completed.filter(Boolean).length}
-              totalTasks={taskData.tasks.filter(task => task.trim() !== "").length}
-            />
-          </Card>
-
-          {/* Today's Earned Pets */}
-          {earnedAnimals.length > 0 && (
-            <Card className="lg:col-span-2 xl:col-span-2 p-4 md:p-5">
+            {/* Vision Board */}
+            <Card className="p-4 md:p-5">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold flex items-center gap-2">
-                  🏆 Today's Earned Pets
+                <h2 className="text-xl font-semibold flex items-center gap-2">
+                  <span className="text-xl">🌈</span>
+                  Hold the Vision ✨
                 </h2>
               </div>
-              <div className="flex flex-wrap gap-3 justify-center mb-4">
-                {earnedAnimals.map((animal, index) => (
-                  <div 
-                    key={`${animal.id}-${index}`}
-                    className="text-4xl animate-bounce hover:scale-110 transition-transform cursor-default"
-                    style={{ animationDelay: `${index * 0.3}s` }}
-                    title={`Earned ${animal.id}!`}
-                  >
-                    {animal.emoji}
+              {visionImages.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                  {visionImages.slice(0, 4).map((image, index) => (
+                    <div
+                      key={index}
+                      className="aspect-square rounded-lg overflow-hidden bg-muted/20 cursor-pointer hover:scale-105 transition-transform"
+                      onClick={() => navigate('/tools/vision')}
+                    >
+                      <img
+                        src={image}
+                        alt={`Vision ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="h-32 rounded-lg bg-muted/20 flex items-center justify-center mb-4">
+                  <div className="text-center text-muted-foreground">
+                    <div className="text-3xl mb-2">🌟</div>
+                    <p className="text-xs">Add images to your vision board</p>
                   </div>
-                ))}
-              </div>
-              <p className="text-center text-sm text-muted-foreground">
-                Complete tasks to earn more pets! 🎉
-              </p>
+                </div>
+              )}
+              <Button
+                onClick={() => navigate('/tools/vision')}
+                className="w-full"
+                variant="outline"
+                size="sm"
+              >
+                View Full Board
+              </Button>
             </Card>
-          )}
 
+            {/* Trophy Case */}
+            <Card className="p-4 md:p-5">
+              <DashboardTrophyCase />
+            </Card>
+
+            {/* Habits */}
+            <Card className="p-4 md:p-5">
+              <DashboardHabitTracker />
+            </Card>
+
+            {/* Today's Intention */}
+            <Card className="p-4 md:p-5">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div 
+                      className="cursor-pointer hover:scale-105 transition-transform h-full flex flex-col justify-center text-center p-4"
+                      onClick={() => navigate('/tools/tasks')}
+                    >
+                      <div className="text-3xl mb-3">✨</div>
+                      <div className="text-lg font-medium mb-2">Today's Intention</div>
+                      <div className="text-sm text-muted-foreground">
+                        {todayIntention ? (
+                          <div className="space-y-1">
+                            <div>Feel: {todayIntention.feel}</div>
+                            {todayIntention.focus && <div>Focus: {todayIntention.focus}</div>}
+                          </div>
+                        ) : "Set your intention"}
+                      </div>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Click to set intention</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </Card>
+
+            {/* Pet Status */}
+            <Card className="p-4 md:p-5">
+              <PetStatusCard 
+                petData={petData}
+                completedTasks={taskData.completed.filter(Boolean).length}
+                totalTasks={taskData.tasks.filter(task => task.trim() !== "").length}
+              />
+            </Card>
+
+            {/* Today's Earned Pets */}
+            {earnedAnimals.length > 0 && (
+              <Card className="p-4 md:p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold flex items-center gap-2">
+                    🏆 Today's Earned Pets
+                  </h2>
+                </div>
+                <div className="flex flex-wrap gap-3 justify-center mb-4">
+                  {earnedAnimals.map((animal, index) => (
+                    <div 
+                      key={`${animal.id}-${index}`}
+                      className="text-4xl animate-bounce hover:scale-110 transition-transform cursor-default"
+                      style={{ animationDelay: `${index * 0.3}s` }}
+                      title={`Earned ${animal.id}!`}
+                    >
+                      {animal.emoji}
+                    </div>
+                  ))}
+                </div>
+                <p className="text-center text-sm text-muted-foreground">
+                  Complete tasks to earn more pets! 🎉
+                </p>
+              </Card>
+            )}
+          </div>
         </div>
         
         {/* Footer tip */}
