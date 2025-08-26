@@ -1,6 +1,6 @@
 import { getDailyData, setDailyData } from "@/lib/storage";
 import { emitChanged } from "@/lib/bus";
-import { readTodayIntention } from "@/lib/dailyFlow";
+import { readTodayIntention, saveJSON, KEY_INTENT } from "@/lib/dailyFlow";
 import { z } from "zod";
 
 // Unified task data structure
@@ -231,6 +231,9 @@ export const resetTodaysTasks = () => {
     roundsCompleted: data.roundsCompleted + (data.tasks.length > 0 ? 1 : 0),
     totalTasksCompleted: data.totalTasksCompleted,
   };
+  
+  // Clear the daily intention so tasks don't auto-repopulate
+  localStorage.removeItem(KEY_INTENT);
   
   saveUnifiedTaskData(updatedData);
 };
