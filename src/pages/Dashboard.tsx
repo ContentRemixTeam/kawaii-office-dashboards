@@ -217,104 +217,87 @@ const Dashboard = () => {
       {/* Main content */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 py-6 md:py-8 space-y-6">
         
-        {/* Two-column responsive layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        {/* Three-column responsive layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-[1fr_1fr_360px] gap-6 items-start">
           
-          {/* LEFT COLUMN: Ambient Player */}
-          <Card className="p-4 md:p-5 space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold flex items-center gap-2">
-                <Play className="w-5 h-5" />
-                Ambient Player
-              </h2>
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 text-sm">
-                  <span>Hero Mode</span>
-                  <Switch
-                    checked={ambientState.useAsHero || false}
-                    onCheckedChange={(checked) => updateAmbientState({ useAsHero: checked })}
-                  />
-                </div>
-              </div>
-            </div>
-            
-            <div className="w-full rounded-lg overflow-hidden">
-              <div className="aspect-video">
-                <YouTubeAmbient 
-                  videoId={getCurrentVideoId()}
-                  startMuted={ambientState.muted || true}
-                  className="w-full h-full"
-                />
-              </div>
-            </div>
-            
-            <div className="flex items-center justify-between p-3 bg-muted/10 rounded-lg">
-              <div className="flex items-center gap-3">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => updateAmbientState({ muted: !ambientState.muted })}
-                >
-                  {ambientState.muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-                </Button>
-                <div className="w-24">
-                  <Slider
-                    value={[ambientState.muted ? 0 : (ambientState.volume || 50)]}
-                    onValueChange={(value) => updateAmbientState({ 
-                      volume: value[0], 
-                      muted: value[0] === 0 
-                    })}
-                    max={100}
-                    step={5}
-                    className="w-full"
-                  />
-                </div>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate('/tools/sounds')}
-                className="flex items-center gap-2"
-              >
-                <ExternalLink className="w-3 h-3" />
-                More Sounds
-              </Button>
-            </div>
-          </Card>
-
-          {/* RIGHT COLUMN: Big Three Tasks */}
-          <Card className="p-4 md:p-5">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold flex items-center gap-2">
-                <span className="text-2xl">⭐</span>
-                The Big Three
-              </h2>
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">
-                  Streak: {streakData.streak} days
-                </span>
-              </div>
-            </div>
-            <BigThreeTasksSection />
-          </Card>
-        </div>
-        
-        {/* Focus Timer - positioned under Ambient Player */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card className="p-4 md:p-5">
-            <div className={`bg-gradient-to-r ${getPhaseColor()} rounded-lg p-4 mb-4`}>
+          {/* LEFT COLUMN: Ambient Player + Focus Timer */}
+          <div className="space-y-6">
+            {/* Ambient Player */}
+            <Card className="p-4 md:p-5 space-y-4">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Timer className="w-5 h-5" />
-                  <span>{getPhaseIcon()}</span>
-                  <h2 className="text-xl font-semibold">Focus Timer</h2>
+                <h2 className="text-xl font-semibold flex items-center gap-2">
+                  <Play className="w-5 h-5" />
+                  Ambient Player
+                </h2>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 text-sm">
+                    <span>Hero Mode</span>
+                    <Switch
+                      checked={ambientState.useAsHero || false}
+                      onCheckedChange={(checked) => updateAmbientState({ useAsHero: checked })}
+                    />
+                  </div>
                 </div>
-                <Badge variant="outline" className="bg-background/80">
-                  🏆 {trophyCount}
-                </Badge>
               </div>
-            </div>
+              
+              <div className="w-full rounded-lg overflow-hidden">
+                <div className="aspect-video">
+                  <YouTubeAmbient 
+                    videoId={getCurrentVideoId()}
+                    startMuted={ambientState.muted || true}
+                    className="w-full h-full"
+                  />
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between p-3 bg-muted/10 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => updateAmbientState({ muted: !ambientState.muted })}
+                  >
+                    {ambientState.muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                  </Button>
+                  <div className="w-24">
+                    <Slider
+                      value={[ambientState.muted ? 0 : (ambientState.volume || 50)]}
+                      onValueChange={(value) => updateAmbientState({ 
+                        volume: value[0], 
+                        muted: value[0] === 0 
+                      })}
+                      max={100}
+                      step={5}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate('/tools/sounds')}
+                  className="flex items-center gap-2"
+                >
+                  <ExternalLink className="w-3 h-3" />
+                  More Sounds
+                </Button>
+              </div>
+            </Card>
+
+            {/* Focus Timer */}
+            <Card className="p-4 md:p-5">
+              <div className={`bg-gradient-to-r ${getPhaseColor()} rounded-lg p-4 mb-4`}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Timer className="w-5 h-5" />
+                    <span>{getPhaseIcon()}</span>
+                    <h2 className="text-xl font-semibold">Focus Timer</h2>
+                  </div>
+                  <Badge variant="outline" className="bg-background/80">
+                    🏆 {trophyCount}
+                  </Badge>
+                </div>
+              </div>
             <div className="flex items-center justify-between">
               <div className="text-center">
                 <div className="text-3xl font-mono font-bold mb-2">
@@ -351,145 +334,162 @@ const Dashboard = () => {
               </div>
             </div>
           </Card>
-          <div></div> {/* Empty column to align with ambient player */}
-        </div>
+          </div>
 
-        {/* Rest of content below */}
-        <div className="space-y-6">
-          {/* Recent Wins */}
-          <Card className="p-4 md:p-5">
-            <RecentWinsPanel />
-          </Card>
-
-          {/* Vision Board */}
-          <Card className="p-4 md:p-5">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold flex items-center gap-2">
-                <span className="text-xl">🌈</span>
-                Hold the Vision ✨
-              </h2>
-            </div>
-            {visionImages.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-                {visionImages.slice(0, 4).map((image, index) => (
-                  <div
-                    key={index}
-                    className="aspect-square rounded-lg overflow-hidden bg-muted/20 cursor-pointer hover:scale-105 transition-transform"
-                    onClick={() => navigate('/tools/vision')}
-                  >
-                    <img
-                      src={image}
-                      alt={`Vision ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="h-32 rounded-lg bg-muted/20 flex items-center justify-center mb-4">
-                <div className="text-center text-muted-foreground">
-                  <div className="text-3xl mb-2">🌟</div>
-                  <p className="text-xs">Add images to your vision board</p>
-                </div>
-              </div>
-            )}
-            <Button
-              onClick={() => navigate('/tools/vision')}
-              className="w-full"
-              variant="outline"
-              size="sm"
-            >
-              View Full Board
-            </Button>
-          </Card>
-
-          {/* Trophy Case */}
-          <Card className="p-4 md:p-5">
-            <DashboardTrophyCase />
-          </Card>
-
-          {/* Habits */}
-          <Card className="p-4 md:p-5">
-            <DashboardHabitTracker />
-          </Card>
-
-          {/* Today's Intention */}
-          <Card className="p-4 md:p-5">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div 
-                    className="cursor-pointer hover:scale-105 transition-transform h-full flex flex-col justify-center text-center p-4"
-                    onClick={() => navigate('/tools/tasks')}
-                  >
-                    <div className="text-3xl mb-3">✨</div>
-                    <div className="text-lg font-medium mb-2">Today's Intention</div>
-                    <div className="text-sm text-muted-foreground">
-                      {todayIntention ? (
-                        <div className="space-y-1">
-                          <div>Feel: {todayIntention.feel}</div>
-                          {todayIntention.focus && <div>Focus: {todayIntention.focus}</div>}
-                        </div>
-                      ) : "Set your intention"}
-                    </div>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Click to set intention</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </Card>
-
-          {/* Pet Status */}
-          <Card className="p-4 md:p-5">
-            <PetStatusCard 
-              petData={petData}
-              completedTasks={taskData.completed.filter(Boolean).length}
-              totalTasks={taskData.tasks.filter(task => task.trim() !== "").length}
-            />
-          </Card>
-
-          {/* Today's Earned Pets */}
-          {earnedAnimals.length > 0 && (
+          {/* RIGHT COLUMN: Big Three + Other Content */}
+          <div className="space-y-6">
+            {/* Big Three Tasks */}
             <Card className="p-4 md:p-5">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold flex items-center gap-2">
-                  🏆 Today's Earned Pets
+                <h2 className="text-xl font-semibold flex items-center gap-2">
+                  <span className="text-2xl">⭐</span>
+                  The Big Three
+                </h2>
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">
+                    Streak: {streakData.streak} days
+                  </span>
+                </div>
+              </div>
+              <BigThreeTasksSection />
+            </Card>
+            
+            {/* Recent Wins */}
+            <Card className="p-4 md:p-5">
+              <RecentWinsPanel />
+            </Card>
+
+            {/* Vision Board */}
+            <Card className="p-4 md:p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold flex items-center gap-2">
+                  <span className="text-xl">🌈</span>
+                  Hold the Vision ✨
                 </h2>
               </div>
-              <div className="flex flex-wrap gap-3 justify-center mb-4">
-                {earnedAnimals.map((animal, index) => (
-                  <div 
-                    key={`${animal.id}-${index}`}
-                    className="text-4xl animate-bounce hover:scale-110 transition-transform cursor-default"
-                    style={{ animationDelay: `${index * 0.3}s` }}
-                    title={`Earned ${animal.id}!`}
-                  >
-                    {animal.emoji}
+              {visionImages.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                  {visionImages.slice(0, 4).map((image, index) => (
+                    <div
+                      key={index}
+                      className="aspect-square rounded-lg overflow-hidden bg-muted/20 cursor-pointer hover:scale-105 transition-transform"
+                      onClick={() => navigate('/tools/vision')}
+                    >
+                      <img
+                        src={image}
+                        alt={`Vision ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="h-32 rounded-lg bg-muted/20 flex items-center justify-center mb-4">
+                  <div className="text-center text-muted-foreground">
+                    <div className="text-3xl mb-2">🌟</div>
+                    <p className="text-xs">Add images to your vision board</p>
                   </div>
-                ))}
-              </div>
-              <p className="text-center text-sm text-muted-foreground">
-                Complete tasks to earn more pets! 🎉
-              </p>
+                </div>
+              )}
+              <Button
+                onClick={() => navigate('/tools/vision')}
+                className="w-full"
+                variant="outline"
+                size="sm"
+              >
+                View Full Board
+              </Button>
             </Card>
-          )}
-        </div>
 
-        {/* Sidebar components flowing naturally below */}
-        <div className="space-y-6">
-          <Card className="p-4 md:p-5">
-            <DailyProgressPanel />
-          </Card>
-          
-          <Card className="p-4 md:p-5">
-            <QuickActionsPanel />
-          </Card>
-          
-          <Card className="p-4 md:p-5">
-            <InspirationCorner />
-          </Card>
+            {/* Trophy Case */}
+            <Card className="p-4 md:p-5">
+              <DashboardTrophyCase />
+            </Card>
+
+            {/* Habits */}
+            <Card className="p-4 md:p-5">
+              <DashboardHabitTracker />
+            </Card>
+
+            {/* Today's Intention */}
+            <Card className="p-4 md:p-5">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div 
+                      className="cursor-pointer hover:scale-105 transition-transform h-full flex flex-col justify-center text-center p-4"
+                      onClick={() => navigate('/tools/tasks')}
+                    >
+                      <div className="text-3xl mb-3">✨</div>
+                      <div className="text-lg font-medium mb-2">Today's Intention</div>
+                      <div className="text-sm text-muted-foreground">
+                        {todayIntention ? (
+                          <div className="space-y-1">
+                            <div>Feel: {todayIntention.feel}</div>
+                            {todayIntention.focus && <div>Focus: {todayIntention.focus}</div>}
+                          </div>
+                        ) : "Set your intention"}
+                      </div>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Click to set intention</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </Card>
+
+            {/* Pet Status */}
+            <Card className="p-4 md:p-5">
+              <PetStatusCard 
+                petData={petData}
+                completedTasks={taskData.completed.filter(Boolean).length}
+                totalTasks={taskData.tasks.filter(task => task.trim() !== "").length}
+              />
+            </Card>
+
+            {/* Today's Earned Pets */}
+            {earnedAnimals.length > 0 && (
+              <Card className="p-4 md:p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold flex items-center gap-2">
+                    🏆 Today's Earned Pets
+                  </h2>
+                </div>
+                <div className="flex flex-wrap gap-3 justify-center mb-4">
+                  {earnedAnimals.map((animal, index) => (
+                    <div 
+                      key={`${animal.id}-${index}`}
+                      className="text-4xl animate-bounce hover:scale-110 transition-transform cursor-default"
+                      style={{ animationDelay: `${index * 0.3}s` }}
+                      title={`Earned ${animal.id}!`}
+                    >
+                      {animal.emoji}
+                    </div>
+                  ))}
+                </div>
+                <p className="text-center text-sm text-muted-foreground">
+                  Complete tasks to earn more pets! 🎉
+                </p>
+              </Card>
+            )}
+          </div>
+
+          {/* SIDEBAR: Daily Progress, Quick Actions, Inspiration */}
+          <aside className="xl:col-start-3 xl:row-start-1 xl:row-span-3 space-y-6">
+            <Card className="p-4 md:p-5">
+              <DailyProgressPanel />
+            </Card>
+            
+            <Card className="p-4 md:p-5">
+              <QuickActionsPanel />
+            </Card>
+            
+            <Card className="p-4 md:p-5">
+              <InspirationCorner />
+            </Card>
+          </aside>
         </div>
         
         {/* Footer tip */}
