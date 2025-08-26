@@ -62,13 +62,13 @@ export function FocusTimerCard() {
   };
 
   return (
-    <Card className="p-4 md:p-5">
-      <div className={`bg-gradient-to-r ${getPhaseColor()} rounded-lg p-4 mb-4`}>
+    <Card className="p-4 md:p-5 space-y-4">
+      <div className={`bg-gradient-to-r ${getPhaseColor()} rounded-lg p-4`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Timer className="w-5 h-5" />
             <span>{getPhaseIcon()}</span>
-            <h2 className="text-section">Focus Timer</h2>
+            <h2 className="text-lg font-semibold">Focus Timer</h2>
           </div>
           <Badge variant="outline" className="bg-background/80">
             🏆 {trophyCount}

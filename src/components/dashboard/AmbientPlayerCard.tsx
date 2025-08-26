@@ -34,12 +34,12 @@ export function AmbientPlayerCard() {
   return (
     <Card className="p-4 md:p-5 space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-section flex items-center gap-2">
+        <h2 className="text-lg font-semibold flex items-center gap-2">
           <Play className="w-5 h-5" />
           Ambient Player
         </h2>
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 text-subtle">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <span>Hero Mode</span>
             <Switch
               checked={ambientState.useAsHero || false}

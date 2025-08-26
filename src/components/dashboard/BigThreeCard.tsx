@@ -28,15 +28,15 @@ export function BigThreeCard() {
   }, []);
 
   return (
-    <Card className="p-4 md:p-5">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-section flex items-center gap-2">
+    <Card className="p-4 md:p-5 space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold flex items-center gap-2">
           <span className="text-2xl">⭐</span>
           The Big Three
         </h2>
         <div className="flex items-center gap-2">
           <Calendar className="w-4 h-4 text-muted-foreground" />
-          <span className="text-subtle">
+          <span className="text-sm text-muted-foreground">
             Streak: {streakData.streak} days
           </span>
         </div>

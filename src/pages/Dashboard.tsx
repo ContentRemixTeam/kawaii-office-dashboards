@@ -115,15 +115,15 @@ const Dashboard = () => {
       {/* Main content */}
       <div className="container mx-auto px-4 py-6 space-y-6">
 
-        {/* TOP BAND: exactly 2 columns */}
+        {/* TOP BAND: exactly two cards */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
           <AmbientPlayerCard />
           <BigThreeCard />
         </div>
 
-        {/* MAIN BAND: two vertical stacks under those columns */}
+        {/* MAIN BAND: two vertical stacks under the same two columns */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-          {/* Left stack */}
+          {/* LEFT STACK: Focus Timer → Daily Wins → Hold the Vision */}
           <div className="space-y-6">
             <FocusTimerCard />
             
@@ -135,7 +135,7 @@ const Dashboard = () => {
             {/* Hold the Vision */}
             <Card className="p-4 md:p-5">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-section flex items-center gap-2">
+                <h2 className="text-lg font-semibold flex items-center gap-2">
                   <span className="text-xl">🌈</span>
                   Hold the Vision ✨
                 </h2>
@@ -175,13 +175,14 @@ const Dashboard = () => {
             </Card>
           </div>
           
-          {/* Right stack */}
+          {/* RIGHT STACK: Trophy Case → Pet Companion → Habit Garden → Today's Intention */}
           <div className="space-y-6">
-            {/* Trophy Case / Pet Status */}
+            {/* Trophy Case */}
             <Card className="p-4 md:p-5">
               <DashboardTrophyCase />
             </Card>
             
+            {/* Pet Companion */}
             <Card className="p-4 md:p-5">
               <PetStatusCard 
                 petData={petData}
@@ -201,12 +202,12 @@ const Dashboard = () => {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <div 
-                      className="cursor-pointer hover:scale-105 transition-transform h-full flex flex-col justify-center text-center p-4"
+                      className="cursor-pointer hover:scale-105 transition-transform flex flex-col justify-center text-center p-4"
                       onClick={() => navigate('/tools/tasks')}
                     >
                       <div className="text-3xl mb-3">✨</div>
-                      <div className="text-body font-medium mb-2">Today's Intention</div>
-                      <div className="text-subtle">
+                      <div className="text-lg font-semibold mb-2">Today's Intention</div>
+                      <div className="text-sm text-muted-foreground">
                         {todayIntention ? (
                           <div className="space-y-1">
                             <div>Feel: {todayIntention.feel}</div>
@@ -227,7 +228,7 @@ const Dashboard = () => {
             {earnedAnimals.length > 0 && (
               <Card className="p-4 md:p-5">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-section flex items-center gap-2">
+                  <h2 className="text-lg font-semibold flex items-center gap-2">
                     🏆 Today's Earned Pets
                   </h2>
                 </div>
@@ -243,7 +244,7 @@ const Dashboard = () => {
                     </div>
                   ))}
                 </div>
-                <p className="text-center text-subtle">
+                <p className="text-center text-sm text-muted-foreground">
                   Complete tasks to earn more pets! 🎉
                 </p>
               </Card>
