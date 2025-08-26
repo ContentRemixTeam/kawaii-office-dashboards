@@ -217,107 +217,73 @@ const Dashboard = () => {
       {/* Main content */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 py-6 md:py-8 space-y-6">
         
-        {/* TOP ROW: Ambient Player + Big Three */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-          {/* Ambient Player - Left */}
-          <Card className="p-4 md:p-5 space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold flex items-center gap-2">
-                <Play className="w-5 h-5" />
-                Ambient Player
-              </h2>
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 text-sm">
-                  <span>Hero Mode</span>
-                  <Switch
-                    checked={ambientState.useAsHero || false}
-                    onCheckedChange={(checked) => updateAmbientState({ useAsHero: checked })}
-                  />
-                </div>
-              </div>
-            </div>
-            
-            <div className="w-full rounded-lg overflow-hidden">
-              <div className="aspect-video">
-                <YouTubeAmbient 
-                  videoId={getCurrentVideoId()}
-                  startMuted={ambientState.muted || true}
-                  className="w-full h-full"
-                />
-              </div>
-            </div>
-            
-            <div className="flex items-center justify-between p-3 bg-muted/10 rounded-lg">
-              <div className="flex items-center gap-3">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => updateAmbientState({ muted: !ambientState.muted })}
-                >
-                  {ambientState.muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-                </Button>
-                <div className="w-24">
-                  <Slider
-                    value={[ambientState.muted ? 0 : (ambientState.volume || 50)]}
-                    onValueChange={(value) => updateAmbientState({ 
-                      volume: value[0], 
-                      muted: value[0] === 0 
-                    })}
-                    max={100}
-                    step={5}
-                    className="w-full"
-                  />
-                </div>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate('/tools/sounds')}
-                className="flex items-center gap-2"
-              >
-                <ExternalLink className="w-3 h-3" />
-                More Sounds
-              </Button>
-            </div>
-          </Card>
-
-          {/* Big Three Tasks - Right */}
-          <Card className="p-4 md:p-5">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold flex items-center gap-2">
-                <span className="text-2xl">⭐</span>
-                The Big Three
-              </h2>
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">
-                  Streak: {streakData.streak} days
-                </span>
-              </div>
-            </div>
-            <BigThreeTasksSection />
-          </Card>
-        </div>
-
-        {/* BELOW TOP ROW: Sidebar + Main content area */}
-        <div className="grid grid-cols-1 xl:grid-cols-[340px_1fr] gap-6 items-start">
-          {/* Sidebar */}
-          <aside className="space-y-6">
-            <Card className="p-4 md:p-5">
-              <DailyProgressPanel />
-            </Card>
-            
-            <Card className="p-4 md:p-5">
-              <QuickActionsPanel />
-            </Card>
-            
-            <Card className="p-4 md:p-5">
-              <InspirationCorner />
-            </Card>
-          </aside>
-
-          {/* Main content area */}
+        {/* Three-column responsive layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-[1fr_1fr_360px] gap-6 items-start">
+          
+          {/* LEFT COLUMN: Ambient Player + Focus Timer */}
           <div className="space-y-6">
+            {/* Ambient Player */}
+            <Card className="p-4 md:p-5 space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold flex items-center gap-2">
+                  <Play className="w-5 h-5" />
+                  Ambient Player
+                </h2>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 text-sm">
+                    <span>Hero Mode</span>
+                    <Switch
+                      checked={ambientState.useAsHero || false}
+                      onCheckedChange={(checked) => updateAmbientState({ useAsHero: checked })}
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="w-full rounded-lg overflow-hidden">
+                <div className="aspect-video">
+                  <YouTubeAmbient 
+                    videoId={getCurrentVideoId()}
+                    startMuted={ambientState.muted || true}
+                    className="w-full h-full"
+                  />
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between p-3 bg-muted/10 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => updateAmbientState({ muted: !ambientState.muted })}
+                  >
+                    {ambientState.muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                  </Button>
+                  <div className="w-24">
+                    <Slider
+                      value={[ambientState.muted ? 0 : (ambientState.volume || 50)]}
+                      onValueChange={(value) => updateAmbientState({ 
+                        volume: value[0], 
+                        muted: value[0] === 0 
+                      })}
+                      max={100}
+                      step={5}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate('/tools/sounds')}
+                  className="flex items-center gap-2"
+                >
+                  <ExternalLink className="w-3 h-3" />
+                  More Sounds
+                </Button>
+              </div>
+            </Card>
+
             {/* Focus Timer */}
             <Card className="p-4 md:p-5">
               <div className={`bg-gradient-to-r ${getPhaseColor()} rounded-lg p-4 mb-4`}>
@@ -367,6 +333,26 @@ const Dashboard = () => {
                   </Button>
                 </div>
               </div>
+            </Card>
+          </div>
+
+          {/* RIGHT COLUMN: Big Three + Other Content */}
+          <div className="space-y-6">
+            {/* Big Three Tasks */}
+            <Card className="p-4 md:p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold flex items-center gap-2">
+                  <span className="text-2xl">⭐</span>
+                  The Big Three
+                </h2>
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">
+                    Streak: {streakData.streak} days
+                  </span>
+                </div>
+              </div>
+              <BigThreeTasksSection />
             </Card>
             
             {/* Recent Wins */}
@@ -489,6 +475,21 @@ const Dashboard = () => {
               </Card>
             )}
           </div>
+
+          {/* SIDEBAR: Daily Progress, Quick Actions, Inspiration */}
+          <aside className="xl:col-start-3 xl:row-start-1 xl:row-span-3 space-y-6">
+            <Card className="p-4 md:p-5">
+              <DailyProgressPanel />
+            </Card>
+            
+            <Card className="p-4 md:p-5">
+              <QuickActionsPanel />
+            </Card>
+            
+            <Card className="p-4 md:p-5">
+              <InspirationCorner />
+            </Card>
+          </aside>
         </div>
         
         {/* Footer tip */}
