@@ -1,18 +1,19 @@
 import { ReactNode } from "react";
-import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 export function DashboardCard({
   className = '',
   children,
-  fullWidth = false,
 }: {
   className?: string;
   children: ReactNode;
-  fullWidth?: boolean;
 }) {
   return (
-    <Card className={`${fullWidth ? 'lg:col-span-2' : ''} ${className}`}>
+    <div className={cn(
+      "rounded-xl border bg-card text-card-foreground shadow-sm p-4 md:p-5",
+      className
+    )}>
       {children}
-    </Card>
+    </div>
   );
 }

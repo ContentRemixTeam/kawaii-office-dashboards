@@ -217,112 +217,106 @@ const Dashboard = () => {
       <div className="h-16" />
       
       {/* Main content */}
-      <div className="relative z-10 w-full max-w-6xl mx-auto px-4 py-6 md:py-8">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 py-6 md:py-8">
         <DashboardGrid>
           
-          {/* Ambient Player */}
-          <DashboardCard fullWidth>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2">
-                  <Play className="w-5 h-5" />
-                  Ambient Player
-                </CardTitle>
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-2 text-sm">
-                    <span>Hero Mode</span>
-                    <Switch
-                      checked={ambientState.useAsHero || false}
-                      onCheckedChange={(checked) => updateAmbientState({ useAsHero: checked })}
-                    />
-                  </div>
+          {/* Ambient Player - Left main column */}
+          <DashboardCard>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold flex items-center gap-2">
+                <Play className="w-5 h-5" />
+                Ambient Player
+              </h2>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 text-sm">
+                  <span>Hero Mode</span>
+                  <Switch
+                    checked={ambientState.useAsHero || false}
+                    onCheckedChange={(checked) => updateAmbientState({ useAsHero: checked })}
+                  />
                 </div>
               </div>
-            </CardHeader>
-            <CardContent>
-              <div className="aspect-video rounded-xl overflow-hidden bg-muted/20 mb-4">
-                <YouTubeAmbient 
-                  videoId={getCurrentVideoId()}
-                  startMuted={ambientState.muted || true}
-                  className="w-full h-full"
-                />
-              </div>
-              
-              <div className="flex items-center justify-between p-3 bg-muted/10 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => updateAmbientState({ muted: !ambientState.muted })}
-                  >
-                    {ambientState.muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-                  </Button>
-                  <div className="w-24">
-                    <Slider
-                      value={[ambientState.muted ? 0 : (ambientState.volume || 50)]}
-                      onValueChange={(value) => updateAmbientState({ 
-                        volume: value[0], 
-                        muted: value[0] === 0 
-                      })}
-                      max={100}
-                      step={5}
-                      className="w-full"
-                    />
-                  </div>
-                </div>
+            </div>
+            <div className="w-full aspect-video rounded-xl overflow-hidden bg-muted/20 mb-4">
+              <YouTubeAmbient 
+                videoId={getCurrentVideoId()}
+                startMuted={ambientState.muted || true}
+                className="w-full h-full"
+              />
+            </div>
+            <div className="flex items-center justify-between p-3 bg-muted/10 rounded-lg">
+              <div className="flex items-center gap-3">
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="sm"
-                  onClick={() => navigate('/tools/sounds')}
-                  className="flex items-center gap-2"
+                  onClick={() => updateAmbientState({ muted: !ambientState.muted })}
                 >
-                  <ExternalLink className="w-3 h-3" />
-                  More Sounds
+                  {ambientState.muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
                 </Button>
+                <div className="w-24">
+                  <Slider
+                    value={[ambientState.muted ? 0 : (ambientState.volume || 50)]}
+                    onValueChange={(value) => updateAmbientState({ 
+                      volume: value[0], 
+                      muted: value[0] === 0 
+                    })}
+                    max={100}
+                    step={5}
+                    className="w-full"
+                  />
+                </div>
               </div>
-            </CardContent>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate('/tools/sounds')}
+                className="flex items-center gap-2"
+              >
+                <ExternalLink className="w-3 h-3" />
+                More Sounds
+              </Button>
+            </div>
           </DashboardCard>
 
-          {/* Big Three Tasks */}
+          {/* Big Three Tasks - Right main column */}
           <DashboardCard>
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-xl">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold flex items-center gap-2">
                 <span className="text-2xl">⭐</span>
                 The Big Three
-              </CardTitle>
+              </h2>
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">
                   Streak: {streakData.streak} days
                 </span>
               </div>
-            </CardHeader>
-            <CardContent>
-              <BigThreeTasksSection />
-            </CardContent>
+            </div>
+            <BigThreeTasksSection />
           </DashboardCard>
 
-          {/* Focus Timer */}
-          <DashboardCard>
-            <CardHeader className={`bg-gradient-to-r ${getPhaseColor()} rounded-t-lg pb-4`}>
-              <CardTitle className="flex items-center justify-between">
+          {/* Focus Timer - Full width under main columns */}
+          <DashboardCard className="lg:col-span-2 xl:col-span-2">
+            <div className={`bg-gradient-to-r ${getPhaseColor()} rounded-lg p-4 mb-4`}>
+              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Timer className="w-5 h-5" />
                   <span>{getPhaseIcon()}</span>
+                  <h2 className="text-xl font-semibold">Focus Timer</h2>
                 </div>
                 <Badge variant="outline" className="bg-background/80">
                   🏆 {trophyCount}
                 </Badge>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center mb-4">
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="text-center">
                 <div className="text-3xl font-mono font-bold mb-2">
                   {formatTime(timerState.msLeft)}
                 </div>
-                <Progress value={timerState.progress * 100} className="h-2 mb-4" />
+                <Progress value={timerState.progress * 100} className="h-2 w-32" />
               </div>
-              <div className="flex justify-center gap-2">
+              <div className="flex gap-2">
                 {!timerState.isRunning ? (
                   <Button
                     onClick={() => focusTimer.start(timerState.phase === "idle" ? "focus" : timerState.phase)}
@@ -349,36 +343,83 @@ const Dashboard = () => {
                   Full Timer
                 </Button>
               </div>
-            </CardContent>
+            </div>
           </DashboardCard>
 
-          {/* Quick Actions */}
-          <DashboardCard>
-            <QuickActionsPanel />
-          </DashboardCard>
+          {/* Sidebar - Third column on xl, flows below on smaller screens */}
+          <aside className="xl:col-start-3 xl:row-start-1 xl:row-span-6 space-y-6">
+            <DashboardCard>
+              <QuickActionsPanel />
+            </DashboardCard>
+            
+            <DashboardCard>
+              <DailyProgressPanel />
+            </DashboardCard>
+            
+            <DashboardCard>
+              <InspirationCorner />
+            </DashboardCard>
+          </aside>
 
-          {/* Daily Progress */}
-          <DashboardCard>
-            <DailyProgressPanel />
-          </DashboardCard>
-
-          {/* Recent Wins */}
-          <DashboardCard>
+          {/* Recent Wins - Below timer */}
+          <DashboardCard className="lg:col-span-2 xl:col-span-2">
             <RecentWinsPanel />
           </DashboardCard>
 
-          {/* Trophy Case */}
-          <DashboardCard>
+          {/* Vision Board - Below wins */}
+          <DashboardCard className="lg:col-span-2 xl:col-span-2">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold flex items-center gap-2">
+                <span className="text-xl">🌈</span>
+                Hold the Vision ✨
+              </h2>
+            </div>
+            {visionImages.length > 0 ? (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                {visionImages.slice(0, 4).map((image, index) => (
+                  <div
+                    key={index}
+                    className="aspect-square rounded-lg overflow-hidden bg-muted/20 cursor-pointer hover:scale-105 transition-transform"
+                    onClick={() => navigate('/tools/vision')}
+                  >
+                    <img
+                      src={image}
+                      alt={`Vision ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="h-32 rounded-lg bg-muted/20 flex items-center justify-center mb-4">
+                <div className="text-center text-muted-foreground">
+                  <div className="text-3xl mb-2">🌟</div>
+                  <p className="text-xs">Add images to your vision board</p>
+                </div>
+              </div>
+            )}
+            <Button
+              onClick={() => navigate('/tools/vision')}
+              className="w-full"
+              variant="outline"
+              size="sm"
+            >
+              View Full Board
+            </Button>
+          </DashboardCard>
+
+          {/* Trophy Case - Below vision */}
+          <DashboardCard className="lg:col-span-1 xl:col-span-1">
             <DashboardTrophyCase />
           </DashboardCard>
 
-          {/* Habits */}
-          <DashboardCard>
+          {/* Habits - Next to trophy case */}
+          <DashboardCard className="lg:col-span-1 xl:col-span-1">
             <DashboardHabitTracker />
           </DashboardCard>
 
           {/* Today's Intention */}
-          <DashboardCard>
+          <DashboardCard className="lg:col-span-1 xl:col-span-1">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -405,81 +446,38 @@ const Dashboard = () => {
             </TooltipProvider>
           </DashboardCard>
 
-          {/* Vision Preview */}
-          <DashboardCard fullWidth>
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2">
-                <span className="text-xl">🌈</span>
-                Hold the Vision ✨
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {visionImages.length > 0 ? (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-                  {visionImages.slice(0, 4).map((image, index) => (
-                    <div
-                      key={index}
-                      className="aspect-square rounded-lg overflow-hidden bg-muted/20 cursor-pointer hover:scale-105 transition-transform"
-                      onClick={() => navigate('/tools/vision')}
-                    >
-                      <img
-                        src={image}
-                        alt={`Vision ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="h-32 rounded-lg bg-muted/20 flex items-center justify-center mb-4">
-                  <div className="text-center text-muted-foreground">
-                    <div className="text-3xl mb-2">🌟</div>
-                    <p className="text-xs">Add images to your vision board</p>
-                  </div>
-                </div>
-              )}
-              
-              <Button
-                onClick={() => navigate('/tools/vision')}
-                className="w-full"
-                variant="outline"
-                size="sm"
-              >
-                View Full Board
-              </Button>
-            </CardContent>
-          </DashboardCard>
-
-          {/* Inspiration Corner */}
-          <DashboardCard>
-            <InspirationCorner />
+          {/* Pet Status */}
+          <DashboardCard className="lg:col-span-1 xl:col-span-1">
+            <PetStatusCard 
+              petData={petData}
+              completedTasks={taskData.completed.filter(Boolean).length}
+              totalTasks={taskData.tasks.filter(task => task.trim() !== "").length}
+            />
           </DashboardCard>
 
           {/* Today's Earned Pets */}
           {earnedAnimals.length > 0 && (
-            <DashboardCard fullWidth>
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-lg">
+            <DashboardCard className="lg:col-span-2 xl:col-span-2">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold flex items-center gap-2">
                   🏆 Today's Earned Pets
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-3 justify-center mb-4">
-                  {earnedAnimals.map((animal, index) => (
-                    <div 
-                      key={`${animal.id}-${index}`}
-                      className="text-4xl animate-bounce hover:scale-110 transition-transform cursor-default"
-                      style={{ animationDelay: `${index * 0.3}s` }}
-                      title={`Earned ${animal.id}!`}
-                    >
-                      {animal.emoji}
-                    </div>
-                  ))}
-                </div>
-                <p className="text-center text-sm text-muted-foreground">
-                  Complete tasks to earn more pets! 🎉
-                </p>
-              </CardContent>
+                </h2>
+              </div>
+              <div className="flex flex-wrap gap-3 justify-center mb-4">
+                {earnedAnimals.map((animal, index) => (
+                  <div 
+                    key={`${animal.id}-${index}`}
+                    className="text-4xl animate-bounce hover:scale-110 transition-transform cursor-default"
+                    style={{ animationDelay: `${index * 0.3}s` }}
+                    title={`Earned ${animal.id}!`}
+                  >
+                    {animal.emoji}
+                  </div>
+                ))}
+              </div>
+              <p className="text-center text-sm text-muted-foreground">
+                Complete tasks to earn more pets! 🎉
+              </p>
             </DashboardCard>
           )}
 
