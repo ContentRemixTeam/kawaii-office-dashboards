@@ -8,6 +8,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { Calendar, Play, Pause, Timer, Settings, Square, RotateCcw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import useDailyFlow from "@/hooks/useDailyFlow";
 import { 
   getUnifiedTaskData, 
   getBigThreeTasks, 
@@ -94,6 +95,7 @@ const ANIMALS = [
 
 export default function BigThreeTasksSection() {
   const navigate = useNavigate();
+  const { setShowIntention } = useDailyFlow();
   const todayPet = useTodayPet();
   
   // Celebration hooks
@@ -419,7 +421,7 @@ export default function BigThreeTasksSection() {
             <p className="text-muted-foreground">Set your Big Three to start the day!</p>
             <Button
               variant="outline"
-              onClick={() => navigate('/dashboard')}
+              onClick={() => setShowIntention(true)}
               className="gap-2"
             >
               ✨ Set Daily Intention
