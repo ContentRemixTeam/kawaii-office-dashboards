@@ -2,6 +2,7 @@ import React from "react";
 import { writeTodayIntention } from "@/lib/dailyFlow";
 import { emitChanged } from "@/lib/bus";
 import { addFutureNote } from "@/lib/futureNotes";
+import { setBigThreeTasks } from "@/lib/unifiedTasks";
 
 export default function DailyIntentionModal({ open, onClose }:{
   open:boolean; onClose: ()=>void;
@@ -100,10 +101,14 @@ export default function DailyIntentionModal({ open, onClose }:{
             onClick={()=>{
               const payload = { feel, focus, top3:[top1,top2,top3].filter(Boolean), notes };
               writeTodayIntention(payload);
+              
+              // Save Big Three tasks to unified system
+              setBigThreeTasks(top1, top2, top3);
+              
               if (futureNote.trim()) { 
                 addFutureNote(futureNote.trim()); 
               }
-              emitChanged(["fm_daily_intention_v1", "fm_future_notes_v1"]);
+              emitChanged(["fm_daily_intention_v1", "fm_future_notes_v1", "fm_unified_tasks_v1"]);
               onClose();
             }}
             className="px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"

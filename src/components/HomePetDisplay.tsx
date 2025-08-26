@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { getDailyData } from "@/lib/storage";
+import { getUnifiedTaskData, getBigThreeTasks } from "@/lib/unifiedTasks";
 
 interface TaskData {
   tasks: string[];
@@ -144,14 +145,16 @@ export default function HomePetDisplay() {
   });
 
   useEffect(() => {
-    const data = getDailyData("fm_tasks_v1", {
-      tasks: ["", "", ""],
-      reflections: ["", "", ""],
-      completed: [false, false, false],
-      selectedAnimal: "unicorn",
-      roundsCompleted: 0,
-      totalTasksCompleted: 0
-    });
+    const unifiedData = getUnifiedTaskData();
+    const tasks = getBigThreeTasks();
+    const data = {
+      tasks: tasks.map(t => t?.title || ""),
+      reflections: unifiedData.reflections,
+      completed: tasks.map(t => t?.completed || false),
+      selectedAnimal: unifiedData.selectedAnimal,
+      roundsCompleted: unifiedData.roundsCompleted,
+      totalTasksCompleted: unifiedData.totalTasksCompleted
+    };
     setTaskData(data);
 
     // Listen for task updates

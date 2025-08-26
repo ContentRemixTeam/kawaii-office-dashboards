@@ -21,6 +21,7 @@ import { useGiphyCelebration } from "@/hooks/useGiphyCelebration";
 import GiphyCelebration from "@/components/GiphyCelebration";
 import { eventBus } from "@/lib/eventBus";
 import { getDailyData, setDailyData } from "@/lib/storage";
+import { getUnifiedTaskData, getBigThreeTasks } from "@/lib/unifiedTasks";
 import { readVisionThumbs, readPetStage, readEarnedAnimals } from "@/lib/topbarState";
 import { readTodayIntention } from "@/lib/dailyFlow";
 import focusTimer from "@/lib/focusTimer";
@@ -85,8 +86,13 @@ const Dashboard = () => {
     const dashData = getDailyData("fm_dashboard_v1", streakData);
     setStreakData(dashData);
     
-    const taskFallback = { tasks: ["", "", ""], completed: [false, false, false], selectedAnimal: "unicorn" };
-    const loadedTaskData = getDailyData("fm_tasks_v1", taskFallback);
+    const unifiedData = getUnifiedTaskData();
+    const tasks = getBigThreeTasks();
+    const loadedTaskData = {
+      tasks: tasks.map(t => t?.title || ""),
+      completed: tasks.map(t => t?.completed || false),
+      selectedAnimal: unifiedData.selectedAnimal
+    };
     setTaskData(loadedTaskData);
     
     setVisionImages(readVisionThumbs(4));
