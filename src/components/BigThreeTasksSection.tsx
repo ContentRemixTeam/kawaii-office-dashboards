@@ -24,10 +24,8 @@ import { toast } from "@/hooks/use-toast";
 import { emitChanged, addEarnedAnimal } from "@/lib/topbarState";
 import { K_TASKS } from "@/lib/topbar.readers";
 import focusTimer from "@/lib/focusTimer";
-import { useGiphyCelebration } from "@/hooks/useGiphyCelebration";
-import { useCelebrationGif } from "@/components/CelebrationGifPopup";
 import { useTodayPet } from "@/hooks/useTodayPet";
-import GiphyCelebration from "@/components/GiphyCelebration";
+import { TaskCompletionModal } from "@/components/TaskCompletionModal";
 import TaskProgressGraph from "./TaskProgressGraph";
 
 const ANIMALS = [
@@ -98,15 +96,9 @@ export default function BigThreeTasksSection() {
   const { setShowIntention } = useDailyFlow();
   const todayPet = useTodayPet();
   
-  // Celebration hooks
-  const { 
-    currentCelebration: giphyCelebration, 
-    celebrateTask: celebrateGiphyTask, 
-    celebrateAllTasks: celebrateGiphyAllTasks, 
-    clearCelebration: clearGiphyCelebration 
-  } = useGiphyCelebration();
-  
-  const { celebrate, CelebrationPopup } = useCelebrationGif();
+  // Task completion modal state
+  const [showTaskModal, setShowTaskModal] = useState(false);
+  const [completedTaskIndex, setCompletedTaskIndex] = useState<number>(0);
   
   const [bigThreeTasks, setBigThreeTasksState] = useState<[any, any, any]>([null, null, null]);
   const [selectedAnimal, setSelectedAnimal] = useState("unicorn");
@@ -197,41 +189,8 @@ export default function BigThreeTasksSection() {
     
     // Show celebration for task completion (not unchecking)
     if (!wasCompleted) {
-      // Only celebrate if we haven't celebrated this task today
-      if (!celebratedTasks.has(index)) {
-        setCelebratedTaskIndex(index);
-        setShowTaskCelebration(true);
-        
-        // Mark this task as celebrated today
-        const newCelebratedTasks = new Set(celebratedTasks);
-        newCelebratedTasks.add(index);
-        setCelebratedTasks(newCelebratedTasks);
-      }
-      
-      const taskNumber = index + 1;
-      
-      // Trigger new pet-themed celebration
-      celebrate('taskComplete');
-      
-      // Trigger GIPHY celebration for task completion
-      console.log('[BigThreeTasksSection] Triggering GIPHY celebration for task:', selectedAnimal, taskNumber);
-      celebrateGiphyTask(selectedAnimal, taskNumber);
-      
-      if (getCelebrationsEnabled()) {
-        toast({
-          title: "Task Complete! 🎉",
-          description: `Great job finishing task #${taskNumber}!`,
-          duration: 3000,
-        });
-      }
-
-      // Check if all tasks are completed for overall celebration
-      const stats = getCompletionStats();
-      if (stats.allCompleted) {
-        console.log("BigThreeTasksSection: All tasks completed! Triggering GIPHY celebration");
-        // Trigger GIPHY celebration for all tasks
-        celebrateGiphyAllTasks(selectedAnimal);
-      }
+      setCompletedTaskIndex(index);
+      setShowTaskModal(true);
     }
   };
 
@@ -548,16 +507,12 @@ export default function BigThreeTasksSection() {
         )}
       </div>
 
-      {/* Pet-themed Celebrations */}
-      {CelebrationPopup}
-
-      {/* GIPHY Celebrations */}
-      {giphyCelebration && (
-        <GiphyCelebration 
-          payload={giphyCelebration}
-          onClose={clearGiphyCelebration}
-        />
-      )}
+      {/* Task Completion Modal */}
+      <TaskCompletionModal
+        isOpen={showTaskModal}
+        onClose={() => setShowTaskModal(false)}
+        taskIndex={completedTaskIndex}
+      />
     </>
   );
 }

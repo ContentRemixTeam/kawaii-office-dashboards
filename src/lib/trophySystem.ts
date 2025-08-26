@@ -176,6 +176,11 @@ export function getTrophyCountsByType(): Record<keyof typeof TROPHY_TYPES, numbe
   return counts;
 }
 
+// Award trophy specifically for task completion
+export function awardTaskTrophy(durationMinutes: number = 5): { trophy: Trophy; message: string; isStreakReward: boolean } {
+  return awardTrophy(durationMinutes);
+}
+
 export function resetTrophies() {
   safeSet(TROPHY_KEY, []);
   safeSet(TROPHY_STATS_KEY, {

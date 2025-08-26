@@ -16,6 +16,7 @@ import DailyProgressPanel from "@/components/DailyProgressPanel";
 import InspirationCorner from "@/components/InspirationCorner";
 import DashboardHabitTracker from "@/components/DashboardHabitTracker";
 import DashboardTrophyCase from "@/components/DashboardTrophyCase";
+import { RecentWinsPanel } from "@/components/RecentWinsPanel";
 import PetStatusCard from "@/components/PetStatusCard";
 import { useGiphyCelebration } from "@/hooks/useGiphyCelebration";
 import GiphyCelebration from "@/components/GiphyCelebration";
@@ -460,12 +461,13 @@ const Dashboard = () => {
           {/* Middle Section: Habit Tracker */}
           <div className="space-y-6">
             <DashboardHabitTracker />
-            <InspirationCorner />
+            <RecentWinsPanel />
           </div>
 
-          {/* Right Section: Trophy Case */}
+          {/* Right Section: Trophy Case + Inspiration */}
           <div className="space-y-6">
             <DashboardTrophyCase />
+            <InspirationCorner />
           </div>
 
         </div>

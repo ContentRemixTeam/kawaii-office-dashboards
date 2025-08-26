@@ -5,16 +5,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import ToolShell from "@/components/ToolShell";
-import { getDailyData, setDailyData, safeGet, safeSet, generateId, getTodayISO } from "@/lib/storage";
+import { getDailyData, setDailyData, getTodayISO } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 import { notifyDataChanged } from "@/lib/bus";
 
-interface Win {
-  id: string;
-  text: string;
-  date: string;
-  week: string;
-}
+import { Win, getWins, saveWin } from '@/lib/winsStorage';
 
 const getWeekKey = (date: Date) => {
   const year = date.getFullYear();
@@ -56,25 +51,20 @@ export default function Wins() {
     setTodayWin(todayData.text);
     setHasWinToday(todayData.saved);
 
-    // Load all wins
-    const wins = safeGet<Win[]>("fm_wins_v1", []);
-    setAllWins(wins.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+    // Load all wins from centralized storage
+    const wins = getWins();
+    setAllWins(wins);
   }, []);
 
-  const saveWin = () => {
+  const saveWinHandler = () => {
     if (!todayWin.trim()) return;
 
-    const today = getTodayISO();
-    const newWin: Win = {
-      id: generateId(),
-      text: todayWin.trim(),
-      date: today,
-      week: getWeekKey(new Date())
-    };
-
-    const updatedWins = [newWin, ...allWins];
+    // Use centralized save function
+    saveWin(todayWin.trim());
+    
+    // Reload wins
+    const updatedWins = getWins();
     setAllWins(updatedWins);
-    safeSet("fm_wins_v1", updatedWins);
     
     // Mark today as saved
     setDailyData("fm_wins_today_v1", { text: todayWin, saved: true });
@@ -130,7 +120,7 @@ export default function Wins() {
                 />
               </div>
               <Button 
-                onClick={saveWin}
+                onClick={saveWinHandler}
                 disabled={!todayWin.trim()}
                 className="w-full"
               >
