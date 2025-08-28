@@ -113,7 +113,7 @@ const Dashboard = () => {
       <div className="h-16" />
       
       {/* Main content */}
-      <div className="container mx-auto px-4 py-8 space-y-8 max-w-7xl">
+      <div className="container mx-auto px-4 py-8 space-y-4 max-w-7xl">
 
         {/* TOP BAND: exactly two cards */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
