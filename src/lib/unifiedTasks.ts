@@ -90,23 +90,36 @@ export const initializeTasksFromIntention = () => {
   const intention = readTodayIntention();
   const currentData = getUnifiedTaskData();
   
-  if (intention?.top3 && intention.top3.length > 0 && currentData.tasks.length === 0) {
-    const tasks: UnifiedTask[] = intention.top3
-      .filter(task => task.trim())
-      .map(task => ({
-        id: generateTaskId(),
-        title: task.trim(),
-        completed: false,
-        createdAt: new Date().toISOString(),
-      }));
+  // Always initialize from intention if it exists and has more tasks than current
+  if (intention?.top3 && intention.top3.length > 0) {
+    const intentionTasks = intention.top3.filter(task => task.trim());
+    const currentTasks = currentData.tasks.filter(task => task.title.trim());
     
-    const updatedData = {
-      ...currentData,
-      tasks,
-    };
-    
-    saveUnifiedTaskData(updatedData);
-    return updatedData;
+    // If intention has more non-empty tasks or we have no tasks at all, update
+    if (intentionTasks.length > currentTasks.length || currentData.tasks.length === 0) {
+      const tasks: UnifiedTask[] = intention.top3
+        .map((task, index) => {
+          const existing = currentData.tasks[index];
+          if (task.trim()) {
+            return existing && existing.title === task.trim() ? existing : {
+              id: existing?.id || generateTaskId(),
+              title: task.trim(),
+              completed: existing?.completed || false,
+              createdAt: existing?.createdAt || new Date().toISOString(),
+            };
+          }
+          return null;
+        })
+        .filter(Boolean) as UnifiedTask[];
+      
+      const updatedData = {
+        ...currentData,
+        tasks,
+      };
+      
+      saveUnifiedTaskData(updatedData);
+      return updatedData;
+    }
   }
   
   return currentData;

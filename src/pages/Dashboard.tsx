@@ -16,7 +16,7 @@ import { useGiphyCelebration } from "@/hooks/useGiphyCelebration";
 import GiphyCelebration from "@/components/GiphyCelebration";
 import { eventBus } from "@/lib/eventBus";
 import { getDailyData } from "@/lib/storage";
-import { getUnifiedTaskData, getBigThreeTasks } from "@/lib/unifiedTasks";
+import { getUnifiedTaskData, getBigThreeTasks, initializeTasksFromIntention } from "@/lib/unifiedTasks";
 import { readVisionThumbs, readPetStage, readEarnedAnimals } from "@/lib/topbarState";
 import { readTodayIntention } from "@/lib/dailyFlow";
 import { onChanged } from "@/lib/bus";
@@ -66,6 +66,9 @@ const Dashboard = () => {
         celebratePomodoro(currentPetData.animal);
       }
     });
+    
+    // Initialize tasks from intention if needed
+    initializeTasksFromIntention();
     
     const unifiedData = getUnifiedTaskData();
     const tasks = getBigThreeTasks();

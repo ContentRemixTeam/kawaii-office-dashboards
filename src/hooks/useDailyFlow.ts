@@ -19,7 +19,11 @@ export default function useDailyFlow(){
   };
 
   useEffect(()=>{
-    if (shouldShowIntention()) {
+    // Check if we should auto-show intention modal
+    const shouldShow = shouldShowIntention();
+    log.info("Checking if should show intention modal:", shouldShow);
+    
+    if (shouldShow) {
       log.info("Auto-showing intention modal on startup");
       setShowIntention(true);
     }

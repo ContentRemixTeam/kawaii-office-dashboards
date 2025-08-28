@@ -1,8 +1,8 @@
 import React from "react";
-import { writeTodayIntention } from "@/lib/dailyFlow";
+import { writeTodayIntention, readTodayIntention } from "@/lib/dailyFlow";
 import { emitChanged } from "@/lib/bus";
 import { addFutureNote } from "@/lib/futureNotes";
-import { setBigThreeTasks } from "@/lib/unifiedTasks";
+import { setBigThreeTasks, getBigThreeTasks } from "@/lib/unifiedTasks";
 import { log } from "@/lib/log";
 
 export default function DailyIntentionModal({ open, onClose }:{
@@ -16,9 +16,37 @@ export default function DailyIntentionModal({ open, onClose }:{
   const [notes,setNotes]  = React.useState("");
   const [futureNote, setFutureNote] = React.useState("");
 
-  // Add logging to track modal state
+  // Load existing intention data when modal opens
   React.useEffect(() => {
-    log.info(`DailyIntentionModal open state changed: ${open}`);
+    if (open) {
+      log.info(`DailyIntentionModal opened, loading existing data`);
+      
+      // Load existing intention if it exists
+      const existingIntention = readTodayIntention();
+      if (existingIntention) {
+        setFeel(existingIntention.feel || "");
+        setFocus(existingIntention.focus || "");
+        setTop1(existingIntention.top3?.[0] || "");
+        setTop2(existingIntention.top3?.[1] || "");
+        setTop3(existingIntention.top3?.[2] || "");
+        setNotes(existingIntention.notes || "");
+      } else {
+        // Load from current tasks if no intention exists
+        const currentTasks = getBigThreeTasks();
+        setTop1(currentTasks[0]?.title || "");
+        setTop2(currentTasks[1]?.title || "");
+        setTop3(currentTasks[2]?.title || "");
+      }
+    } else {
+      // Reset form when modal closes
+      setFeel("");
+      setFocus("");
+      setTop1("");
+      setTop2("");
+      setTop3("");
+      setNotes("");
+      setFutureNote("");
+    }
   }, [open]);
 
   if (!open) return null;
