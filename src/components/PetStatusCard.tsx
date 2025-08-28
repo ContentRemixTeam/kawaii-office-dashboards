@@ -18,6 +18,9 @@ interface PetStatusCardProps {
 }
 
 export default function PetStatusCard({ petData, completedTasks, totalTasks }: PetStatusCardProps) {
+  // TEST ERROR BOUNDARY - REMOVE AFTER TESTING
+  if (Math.random() > 0.7) throw new Error('Test error boundary - remove this line after testing');
+  
   const navigate = useNavigate();
   
   const animal = petData.animal ? ANIMALS.find(a => a.id === petData.animal) : null;
