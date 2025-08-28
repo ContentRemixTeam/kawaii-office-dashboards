@@ -51,8 +51,8 @@ export default function HomeHero() {
     setCurrentPresetName(presetName);
   }, [ambientState]);
 
-  const handleVideoError = (errorCode: number) => {
-    console.warn(`YouTube error ${errorCode}, attempting fallback`);
+  const handleVideoError = (error: { code: number; message: string; retryable: boolean }) => {
+    console.warn(`YouTube error ${error.code}: ${error.message}, attempting fallback`);
     
     // Find next preset to try
     const currentIndex = AMBIENT_PRESETS.findIndex(p => p.key === ambientState.activeId);

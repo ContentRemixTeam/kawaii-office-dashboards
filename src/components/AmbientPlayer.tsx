@@ -78,8 +78,8 @@ export default function AmbientPlayer() {
     });
   };
 
-  const handleVideoError = (errorCode: number) => {
-    console.warn(`YouTube error ${errorCode} for video ${currentVideoId}`);
+  const handleVideoError = (error: { code: number; message: string; retryable: boolean }) => {
+    console.warn(`YouTube error ${error.code}: ${error.message} for video ${currentVideoId}`);
     
     // If we're on a preset, try the next one
     if (state.activeId !== "custom") {
