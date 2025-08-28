@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
+import { AppErrorBoundary } from "@/components/ErrorBoundary";
 import useDailyFlow from "./hooks/useDailyFlow";
 import DailyIntentionModal from "./components/DailyIntentionModal";
 import DebriefModal from "./components/DebriefModal";
@@ -43,40 +44,48 @@ const App = () => {
   }, []);
   
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AppLayout>
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/tools/tasks" element={<Tasks />} />
-              <Route path="/tools/positivity-cabinet" element={<PositivityCabinet />} />
-              <Route path="/tools/vision" element={<Vision />} />
-              <Route path="/tools/sounds" element={<Sounds />} />
-              <Route path="/tools/energy" element={<Energy />} />
-              <Route path="/tools/habits" element={<Habits />} />
-              <Route path="/tools/theme" element={<Theme />} />
-              <Route path="/tools/focus" element={<Focus />} />
-              <Route path="/tools/beat-clock" element={<BeatClock />} />
-              <Route path="/tools/break-room" element={<BreakRoom />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </AppLayout>
-          
-          {/* Daily Flow Modals */}
-          <DailyIntentionModal open={flow.showIntention} onClose={()=> flow.setShowIntention(false)} />
-          <DebriefModal open={flow.showDebrief} onClose={()=> flow.setShowDebrief(false)} />
-          <PomodoroWinModal 
-            open={showPomodoroWin} 
-            onClose={() => setShowPomodoroWin(false)}
-            sessionDuration={sessionDuration}
-          />
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
+    <AppErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Suspense fallback={
+              <div className="min-h-screen flex items-center justify-center">
+                <div className="text-lg">Loading your productivity dashboard...</div>
+              </div>
+            }>
+              <AppLayout>
+                <Routes>
+                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/tools/tasks" element={<Tasks />} />
+                  <Route path="/tools/positivity-cabinet" element={<PositivityCabinet />} />
+                  <Route path="/tools/vision" element={<Vision />} />
+                  <Route path="/tools/sounds" element={<Sounds />} />
+                  <Route path="/tools/energy" element={<Energy />} />
+                  <Route path="/tools/habits" element={<Habits />} />
+                  <Route path="/tools/theme" element={<Theme />} />
+                  <Route path="/tools/focus" element={<Focus />} />
+                  <Route path="/tools/beat-clock" element={<BeatClock />} />
+                  <Route path="/tools/break-room" element={<BreakRoom />} />
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </AppLayout>
+            </Suspense>
+            
+            {/* Daily Flow Modals */}
+            <DailyIntentionModal open={flow.showIntention} onClose={()=> flow.setShowIntention(false)} />
+            <DebriefModal open={flow.showDebrief} onClose={()=> flow.setShowDebrief(false)} />
+            <PomodoroWinModal 
+              open={showPomodoroWin} 
+              onClose={() => setShowPomodoroWin(false)}
+              sessionDuration={sessionDuration}
+            />
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </AppErrorBoundary>
   );
 };
 
