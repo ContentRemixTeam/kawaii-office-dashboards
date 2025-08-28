@@ -25,7 +25,8 @@ import { emitChanged, addEarnedAnimal } from "@/lib/topbarState";
 import { K_TASKS } from "@/lib/topbar.readers";
 import focusTimer from "@/lib/focusTimer";
 import { useTodayPet } from "@/hooks/useTodayPet";
-import { TaskCompletionModal } from "@/components/TaskCompletionModal";
+import { TaskCelebrationPopup } from "@/components/TaskCelebrationPopup";
+import { AnimalGrowthDisplay } from "@/components/AnimalGrowthDisplay";
 import TaskProgressGraph from "./TaskProgressGraph";
 
 const ANIMALS = [
@@ -96,9 +97,10 @@ export default function BigThreeTasksSection() {
   const { setShowIntention } = useDailyFlow();
   const todayPet = useTodayPet();
   
-  // Task completion modal state
-  const [showTaskModal, setShowTaskModal] = useState(false);
-  const [completedTaskIndex, setCompletedTaskIndex] = useState<number>(0);
+  // Task celebration popup state
+  const [showCelebrationPopup, setShowCelebrationPopup] = useState(false);
+  const [celebratedTaskTitle, setCelebratedTaskTitle] = useState('');
+  const [celebratedTaskIndex, setCelebratedTaskIndex] = useState(0);
   
   const [bigThreeTasks, setBigThreeTasksState] = useState<[any, any, any]>([null, null, null]);
   const [selectedAnimal, setSelectedAnimal] = useState("unicorn");
@@ -107,7 +109,6 @@ export default function BigThreeTasksSection() {
   const [showAnimalPicker, setShowAnimalPicker] = useState(false);
   const [timerState, setTimerState] = useState(focusTimer.getState());
   const [showTaskCelebration, setShowTaskCelebration] = useState(false);
-  const [celebratedTaskIndex, setCelebratedTaskIndex] = useState<number>(-1);
   const [celebratedTasks, setCelebratedTasks] = useState<Set<number>>(new Set());
   const [streakCount, setStreakCount] = useState(0);
 
@@ -189,8 +190,9 @@ export default function BigThreeTasksSection() {
     
     // Show celebration for task completion (not unchecking)
     if (!wasCompleted) {
-      setCompletedTaskIndex(index);
-      setShowTaskModal(true);
+      setCelebratedTaskTitle(task.title);
+      setCelebratedTaskIndex(index);
+      setShowCelebrationPopup(true);
     }
   };
 
@@ -282,93 +284,8 @@ export default function BigThreeTasksSection() {
           </div>
         </div>
 
-        {/* Pet Stage Display */}
-        <div className="text-center p-8 bg-gradient-to-br from-background to-muted/30 rounded-3xl border-2 border-border/50 shadow-lg relative overflow-hidden">
-          {/* Special Effects */}
-          {stats.completedCount > 0 && (
-            <div className="absolute inset-0 pointer-events-none">
-              {(() => {
-                const effects = {
-                  unicorn: ["🌈", "✨", "⭐", "💫"],
-                  dragon: ["🔥", "⚡", "💥", "🌟"],
-                  cat: ["💕", "🐾", "✨", "💖"],
-                  dog: ["❤️", "🌟", "⭐", "💫"],
-                  rabbit: ["🌸", "🌺", "✨", "💕"],
-                  fox: ["🍂", "✨", "🌟", "💫"],
-                  panda: ["🎋", "💚", "✨", "🌟"],
-                  penguin: ["❄️", "💎", "⭐", "✨"],
-                  owl: ["🌙", "📚", "✨", "🌟"],
-                  hamster: ["🌻", "💫", "⭐", "✨"]
-                };
-                const animalEffects = effects[currentAnimal.id as keyof typeof effects] || effects.unicorn;
-                return animalEffects.slice(0, stats.completedCount).map((effect, i) => (
-                  <div
-                    key={i}
-                    className="absolute text-lg animate-bounce"
-                    style={{
-                      left: `${15 + i * 20}%`,
-                      top: `${10 + i * 15}%`,
-                      animationDelay: `${i * 0.5}s`,
-                      animationDuration: "2s"
-                    }}
-                  >
-                    {effect}
-                  </div>
-                ));
-              })()}
-            </div>
-          )}
-          
-          <div className="mb-4 relative">
-            <div className={`${petStage === 0 ? 'text-6xl' : petStage === 1 ? 'text-7xl animate-bounce' : petStage === 2 ? 'text-8xl animate-pulse' : 'text-9xl animate-bounce'} mb-2 transition-all duration-500`}>
-              {currentAnimal.stages[petStage]}
-            </div>
-            
-            {stats.completedCount > 0 && (
-              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 text-xl">
-                <span className="text-primary">◡ ◡</span>
-              </div>
-            )}
-          </div>
-          
-          <h3 className="text-xl font-bold text-foreground mb-2">
-            {petStage === 0 ? "Sleeping Baby" : petStage === 1 ? "Awake Baby" : petStage === 2 ? "Growing Strong" : "Fully Grown Magical"}
-          </h3>
-          
-          <p className="text-muted-foreground text-sm mb-2 font-medium">
-            {stats.completedCount === 0 ? `${currentAnimal.name} is sleeping... zzz 💤` : 
-             stats.completedCount === 1 ? `${currentAnimal.name} is awakening! Ready to grow! ✨` :
-             stats.completedCount === 2 ? `${currentAnimal.name} is getting stronger! 💪` : 
-             `${currentAnimal.name} has reached maximum power! 🌟`}
-          </p>
-          
-          <div className="text-muted-foreground/70 text-xs mb-3">
-            {stats.completedCount}/{stats.totalCount} tasks completed
-          </div>
-          
-          {/* Progress bar */}
-          <div className="w-full bg-muted rounded-full h-3 overflow-hidden">
-            <div 
-              className="bg-gradient-to-r from-primary to-primary/80 h-full rounded-full transition-all duration-700 ease-out relative"
-              style={{ width: `${stats.percentage}%` }}
-            >
-              {stats.completedCount > 0 && (
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse"></div>
-              )}
-            </div>
-          </div>
-          
-          {stats.allCompleted && (
-            <div className="mt-4 animate-bounce">
-              <div className="text-sm text-primary font-semibold">
-                Perfect day achieved! ✨
-              </div>
-              <div className="text-xs text-muted-foreground mt-1">
-                Your {currentAnimal.name.toLowerCase()} is absolutely magical! 💕
-              </div>
-            </div>
-          )}
-        </div>
+        {/* Animal Growth Display */}
+        <AnimalGrowthDisplay selectedAnimal={selectedAnimal} />
 
         {/* Progress Graph */}
         <TaskProgressGraph completedCount={stats.completedCount} totalTasks={stats.totalCount} />
@@ -507,11 +424,13 @@ export default function BigThreeTasksSection() {
         )}
       </div>
 
-      {/* Task Completion Modal */}
-      <TaskCompletionModal
-        isOpen={showTaskModal}
-        onClose={() => setShowTaskModal(false)}
-        taskIndex={completedTaskIndex}
+      {/* Task Celebration Popup */}
+      <TaskCelebrationPopup
+        open={showCelebrationPopup}
+        onOpenChange={setShowCelebrationPopup}
+        taskTitle={celebratedTaskTitle}
+        taskIndex={celebratedTaskIndex}
+        selectedAnimal={selectedAnimal}
       />
     </>
   );

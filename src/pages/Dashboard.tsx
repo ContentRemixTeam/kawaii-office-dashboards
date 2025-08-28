@@ -10,6 +10,7 @@ import { FocusTimerCard } from "@/components/dashboard/FocusTimerCard";
 import { SidebarGroup } from "@/components/dashboard/SidebarGroup";
 import DashboardHabitTracker from "@/components/DashboardHabitTracker";
 import DashboardTrophyCase from "@/components/DashboardTrophyCase";
+import { DailyWinsTracker } from "@/components/DailyWinsTracker";
 import { RecentWinsPanel } from "@/components/RecentWinsPanel";
 import PetStatusCard from "@/components/PetStatusCard";
 import { useGiphyCelebration } from "@/hooks/useGiphyCelebration";
@@ -145,9 +146,7 @@ const Dashboard = () => {
             
             <FeatureErrorBoundary featureName="Daily Wins">
               <div className="card-standard mb-6">
-                <div className="p-6">
-                  <RecentWinsPanel />
-                </div>
+                <DailyWinsTracker />
               </div>
             </FeatureErrorBoundary>
             
