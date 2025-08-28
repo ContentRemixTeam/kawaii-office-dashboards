@@ -1,10 +1,11 @@
 import { Calendar } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import BigThreeTasksSection from "@/components/BigThreeTasksSection";
-import { getDailyData } from "@/lib/storage";
+import { safeStorage } from "@/lib/safeStorage";
 import { useState, useEffect } from "react";
 import { onChanged } from "@/lib/bus";
 
+// TypeScript interfaces for task data structure
 interface DashboardData {
   streak: number;
   lastCompletedDate: string;
@@ -14,13 +15,16 @@ export function BigThreeCard() {
   const [streakData, setStreakData] = useState<DashboardData>({ streak: 0, lastCompletedDate: "" });
 
   useEffect(() => {
-    const dashData = getDailyData("fm_dashboard_v1", { streak: 0, lastCompletedDate: "" });
-    setStreakData(dashData);
+    // Load initial dashboard data using safeStorage
+    const defaultDashData: DashboardData = { streak: 0, lastCompletedDate: "" };
+    const dashData = safeStorage.get<DashboardData>("fm_dashboard_v1", defaultDashData);
+    setStreakData(dashData || defaultDashData);
 
+    // Subscribe to storage changes using the existing bus system
     const unsubscribe = onChanged(keys => {
       if (keys.includes("fm_dashboard_v1")) {
-        const newDashData = getDailyData("fm_dashboard_v1", { streak: 0, lastCompletedDate: "" });
-        setStreakData(newDashData);
+        const newDashData = safeStorage.get<DashboardData>("fm_dashboard_v1", defaultDashData);
+        setStreakData(newDashData || defaultDashData);
       }
     });
 
