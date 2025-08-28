@@ -20,7 +20,7 @@ import { getUnifiedTaskData, getBigThreeTasks } from "@/lib/unifiedTasks";
 import { readVisionThumbs, readPetStage, readEarnedAnimals } from "@/lib/topbarState";
 import { readTodayIntention } from "@/lib/dailyFlow";
 import { onChanged } from "@/lib/bus";
-import { SectionErrorBoundary } from "@/components/layout/SectionErrorBoundary";
+import { FeatureErrorBoundary } from "@/components/ErrorBoundary";
 
 interface DashboardData {
   streak: number;
@@ -118,37 +118,37 @@ const Dashboard = () => {
 
         {/* TOP BAND: exactly two cards */}
         <div className="grid grid-cols-1 lg:grid-cols-2 layout-grid-gap-lg items-start">
-          <SectionErrorBoundary sectionName="Ambient Player">
+          <FeatureErrorBoundary featureName="Ambient Player">
             <div className="card-standard">
               <AmbientPlayerCard />
             </div>
-          </SectionErrorBoundary>
-          <SectionErrorBoundary sectionName="Big Three Tasks">
+          </FeatureErrorBoundary>
+          <FeatureErrorBoundary featureName="Big Three Tasks">
             <div className="card-standard">
               <BigThreeCard />
             </div>
-          </SectionErrorBoundary>
+          </FeatureErrorBoundary>
         </div>
 
         {/* MAIN BAND: two vertical stacks under the same two columns */}
         <div className="grid grid-cols-1 lg:grid-cols-2 layout-grid-gap-lg items-start">
           {/* LEFT STACK: Focus Timer → Daily Wins → Hold the Vision */}
           <div className="layout-spacing-md">
-            <SectionErrorBoundary sectionName="Focus Timer">
+            <FeatureErrorBoundary featureName="Focus Timer">
               <div className="card-standard mb-6">
                 <FocusTimerCard />
               </div>
-            </SectionErrorBoundary>
+            </FeatureErrorBoundary>
             
-            <SectionErrorBoundary sectionName="Daily Wins">
+            <FeatureErrorBoundary featureName="Daily Wins">
               <div className="card-standard mb-6">
                 <div className="p-6">
                   <RecentWinsPanel />
                 </div>
               </div>
-            </SectionErrorBoundary>
+            </FeatureErrorBoundary>
             
-            <SectionErrorBoundary sectionName="Vision Board">
+            <FeatureErrorBoundary featureName="Vision Board">
               <div className="card-standard">
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-6">
@@ -191,20 +191,20 @@ const Dashboard = () => {
                   </Button>
                 </div>
               </div>
-            </SectionErrorBoundary>
+            </FeatureErrorBoundary>
           </div>
           
           {/* RIGHT STACK: Trophy Case → Pet Companion → Habit Garden → Today's Intention */}
           <div className="layout-spacing-md">
-            <SectionErrorBoundary sectionName="Trophy Case">
+            <FeatureErrorBoundary featureName="Trophy Case">
               <div className="card-standard mb-6">
                 <div className="p-6">
                   <DashboardTrophyCase />
                 </div>
               </div>
-            </SectionErrorBoundary>
+            </FeatureErrorBoundary>
             
-            <SectionErrorBoundary sectionName="Pet Companion">
+            <FeatureErrorBoundary featureName="Pet Companion">
               <div className="card-standard mb-6">
                 <div className="p-6">
                   <PetStatusCard 
@@ -214,17 +214,17 @@ const Dashboard = () => {
                   />
                 </div>
               </div>
-            </SectionErrorBoundary>
+            </FeatureErrorBoundary>
             
-            <SectionErrorBoundary sectionName="Habit Garden">
+            <FeatureErrorBoundary featureName="Habit Tracker">
               <div className="card-standard mb-6">
                 <div className="p-6">
                   <DashboardHabitTracker />
                 </div>
               </div>
-            </SectionErrorBoundary>
+            </FeatureErrorBoundary>
             
-            <SectionErrorBoundary sectionName="Daily Intention">
+            <FeatureErrorBoundary featureName="Daily Intention">
               <div className="card-standard mb-6">
                 <div className="p-6">
                   <TooltipProvider>
@@ -263,11 +263,11 @@ const Dashboard = () => {
                   </TooltipProvider>
                 </div>
               </div>
-            </SectionErrorBoundary>
+            </FeatureErrorBoundary>
 
             {/* Today's Earned Pets */}
             {earnedAnimals.length > 0 && (
-              <SectionErrorBoundary sectionName="Earned Pets">
+              <FeatureErrorBoundary featureName="Earned Pets">
                 <div className="card-elevated">
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-6">
@@ -294,7 +294,7 @@ const Dashboard = () => {
                     </div>
                   </div>
                 </div>
-              </SectionErrorBoundary>
+              </FeatureErrorBoundary>
             )}
           </div>
         </div>
