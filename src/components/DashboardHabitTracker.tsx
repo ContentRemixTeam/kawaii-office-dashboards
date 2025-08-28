@@ -4,9 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, ExternalLink, Sprout } from "lucide-react";
-import { safeGet, safeSet, getTodayISO } from "@/lib/storage";
+import { safeStorage } from "@/lib/safeStorage";
+import { getTodayISO } from "@/lib/storage";
 import { cn } from "@/lib/utils";
 
+// Enhanced TypeScript interfaces for habit data structures
 interface Habit {
   id: string;
   name: string;
@@ -21,12 +23,20 @@ interface HabitLog {
   completed: boolean;
 }
 
-const PLANT_STAGES = {
+// Enhanced interface for habit statistics
+interface HabitStats {
+  totalHabits: number;
+  completedToday: number;
+  totalStreaks: number;
+}
+
+// Plant stage mapping with type safety
+const PLANT_STAGES: Record<number, string> = {
   0: "🌱", // seed (0 days)
   1: "🌿", // sprout (1-6 days)
   7: "🌸", // flower (7-20 days)
   21: "🌳"  // tree (21+ days)
-};
+} as const;
 
 export default function DashboardHabitTracker() {
   const navigate = useNavigate();
@@ -35,15 +45,20 @@ export default function DashboardHabitTracker() {
   const today = getTodayISO();
 
   useEffect(() => {
-    const savedHabits = safeGet<Habit[]>("fm_habits_v1", []);
-    const savedLogs = safeGet<HabitLog[]>("fm_habit_logs_v1", []);
-    setHabits(savedHabits);
-    setHabitLogs(savedLogs);
+    // Load initial data using safeStorage with proper fallbacks
+    const defaultHabits: Habit[] = [];
+    const defaultLogs: HabitLog[] = [];
+    
+    const savedHabits = safeStorage.get<Habit[]>("fm_habits_v1", defaultHabits);
+    const savedLogs = safeStorage.get<HabitLog[]>("fm_habit_logs_v1", defaultLogs);
+    
+    setHabits(savedHabits || defaultHabits);
+    setHabitLogs(savedLogs || defaultLogs);
   }, []);
 
-  const saveLogs = (newLogs: HabitLog[]) => {
+  const saveLogs = (newLogs: HabitLog[]): boolean => {
     setHabitLogs(newLogs);
-    safeSet("fm_habit_logs_v1", newLogs);
+    return safeStorage.set("fm_habit_logs_v1", newLogs);
   };
 
   const toggleHabitToday = (habitId: string) => {
@@ -102,7 +117,7 @@ export default function DashboardHabitTracker() {
     );
   };
 
-  const getHabitStats = () => {
+  const getHabitStats = (): HabitStats => {
     const totalHabits = habits.length;
     const completedToday = habits.filter(habit => isCompletedToday(habit.id)).length;
     const totalStreaks = habits.reduce((sum, habit) => sum + getStreak(habit.id), 0);
