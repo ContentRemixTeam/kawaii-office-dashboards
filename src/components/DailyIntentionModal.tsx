@@ -3,6 +3,7 @@ import { writeTodayIntention } from "@/lib/dailyFlow";
 import { emitChanged } from "@/lib/bus";
 import { addFutureNote } from "@/lib/futureNotes";
 import { setBigThreeTasks } from "@/lib/unifiedTasks";
+import { log } from "@/lib/log";
 
 export default function DailyIntentionModal({ open, onClose }:{
   open:boolean; onClose: ()=>void;
@@ -15,9 +16,14 @@ export default function DailyIntentionModal({ open, onClose }:{
   const [notes,setNotes]  = React.useState("");
   const [futureNote, setFutureNote] = React.useState("");
 
+  // Add logging to track modal state
+  React.useEffect(() => {
+    log.info(`DailyIntentionModal open state changed: ${open}`);
+  }, [open]);
+
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-[60] bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[100] bg-background/80 backdrop-blur-sm flex items-center justify-center p-4" style={{ zIndex: 9999 }}>
       <div className="w-full max-w-2xl rounded-2xl bg-card shadow-xl border">
         <div className="p-5 border-b border-border">
           <h2 className="text-lg font-semibold text-card-foreground">✨ Set today's intention</h2>
@@ -99,17 +105,23 @@ export default function DailyIntentionModal({ open, onClose }:{
           </button>
           <button
             onClick={()=>{
-              const payload = { feel, focus, top3:[top1,top2,top3].filter(Boolean), notes };
-              writeTodayIntention(payload);
-              
-              // Save Big Three tasks to unified system
-              setBigThreeTasks(top1, top2, top3);
-              
-              if (futureNote.trim()) { 
-                addFutureNote(futureNote.trim()); 
+              try {
+                log.info("Saving daily intention", { feel, focus, top1, top2, top3 });
+                const payload = { feel, focus, top3:[top1,top2,top3].filter(Boolean), notes };
+                writeTodayIntention(payload);
+                
+                // Save Big Three tasks to unified system
+                setBigThreeTasks(top1, top2, top3);
+                
+                if (futureNote.trim()) { 
+                  addFutureNote(futureNote.trim()); 
+                }
+                emitChanged(["fm_daily_intention_v1", "fm_future_notes_v1", "fm_unified_tasks_v1"]);
+                log.info("Daily intention saved successfully");
+                onClose();
+              } catch (error) {
+                log.error("Error saving daily intention:", error);
               }
-              emitChanged(["fm_daily_intention_v1", "fm_future_notes_v1", "fm_unified_tasks_v1"]);
-              onClose();
             }}
             className="px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
             disabled={!feel && !focus && !top1}

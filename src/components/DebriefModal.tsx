@@ -4,6 +4,7 @@ import { emitChanged } from "@/lib/bus";
 import { clearEarnedAnimals } from "@/lib/topbarState";
 import { getTodaysNote } from "@/lib/futureNotes";
 import DailySummary from "@/components/DailySummary";
+import { log } from "@/lib/log";
 
 export default function DebriefModal({ open, onClose }:{ open:boolean; onClose:()=>void; }){
   const [w1,setW1]=React.useState("");
@@ -16,9 +17,14 @@ export default function DebriefModal({ open, onClose }:{ open:boolean; onClose:(
   
   const todays = getTodaysNote();
 
+  // Add logging to track modal state
+  React.useEffect(() => {
+    log.info(`DebriefModal open state changed: ${open}`);
+  }, [open]);
+
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-[60] bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[100] bg-background/80 backdrop-blur-sm flex items-center justify-center p-4" style={{ zIndex: 9999 }}>
       <div className="w-full max-w-2xl rounded-2xl bg-card shadow-xl border">
         <div className="p-5 border-b border-border">
           <h2 className="text-lg font-semibold text-card-foreground">🌙 Daily Debrief</h2>
@@ -99,12 +105,18 @@ export default function DebriefModal({ open, onClose }:{ open:boolean; onClose:(
           </button>
           <button
             onClick={()=>{
-              const wins=[w1,w2,w3].filter(Boolean);
-              const nextTop3=[n1,n2,n3].filter(Boolean);
-              writeTodayDebrief({ wins, reflect, nextTop3 });
-              clearEarnedAnimals(); // Clear earned animals on sign-off
-              emitChanged(["fm_daily_debrief_v1"]);
-              onClose();
+              try {
+                log.info("Saving daily debrief", { w1, w2, w3, reflect, n1, n2, n3 });
+                const wins=[w1,w2,w3].filter(Boolean);
+                const nextTop3=[n1,n2,n3].filter(Boolean);
+                writeTodayDebrief({ wins, reflect, nextTop3 });
+                clearEarnedAnimals(); // Clear earned animals on sign-off
+                emitChanged(["fm_daily_debrief_v1"]);
+                log.info("Daily debrief saved successfully");
+                onClose();
+              } catch (error) {
+                log.error("Error saving daily debrief:", error);
+              }
             }}
             className="px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90"
           >
