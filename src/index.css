@@ -72,6 +72,42 @@
     --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
+    /* Production Layout System - CSS Custom Properties */
+    --layout-spacing-xs: 0.25rem;  /* 4px */
+    --layout-spacing-sm: 0.5rem;   /* 8px */
+    --layout-spacing-md: 1rem;     /* 16px */
+    --layout-spacing-lg: 1.5rem;   /* 24px */
+    --layout-spacing-xl: 2rem;     /* 32px */
+    --layout-spacing-2xl: 3rem;    /* 48px */
+    --layout-spacing-3xl: 4rem;    /* 64px */
+
+    /* Grid gaps */
+    --layout-gap-xs: 0.5rem;
+    --layout-gap-sm: 1rem;
+    --layout-gap-md: 1.5rem;
+    --layout-gap-lg: 2rem;
+
+    /* Component heights */
+    --layout-height-header: 64px;
+    --layout-height-card-min: 200px;
+    --layout-height-card-standard: 300px;
+    --layout-height-card-large: 400px;
+    --layout-height-hero: 500px;
+
+    /* Container max widths */
+    --layout-max-width-content: 1200px;
+    --layout-max-width-dashboard: 1400px;
+
+    /* Z-index scale */
+    --layout-z-dropdown: 1000;
+    --layout-z-sticky: 1020;
+    --layout-z-fixed: 1030;
+    --layout-z-modal-backdrop: 1040;
+    --layout-z-modal: 1050;
+    --layout-z-popover: 1060;
+    --layout-z-tooltip: 1070;
+    --layout-z-toast: 1080;
+
     --sidebar-background: 0 0% 98%;
 
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -222,4 +258,46 @@
     border-radius: 0.75rem;
     display: block;
   }
+
+  /* Production Layout Utility Classes */
+  .layout-container-content {
+    max-width: var(--layout-max-width-content);
+  }
+
+  .layout-container-dashboard {
+    max-width: var(--layout-max-width-dashboard);
+  }
+
+  .layout-spacing-xs { display: flex; flex-direction: column; gap: var(--layout-spacing-xs); }
+  .layout-spacing-sm { display: flex; flex-direction: column; gap: var(--layout-spacing-sm); }
+  .layout-spacing-md { display: flex; flex-direction: column; gap: var(--layout-spacing-md); }
+  .layout-spacing-lg { display: flex; flex-direction: column; gap: var(--layout-spacing-lg); }
+  .layout-spacing-xl { display: flex; flex-direction: column; gap: var(--layout-spacing-xl); }
+
+  .layout-grid-gap-xs { gap: var(--layout-gap-xs); }
+  .layout-grid-gap-sm { gap: var(--layout-gap-sm); }
+  .layout-grid-gap-md { gap: var(--layout-gap-md); }
+  .layout-grid-gap-lg { gap: var(--layout-gap-lg); }
+
+  .layout-height-card-min { min-height: var(--layout-height-card-min); }
+  .layout-height-card-standard { min-height: var(--layout-height-card-standard); }
+  .layout-height-card-large { min-height: var(--layout-height-card-large); }
+
+  /* Standardized card classes */
+  .card-standard {
+    @apply bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-2xl;
+  }
+
+  .card-elevated {
+    @apply bg-card backdrop-blur-lg border border-border/20 shadow-2xl rounded-2xl;
+  }
+
+  .card-glass {
+    @apply bg-card/60 backdrop-blur-lg border border-border/10 shadow-lg rounded-2xl;
+  }
+
+  .card-interactive {
+    @apply card-standard hover:shadow-2xl hover:scale-[1.02] cursor-pointer transition-all duration-300;
+  }
+}
 }

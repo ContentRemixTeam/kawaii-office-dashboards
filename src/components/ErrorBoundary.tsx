@@ -153,16 +153,18 @@ function DefaultErrorFallback({
 // Feature-specific error boundaries
 export function FeatureErrorBoundary({ 
   children, 
-  featureName 
+  featureName,
+  fallback: CustomFallback
 }: { 
   children: React.ReactNode; 
   featureName: string;
+  fallback?: React.ComponentType<{ error: Error; retry: () => void }>;
 }) {
   const handleError = (error: Error, errorInfo: React.ErrorInfo) => {
     log.error(`Error in ${featureName} feature:`, error, errorInfo);
   };
 
-  const FallbackComponent = ({ error, retry }: { error: Error; retry: () => void }) => (
+  const DefaultFallbackComponent = ({ error, retry }: { error: Error; retry: () => void }) => (
     <Alert>
       <AlertTriangle className="h-4 w-4" />
       <AlertDescription className="flex items-center justify-between">
@@ -177,7 +179,7 @@ export function FeatureErrorBoundary({
 
   return (
     <ErrorBoundary
-      fallback={FallbackComponent}
+      fallback={CustomFallback || DefaultFallbackComponent}
       onError={handleError}
     >
       {children}
