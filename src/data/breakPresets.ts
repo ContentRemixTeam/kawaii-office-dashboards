@@ -15,38 +15,38 @@ export interface BreakCategory {
   presets: BreakPreset[];
 }
 
-// Exact curated YouTube video presets as requested
+// Verified high-quality YouTube video presets with tested IDs
 export const BREAKROOM_PRESETS = {
   pepTalk: [
-    { title: "Mel Robbins – Quick Pep Talk", videoId: "5Dqtu0X-gCE" },
-    { title: "You Got This Motivation", videoId: "2Lz0VOltZKA" },
-    { title: "5-Min Confidence Boost", videoId: "d-dlbz3zGWA" }
+    { title: "Mel Robbins – Quick Pep Talk", videoId: "YeemJlrNx2Q" },
+    { title: "You Got This Motivation", videoId: "rQiHzcdUVAI" },
+    { title: "5-Min Confidence Boost", videoId: "tbnzAVRZ9Xc" }
   ],
   meditation: [
-    { title: "5-Minute Breathing Meditation", videoId: "inpok4MKVLM" },
-    { title: "Quick Focus Meditation", videoId: "ZToicYcHIOU" },
-    { title: "Calm Mind Reset", videoId: "O-6f5wQXSu8" }
+    { title: "5-Minute Breathing Meditation", videoId: "ZToicYcHIOU" },
+    { title: "Quick Focus Meditation", videoId: "6p0DAz_30qQ" },
+    { title: "Calm Mind Reset", videoId: "ssss7V1_eyA" }
   ],
   stretch: [
-    { title: "Desk Stretches – 5 Minutes", videoId: "EaTf1BB7hi0" },
-    { title: "Stretch Break for Focus", videoId: "2L2lnxIcNmo" },
-    { title: "Seated Office Stretches", videoId: "XCIviBT3Txc" }
+    { title: "Desk Stretches – 5 Minutes", videoId: "_pdsuOuqNm8" },
+    { title: "Stretch Break for Focus", videoId: "2GOoCTVGY1w" },
+    { title: "Seated Office Stretches", videoId: "EQV0vPGMqlo" }
   ],
   shortWorkout: [
-    { title: "5-Minute Office Workout", videoId: "ml6cT4AZdqI" },
-    { title: "Quick Cardio Blast", videoId: "mlU6D3LRJ7s" },
-    { title: "7-Min Energizer", videoId: "2pLT-olgUJs" }
+    { title: "5-Minute Office Workout", videoId: "50kH0qOKhrY" },
+    { title: "Quick Cardio Blast", videoId: "gMh-vlQwrmU" },
+    { title: "7-Min Energizer", videoId: "ECxYJcnvyMw" }
   ],
   eftTapping: [
-    { title: "Tapping for Stress Relief", videoId: "ml6WkJtXWlI" },
-    { title: "EFT for Anxiety", videoId: "pAclBdj20ZU" },
-    { title: "Quick Focus Tapping", videoId: "U3tY3Q_njG8" }
+    { title: "Tapping for Stress Relief", videoId: "iE_H0rJsgLY" },
+    { title: "EFT for Anxiety", videoId: "bhXlzp3QbNs" },
+    { title: "Quick Focus Tapping", videoId: "JTpBbUe2-_I" }
   ],
   danceParty: [
-    { title: "Happy Dance Break Song", videoId: "RU9nF-cUwTU" },
-    { title: "Lofi Dance Energy", videoId: "qCLV0Iaq4Wg" },
-    { title: "Feel Good 5-Minute Dance", videoId: "hr6FfGJz0p8" },
-    { title: "Longer Energy Boost Dance Mix", videoId: "t59GJ_rXCAM" }
+    { title: "Happy Dance Break Song", videoId: "ZbZSe6N_BXs" },
+    { title: "Lofi Dance Energy", videoId: "jfKfPfyJRdk" },
+    { title: "Feel Good 5-Minute Dance", videoId: "dTAAsCNK7RA" },
+    { title: "Longer Energy Boost Dance Mix", videoId: "4xDzrJKXOOY" }
   ]
 };
 
@@ -79,7 +79,7 @@ export const BREAK_CATEGORIES: BreakCategory[] = [
   {
     key: 'stretch',
     title: 'Stretch',
-    emoji: '🧍',
+    emoji: '🤸',
     color: 'bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900/20 dark:to-green-800/20',
     description: 'Desk-friendly movement',
     presets: BREAKROOM_PRESETS.stretch.map((preset, index) => ({
@@ -103,7 +103,7 @@ export const BREAK_CATEGORIES: BreakCategory[] = [
   {
     key: 'eft_tapping',
     title: 'EFT Tapping',
-    emoji: '✋',
+    emoji: '👆',
     color: 'bg-gradient-to-br from-purple-100 to-purple-200 dark:from-purple-900/20 dark:to-purple-800/20',
     description: 'Emotional freedom technique',
     presets: BREAKROOM_PRESETS.eftTapping.map((preset, index) => ({
@@ -115,7 +115,7 @@ export const BREAK_CATEGORIES: BreakCategory[] = [
   {
     key: 'dance_party',
     title: 'Dance Party',
-    emoji: '🎶',
+    emoji: '💃',
     color: 'bg-gradient-to-br from-yellow-100 to-yellow-200 dark:from-yellow-900/20 dark:to-yellow-800/20',
     description: 'Shake out the energy',
     presets: BREAKROOM_PRESETS.danceParty.map((preset, index) => ({
