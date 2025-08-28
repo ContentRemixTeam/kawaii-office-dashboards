@@ -45,28 +45,31 @@ const Index = () => {
         </p>
       </div>
 
-      {/* Simplified Grid */}
-      <div className="w-full max-w-6xl mb-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Main Hero Grid */}
+      <div className="w-full max-w-6xl mb-8 grid grid-cols-1 lg:grid-cols-3 gap-6 min-h-[500px]">
         <div className="lg:col-span-1 relative">
-          <div className="h-full bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-2xl overflow-hidden">
+          <div className="h-full bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-2xl overflow-hidden min-h-[500px]">
             <OfficeHero
               hotspots={HOTSPOTS}
               fallbackSrc={OFFICE_IMAGE_SRC}
               alt={OFFICE_ALT}
-              aspectRatio={16/9}
+              aspectRatio={4/3}
             />
             <VisionPreviewOverlay boardBox={boardHotspot} />
           </div>
         </div>
         
-        
         <div className="lg:col-span-2">
-          <div className="h-full bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-2xl p-6">
-            <div className="text-center mb-4">
-              <h2 className="text-xl font-bold text-primary mb-1">⭐ The Big Three</h2>
-              <p className="text-sm text-muted-foreground">Your most important tasks today</p>
+          <div className="h-full bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-2xl overflow-hidden min-h-[500px]">
+            <div className="p-6 h-full flex flex-col">
+              <div className="text-center mb-4 flex-shrink-0">
+                <h2 className="text-xl font-bold text-primary mb-1">⭐ The Big Three</h2>
+                <p className="text-sm text-muted-foreground">Your most important tasks today</p>
+              </div>
+              <div className="flex-1 overflow-y-auto">
+                <BigThreeTasksSection />
+              </div>
             </div>
-            <BigThreeTasksSection />
           </div>
         </div>
       </div>
