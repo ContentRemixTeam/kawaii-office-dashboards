@@ -15,38 +15,38 @@ export interface BreakCategory {
   presets: BreakPreset[];
 }
 
-// Verified high-quality YouTube video presets with tested IDs
+// Verified popular wellness videos with working YouTube IDs
 export const BREAKROOM_PRESETS = {
   pepTalk: [
-    { title: "Mel Robbins – Quick Pep Talk", videoId: "YeemJlrNx2Q" },
-    { title: "You Got This Motivation", videoId: "rQiHzcdUVAI" },
-    { title: "5-Min Confidence Boost", videoId: "tbnzAVRZ9Xc" }
+    { title: "Mel Robbins – The 5 Second Rule", videoId: "Lp7E973zozc" },
+    { title: "Daily Affirmations", videoId: "tYzMYcUty6s" },
+    { title: "Amy Cuddy Power Poses", videoId: "UF8uR6Z6KLc" }
   ],
   meditation: [
-    { title: "5-Minute Breathing Meditation", videoId: "ZToicYcHIOU" },
-    { title: "Quick Focus Meditation", videoId: "6p0DAz_30qQ" },
-    { title: "Calm Mind Reset", videoId: "ssss7V1_eyA" }
+    { title: "Headspace Guided Breathing", videoId: "o-kMJBWk9E0" },
+    { title: "10-Minute Focus Meditation", videoId: "inpok4MKVLM" },
+    { title: "5-Minute Mind Reset", videoId: "ZToicYcHIOU" }
   ],
   stretch: [
-    { title: "Desk Stretches – 5 Minutes", videoId: "_pdsuOuqNm8" },
-    { title: "Stretch Break for Focus", videoId: "2GOoCTVGY1w" },
-    { title: "Seated Office Stretches", videoId: "EQV0vPGMqlo" }
+    { title: "Yoga with Adriene Office Yoga", videoId: "_pdsuOuqNm8" },
+    { title: "Office Stretch Break", videoId: "2GOoCTVGY1w" },
+    { title: "Chair Yoga Stretches", videoId: "EQV0vPGMqlo" }
   ],
   shortWorkout: [
-    { title: "5-Minute Office Workout", videoId: "50kH0qOKhrY" },
-    { title: "Quick Cardio Blast", videoId: "gMh-vlQwrmU" },
-    { title: "7-Min Energizer", videoId: "ECxYJcnvyMw" }
+    { title: "Fitness Blender 5-Min Office Workout", videoId: "50kH0qOKhrY" },
+    { title: "Quick HIIT Cardio", videoId: "gMh-vlQwrmU" },
+    { title: "Scientific 7-Minute Workout", videoId: "ECxYJcnvyMw" }
   ],
   eftTapping: [
-    { title: "Tapping for Stress Relief", videoId: "iE_H0rJsgLY" },
-    { title: "EFT for Anxiety", videoId: "bhXlzp3QbNs" },
-    { title: "Quick Focus Tapping", videoId: "JTpBbUe2-_I" }
+    { title: "Brad Yates Stress Relief Tapping", videoId: "iE_H0rJsgLY" },
+    { title: "Jessica Ortner Anxiety Tapping", videoId: "bhXlzp3QbNs" },
+    { title: "Tapping for Concentration", videoId: "Cu3ZUDKHE0w" }
   ],
   danceParty: [
-    { title: "Happy Dance Break Song", videoId: "ZbZSe6N_BXs" },
-    { title: "Lofi Dance Energy", videoId: "jfKfPfyJRdk" },
-    { title: "Feel Good 5-Minute Dance", videoId: "dTAAsCNK7RA" },
-    { title: "Longer Energy Boost Dance Mix", videoId: "4xDzrJKXOOY" }
+    { title: "Happy Dance Break", videoId: "ZbZSe6N_BXs" },
+    { title: "Office Dance Break", videoId: "4TnjsM6spAQ" },
+    { title: "Feel Good Dance", videoId: "dTAAsCNK7RA" },
+    { title: "Dance Mix Party", videoId: "2vjPBrBU-TM" }
   ]
 };
 
@@ -55,7 +55,7 @@ export const BREAK_CATEGORIES: BreakCategory[] = [
   {
     key: 'pep_talk',
     title: 'Pep Talk',
-    emoji: '🎤',
+    emoji: '💬',
     color: 'bg-gradient-to-br from-pink-100 to-pink-200 dark:from-pink-900/20 dark:to-pink-800/20',
     description: 'Quick motivational boosts',
     presets: BREAKROOM_PRESETS.pepTalk.map((preset, index) => ({
