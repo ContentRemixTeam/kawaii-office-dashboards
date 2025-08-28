@@ -15,38 +15,37 @@ export interface BreakCategory {
   presets: BreakPreset[];
 }
 
-// Verified popular wellness videos with working YouTube IDs
+// Real, verified YouTube videos perfect for office break room wellness
 export const BREAKROOM_PRESETS = {
   pepTalk: [
-    { title: "Mel Robbins – The 5 Second Rule", videoId: "Lp7E973zozc" },
-    { title: "Daily Affirmations", videoId: "tYzMYcUty6s" },
-    { title: "Amy Cuddy Power Poses", videoId: "UF8uR6Z6KLc" }
+    { title: "10 Minutes to Start Your Day Right", videoId: "iuCJ6JVnrt0" },
+    { title: "A Pep Talk from Kid President to You", videoId: "l-gQLqv9f4o" },
+    { title: "STOP WASTING TIME - Part 1", videoId: "z3FA2kALScU" }
   ],
   meditation: [
-    { title: "Headspace Guided Breathing", videoId: "o-kMJBWk9E0" },
-    { title: "10-Minute Focus Meditation", videoId: "inpok4MKVLM" },
-    { title: "5-Minute Mind Reset", videoId: "ZToicYcHIOU" }
+    { title: "5 minute meditation for focus", videoId: "zSkFFW--Ma0" },
+    { title: "5 Minute Meditation for Focus & Clarity", videoId: "suGx3T1QtLc" },
+    { title: "5 Minute Guided Morning Meditation", videoId: "j734gLbQFbU" }
   ],
   stretch: [
-    { title: "Yoga with Adriene Office Yoga", videoId: "_pdsuOuqNm8" },
-    { title: "Office Stretch Break", videoId: "2GOoCTVGY1w" },
-    { title: "Chair Yoga Stretches", videoId: "EQV0vPGMqlo" }
+    { title: "5 min YOGA STRETCH AT YOUR DESK", videoId: "DOY30-u2Eas" },
+    { title: "5-Minute Break - Office Yoga", videoId: "6fnLKyRJsrs" },
+    { title: "5 Minute Office Break Yoga", videoId: "wlrr5jJ75Hk" }
   ],
   shortWorkout: [
-    { title: "Fitness Blender 5-Min Office Workout", videoId: "50kH0qOKhrY" },
-    { title: "Quick HIIT Cardio", videoId: "gMh-vlQwrmU" },
-    { title: "Scientific 7-Minute Workout", videoId: "ECxYJcnvyMw" }
+    { title: "5 Minute Desk Workout", videoId: "hLXQXbXsZdI" },
+    { title: "5 minute Recharge", videoId: "57g7ZBvfWJQ" },
+    { title: "5 Minute Ab Express Workout", videoId: "yv4sbu1nda8" }
   ],
   eftTapping: [
-    { title: "Brad Yates Stress Relief Tapping", videoId: "iE_H0rJsgLY" },
-    { title: "Jessica Ortner Anxiety Tapping", videoId: "bhXlzp3QbNs" },
-    { title: "Tapping for Concentration", videoId: "Cu3ZUDKHE0w" }
+    { title: "Self-Love in About Five Minutes", videoId: "tLWTzQWa2hg" },
+    { title: "Getting Out of the Way of Miracles", videoId: "0E53XCe3_4c" },
+    { title: "Take the Next Step - Clear the Blocks", videoId: "FuChV7VY4Mk" }
   ],
   danceParty: [
-    { title: "Happy Dance Break", videoId: "ZbZSe6N_BXs" },
-    { title: "Office Dance Break", videoId: "4TnjsM6spAQ" },
-    { title: "Feel Good Dance", videoId: "dTAAsCNK7RA" },
-    { title: "Dance Mix Party", videoId: "2vjPBrBU-TM" }
+    { title: "Dance Your Stress Away", videoId: "61USIp1iRig" },
+    { title: "Pharrell Williams - Happy", videoId: "ZbZSe6N_BXs" },
+    { title: "Scream & Shout Dance Workout", videoId: "q3qYZXpHEuE" }
   ]
 };
 
