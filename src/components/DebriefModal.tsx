@@ -3,8 +3,10 @@ import { writeTodayDebrief } from "@/lib/dailyFlow";
 import { emitChanged } from "@/lib/bus";
 import { clearEarnedAnimals } from "@/lib/topbarState";
 import { getTodaysNote } from "@/lib/futureNotes";
+import { getBigThreeTasks, getCompletionStats } from "@/lib/unifiedTasks";
 import DailySummary from "@/components/DailySummary";
 import { log } from "@/lib/log";
+import { CheckCircle, Star, Trophy } from "lucide-react";
 
 export default function DebriefModal({ open, onClose }:{ open:boolean; onClose:()=>void; }){
   const [w1,setW1]=React.useState("");
@@ -16,6 +18,8 @@ export default function DebriefModal({ open, onClose }:{ open:boolean; onClose:(
   const [n3,setN3]=React.useState("");
   
   const todays = getTodaysNote();
+  const tasks = getBigThreeTasks();
+  const stats = getCompletionStats();
 
   // Add logging to track modal state
   React.useEffect(() => {
@@ -26,10 +30,53 @@ export default function DebriefModal({ open, onClose }:{ open:boolean; onClose:(
   return (
     <div className="fixed inset-0 z-[100] bg-background/80 backdrop-blur-sm flex items-center justify-center p-4" style={{ zIndex: 9999 }}>
       <div className="w-full max-w-2xl rounded-2xl bg-card shadow-xl border">
-        <div className="p-5 border-b border-border">
-          <h2 className="text-lg font-semibold text-card-foreground">🌙 Daily Debrief</h2>
-          <p className="text-sm text-muted-foreground">Close the loop and set tomorrow up for success.</p>
+        {/* Celebration Header */}
+        <div className="p-6 border-b border-border bg-gradient-to-r from-primary/10 to-primary/5 rounded-t-2xl">
+          <div className="text-center mb-4">
+            <div className="text-6xl mb-2 animate-bounce">🎉</div>
+            {stats.allCompleted ? (
+              <h2 className="text-xl font-bold text-primary mb-1">Amazing! All Tasks Complete!</h2>
+            ) : stats.completedCount > 0 ? (
+              <h2 className="text-xl font-bold text-primary mb-1">Great Progress Today!</h2>
+            ) : (
+              <h2 className="text-xl font-bold text-card-foreground mb-1">Time to Reflect</h2>
+            )}
+            <p className="text-sm text-muted-foreground">Let's celebrate what you accomplished and plan ahead.</p>
+          </div>
+          
+          {/* Task Completion Display */}
+          {tasks.some(task => task?.title) && (
+            <div className="bg-background/80 rounded-xl p-4 border">
+              <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
+                <Trophy className="w-4 h-4 text-primary" />
+                Today's Big Three
+              </h3>
+              <div className="space-y-2">
+                {tasks.map((task, index) => (
+                  task?.title ? (
+                    <div key={index} className="flex items-center gap-3">
+                      <CheckCircle 
+                        className={`w-5 h-5 ${task.completed ? 'text-primary' : 'text-muted-foreground'}`}
+                      />
+                      <span className={`text-sm ${task.completed ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>
+                        {task.title}
+                      </span>
+                      {task.completed && <Star className="w-4 h-4 text-primary animate-pulse" />}
+                    </div>
+                  ) : null
+                ))}
+              </div>
+              <div className="mt-3 text-center">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full">
+                  <span className="text-sm font-medium text-primary">
+                    {stats.completedCount} of {stats.totalCount} completed
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
+        
         <div className="p-5 space-y-4">
           {/* Today's Future Note */}
           {todays?.text && (
@@ -42,37 +89,50 @@ export default function DebriefModal({ open, onClose }:{ open:boolean; onClose:(
           {/* Daily Summary */}
           <DailySummary />
           
-          <div>
-            <label className="text-sm text-muted-foreground block mb-1">Wins (up to 3)</label>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <input 
+          {/* Enhanced Journal Prompts */}
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm text-muted-foreground block mb-1">🌟 What went really well today?</label>
+              <textarea 
                 value={w1} 
                 onChange={e=>setW1(e.target.value)} 
-                className="rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" 
-                placeholder="Shipped landing page" 
+                rows={2}
+                className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" 
+                placeholder="I completed my presentation, stayed focused during deep work, connected with my team..." 
               />
-              <input 
+            </div>
+            
+            <div>
+              <label className="text-sm text-muted-foreground block mb-1">🔄 What would you do differently tomorrow?</label>
+              <textarea 
                 value={w2} 
                 onChange={e=>setW2(e.target.value)} 
-                className="rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" 
-                placeholder="Closed client" 
+                rows={2}
+                className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" 
+                placeholder="Start earlier, take more breaks, eliminate distractions..." 
               />
-              <input 
+            </div>
+            
+            <div>
+              <label className="text-sm text-muted-foreground block mb-1">🏆 What are you most proud of accomplishing?</label>
+              <textarea 
                 value={w3} 
                 onChange={e=>setW3(e.target.value)} 
-                className="rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" 
-                placeholder="Stayed focused" 
+                rows={2}
+                className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" 
+                placeholder="Pushed through a challenging task, maintained consistent energy, helped a colleague..." 
               />
             </div>
           </div>
+          
           <div>
-            <label className="text-sm text-muted-foreground block mb-1">Reflection</label>
+            <label className="text-sm text-muted-foreground block mb-1">💭 Additional reflection (optional)</label>
             <textarea 
               value={reflect} 
               onChange={e=>setReflect(e.target.value)} 
-              rows={3} 
+              rows={2} 
               className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" 
-              placeholder="What worked? What needs adjustment?" 
+              placeholder="Any other thoughts, lessons learned, or insights from today..." 
             />
           </div>
           <div>
@@ -107,6 +167,7 @@ export default function DebriefModal({ open, onClose }:{ open:boolean; onClose:(
             onClick={()=>{
               try {
                 log.info("Saving daily debrief", { w1, w2, w3, reflect, n1, n2, n3 });
+                // Combine all responses into wins array for storage
                 const wins=[w1,w2,w3].filter(Boolean);
                 const nextTop3=[n1,n2,n3].filter(Boolean);
                 writeTodayDebrief({ wins, reflect, nextTop3 });
