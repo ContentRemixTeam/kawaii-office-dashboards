@@ -120,24 +120,44 @@ const Dashboard = () => {
       {/* Main content */}
       <div className="container mx-auto px-4 py-8 layout-container-dashboard layout-spacing-sm">
 
-        {/* TOP BAND: exactly two cards */}
+        {/* TOP BAND: Pet Companion & Trophy Case - Core gamification features */}
         <div className="grid grid-cols-1 lg:grid-cols-2 layout-grid-gap-lg items-start">
-          <FeatureErrorBoundary featureName="Ambient Player">
+          <FeatureErrorBoundary featureName="Pet Companion">
             <div className="card-standard">
-              <AmbientPlayerCard />
+              <div className="p-6">
+                <PetStatusCard 
+                  petData={petData}
+                  completedTasks={taskData.completed.filter(Boolean).length}
+                  totalTasks={taskData.tasks.filter(task => task.trim() !== "").length}
+                />
+              </div>
             </div>
           </FeatureErrorBoundary>
-          <FeatureErrorBoundary featureName="Big Three Tasks">
+          <FeatureErrorBoundary featureName="Trophy Case">
             <div className="card-standard">
-              <BigThreeCard />
+              <div className="p-6">
+                <DashboardTrophyCase />
+              </div>
             </div>
           </FeatureErrorBoundary>
         </div>
 
         {/* MAIN BAND: two vertical stacks under the same two columns */}
         <div className="grid grid-cols-1 lg:grid-cols-2 layout-grid-gap-lg items-start">
-          {/* LEFT STACK: Focus Timer → Daily Wins → Hold the Vision */}
+          {/* LEFT STACK: Big Three Tasks → Ambient Player → Focus Timer → Daily Wins */}
           <div className="layout-spacing-md">
+            <FeatureErrorBoundary featureName="Big Three Tasks">
+              <div className="card-standard mb-6">
+                <BigThreeCard />
+              </div>
+            </FeatureErrorBoundary>
+            
+            <FeatureErrorBoundary featureName="Ambient Player">
+              <div className="card-standard mb-6">
+                <AmbientPlayerCard />
+              </div>
+            </FeatureErrorBoundary>
+            
             <FeatureErrorBoundary featureName="Focus Timer">
               <div className="card-standard mb-6">
                 <FocusTimerCard />
@@ -150,74 +170,26 @@ const Dashboard = () => {
               </div>
             </FeatureErrorBoundary>
             
-            <FeatureErrorBoundary featureName="Vision Board">
+            <FeatureErrorBoundary featureName="Daily Wins">
               <div className="card-standard">
+                <DailyWinsTracker />
+              </div>
+            </FeatureErrorBoundary>
+          </div>
+          
+          {/* RIGHT STACK: Habit Garden → Today's Intention → Hold the Vision */}
+          <div className="layout-spacing-md">
+            <FeatureErrorBoundary featureName="Habit Tracker">
+              <div className="card-standard mb-6">
                 <div className="p-6">
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-card-title flex items-center gap-3">
-                      <span className="text-2xl">🌈</span>
-                      Hold the Vision
-                    </h2>
-                  </div>
-                  {visionImages.length > 0 ? (
-                    <div className="grid grid-cols-2 gap-4 mb-6">
-                      {visionImages.slice(0, 4).map((image, index) => (
-                        <div
-                          key={index}
-                          className="aspect-square rounded-xl overflow-hidden bg-muted/10 cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-lg group"
-                          onClick={() => navigate('/tools/vision')}
-                        >
-                          <img
-                            src={image}
-                            alt={`Vision ${index + 1}`}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="h-32 rounded-xl bg-gradient-to-br from-muted/20 to-muted/10 flex items-center justify-center mb-6 border border-muted/20">
-                      <div className="text-center">
-                        <div className="text-3xl mb-2">🌟</div>
-                        <p className="text-caption">Add images to your vision board</p>
-                      </div>
-                    </div>
-                  )}
-                  <Button
-                    onClick={() => navigate('/tools/vision')}
-                    className="w-full"
-                    variant="outline"
-                    size="sm"
-                  >
-                    View Full Board
-                  </Button>
+                  <DashboardHabitTracker />
                 </div>
               </div>
             </FeatureErrorBoundary>
           </div>
           
-          {/* RIGHT STACK: Trophy Case → Pet Companion → Habit Garden → Today's Intention */}
+          {/* RIGHT STACK: Habit Garden → Today's Intention → Hold the Vision */}
           <div className="layout-spacing-md">
-            <FeatureErrorBoundary featureName="Trophy Case">
-              <div className="card-standard mb-6">
-                <div className="p-6">
-                  <DashboardTrophyCase />
-                </div>
-              </div>
-            </FeatureErrorBoundary>
-            
-            <FeatureErrorBoundary featureName="Pet Companion">
-              <div className="card-standard mb-6">
-                <div className="p-6">
-                  <PetStatusCard 
-                    petData={petData}
-                    completedTasks={taskData.completed.filter(Boolean).length}
-                    totalTasks={taskData.tasks.filter(task => task.trim() !== "").length}
-                  />
-                </div>
-              </div>
-            </FeatureErrorBoundary>
-            
             <FeatureErrorBoundary featureName="Habit Tracker">
               <div className="card-standard mb-6">
                 <div className="p-6">
@@ -263,6 +235,51 @@ const Dashboard = () => {
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
+                </div>
+              </div>
+            </FeatureErrorBoundary>
+            
+            <FeatureErrorBoundary featureName="Vision Board">
+              <div className="card-standard">
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-card-title flex items-center gap-3">
+                      <span className="text-2xl">🌈</span>
+                      Hold the Vision
+                    </h2>
+                  </div>
+                  {visionImages.length > 0 ? (
+                    <div className="grid grid-cols-2 gap-4 mb-6">
+                      {visionImages.slice(0, 4).map((image, index) => (
+                        <div
+                          key={index}
+                          className="aspect-square rounded-xl overflow-hidden bg-muted/10 cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-lg group"
+                          onClick={() => navigate('/tools/vision')}
+                        >
+                          <img
+                            src={image}
+                            alt={`Vision ${index + 1}`}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="h-32 rounded-xl bg-gradient-to-br from-muted/20 to-muted/10 flex items-center justify-center mb-6 border border-muted/20">
+                      <div className="text-center">
+                        <div className="text-3xl mb-2">🌟</div>
+                        <p className="text-caption">Add images to your vision board</p>
+                      </div>
+                    </div>
+                  )}
+                  <Button
+                    onClick={() => navigate('/tools/vision')}
+                    className="w-full"
+                    variant="outline"
+                    size="sm"
+                  >
+                    View Full Board
+                  </Button>
                 </div>
               </div>
             </FeatureErrorBoundary>
