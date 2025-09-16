@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { Play, ExternalLink, Maximize2, Minimize2 } from "lucide-react";
+import { Play, ExternalLink, Maximize2, Minimize2, Loader2 } from "lucide-react";
 import { BREAK_CATEGORIES, BreakCategory, BreakPreset } from "@/data/breakPresets";
 import { BreakState, loadBreakState, saveBreakState, trackBreakSession } from "@/lib/breakStore";
 import { extractYouTubeId } from "@/lib/youtube";
@@ -16,6 +16,57 @@ export default function BreakPlayer() {
   const [customUrl, setCustomUrl] = useState(state.customUrl || "");
   const [urlError, setUrlError] = useState("");
   const [activeVideoId, setActiveVideoId] = useState<string | null>(null);
+  const [isAPIReady, setIsAPIReady] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(false);
+
+  // Pre-load YouTube API when component mounts
+  useEffect(() => {
+    preloadYouTubeAPI();
+  }, []);
+
+  const preloadYouTubeAPI = async () => {
+    setIsInitializing(true);
+    
+    // Check if API is already loaded
+    if (window.YT && window.YT.Player) {
+      setIsAPIReady(true);
+      setIsInitializing(false);
+      return;
+    }
+
+    try {
+      // Load YouTube API
+      if (!document.querySelector('script[src*="youtube.com/iframe_api"]')) {
+        const tag = document.createElement('script');
+        tag.src = 'https://www.youtube.com/iframe_api';
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
+      }
+
+      // Wait for API to be ready
+      const checkAPI = () => {
+        return new Promise<void>((resolve) => {
+          if (window.YT && window.YT.Player) {
+            resolve();
+          } else {
+            window.onYouTubeIframeAPIReady = () => resolve();
+          }
+        });
+      };
+
+      await checkAPI();
+      
+      // Additional delay to ensure full initialization
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      setIsAPIReady(true);
+      setIsInitializing(false);
+    } catch (error) {
+      console.error('Failed to load YouTube API:', error);
+      setIsInitializing(false);
+      toast.error('YouTube player initialization failed');
+    }
+  };
 
   // Determine current video ID
   const getCurrentVideoId = (): string | null => {
@@ -33,6 +84,19 @@ export default function BreakPlayer() {
   const currentVideoId = getCurrentVideoId();
 
   const selectPreset = (category: BreakCategory, preset: BreakPreset) => {
+    if (!isAPIReady) {
+      toast.loading("Preparing your wellness video...", { id: "loading-video" });
+      preloadYouTubeAPI().then(() => {
+        toast.dismiss("loading-video");
+        proceedWithPreset(category, preset);
+      });
+      return;
+    }
+    
+    proceedWithPreset(category, preset);
+  };
+
+  const proceedWithPreset = (category: BreakCategory, preset: BreakPreset) => {
     const newState = {
       ...state,
       activeCategory: category.key,
@@ -54,6 +118,19 @@ export default function BreakPlayer() {
       return;
     }
 
+    if (!isAPIReady) {
+      toast.loading("Preparing your custom video...", { id: "loading-custom" });
+      preloadYouTubeAPI().then(() => {
+        toast.dismiss("loading-custom");
+        proceedWithCustomUrl(videoId);
+      });
+      return;
+    }
+
+    proceedWithCustomUrl(videoId);
+  };
+
+  const proceedWithCustomUrl = (videoId: string) => {
     const newState = {
       ...state,
       customUrl,
@@ -74,9 +151,13 @@ export default function BreakPlayer() {
     saveBreakState(newState);
   };
 
-  const handleVideoError = (errorCode: number) => {
-    console.error("YouTube video error:", errorCode);
-    toast.error("This video isn't available, try another.");
+  const handleVideoError = (error: any) => {
+    console.error("YouTube video error:", error);
+    toast.error("Video loading failed. Sometimes videos take a moment to load - please try again.");
+  };
+
+  const handleVideoReady = () => {
+    toast.success("Video ready to play!", { duration: 2000 });
   };
 
   return (
@@ -101,13 +182,27 @@ export default function BreakPlayer() {
         )}
       </div>
 
+      {/* API Initialization Status */}
+      {isInitializing && (
+        <Card className="aspect-video bg-muted/30 flex items-center justify-center">
+          <div className="text-center space-y-4">
+            <Loader2 className="w-12 h-12 mx-auto animate-spin text-primary" />
+            <div>
+              <p className="text-main font-medium">Preparing Break Room...</p>
+              <p className="text-sm text-muted-foreground mt-1">Loading video player</p>
+            </div>
+          </div>
+        </Card>
+      )}
+
       {/* Video Player */}
-      {currentVideoId ? (
+      {!isInitializing && currentVideoId ? (
         <div className={`${state.isHeroMode ? 'fixed inset-0 z-50 bg-black' : 'relative'}`}>
           <div className={`${state.isHeroMode ? 'h-full' : 'aspect-video'} rounded-xl overflow-hidden`}>
             <SafeYouTube
               videoId={currentVideoId}
               onError={handleVideoError}
+              onReady={handleVideoReady}
               className="w-full h-full"
             />
           </div>
@@ -123,11 +218,16 @@ export default function BreakPlayer() {
             </Button>
           )}
         </div>
-      ) : (
+      ) : !isInitializing && (
         <Card className="aspect-video bg-muted/30 flex items-center justify-center">
           <div className="text-center">
             <Play className="w-12 h-12 mx-auto mb-2 text-muted-foreground" />
             <p className="text-muted-foreground">Select a break to get started</p>
+            {!isAPIReady && (
+              <p className="text-xs text-muted-foreground mt-2">
+                Video player will initialize when you select a break
+              </p>
+            )}
           </div>
         </Card>
       )}
@@ -157,8 +257,14 @@ export default function BreakPlayer() {
                       }
                       onClick={() => selectPreset(category, preset)}
                       className="h-auto p-3 flex flex-col items-start text-left"
+                      disabled={isInitializing}
                     >
                       <div className="font-medium text-sm">{preset.title}</div>
+                      {!isAPIReady && (
+                        <div className="text-xs text-muted-foreground mt-1">
+                          Preparing video player...
+                        </div>
+                      )}
                     </Button>
                   ))}
                 </div>
@@ -185,7 +291,11 @@ export default function BreakPlayer() {
               }}
               className={urlError ? "border-destructive" : ""}
             />
-            <Button onClick={handleCustomUrlSubmit} disabled={!customUrl.trim()}>
+            <Button 
+              onClick={handleCustomUrlSubmit} 
+              disabled={!customUrl.trim() || isInitializing}
+            >
+              {isInitializing ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
               Load
             </Button>
           </div>

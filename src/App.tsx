@@ -9,6 +9,7 @@ import { AppErrorBoundary } from "@/components/ErrorBoundary";
 import useDailyFlow from "./hooks/useDailyFlow";
 import DailyIntentionModal from "./components/DailyIntentionModal";
 import DebriefModal from "./components/DebriefModal";
+import { useTodayPet } from "./hooks/useTodayPet";
 import PomodoroWinModal from "./components/PomodoroWinModal";
 import focusTimer from "@/lib/focusTimer";
 import Dashboard from "./pages/Dashboard";
@@ -28,6 +29,7 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const flow = useDailyFlow();
+  const selectedAnimal = useTodayPet();
   const [showPomodoroWin, setShowPomodoroWin] = useState(false);
   const [sessionDuration, setSessionDuration] = useState(25);
 
@@ -76,7 +78,7 @@ const App = () => {
             
             {/* Daily Flow Modals */}
             <DailyIntentionModal open={flow.showIntention} onClose={()=> flow.setShowIntention(false)} />
-            <DebriefModal open={flow.showDebrief} onClose={()=> flow.setShowDebrief(false)} />
+            <DebriefModal open={flow.showDebrief} onClose={()=> flow.setShowDebrief(false)} selectedAnimal={selectedAnimal} />
             <PomodoroWinModal 
               open={showPomodoroWin} 
               onClose={() => setShowPomodoroWin(false)}
