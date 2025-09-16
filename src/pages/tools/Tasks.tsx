@@ -3,16 +3,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { getDailyData, setDailyData } from "@/lib/storage";
-import { emitChanged, addEarnedAnimal } from "@/lib/topbarState";
-import { K_TASKS } from "@/lib/topbar.readers";
 import { useToast } from "@/hooks/use-toast";
 import ToolShell from "@/components/ToolShell";
 import CelebrationModal from "@/components/CelebrationModal";
 import TaskCelebrationModal from "@/components/TaskCelebrationModal";
 import { readTodayIntention } from "@/lib/dailyFlow";
+import { 
+  getPetTaskData, 
+  savePetTaskData, 
+  updatePetTask, 
+  updateSelectedAnimal, 
+  updateReflections 
+} from "@/lib/petTasks";
 
-interface TaskData {
+interface LegacyTaskData {
   tasks: string[];
   reflections: string[];
   completed: boolean[];
@@ -326,96 +330,92 @@ const PetStage = ({ completed, selectedAnimal }: { completed: number; selectedAn
 
 export default function Tasks() {
   const { toast } = useToast();
-  const [taskData, setTaskData] = useState<TaskData>({
-    tasks: ["", "", ""],
-    reflections: ["", "", ""],
-    completed: [false, false, false],
-    selectedAnimal: "unicorn",
-    roundsCompleted: 0,
-    totalTasksCompleted: 0
-  });
+  const [taskData, setTaskData] = useState(getPetTaskData());
   const [showConfetti, setShowConfetti] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
   const [showTaskCelebration, setShowTaskCelebration] = useState(false);
   const [completedTaskIndex, setCompletedTaskIndex] = useState(0);
 
   useEffect(() => {
-    const data = getDailyData("fm_tasks_v1", {
-      tasks: ["", "", ""],
-      reflections: ["", "", ""],
-      completed: [false, false, false],
-      selectedAnimal: "unicorn",
-      roundsCompleted: 0,
-      totalTasksCompleted: 0
-    });
+    // Load current pet task data
+    let data = getPetTaskData();
 
     // Check if we should populate from daily intention
     const intention = readTodayIntention();
-    let initialTasks = data.tasks || ["", "", ""];
     
-    // If tasks are empty and we have intention data, populate from intention
-    const hasEmptyTasks = initialTasks.every(task => !task.trim());
-    if (hasEmptyTasks && intention?.top3?.length) {
-      initialTasks = [
-        intention.top3[0] || "",
-        intention.top3[1] || "",
-        intention.top3[2] || ""
-      ];
+    // If tasks are empty and we have intention data, populate from intention first3
+    const hasEmptyTasks = data.tasks.length === 0;
+    if (hasEmptyTasks && intention?.first3?.length) {
+      const newTasks = intention.first3.map((title, index) => ({
+        id: Date.now().toString(36) + Math.random().toString(36).substr(2),
+        title: title.trim(),
+        completed: false,
+        createdAt: new Date().toISOString(),
+      })).filter(task => task.title);
       
-      // Update the data with intention tasks
-      const updatedData = { ...data, tasks: initialTasks };
-      setTaskData(updatedData);
-      setDailyData("fm_tasks_v1", updatedData);
-    } else {
-      setTaskData(data);
+      data = {
+        ...data,
+        tasks: newTasks,
+      };
+      
+      savePetTaskData(data);
     }
+    
+    setTaskData(data);
   }, []);
 
-  const saveData = (data: TaskData) => {
+  const saveData = (data: any) => {
     setTaskData(data);
-    setDailyData("fm_tasks_v1", data);
-    // Dispatch events for real-time updates
-    window.dispatchEvent(new CustomEvent('tasksUpdated'));
-    window.dispatchEvent(new Event('storage'));
-    emitChanged([K_TASKS]);
+    savePetTaskData(data);
   };
 
   const handleTaskChange = (index: number, value: string) => {
-    const newData = {
-      ...taskData,
-      tasks: taskData.tasks.map((task, i) => i === index ? value : task)
-    };
+    const updatedTasks = [...taskData.tasks];
+    if (updatedTasks[index]) {
+      updatedTasks[index] = { ...updatedTasks[index], title: value };
+    } else {
+      updatedTasks[index] = {
+        id: Date.now().toString(36) + Math.random().toString(36).substr(2),
+        title: value,
+        completed: false,
+        createdAt: new Date().toISOString(),
+      };
+    }
+    const newData = { ...taskData, tasks: updatedTasks };
     saveData(newData);
   };
 
   const handleReflectionChange = (index: number, value: string) => {
-    const newData = {
-      ...taskData,
-      reflections: taskData.reflections.map((reflection, i) => i === index ? value : reflection)
-    };
-    saveData(newData);
+    const newReflections = [...taskData.reflections];
+    newReflections[index] = value;
+    updateReflections(newReflections);
+    setTaskData({ ...taskData, reflections: newReflections });
   };
 
   const handleAnimalSelect = (animalId: string) => {
-    const hasAnyProgress = taskData.completed.some(Boolean);
+    const hasAnyProgress = taskData.tasks.some(task => task.completed);
     if (hasAnyProgress) return; // Don't allow changing if progress made
     
-    const newData = { ...taskData, selectedAnimal: animalId };
-    saveData(newData);
+    updateSelectedAnimal(animalId);
+    setTaskData({ ...taskData, selectedAnimal: animalId });
   };
 
   const toggleTaskCompleted = (index: number) => {
-    const newCompleted = taskData.completed.map((completed, i) => 
-      i === index ? !completed : completed
-    );
-    const newData = { ...taskData, completed: newCompleted };
-    saveData(newData);
+    const task = taskData.tasks[index];
+    if (!task) return;
+    
+    updatePetTask(task.id, { completed: !task.completed });
+    
+    const updatedTasks = [...taskData.tasks];
+    updatedTasks[index] = { ...task, completed: !task.completed };
+    const newData = { ...taskData, tasks: updatedTasks };
+    setTaskData(newData);
 
-    const completedCount = newCompleted.filter(Boolean).length;
-    const previousCompletedCount = taskData.completed.filter(Boolean).length;
+    const completedCount = updatedTasks.filter(task => task.completed).length;
+    const previousCompletedCount = taskData.tasks.filter(task => task.completed).length;
     
     // Show individual task completion celebration
-    if (newCompleted[index] && !taskData.completed[index]) {
+    if (!task.completed && updatedTasks[index].completed) {
       const animal = ANIMALS.find(a => a.id === taskData.selectedAnimal) || ANIMALS[0];
       
       // Show the task celebration modal instead of just a toast
@@ -430,9 +430,6 @@ export default function Tasks() {
       
       const animal = ANIMALS.find(a => a.id === taskData.selectedAnimal) || ANIMALS[0];
       
-      // Add animal to top bar
-      addEarnedAnimal(animal.id, animal.emoji);
-      
       toast({
         title: "🎉 All tasks completed!",
         description: `Your ${animal.name.toLowerCase()} has reached maximum power! You're amazing!`
@@ -443,13 +440,12 @@ export default function Tasks() {
     }
   };
 
-  const completedCount = taskData.completed.filter(Boolean).length;
+  const completedCount = taskData.tasks.filter(task => task.completed).length;
   
   const resetForNewRound = () => {
     const newData = {
       ...taskData,
-      tasks: ["", "", ""],
-      completed: [false, false, false],
+      tasks: [],
       roundsCompleted: (taskData.roundsCompleted || 0) + 1,
       totalTasksCompleted: (taskData.totalTasksCompleted || 0) + 3
     };
@@ -485,7 +481,7 @@ export default function Tasks() {
         <AnimalSelector 
           selectedAnimal={taskData.selectedAnimal}
           onAnimalSelect={handleAnimalSelect}
-          disabled={taskData.completed.some(Boolean)}
+          disabled={taskData.tasks.some(task => task.completed)}
         />
         
         <PetStage completed={completedCount} selectedAnimal={taskData.selectedAnimal} />
@@ -524,27 +520,30 @@ export default function Tasks() {
           <div className="bg-card rounded-xl p-6 border border-border/20">
             <h3 className="font-semibold text-card-foreground mb-4">📝 Today's Tasks</h3>
             <div className="space-y-4">
-              {taskData.tasks.map((task, index) => (
-                <div key={index} className="space-y-2">
-                  <Label className="text-sm text-muted-foreground">Task {index + 1}</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      value={task}
-                      onChange={(e) => handleTaskChange(index, e.target.value)}
-                      placeholder={`What's your ${index === 0 ? "first" : index === 1 ? "second" : "third"} task?`}
-                      className="flex-1"
-                    />
-                    <Button
-                      variant={taskData.completed[index] ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => toggleTaskCompleted(index)}
-                      disabled={!task.trim()}
-                    >
-                      {taskData.completed[index] ? "✓" : "○"}
-                    </Button>
+              {[0, 1, 2].map((index) => {
+                const task = taskData.tasks[index];
+                return (
+                  <div key={index} className="space-y-2">
+                    <Label className="text-sm text-muted-foreground">Task {index + 1}</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        value={task?.title || ""}
+                        onChange={(e) => handleTaskChange(index, e.target.value)}
+                        placeholder={`What's your ${index === 0 ? "first" : index === 1 ? "second" : "third"} task?`}
+                        className="flex-1"
+                      />
+                      <Button
+                        variant={task?.completed ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => toggleTaskCompleted(index)}
+                        disabled={!task?.title?.trim()}
+                      >
+                        {task?.completed ? "✓" : "○"}
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 

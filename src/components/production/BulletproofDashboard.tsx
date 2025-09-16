@@ -287,11 +287,7 @@ export const BulletproofDashboard: React.FC = () => {
               loading={petData.isLoading || taskData.isLoading}
               error={petData.error || taskData.error}
             >
-              <PetStatusCard 
-                petData={{ animal: petData.value.animal || null, stage: petData.value.stage }}
-                completedTasks={taskData.value.completed.filter(Boolean).length}
-                totalTasks={taskData.value.tasks.filter(task => task.trim() !== '').length}
-              />
+              <PetStatusCard />
             </BulletproofCard>
             
             <BulletproofCard

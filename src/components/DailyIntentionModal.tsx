@@ -2,7 +2,8 @@ import React from "react";
 import { writeTodayIntention, readTodayIntention } from "@/lib/dailyFlow";
 import { emitChanged } from "@/lib/bus";
 import { addFutureNote } from "@/lib/futureNotes";
-import { setBigThreeTasks, getBigThreeTasks } from "@/lib/unifiedTasks";
+import { setBigThreeTasks, getBigThreeTasks } from "@/lib/bigThreeTasks";
+import { setPetTasks, getPetTasks } from "@/lib/petTasks";
 import { log } from "@/lib/log";
 
 export default function DailyIntentionModal({ open, onClose }:{
@@ -13,6 +14,9 @@ export default function DailyIntentionModal({ open, onClose }:{
   const [top1, setTop1]   = React.useState("");
   const [top2, setTop2]   = React.useState("");
   const [top3, setTop3]   = React.useState("");
+  const [first1, setFirst1] = React.useState("");
+  const [first2, setFirst2] = React.useState("");
+  const [first3, setFirst3] = React.useState("");
   const [notes,setNotes]  = React.useState("");
   const [futureNote, setFutureNote] = React.useState("");
 
@@ -29,13 +33,21 @@ export default function DailyIntentionModal({ open, onClose }:{
         setTop1(existingIntention.top3?.[0] || "");
         setTop2(existingIntention.top3?.[1] || "");
         setTop3(existingIntention.top3?.[2] || "");
+        setFirst1(existingIntention.first3?.[0] || "");
+        setFirst2(existingIntention.first3?.[1] || "");
+        setFirst3(existingIntention.first3?.[2] || "");
         setNotes(existingIntention.notes || "");
       } else {
         // Load from current tasks if no intention exists
-        const currentTasks = getBigThreeTasks();
-        setTop1(currentTasks[0]?.title || "");
-        setTop2(currentTasks[1]?.title || "");
-        setTop3(currentTasks[2]?.title || "");
+        const currentBigThree = getBigThreeTasks();
+        setTop1(currentBigThree[0]?.title || "");
+        setTop2(currentBigThree[1]?.title || "");
+        setTop3(currentBigThree[2]?.title || "");
+        
+        const currentPetTasks = getPetTasks();
+        setFirst1(currentPetTasks[0]?.title || "");
+        setFirst2(currentPetTasks[1]?.title || "");
+        setFirst3(currentPetTasks[2]?.title || "");
       }
     } else {
       // Reset form when modal closes
@@ -44,6 +56,9 @@ export default function DailyIntentionModal({ open, onClose }:{
       setTop1("");
       setTop2("");
       setTop3("");
+      setFirst1("");
+      setFirst2("");
+      setFirst3("");
       setNotes("");
       setFutureNote("");
     }
@@ -76,30 +91,62 @@ export default function DailyIntentionModal({ open, onClose }:{
               placeholder="One theme or outcome" 
             />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div>
-              <label className="text-sm text-muted-foreground block mb-1">Top task 1</label>
-              <input 
-                value={top1} 
-                onChange={e=>setTop1(e.target.value)} 
-                className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" 
-              />
+          <div>
+            <label className="text-sm text-muted-foreground block mb-2">⭐ The Big Three (most important)</label>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div>
+                <input 
+                  value={top1} 
+                  onChange={e=>setTop1(e.target.value)} 
+                  className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" 
+                  placeholder="Important task 1"
+                />
+              </div>
+              <div>
+                <input 
+                  value={top2} 
+                  onChange={e=>setTop2(e.target.value)} 
+                  className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" 
+                  placeholder="Important task 2"
+                />
+              </div>
+              <div>
+                <input 
+                  value={top3} 
+                  onChange={e=>setTop3(e.target.value)} 
+                  className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" 
+                  placeholder="Important task 3"
+                />
+              </div>
             </div>
-            <div>
-              <label className="text-sm text-muted-foreground block mb-1">Top task 2</label>
-              <input 
-                value={top2} 
-                onChange={e=>setTop2(e.target.value)} 
-                className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" 
-              />
-            </div>
-            <div>
-              <label className="text-sm text-muted-foreground block mb-1">Top task 3</label>
-              <input 
-                value={top3} 
-                onChange={e=>setTop3(e.target.value)} 
-                className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" 
-              />
+          </div>
+          <div>
+            <label className="text-sm text-muted-foreground block mb-2">🎯 First Three Tasks (to tackle first)</label>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div>
+                <input 
+                  value={first1} 
+                  onChange={e=>setFirst1(e.target.value)} 
+                  className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" 
+                  placeholder="First task"
+                />
+              </div>
+              <div>
+                <input 
+                  value={first2} 
+                  onChange={e=>setFirst2(e.target.value)} 
+                  className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" 
+                  placeholder="Second task"
+                />
+              </div>
+              <div>
+                <input 
+                  value={first3} 
+                  onChange={e=>setFirst3(e.target.value)} 
+                  className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" 
+                  placeholder="Third task"
+                />
+              </div>
             </div>
           </div>
           <div>
@@ -134,17 +181,26 @@ export default function DailyIntentionModal({ open, onClose }:{
           <button
             onClick={()=>{
               try {
-                log.info("Saving daily intention", { feel, focus, top1, top2, top3 });
-                const payload = { feel, focus, top3:[top1,top2,top3].filter(Boolean), notes };
+                log.info("Saving daily intention", { feel, focus, top1, top2, top3, first1, first2, first3 });
+                const payload = { 
+                  feel, 
+                  focus, 
+                  top3: [top1, top2, top3].filter(Boolean), 
+                  first3: [first1, first2, first3].filter(Boolean),
+                  notes 
+                };
                 writeTodayIntention(payload);
                 
-                // Save Big Three tasks to unified system
+                // Save Big Three tasks to separate system
                 setBigThreeTasks(top1, top2, top3);
+                
+                // Save Pet tasks to separate system
+                setPetTasks(first1, first2, first3);
                 
                 if (futureNote.trim()) { 
                   addFutureNote(futureNote.trim()); 
                 }
-                emitChanged(["fm_daily_intention_v1", "fm_future_notes_v1", "fm_unified_tasks_v1"]);
+                emitChanged(["fm_daily_intention_v1", "fm_future_notes_v1", "fm_big_three_v1", "fm_pet_tasks_v1"]);
                 log.info("Daily intention saved successfully");
                 onClose();
               } catch (error) {
@@ -152,7 +208,7 @@ export default function DailyIntentionModal({ open, onClose }:{
               }
             }}
             className="px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
-            disabled={!feel && !focus && !top1}
+            disabled={!feel && !focus && !top1 && !first1}
           >
             Save & start day
           </button>

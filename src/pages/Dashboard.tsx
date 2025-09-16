@@ -125,11 +125,7 @@ const Dashboard = () => {
           <FeatureErrorBoundary featureName="Pet Companion">
             <div className="card-standard">
               <div className="p-6">
-                <PetStatusCard 
-                  petData={petData}
-                  completedTasks={taskData.completed.filter(Boolean).length}
-                  totalTasks={taskData.tasks.filter(task => task.trim() !== "").length}
-                />
+                <PetStatusCard />
               </div>
             </div>
           </FeatureErrorBoundary>

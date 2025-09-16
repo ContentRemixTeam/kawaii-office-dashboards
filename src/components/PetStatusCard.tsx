@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { useEffect, useState } from "react";
+import { getPetTaskData } from "@/lib/petTasks";
 
 const ANIMALS = [
   { 
@@ -89,16 +91,44 @@ const ANIMALS = [
   }
 ];
 
-interface PetStatusCardProps {
-  petData: { animal: string | null; stage: number };
-  completedTasks: number;
-  totalTasks: number;
-}
+interface PetStatusCardProps {}
 
-export default function PetStatusCard({ petData, completedTasks, totalTasks }: PetStatusCardProps) {
+export default function PetStatusCard({}: PetStatusCardProps) {
+  const [petData, setPetData] = useState({ animalType: "unicorn", stage: 0 });
+  const [completedTasks, setCompletedTasks] = useState(0);
+  const [totalTasks, setTotalTasks] = useState(0);
+  
+  useEffect(() => {
+    const updatePetData = () => {
+      const taskData = getPetTaskData();
+      setPetData({
+        animalType: taskData.selectedAnimal,
+        stage: Math.min(taskData.tasks.filter(task => task.completed).length, 3)
+      });
+      
+      const completed = taskData.tasks.filter(task => task.completed).length;
+      setCompletedTasks(completed);
+      setTotalTasks(taskData.tasks.length);
+    };
+
+    // Initial load
+    updatePetData();
+
+    // Listen for pet task updates
+    const handlePetTaskUpdate = () => updatePetData();
+    const handleStorageUpdate = () => updatePetData();
+
+    window.addEventListener('petTasksUpdated', handlePetTaskUpdate);
+    window.addEventListener('storage', handleStorageUpdate);
+
+    return () => {
+      window.removeEventListener('petTasksUpdated', handlePetTaskUpdate);
+      window.removeEventListener('storage', handleStorageUpdate);
+    };
+  }, []);
   const navigate = useNavigate();
   
-  const animal = petData.animal ? ANIMALS.find(a => a.id === petData.animal) : null;
+  const animal = ANIMALS.find(a => a.id === petData.animalType) || ANIMALS[0];
   const stage = Math.min(completedTasks, 3);
   const currentEmoji = animal ? animal.stages[stage] : "🥚";
   

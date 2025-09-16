@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { safeStorage } from "@/lib/safeStorage";
 import { useState, useEffect } from "react";
 import { onChanged } from "@/lib/bus";
-import { getBigThreeTasks, setBigThreeTasks, updateTask, getCompletionStats } from "@/lib/unifiedTasks";
+import { getBigThreeTasks, setBigThreeTasks, updateBigThreeTask, getBigThreeStats } from "@/lib/bigThreeTasks";
 import useDailyFlow from "@/hooks/useDailyFlow";
 
 // TypeScript interfaces for task data structure
@@ -36,7 +36,7 @@ export function BigThreeCard() {
         const newDashData = safeStorage.get<DashboardData>("fm_dashboard_v1", defaultDashData);
         setStreakData(newDashData || defaultDashData);
       }
-      if (keys.includes("fm_unified_tasks_v1")) {
+      if (keys.includes("fm_big_three_v1")) {
         const tasks = getBigThreeTasks();
         setBigThreeTasksState(tasks);
       }
@@ -57,10 +57,10 @@ export function BigThreeCard() {
     const task = bigThreeTasks[index];
     if (!task) return;
     
-    updateTask(task.id, { completed: !task.completed });
+    updateBigThreeTask(task.id, { completed: !task.completed });
   };
 
-  const stats = getCompletionStats();
+  const stats = getBigThreeStats();
   const hasAnyTasks = bigThreeTasks.some(task => task?.title?.trim());
 
   return (
