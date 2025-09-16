@@ -225,14 +225,19 @@ const BackgroundManager = memo(function BackgroundManager() {
     return (
       <div className="absolute inset-0 overflow-hidden" style={{ zIndex: -100 }}>
         <iframe
-          src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&disablekb=1&fs=0&cc_load_policy=0&playsinline=1&enablejsapi=0`}
+          src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&disablekb=1&fs=0&cc_load_policy=0&playsinline=1&enablejsapi=0&start=0&end=0`}
           className="absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-h-[100vh] min-w-[177.77vh] transform -translate-x-1/2 -translate-y-1/2"
-          allow="autoplay; encrypted-media"
+          allow="autoplay; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          loading="lazy"
+          title="Background Video"
           style={{
             border: "none",
             pointerEvents: "none",
             zIndex: -100
           }}
+          onLoad={() => log.debug("BackgroundManager: YouTube iframe loaded")}
+          onError={() => log.error("BackgroundManager: YouTube iframe failed to load")}
         />
         <div className="absolute inset-0 bg-black/10" style={{ zIndex: -99 }} />
       </div>

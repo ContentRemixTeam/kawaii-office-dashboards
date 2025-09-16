@@ -21,17 +21,19 @@ declare global {
 let globalAPIState: YouTubeAPIState = 'idle';
 let globalListeners: Set<() => void> = new Set();
 let loadPromise: Promise<void> | null = null;
+let globalRetryCount = 0;
 
 export function useYouTubeAPI(): UseYouTubeAPIResult {
   const [state, setState] = useState<YouTubeAPIState>(globalAPIState);
   const [error, setError] = useState<string | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
+  const [retryCount, setRetryCount] = useState(globalRetryCount);
   const listenerRef = useRef<() => void>();
 
   useEffect(() => {
     // Create listener function
     const listener = () => {
       setState(globalAPIState);
+      setRetryCount(globalRetryCount);
     };
     
     listenerRef.current = listener;
@@ -39,6 +41,7 @@ export function useYouTubeAPI(): UseYouTubeAPIResult {
 
     // Set initial state
     setState(globalAPIState);
+    setRetryCount(globalRetryCount);
 
     return () => {
       if (listenerRef.current) {
@@ -66,124 +69,156 @@ export function useYouTubeAPI(): UseYouTubeAPIResult {
     setError(null);
     notifyListeners();
 
+    console.log('YouTube API: Starting load process');
+
     loadPromise = new Promise<void>((resolve, reject) => {
-      try {
-        // Check if API is already loaded
-        if (window.YT && window.YT.Player) {
-          // Test that the API actually works
-          try {
-            // This will throw if API isn't fully ready
-            const testDiv = document.createElement('div');
-            testDiv.style.display = 'none';
-            document.body.appendChild(testDiv);
-            
-            const testPlayer = new window.YT.Player(testDiv, {
-              height: '100',
-              width: '100',
-              videoId: 'dQw4w9WgXcQ', // Test video
-              events: {
-                onReady: () => {
-                  try {
-                    testPlayer.destroy();
-                    document.body.removeChild(testDiv);
-                  } catch (e) {
-                    // Ignore cleanup errors
-                  }
-                  globalAPIState = 'ready';
-                  notifyListeners();
-                  loadPromise = null;
-                  resolve();
-                },
-                onError: () => {
-                  try {
-                    testPlayer.destroy();
-                    document.body.removeChild(testDiv);
-                  } catch (e) {
-                    // Ignore cleanup errors
-                  }
-                  throw new Error('YouTube API test failed');
-                }
+      let currentAttempt = 0;
+      const maxAttempts = 3;
+
+      const attemptLoad = () => {
+        currentAttempt++;
+        globalRetryCount = currentAttempt - 1;
+        console.log(`YouTube API: Load attempt ${currentAttempt}/${maxAttempts}`);
+        notifyListeners();
+
+        try {
+          // Check if API is already loaded and functional
+          if (window.YT && window.YT.Player) {
+            // Test that the API actually works with a lightweight check
+            try {
+              // Quick functional test without creating an actual player
+              if (typeof window.YT.Player === 'function' && window.YT.PlayerState) {
+                console.log('YouTube API: Already loaded and functional');
+                globalAPIState = 'ready';
+                globalRetryCount = 0;
+                notifyListeners();
+                loadPromise = null;
+                resolve();
+                return;
               }
-            });
-            return;
-          } catch (e) {
-            // API not fully ready, continue with loading
+            } catch (e) {
+              console.log('YouTube API: Present but not functional, reloading');
+              // API not fully ready, continue with loading
+            }
           }
-        }
 
-        // Remove any existing script tags to avoid conflicts
-        const existingScript = document.querySelector('script[src*="youtube.com/iframe_api"]');
-        if (existingScript) {
-          existingScript.remove();
-        }
+          // Check network connectivity
+          if (!navigator.onLine) {
+            throw new Error('No internet connection');
+          }
 
-        // Load YouTube API
-        const tag = document.createElement('script');
-        tag.src = 'https://www.youtube.com/iframe_api';
-        tag.async = true;
-        
-        tag.onerror = () => {
-          const errorMsg = `Failed to load YouTube API (attempt ${retryCount + 1})`;
-          setError(errorMsg);
-          globalAPIState = 'error';
-          notifyListeners();
-          loadPromise = null;
-          reject(new Error(errorMsg));
-        };
+          // Remove any existing script tags to avoid conflicts
+          const existingScript = document.querySelector('script[src*="youtube.com/iframe_api"]');
+          if (existingScript) {
+            existingScript.remove();
+            console.log('YouTube API: Removed existing script');
+          }
 
-        // Set up global callback
-        window.onYouTubeIframeAPIReady = () => {
-          // Additional verification that API is truly ready
-          setTimeout(() => {
-            if (window.YT && window.YT.Player) {
-              globalAPIState = 'ready';
-              notifyListeners();
-              loadPromise = null;
-              resolve();
+          // Load YouTube API
+          const tag = document.createElement('script');
+          tag.src = 'https://www.youtube.com/iframe_api';
+          tag.async = true;
+          
+          tag.onerror = () => {
+            console.error(`YouTube API: Script load failed on attempt ${currentAttempt}`);
+            if (currentAttempt < maxAttempts) {
+              setTimeout(() => attemptLoad(), 1000 * currentAttempt); // Exponential backoff
             } else {
-              const errorMsg = 'YouTube API loaded but not functional';
+              const errorMsg = `Failed to load YouTube API after ${maxAttempts} attempts`;
               setError(errorMsg);
               globalAPIState = 'error';
+              globalRetryCount = maxAttempts;
               notifyListeners();
               loadPromise = null;
               reject(new Error(errorMsg));
             }
-          }, 100);
-        };
+          };
 
-        // Add script to page
-        const firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
+          // Set up global callback with verification
+          window.onYouTubeIframeAPIReady = () => {
+            console.log('YouTube API: onYouTubeIframeAPIReady callback triggered');
+            
+            // Wait a bit for full initialization, then verify
+            setTimeout(() => {
+              if (window.YT && window.YT.Player && typeof window.YT.Player === 'function') {
+                console.log('YouTube API: Successfully loaded and verified');
+                globalAPIState = 'ready';
+                globalRetryCount = 0;
+                notifyListeners();
+                loadPromise = null;
+                resolve();
+              } else {
+                console.error('YouTube API: Callback triggered but API not functional');
+                if (currentAttempt < maxAttempts) {
+                  setTimeout(() => attemptLoad(), 1000 * currentAttempt);
+                } else {
+                  const errorMsg = 'YouTube API loaded but not functional';
+                  setError(errorMsg);
+                  globalAPIState = 'error';
+                  globalRetryCount = maxAttempts;
+                  notifyListeners();
+                  loadPromise = null;
+                  reject(new Error(errorMsg));
+                }
+              }
+            }, 200); // Increased wait time for better stability
+          };
 
-        // Timeout fallback
-        setTimeout(() => {
-          if (globalAPIState === 'loading') {
-            const errorMsg = 'YouTube API load timeout';
+          // Add script to page
+          const firstScriptTag = document.getElementsByTagName('script')[0];
+          if (firstScriptTag && firstScriptTag.parentNode) {
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            console.log('YouTube API: Script added to page');
+          } else {
+            document.head.appendChild(tag);
+            console.log('YouTube API: Script added to head');
+          }
+
+          // Timeout fallback with retry logic
+          setTimeout(() => {
+            if (globalAPIState === 'loading') {
+              console.error(`YouTube API: Load timeout on attempt ${currentAttempt}`);
+              if (currentAttempt < maxAttempts) {
+                setTimeout(() => attemptLoad(), 1000 * currentAttempt);
+              } else {
+                const errorMsg = 'YouTube API load timeout after all attempts';
+                setError(errorMsg);
+                globalAPIState = 'error';
+                globalRetryCount = maxAttempts;
+                notifyListeners();
+                loadPromise = null;
+                reject(new Error(errorMsg));
+              }
+            }
+          }, 10000); // 10 second timeout per attempt
+
+        } catch (err) {
+          console.error(`YouTube API: Error on attempt ${currentAttempt}:`, err);
+          if (currentAttempt < maxAttempts) {
+            setTimeout(() => attemptLoad(), 1000 * currentAttempt);
+          } else {
+            const errorMsg = `YouTube API initialization failed: ${err}`;
             setError(errorMsg);
             globalAPIState = 'error';
+            globalRetryCount = maxAttempts;
             notifyListeners();
             loadPromise = null;
             reject(new Error(errorMsg));
           }
-        }, 15000);
+        }
+      };
 
-      } catch (err) {
-        const errorMsg = `YouTube API initialization failed: ${err}`;
-        setError(errorMsg);
-        globalAPIState = 'error';
-        notifyListeners();
-        loadPromise = null;
-        reject(new Error(errorMsg));
-      }
+      attemptLoad();
     });
 
     return loadPromise;
   };
 
   const retry = () => {
-    setRetryCount(prev => prev + 1);
+    console.log('YouTube API: Manual retry triggered');
     setError(null);
     globalAPIState = 'idle';
+    globalRetryCount = 0;
     loadPromise = null;
     notifyListeners();
   };

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { useToast } from '@/hooks/use-toast';
 import { log } from '@/lib/log';
+import { useYouTubeAPI } from '@/hooks/useYouTubeAPI';
 
 // YouTube Player types
 declare global {
@@ -165,12 +166,17 @@ export default function YouTubeAmbient({
   const playerRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const initTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Use centralized YouTube API hook
+  const youtubeAPI = useYouTubeAPI();
   
   // Enhanced state management
   const [loadingState, setLoadingState] = useState<LoadingState>('idle');
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentError, setCurrentError] = useState<YouTubeError | null>(null);
   const [retryCount, setRetryCount] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
   const networkState = useNetworkStatus();
   
   const [volume, setVolume] = useState(() => {
@@ -268,7 +274,7 @@ export default function YouTubeAmbient({
     }
   }, []);
 
-  // Enhanced player initialization with comprehensive error handling
+  // Enhanced player initialization with centralized API management
   useEffect(() => {
     if (!videoId) {
       setLoadingState('error');
@@ -291,14 +297,19 @@ export default function YouTubeAmbient({
       return;
     }
 
+    if (!youtubeAPI.isReady) {
+      console.log('YouTubeAmbient: Waiting for YouTube API to be ready');
+      setLoadingState('loading');
+      return;
+    }
+
     const initPlayer = async () => {
       try {
         setLoadingState('loading');
         setCurrentError(null);
+        setIsVisible(false);
         
-        log.info(`Initializing YouTube player for video: ${videoId}`);
-        
-        await loadYouTubeAPI();
+        console.log(`YouTubeAmbient: Initializing player for video: ${videoId}`);
         
         if (!containerRef.current) {
           throw new Error('Container ref not available');
@@ -308,82 +319,110 @@ export default function YouTubeAmbient({
         if (playerRef.current && typeof playerRef.current.destroy === 'function') {
           try {
             playerRef.current.destroy();
+            console.log('YouTubeAmbient: Destroyed existing player');
           } catch (e) {
             log.warn('Error destroying existing player:', e);
           }
         }
 
-        // Create player container
-        const playerId = `youtube-player-${Math.random().toString(36).substr(2, 9)}`;
-        const playerDiv = document.createElement('div');
-        playerDiv.id = playerId;
-        containerRef.current.innerHTML = '';
-        containerRef.current.appendChild(playerDiv);
+        // Add 500ms delay for better initialization stability
+        if (initTimeoutRef.current) {
+          clearTimeout(initTimeoutRef.current);
+        }
 
-        playerRef.current = new window.YT.Player(playerId, {
-          videoId,
-          width: '100%',
-          height: '100%',
-          playerVars: {
-            autoplay: 0,
-            mute: startMuted ? 1 : 0,
-            controls: 0,
-            showinfo: 0,
-            rel: 0,
-            iv_load_policy: 3,
-            modestbranding: 1,
-            disablekb: 1,
-            fs: 0,
-            cc_load_policy: 0,
-            playsinline: 1,
-            enablejsapi: 1,
-            origin: window.location.origin
-          },
-          events: {
-            onReady: (event: any) => {
-              try {
-                log.info(`YouTube player ready for video: ${videoId}`);
-                setLoadingState('ready');
-                setRetryCount(0); // Reset retry count on successful load
-                
-                // Set initial volume and mute state
-                event.target.setVolume(volume);
-                if (isMuted || startMuted) {
-                  event.target.mute();
-                } else {
-                  event.target.unMute();
+        initTimeoutRef.current = setTimeout(() => {
+          try {
+            // Create player container
+            const playerId = `youtube-ambient-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            const playerDiv = document.createElement('div');
+            playerDiv.id = playerId;
+            containerRef.current!.innerHTML = '';
+            containerRef.current!.appendChild(playerDiv);
+
+            playerRef.current = new window.YT.Player(playerId, {
+              videoId,
+              width: '100%',
+              height: '100%',
+              playerVars: {
+                autoplay: 0,
+                mute: startMuted ? 1 : 0,
+                controls: 0,
+                showinfo: 0,
+                rel: 0,
+                iv_load_policy: 3,
+                modestbranding: 1,
+                disablekb: 1,
+                fs: 0,
+                cc_load_policy: 0,
+                playsinline: 1,
+                enablejsapi: 1,
+                origin: window.location.origin
+              },
+              events: {
+                onReady: (event: any) => {
+                  try {
+                    console.log(`YouTubeAmbient: Player ready for video: ${videoId}`);
+                    setLoadingState('ready');
+                    setRetryCount(0); // Reset retry count on successful load
+                    
+                    // Delay visibility for smoother experience
+                    setTimeout(() => {
+                      setIsVisible(true);
+                      console.log('YouTubeAmbient: Video made visible');
+                    }, 200);
+                    
+                    // Set initial volume and mute state
+                    event.target.setVolume(volume);
+                    if (isMuted || startMuted) {
+                      event.target.mute();
+                    } else {
+                      event.target.unMute();
+                    }
+                  } catch (error) {
+                    console.error('YouTubeAmbient: Error in onReady callback:', error);
+                    handlePlayerError(-1);
+                  }
+                },
+                onStateChange: (event: any) => {
+                  try {
+                    const isCurrentlyPlaying = event.data === window.YT.PlayerState.PLAYING;
+                    setIsPlaying(isCurrentlyPlaying);
+                    
+                    // Log state changes for debugging
+                    const states = {
+                      [-1]: 'unstarted',
+                      [0]: 'ended',
+                      [1]: 'playing',
+                      [2]: 'paused',
+                      [3]: 'buffering',
+                      [5]: 'cued'
+                    };
+                    console.log(`YouTubeAmbient: Player state changed to: ${states[event.data] || event.data}`);
+                  } catch (error) {
+                    console.error('YouTubeAmbient: Error in onStateChange callback:', error);
+                  }
+                },
+                onError: (event: any) => {
+                  console.error('YouTubeAmbient: Player error event:', event.data);
+                  handlePlayerError(event.data);
                 }
-              } catch (error) {
-                log.error('Error in onReady callback:', error);
-                handlePlayerError(-1);
               }
-            },
-            onStateChange: (event: any) => {
-              try {
-                const isCurrentlyPlaying = event.data === window.YT.PlayerState.PLAYING;
-                setIsPlaying(isCurrentlyPlaying);
-                
-                // Log state changes for debugging
-                const states = {
-                  [-1]: 'unstarted',
-                  [0]: 'ended',
-                  [1]: 'playing',
-                  [2]: 'paused',
-                  [3]: 'buffering',
-                  [5]: 'cued'
-                };
-                log.debug(`Player state changed to: ${states[event.data] || event.data}`);
-              } catch (error) {
-                log.error('Error in onStateChange callback:', error);
-              }
-            },
-            onError: (event: any) => {
-              handlePlayerError(event.data);
+            });
+            
+            console.log('YouTubeAmbient: Player instance created');
+          } catch (error) {
+            console.error('YouTubeAmbient: Error in delayed initialization:', error);
+            if (currentError?.retryable !== false && retryCount < maxRetries) {
+              retryInitialization();
+            } else {
+              setLoadingState('error');
+              setCurrentError({ code: -1, message: 'Failed to initialize player', retryable: false });
             }
           }
-        });
+        }, 500);
+
       } catch (error) {
-        log.error('Failed to initialize YouTube player:', error);
+        console.error('YouTubeAmbient: Failed to initialize YouTube player:', error);
         
         if (currentError?.retryable !== false && retryCount < maxRetries) {
           retryInitialization();
@@ -401,16 +440,20 @@ export default function YouTubeAmbient({
       if (retryTimeoutRef.current) {
         clearTimeout(retryTimeoutRef.current);
       }
+      if (initTimeoutRef.current) {
+        clearTimeout(initTimeoutRef.current);
+      }
       
       if (playerRef.current && typeof playerRef.current.destroy === 'function') {
         try {
           playerRef.current.destroy();
+          console.log('YouTubeAmbient: Player destroyed during cleanup');
         } catch (e) {
           log.warn('Error destroying YouTube player:', e);
         }
       }
     };
-  }, [videoId, startMuted, volume, isMuted, networkState, retryCount, maxRetries, handlePlayerError, retryInitialization, currentError]);
+  }, [videoId, startMuted, volume, isMuted, networkState, retryCount, maxRetries, handlePlayerError, retryInitialization, currentError, youtubeAPI.isReady]);
 
   // Enhanced control handlers with better error handling
   const handlePlay = useCallback(() => {

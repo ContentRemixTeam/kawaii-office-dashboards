@@ -1,11 +1,11 @@
 /**
- * Safe YouTube wrapper with fallback handling
+ * Safe YouTube wrapper with automatic retry and enhanced error handling
  */
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { RefreshCw, Play, AlertTriangle, Volume2, VolumeX, Loader2 } from 'lucide-react';
+import { RefreshCw, Play, Pause, AlertTriangle, Volume2, VolumeX, Loader2 } from 'lucide-react';
 import { log } from '@/lib/log';
 import { useFeatureFlag } from '@/lib/flags';
 import { useYouTubeAPI } from '@/hooks/useYouTubeAPI';
@@ -26,6 +26,7 @@ interface YouTubePlayer {
   unMute: () => void;
   isMuted: () => boolean;
   getVolume: () => number;
+  destroy: () => void;
 }
 
 declare global {
@@ -48,109 +49,196 @@ export default function SafeYouTube({
   const [errorMessage, setErrorMessage] = useState('');
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(startMuted);
-  const [videoReady, setVideoReady] = useState(false);
-  const playerRef = useRef<HTMLDivElement>(null);
-  const enhancedA11y = useFeatureFlag('enhancedAccessibility');
+  const [retryAttempts, setRetryAttempts] = useState(0);
+  const [enhancedA11y, setEnhancedA11y] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(false);
+  
   const youtubeAPI = useYouTubeAPI();
+  const playerRef = useRef<HTMLDivElement>(null);
+  const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const initTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Initialize player when API is ready and videoId is provided
   useEffect(() => {
-    if (youtubeAPI.isReady && videoId) {
-      initializePlayer();
-    } else if (youtubeAPI.state === 'error') {
-      setHasError(true);
-      setErrorMessage(youtubeAPI.error || 'YouTube API failed to load');
-      setIsLoading(false);
+    if (!youtubeAPI.isReady || !videoId || hasError) {
+      return;
     }
-  }, [videoId, youtubeAPI.state, youtubeAPI.isReady]);
 
-  // Remove the old API loading logic since we use the hook now
+    console.log('SafeYouTube: Starting player initialization for video:', videoId);
+    setIsLoading(true);
+    setIsInitializing(true);
+    setIsVisible(false);
+    
+    // Add 500ms delay before initialization for better stability
+    if (initTimeoutRef.current) {
+      clearTimeout(initTimeoutRef.current);
+    }
+    
+    initTimeoutRef.current = setTimeout(() => {
+      initializePlayer();
+    }, 500);
 
-  const initializePlayer = () => {
-    if (!playerRef.current || !window.YT) {
-      setHasError(true);
-      setErrorMessage('YouTube player initialization failed');
-      setIsLoading(false);
+    return () => {
+      if (initTimeoutRef.current) {
+        clearTimeout(initTimeoutRef.current);
+      }
+    };
+  }, [youtubeAPI.isReady, videoId, retryAttempts]);
+
+  const initializePlayer = async () => {
+    if (!playerRef.current || !window.YT?.Player) {
+      console.error('SafeYouTube: Player ref or YT.Player not available');
       return;
     }
 
     try {
-      // Reset states
-      setHasError(false);
-      setIsLoading(true);
-      setVideoReady(false);
+      console.log('SafeYouTube: Creating YouTube player instance');
+      
+      // Clean up existing player
+      if (player) {
+        try {
+          player.destroy();
+          console.log('SafeYouTube: Destroyed existing player');
+        } catch (e) {
+          console.warn('SafeYouTube: Error destroying existing player:', e);
+        }
+      }
 
-      const ytPlayer = new window.YT.Player(playerRef.current, {
-        height: '100%',
-        width: '100%',
+      // Clear the container
+      playerRef.current.innerHTML = '';
+
+      // Create unique player ID
+      const playerId = `yt-player-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const playerDiv = document.createElement('div');
+      playerDiv.id = playerId;
+      playerRef.current.appendChild(playerDiv);
+
+      // Create player instance with enhanced error handling
+      const newPlayer = new window.YT.Player(playerId, {
         videoId: videoId,
+        width: '100%',
+        height: '100%',
         playerVars: {
+          autoplay: 0,
+          controls: 1,
           modestbranding: 1,
           rel: 0,
-          fs: 1,
+          showinfo: 0,
+          iv_load_policy: 3,
+          cc_load_policy: 0,
           playsinline: 1,
+          enablejsapi: 1,
           origin: window.location.origin,
-          autoplay: 0, // Never autoplay - require user interaction
+          fs: 1, // Allow fullscreen
+          hl: 'en', // Language
+          cc_lang_pref: 'en' // Captions language
         },
         events: {
           onReady: handlePlayerReady,
-          onError: handlePlayerError,
           onStateChange: handleStateChange,
+          onError: handlePlayerError,
         },
       });
 
-      setPlayer(ytPlayer);
+      setPlayer(newPlayer);
+      console.log('SafeYouTube: Player instance created successfully');
     } catch (error) {
-      log.recoverable('SafeYouTube.initializePlayer', error);
-      setHasError(true);
-      setErrorMessage('Failed to create YouTube player');
-      setIsLoading(false);
-      onError?.(error);
+      console.error('SafeYouTube: Error initializing player:', error);
+      handlePlayerError({ data: -1 });
     }
   };
 
   const handlePlayerReady = (event: any) => {
+    console.log('SafeYouTube: Player ready for video:', videoId);
     setIsLoading(false);
+    setIsInitializing(false);
     setHasError(false);
-    setVideoReady(true);
+    setErrorMessage('');
+    setRetryAttempts(0);
     
-    const playerInstance = event.target;
+    // Add delay before making video visible for smoother user experience
+    setTimeout(() => {
+      setIsVisible(true);
+      console.log('SafeYouTube: Video made visible');
+    }, 200);
     
-    if (playerInstance && startMuted) {
+    if (startMuted) {
       try {
-        playerInstance.mute();
+        event.target.mute();
         setIsMuted(true);
+        console.log('SafeYouTube: Player muted on ready');
       } catch (error) {
-        log.recoverable('SafeYouTube.handlePlayerReady', error);
+        console.warn('SafeYouTube: Error muting player:', error);
       }
     }
     
-    onReady?.();
+    if (onReady) {
+      onReady();
+    }
   };
 
   const handlePlayerError = (event: any) => {
     const errorCode = event.data;
-    let message = 'Video failed to load';
+    let message = 'An error occurred while loading the video.';
+    let shouldRetry = false;
     
     switch (errorCode) {
       case 2:
-        message = 'Invalid video ID';
+        message = 'Invalid video ID or corrupted video data.';
+        shouldRetry = false;
         break;
       case 5:
-        message = 'HTML5 player error';
+        message = 'HTML5 player error occurred.';
+        shouldRetry = true;
         break;
       case 100:
-        message = 'Video not found or private';
+        message = 'Video not found or has been removed.';
+        shouldRetry = false;
         break;
       case 101:
       case 150:
-        message = 'Video playback not allowed';
+        message = 'Video cannot be embedded or is restricted.';
+        shouldRetry = false;
         break;
+      case -1:
+        message = 'Network or loading error occurred.';
+        shouldRetry = true;
+        break;
+      default:
+        message = `Video error (code: ${errorCode}). Please try again.`;
+        shouldRetry = true;
     }
     
-    log.warn(`YouTube player error ${errorCode}:`, message);
-    setHasError(true);
+    console.error(`SafeYouTube: Player error for video ${videoId}:`, errorCode, message);
+    
+    // Automatic retry logic for retryable errors
+    if (shouldRetry && retryAttempts < 3) {
+      console.log(`SafeYouTube: Auto-retrying (attempt ${retryAttempts + 1}/3) after error:`, message);
+      
+      if (retryTimeoutRef.current) {
+        clearTimeout(retryTimeoutRef.current);
+      }
+      
+      retryTimeoutRef.current = setTimeout(() => {
+        setRetryAttempts(prev => prev + 1);
+        setHasError(false);
+        setErrorMessage('');
+      }, 1000 * (retryAttempts + 1)); // Progressive delay: 1s, 2s, 3s
+      
+      return;
+    }
+    
+    // No more retries or non-retryable error
     setErrorMessage(message);
-    onError?.(event);
+    setHasError(true);
+    setIsLoading(false);
+    setIsInitializing(false);
+    setIsVisible(false);
+    
+    if (onError) {
+      onError(event);
+    }
   };
 
   const handleStateChange = (event: any) => {
@@ -195,88 +283,130 @@ export default function SafeYouTube({
   };
 
   const retry = () => {
+    console.log('SafeYouTube: Manual retry triggered');
     setHasError(false);
     setErrorMessage('');
-    setPlayer(null);
-    setVideoReady(false);
-    if (youtubeAPI.state === 'error') {
-      youtubeAPI.retry();
-    } else {
-      initializePlayer();
-    }
+    setIsLoading(true);
+    setIsVisible(false);
+    setRetryAttempts(prev => prev + 1);
+    youtubeAPI.retry();
   };
 
+  // Cleanup
+  useEffect(() => {
+    return () => {
+      if (retryTimeoutRef.current) {
+        clearTimeout(retryTimeoutRef.current);
+      }
+      if (initTimeoutRef.current) {
+        clearTimeout(initTimeoutRef.current);
+      }
+      if (player) {
+        try {
+          player.destroy();
+          console.log('SafeYouTube: Player destroyed during cleanup');
+        } catch (e) {
+          console.warn('SafeYouTube: Error during cleanup:', e);
+        }
+      }
+    };
+  }, [player]);
+
+  // Error state with automatic retry info
   if (hasError) {
     return (
-      <Card className={`${className} bg-muted/20`}>
-        <CardContent className="flex flex-col items-center justify-center p-6 min-h-[200px]">
-          <AlertTriangle className="w-12 h-12 text-muted-foreground mb-4" />
-          <Alert className="mb-4">
-            <AlertTriangle className="h-4 w-4" />
-            <AlertDescription>
-              {errorMessage}
-            </AlertDescription>
-          </Alert>
-          
-          <div className="space-y-2">
-            <Button
+      <Card className={`w-full ${className}`}>
+        <CardContent className="p-6 text-center">
+          <div className="text-destructive mb-4">
+            ⚠️ Video Error
+          </div>
+          <p className="text-sm text-muted-foreground mb-4">
+            {errorMessage}
+          </p>
+          {retryAttempts < 3 ? (
+            <p className="text-xs text-muted-foreground mb-4">
+              Automatic retry in progress... (Attempt {retryAttempts + 1}/3)
+            </p>
+          ) : (
+            <Button 
               onClick={retry}
               variant="outline"
-              className="flex items-center gap-2"
+              size="sm"
+              disabled={youtubeAPI.state === 'loading'}
             >
-              <RefreshCw className="w-4 h-4" />
-              Try Again
+              {youtubeAPI.state === 'loading' ? 'Loading...' : 'Try Again'}
             </Button>
-            
-            <p className="text-sm text-muted-foreground">
-              You can also try a different video or use the fallback audio options
-            </p>
+          )}
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Loading state with better feedback
+  if (isLoading || !youtubeAPI.isReady || isInitializing) {
+    return (
+      <Card className={`w-full ${className}`}>
+        <CardContent className="p-6 text-center">
+          <div className="flex items-center justify-center mb-2">
+            <span className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full"></span>
           </div>
+          <p className="text-sm text-muted-foreground">
+            {!youtubeAPI.isReady 
+              ? 'Loading video player...' 
+              : isInitializing 
+                ? 'Initializing video...' 
+                : 'Preparing video...'}
+          </p>
+          {retryAttempts > 0 && (
+            <p className="text-xs text-muted-foreground mt-2">
+              Retry attempt {retryAttempts}
+            </p>
+          )}
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <div className={`relative ${className}`}>
-      {(isLoading || !youtubeAPI.isReady) && (
-        <Card className="absolute inset-0 z-10">
-          <CardContent className="flex items-center justify-center h-full">
-            <div className="text-center space-y-4">
-              <Loader2 className="w-12 h-12 mx-auto animate-spin text-primary" />
-              <p className="text-sm text-muted-foreground">
-                {!youtubeAPI.isReady ? 'Initializing video player...' : 'Loading video...'}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-      
+    <div className={`relative w-full ${className}`}>
+      {/* YouTube Player */}
       <div 
         ref={playerRef}
-        className="w-full h-full"
-        aria-label={enhancedA11y ? "YouTube ambient video player" : undefined}
-        role={enhancedA11y ? "application" : undefined}
+        className={`w-full h-full min-h-[200px] bg-black rounded-lg overflow-hidden transition-opacity duration-300 ${
+          isVisible ? 'opacity-100' : 'opacity-0'
+        }`}
+        style={{ aspectRatio: '16/9' }}
       />
-      
-      {/* Custom controls overlay for accessibility */}
-      {enhancedA11y && player && !isLoading && (
-        <div className="absolute bottom-2 left-2 flex gap-2">
+
+      {/* Loading overlay during initialization */}
+      {!isVisible && !hasError && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm rounded-lg">
+          <div className="text-center">
+            <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+            <p className="text-white text-sm">Loading video...</p>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Controls (when enhanced accessibility is enabled) */}
+      {enhancedA11y && player && isVisible && (
+        <div className="absolute bottom-4 left-4 right-4 flex items-center gap-2 bg-black/75 p-2 rounded">
           <Button
             size="sm"
-            variant="secondary"
+            variant="ghost"
             onClick={togglePlayPause}
-            aria-label={isPlaying ? "Pause video" : "Play video"}
+            className="text-white hover:bg-white/20"
+            aria-label={isPlaying ? 'Pause video' : 'Play video'}
           >
-            <Play className={`w-4 h-4 ${isPlaying ? 'hidden' : 'block'}`} />
-            <span className={`w-4 h-4 ${isPlaying ? 'block' : 'hidden'}`}>⏸</span>
+            {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
           </Button>
           
           <Button
             size="sm"
-            variant="secondary"
+            variant="ghost"
             onClick={toggleMute}
-            aria-label={isMuted ? "Unmute video" : "Mute video"}
+            className="text-white hover:bg-white/20"
+            aria-label={isMuted ? 'Unmute video' : 'Mute video'}
           >
             {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
           </Button>
