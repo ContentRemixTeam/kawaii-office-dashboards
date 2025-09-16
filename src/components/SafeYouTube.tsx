@@ -5,9 +5,10 @@ import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { RefreshCw, Play, AlertTriangle, Volume2, VolumeX } from 'lucide-react';
+import { RefreshCw, Play, AlertTriangle, Volume2, VolumeX, Loader2 } from 'lucide-react';
 import { log } from '@/lib/log';
 import { useFeatureFlag } from '@/lib/flags';
+import { useYouTubeAPI } from '@/hooks/useYouTubeAPI';
 
 interface SafeYouTubeProps {
   videoId: string;
@@ -45,75 +46,39 @@ export default function SafeYouTube({
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [retryCount, setRetryCount] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(startMuted);
+  const [videoReady, setVideoReady] = useState(false);
   const playerRef = useRef<HTMLDivElement>(null);
   const enhancedA11y = useFeatureFlag('enhancedAccessibility');
-
-  const maxRetries = 3;
+  const youtubeAPI = useYouTubeAPI();
 
   useEffect(() => {
-    if (retryCount >= maxRetries) {
+    if (youtubeAPI.isReady && videoId) {
+      initializePlayer();
+    } else if (youtubeAPI.state === 'error') {
       setHasError(true);
-      setErrorMessage('YouTube player failed to load after multiple attempts');
+      setErrorMessage(youtubeAPI.error || 'YouTube API failed to load');
+      setIsLoading(false);
+    }
+  }, [videoId, youtubeAPI.state, youtubeAPI.isReady]);
+
+  // Remove the old API loading logic since we use the hook now
+
+  const initializePlayer = () => {
+    if (!playerRef.current || !window.YT) {
+      setHasError(true);
+      setErrorMessage('YouTube player initialization failed');
+      setIsLoading(false);
       return;
     }
 
-    loadYouTubeAPI();
-  }, [videoId, retryCount]);
-
-  const loadYouTubeAPI = () => {
     try {
-      // Reset error state
+      // Reset states
       setHasError(false);
       setIsLoading(true);
+      setVideoReady(false);
 
-      // Check if API is already loaded
-      if (window.YT && window.YT.Player) {
-        initializePlayer();
-        return;
-      }
-
-      // Load YouTube API
-      const tag = document.createElement('script');
-      tag.src = 'https://www.youtube.com/iframe_api';
-      tag.onerror = handleAPILoadError;
-      
-      const firstScriptTag = document.getElementsByTagName('script')[0];
-      firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
-
-      // Set up callback
-      window.onYouTubeIframeAPIReady = initializePlayer;
-      
-      // Timeout fallback
-      setTimeout(() => {
-        if (isLoading && !player) {
-          handleAPILoadError(new Error('YouTube API load timeout'));
-        }
-      }, 10000);
-    } catch (error) {
-      log.recoverable('SafeYouTube.loadYouTubeAPI', error);
-      handleAPILoadError(error);
-    }
-  };
-
-  const handleAPILoadError = (error: any) => {
-    log.warn('YouTube API failed to load:', error);
-    setRetryCount(prev => prev + 1);
-    setIsLoading(false);
-    
-    if (retryCount >= maxRetries - 1) {
-      setHasError(true);
-      setErrorMessage('Unable to load YouTube player. Please check your connection.');
-      onError?.(error);
-    }
-  };
-
-  const initializePlayer = () => {
-    if (!playerRef.current || !window.YT) return;
-
-    try {
       const ytPlayer = new window.YT.Player(playerRef.current, {
         height: '100%',
         width: '100%',
@@ -136,17 +101,23 @@ export default function SafeYouTube({
       setPlayer(ytPlayer);
     } catch (error) {
       log.recoverable('SafeYouTube.initializePlayer', error);
-      handleAPILoadError(error);
+      setHasError(true);
+      setErrorMessage('Failed to create YouTube player');
+      setIsLoading(false);
+      onError?.(error);
     }
   };
 
-  const handlePlayerReady = () => {
+  const handlePlayerReady = (event: any) => {
     setIsLoading(false);
     setHasError(false);
+    setVideoReady(true);
     
-    if (player && startMuted) {
+    const playerInstance = event.target;
+    
+    if (playerInstance && startMuted) {
       try {
-        player.mute();
+        playerInstance.mute();
         setIsMuted(true);
       } catch (error) {
         log.recoverable('SafeYouTube.handlePlayerReady', error);
@@ -224,10 +195,15 @@ export default function SafeYouTube({
   };
 
   const retry = () => {
-    setRetryCount(0);
     setHasError(false);
     setErrorMessage('');
     setPlayer(null);
+    setVideoReady(false);
+    if (youtubeAPI.state === 'error') {
+      youtubeAPI.retry();
+    } else {
+      initializePlayer();
+    }
   };
 
   if (hasError) {
@@ -263,12 +239,14 @@ export default function SafeYouTube({
 
   return (
     <div className={`relative ${className}`}>
-      {isLoading && (
+      {(isLoading || !youtubeAPI.isReady) && (
         <Card className="absolute inset-0 z-10">
           <CardContent className="flex items-center justify-center h-full">
             <div className="text-center space-y-4">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-              <p className="text-sm text-muted-foreground">Loading video...</p>
+              <Loader2 className="w-12 h-12 mx-auto animate-spin text-primary" />
+              <p className="text-sm text-muted-foreground">
+                {!youtubeAPI.isReady ? 'Initializing video player...' : 'Loading video...'}
+              </p>
             </div>
           </CardContent>
         </Card>
