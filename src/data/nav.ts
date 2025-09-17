@@ -13,33 +13,20 @@ export interface NavSection {
   items: NavItem[];
 }
 
-export const NAV_SECTIONS: NavSection[] = [
-  {
-    title: "Task Tools",
-    emoji: "🐾",
-    items: [
-      { label: "Task Pets", href: "/tools/tasks", emoji: "🐾" },
-      { label: "Energy Word", href: "/tools/energy", emoji: "⚡" }
-    ]
-  },
-  {
-    title: "Focus Tools", 
-    emoji: "🎯",
-    items: [
-      { label: "Pomodoro Timer", href: "/tools/focus", emoji: "⏰" },
-      { label: "Break Room", href: "/tools/break-room", emoji: "🛋️" }
-    ]
-  },
-  {
-    title: "Positivity Hub",
-    emoji: "✨",
-    items: [
-      { label: "Positivity Cabinet", href: "/tools/positivity-cabinet", emoji: "💖" },
-      { label: "Soundscapes", href: "/tools/sounds", emoji: "🎵" },
-      { label: "Theme", href: "/tools/theme", emoji: "🎨" }
-    ]
-  }
+export const NAV_ITEMS: NavItem[] = [
+  { label: "Task Pets", href: "/tools/tasks", emoji: "🐾" },
+  { label: "Pomodoro Timer", href: "/tools/focus", emoji: "⏰" },
+  { label: "Break Room", href: "/tools/break-room", emoji: "🛋️" },
+  { label: "Soundscapes", href: "/tools/sounds", emoji: "🎵" },
+  { label: "Theme", href: "/tools/theme", emoji: "🎨" },
+  { label: "Energy Word", href: "/tools/energy", emoji: "⚡" },
+  { label: "Positivity Cabinet", href: "/tools/positivity-cabinet", emoji: "💖" }
 ];
 
-// Legacy export for compatibility
-export const NAV_ITEMS = NAV_SECTIONS.flatMap(section => section.items);
+export const NAV_SECTIONS: NavSection[] = [
+  {
+    title: "Tools",
+    emoji: "🔧",
+    items: NAV_ITEMS
+  }
+];
