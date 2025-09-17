@@ -55,7 +55,7 @@ export function AppSidebar() {
       `}
       collapsible="icon"
     >
-      <SidebarContent className="gap-0 py-4">
+      <SidebarContent className="gap-0 pt-16 py-4">
         {/* Expand hint when collapsed */}
         {isCollapsed && (
           <div className="px-2 mb-4">
