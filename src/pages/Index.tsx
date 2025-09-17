@@ -117,7 +117,7 @@ const Index = () => {
           <span>🐱 Task Pets</span>
           <span>📁 Positivity Cabinet</span>
           <span>🎨 Customize your theme in Settings</span>
-          <span>🌱 Habit Garden</span>
+          <span>🎯 Vision Board</span>
         </div>
       </div>
     </main>

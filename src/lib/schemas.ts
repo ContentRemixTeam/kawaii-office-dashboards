@@ -183,7 +183,7 @@ export type FocusState = z.infer<typeof FocusStateSchema>;
 export type SoundsState = z.infer<typeof SoundsStateSchema>;
 export type VisionState = z.infer<typeof VisionStateSchema>;
 export type MoneyState = z.infer<typeof MoneyStateSchema>;
-export type HabitsState = z.infer<typeof HabitsStateSchema>;
+
 export type WinsState = z.infer<typeof WinsStateSchema>;
 export type Intention = z.infer<typeof IntentionSchema>;
 export type PowerWord = z.infer<typeof PowerWordSchema>;
@@ -191,7 +191,7 @@ export type Affirmation = z.infer<typeof AffirmationSchema>;
 export type SessionLog = z.infer<typeof SessionLogSchema>;
 export type VisionImage = z.infer<typeof VisionImageSchema>;
 export type MoneyEntry = z.infer<typeof MoneyEntrySchema>;
-export type Habit = z.infer<typeof HabitSchema>;
+
 export type Win = z.infer<typeof WinSchema>;
 export type CelebrationState = z.infer<typeof CelebrationStateSchema>;
 export type AmbientSettings = z.infer<typeof AmbientSettingsSchema>;

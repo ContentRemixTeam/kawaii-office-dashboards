@@ -85,7 +85,7 @@ export default function DebriefModal({ open, onClose, selectedAnimal }: DebriefM
       return "You showed up and made progress - that's what matters!";
     }
     if (stats.completedCount === 2) {
-      return "Two tasks down - you're developing great habits!";
+      return "Two tasks down - you're building momentum!";
     }
     return "You're absolutely crushing your goals! Keep this energy!";
   };

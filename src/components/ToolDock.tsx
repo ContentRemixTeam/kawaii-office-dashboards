@@ -7,7 +7,7 @@ const TOOLS = [
   { href: "/tools/vision", title: "Vision Board", emoji: "🖼️" },
   { href: "/tools/money", title: "Money Tracker", emoji: "🐷" },
   { href: "/tools/affirmations", title: "Affirmations", emoji: "🃏" },
-  { href: "/tools/habits", title: "Habit Garden", emoji: "🌱" },
+  
   { href: "/tools/wins", title: "Daily Wins", emoji: "🏆" },
   { href: "/tools/energy", title: "Energy Word", emoji: "✨" },
   { href: "/tools/sounds", title: "Soundscapes", emoji: "🎧" },

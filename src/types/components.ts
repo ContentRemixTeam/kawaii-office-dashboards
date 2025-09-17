@@ -228,17 +228,14 @@ export interface PetData {
   mood?: 'happy' | 'neutral' | 'sad' | 'excited';
 }
 
-export interface HabitItem {
+
+// Task and productivity types
+export interface TaskItem {
   id: string;
-  name: string;
-  description?: string;
+  title: string;
   completed: boolean;
-  streak: number;
-  color?: string;
-  icon?: LucideIcon;
-  frequency?: 'daily' | 'weekly' | 'monthly';
-  target?: number;
-  unit?: string;
+  createdAt: string;
+  completedAt?: string;
 }
 
 export interface VisionBoardItem {

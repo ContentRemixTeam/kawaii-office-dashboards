@@ -100,17 +100,15 @@ const TEST_CATEGORIES = [
       },
       {
         id: 'daily-5',
-        name: 'Habit Garden',
-        description: 'Habit tracking and garden visualization',
-        instructions: 'Add habits, track completion, verify garden grows, check streak counting',
+        name: 'Task Tracking',
+        description: 'Task management and completion tracking',
+        instructions: 'Add tasks, mark complete, verify persistence, check task counter',
         category: 'Daily Productivity Tools',
         priority: 'medium' as const
       }
     ]
   },
   {
-    name: 'Focus & Time Management',
-    emoji: '⏰',
     items: [
       {
         id: 'focus-1',

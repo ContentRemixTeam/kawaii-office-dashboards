@@ -5,7 +5,7 @@ import { isFeatureVisible } from "@/lib/theme";
 interface ToolSection {
   title: string;
   emoji: string;
-  visibilityKey: "homeDailyHabits" | "homeGameified" | "homeCustomization";
+  visibilityKey: "homeTaskTools" | "homeGameified" | "homeCustomization";
   tools: Array<{
     href: string;
     title: string;
@@ -16,14 +16,13 @@ interface ToolSection {
 
 const TOOL_SECTIONS: ToolSection[] = [
   {
-    title: "Daily Habits",
-    emoji: "🌱",
-    visibilityKey: "homeDailyHabits",
+    title: "Task Tools",
+    emoji: "🐾",
+    visibilityKey: "homeTaskTools",
     tools: [
       { href: "/tools/tasks", title: "Task Pets", emoji: "🐾", subtitle: "Gamified tasks" },
       { href: "/tools/energy", title: "Energy Word", emoji: "✨", subtitle: "Daily power word" },
       { href: "/tools/affirmations", title: "Affirmations", emoji: "🃏", subtitle: "Positive mindset" },
-      { href: "/tools/habits", title: "Habit Garden", emoji: "🌱", subtitle: "Build routines" },
     ]
   },
   {

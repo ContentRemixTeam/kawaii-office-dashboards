@@ -325,7 +325,7 @@ class SafeStorage {
   private isEssentialKey(key: string): boolean {
     const essentialPatterns = [
       'fm_tasks_v1',
-      'fm_habits_v1',
+      
       'fm_vision_v1',
       'fm_focus_timer_v1',
       'fm_daily_',

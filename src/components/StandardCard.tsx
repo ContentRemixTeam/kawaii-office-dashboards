@@ -290,7 +290,8 @@ export function StandardCard({
 }
 
 // Export component variants for common use cases
-export const HabitCard = (props: Omit<StandardCardProps, 'gradient'>) => (
+
+export const TaskCard = (props: Omit<StandardCardProps, 'gradient'>) => (
   <StandardCard {...props} gradient="green" />
 );
 

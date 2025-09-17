@@ -15,12 +15,11 @@ export interface NavSection {
 
 export const NAV_SECTIONS: NavSection[] = [
   {
-    title: "Daily Habits",
-    emoji: "🌱",
+    title: "Task Tools",
+    emoji: "🐾",
     items: [
       { label: "Task Pets", href: "/tools/tasks", emoji: "🐾" },
-      { label: "Energy Word", href: "/tools/energy", emoji: "⚡" },
-      { label: "Habit Garden", href: "/tools/habits", emoji: "🌿" }
+      { label: "Energy Word", href: "/tools/energy", emoji: "⚡" }
     ]
   },
   {

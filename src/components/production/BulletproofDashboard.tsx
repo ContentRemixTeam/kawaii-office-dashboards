@@ -264,7 +264,7 @@ export const BulletproofDashboard: React.FC = () => {
             </BulletproofCard>
           </div>
           
-          {/* RIGHT STACK: Trophy Case → Pet Companion → Habit Garden → Today's Intention */}
+          {/* RIGHT STACK: Trophy Case → Pet Companion → Today's Intention */}
           <div className="layout-spacing-md">
             <BulletproofCard
               title="Trophy Case"

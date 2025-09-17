@@ -108,14 +108,14 @@ export type AmbientSettings = z.infer<typeof StorageSchemas.ambientSettings>;
 export type FocusTimerState = z.infer<typeof StorageSchemas.focusTimerState>;
 export type VisionData = z.infer<typeof StorageSchemas.visionData>;
 export type PetData = z.infer<typeof StorageSchemas.petData>;
-export type HabitData = z.infer<typeof StorageSchemas.habitData>;
+
 
 // Storage keys registry
 export const STORAGE_KEYS = {
   // Daily data keys
   TASKS: 'fm_tasks_v1',
   DASHBOARD: 'fm_dashboard_v1',
-  HABITS: 'fm_habits_v1',
+  
   WINS: 'fm_wins_v1',
   DAILY_INTENTION: 'fm_daily_intention_v1',
   
@@ -370,11 +370,6 @@ export const storage = {
     unifiedStorage.set(STORAGE_KEYS.PET_DATA, { ...current, ...data });
   },
 
-  // Habit operations
-  getHabitData: (date?: string) =>
-    unifiedStorage.getDailyData(STORAGE_KEYS.HABITS, StorageSchemas.habitData, StorageSchemas.habitData.parse({}), date),
-  setHabitData: (data: HabitData, date?: string) =>
-    unifiedStorage.setDailyData(STORAGE_KEYS.HABITS, data, date),
 
   // Generic operations
   get: unifiedStorage.get.bind(unifiedStorage),

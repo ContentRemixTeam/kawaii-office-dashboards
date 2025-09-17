@@ -23,7 +23,7 @@ interface ThemeData {
     topBarEarnedAnimals?: boolean;
     topBarTrophies?: boolean;
     homeVisionStrip?: boolean;
-    homeDailyHabits?: boolean;
+    homeTaskTools?: boolean;
     homeGameified?: boolean;
     homeCustomization?: boolean;
     dailyIntentionAuto?: boolean;
@@ -53,7 +53,7 @@ const DEFAULT_THEME: ThemeData = {
     topBarEarnedAnimals: false,
     topBarTrophies: false,
     homeVisionStrip: false,
-    homeDailyHabits: false,
+    homeTaskTools: false,
     homeGameified: false,
     homeCustomization: false,
     dailyIntentionAuto: false,
