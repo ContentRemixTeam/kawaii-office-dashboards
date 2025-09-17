@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { onChanged } from "@/lib/bus";
 import { readPowerWord, readAffirmation, readPet, readTrophies,
          K_ENERGY, K_AFFIRM, K_TASKS, K_TROPHIES } from "@/lib/topbar.readers";
+import { readEarnedAnimals } from "@/lib/topbarState";
 
 export default function TopBarStatus(){
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ export default function TopBarStatus(){
   const [affirm, setAffirm] = React.useState("");
   const [pet, setPet] = React.useState<{animal:string;stage:number}>({animal:"",stage:0});
   const [trophies, setTrophies] = React.useState(0);
+  const [earnedAnimals, setEarnedAnimals] = React.useState<Array<{ id: string; emoji: string }>>([]);
 
   const refresh = React.useCallback(()=>{
     console.log('TopBarStatus refreshing data...');
@@ -20,8 +22,9 @@ export default function TopBarStatus(){
     const affirmation = readAffirmation();
     const pet = readPet();
     const trophies = readTrophies();
+    const earned = readEarnedAnimals();
     
-    console.log('TopBarStatus data:', { word, affirmation, pet, trophies });
+    console.log('TopBarStatus data:', { word, affirmation, pet, trophies, earned });
     console.log('TopBarStatus - raw localStorage affirmations:', localStorage.getItem('fm_affirmations_v1'));
     console.log('TopBarStatus - raw localStorage trophies:', localStorage.getItem('fm_trophy_stats_v1'));
     
@@ -29,13 +32,14 @@ export default function TopBarStatus(){
     setAffirm(affirmation);
     setPet(pet);
     setTrophies(trophies);
+    setEarnedAnimals(earned);
   },[]);
 
   React.useEffect(()=>{
     refresh();
     return onChanged(keys=>{
       console.log('TopBarStatus received change events for keys:', keys);
-      if (keys.some(k => [K_ENERGY,K_AFFIRM,K_TASKS,K_TROPHIES].includes(k))) {
+      if (keys.some(k => [K_ENERGY,K_AFFIRM,K_TASKS,K_TROPHIES].includes(k)) || keys.includes("fm_earned_animals_v1")) {
         console.log('TopBarStatus triggering refresh for matching keys');
         refresh();
       }
@@ -44,7 +48,6 @@ export default function TopBarStatus(){
 
   // Context-aware display values
   const stageLabel = pet.stage>=3?"Max":String(pet.stage);
-  const petDisplay = pet.animal ? `${pet.animal} · S${stageLabel}` : "No pet";
   const wordDisplay = word || "Choose Word";
   const affirmDisplay = affirm || "Draw Card";
   
@@ -54,7 +57,14 @@ export default function TopBarStatus(){
     bunny: "🐰", fox: "🦊", panda: "🐼", penguin: "🐧", 
     owl: "🦉", hamster: "🐹" 
   };
-  const petEmoji = pet.animal ? petEmojiMap[pet.animal.toLowerCase()] || "🐾" : "🐾";
+  
+  // Display earned pets if any, otherwise show current pet
+  const petDisplay = earnedAnimals.length > 0 
+    ? `${earnedAnimals.length} pets earned!`
+    : pet.animal ? `${pet.animal} · S${stageLabel}` : "No pet";
+  const petEmoji = earnedAnimals.length > 0 
+    ? earnedAnimals.map(a => a.emoji).join("")
+    : pet.animal ? petEmojiMap[pet.animal.toLowerCase()] || "🐾" : "🐾";
 
   return (
     <div className="flex items-center gap-2 overflow-x-auto max-w-full">
