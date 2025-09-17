@@ -28,6 +28,8 @@ import { useTodayPet } from "@/hooks/useTodayPet";
 import { TaskCelebrationPopup } from "@/components/TaskCelebrationPopup";
 import { AnimalGrowthDisplay } from "@/components/AnimalGrowthDisplay";
 import TaskProgressGraph from "./TaskProgressGraph";
+import { useCelebrationSystem } from "@/hooks/useCelebrationSystem";
+import { CelebrationConfetti } from "./CelebrationConfetti";
 
 const ANIMALS = [
   { 
@@ -96,6 +98,7 @@ export default function BigThreeTasksSection() {
   const navigate = useNavigate();
   const { setShowIntention } = useDailyFlow();
   const todayPet = useTodayPet();
+  const { celebrateTaskCompletion, celebrateAllTasksComplete, showConfetti, clearCelebration } = useCelebrationSystem();
   
   // Task celebration popup state
   const [showCelebrationPopup, setShowCelebrationPopup] = useState(false);
@@ -190,9 +193,20 @@ export default function BigThreeTasksSection() {
     
     // Show celebration for task completion (not unchecking)
     if (!wasCompleted) {
+      // Trigger audio-visual celebration
+      celebrateTaskCompletion('big-three');
+      
       setCelebratedTaskTitle(task.title);
       setCelebratedTaskIndex(index);
       setShowCelebrationPopup(true);
+
+      // Check if all tasks are complete
+      const stats = getCompletionStats();
+      if (stats.allCompleted) {
+        setTimeout(() => {
+          celebrateAllTasksComplete();
+        }, 1500); // Delay for better UX
+      }
     }
   };
 
@@ -255,6 +269,15 @@ export default function BigThreeTasksSection() {
 
   return (
     <>
+      {showConfetti && (
+        <CelebrationConfetti
+          taskType="big-three"
+          duration={3000}
+          particleCount={30}
+          onComplete={clearCelebration}
+        />
+      )}
+      
       <div className="space-y-6">
         {/* Enhanced Header */}
         <div className="flex items-center justify-between">

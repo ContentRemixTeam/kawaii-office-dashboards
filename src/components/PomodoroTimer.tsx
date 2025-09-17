@@ -8,6 +8,8 @@ import focusTimer from "@/lib/focusTimer";
 import TrophyCelebration from "./TrophyCelebration";
 import SessionHistory from "./SessionHistory";
 import { Trophy } from "@/lib/trophySystem";
+import { PomodoroCompletionModal } from "./PomodoroCompletionModal";
+import { useCelebrationSystem } from "@/hooks/useCelebrationSystem";
 
 interface TrophyResult {
   trophy: Trophy;
@@ -22,12 +24,26 @@ export default function PomodoroTimer() {
     message: string;
     isVisible: boolean;
   } | null>(null);
+  const [showPomodoroModal, setShowPomodoroModal] = useState(false);
+  const [completedSessionType, setCompletedSessionType] = useState<'focus' | 'short' | 'long'>('focus');
+  const { celebratePomodoroCompletion } = useCelebrationSystem();
 
   useEffect(() => {
     // Subscribe to timer updates
     const unsubscribeTick = focusTimer.on("tick", setTimerState);
-    const unsubscribePhase = focusTimer.on("phase", () => {
+    const unsubscribePhase = focusTimer.on("phase", (newPhase: string, oldPhase: string) => {
       setTimerState(focusTimer.getState());
+      
+      // Show completion modal when a phase completes
+      if (oldPhase === 'focus' || oldPhase === 'short' || oldPhase === 'long') {
+        setCompletedSessionType(oldPhase as 'focus' | 'short' | 'long');
+        setShowPomodoroModal(true);
+        
+        // Trigger celebration for focus sessions
+        if (oldPhase === 'focus') {
+          celebratePomodoroCompletion();
+        }
+      }
     });
 
     // Listen for trophy celebrations
@@ -172,6 +188,19 @@ export default function PomodoroTimer() {
         message={celebration?.message || ""}
         isVisible={celebration?.isVisible || false}
         onClose={() => setCelebration(null)}
+      />
+
+      {/* Pomodoro Completion Modal */}
+      <PomodoroCompletionModal
+        isOpen={showPomodoroModal}
+        onClose={() => setShowPomodoroModal(false)}
+        sessionType={completedSessionType}
+        sessionCount={timerState.cycleCount}
+        onTakeBreak={() => setShowPomodoroModal(false)}
+        onContinue={() => {
+          setShowPomodoroModal(false);
+          focusTimer.start('focus');
+        }}
       />
     </div>
   );
