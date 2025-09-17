@@ -56,10 +56,9 @@ export default function PetCelebrationModal({
   useEffect(() => {
     if (open) {
       setShowConfetti(true);
-      // Add animal to toolbar when popup opens
-      addEarnedAnimal(animalId, animalEmoji);
+      // Note: Animal is already added to toolbar in DashboardPetHero when tasks complete
     }
-  }, [open, animalId, animalEmoji]);
+  }, [open]);
 
   const gifUrl = CELEBRATION_GIFS[animalId as keyof typeof CELEBRATION_GIFS] || CELEBRATION_GIFS.unicorn;
   const message = CELEBRATION_MESSAGES[animalId as keyof typeof CELEBRATION_MESSAGES] || `Your ${animalName} celebrates your success!`;

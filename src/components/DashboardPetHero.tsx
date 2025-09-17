@@ -11,6 +11,7 @@ import {
 } from "@/lib/petTasks";
 import { useGiphyCelebration } from "@/hooks/useGiphyCelebration";
 import PetCelebrationModal from "./PetCelebrationModal";
+import { addEarnedAnimal } from "@/lib/topbarState";
 
 const ANIMALS = [
   { 
@@ -474,7 +475,10 @@ export default function DashboardPetHero() {
     if (completedCount === 3 && previousCompletedCount < 3) {
       const animal = ANIMALS.find(a => a.id === taskData.selectedAnimal) || ANIMALS[0];
       
-      // Show celebration modal instead of just toast
+      // Add the earned animal to the top bar/dashboard display
+      addEarnedAnimal(taskData.selectedAnimal, animal.emoji);
+      
+      // Show celebration modal
       setShowCelebrationModal(true);
       
       celebrateAllTasks(taskData.selectedAnimal);
