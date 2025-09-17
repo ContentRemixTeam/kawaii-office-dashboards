@@ -27,7 +27,6 @@ export const NAV_SECTIONS: NavSection[] = [
     emoji: "🎯",
     items: [
       { label: "Pomodoro Timer", href: "/tools/focus", emoji: "⏰" },
-      { label: "Beat the Clock", href: "/tools/beat-clock", emoji: "🚀" },
       { label: "Break Room", href: "/tools/break-room", emoji: "🛋️" }
     ]
   },
@@ -36,7 +35,6 @@ export const NAV_SECTIONS: NavSection[] = [
     emoji: "✨",
     items: [
       { label: "Positivity Cabinet", href: "/tools/positivity-cabinet", emoji: "💖" },
-      { label: "Vision Board", href: "/tools/vision", emoji: "🌈" },
       { label: "Soundscapes", href: "/tools/sounds", emoji: "🎵" },
       { label: "Theme", href: "/tools/theme", emoji: "🎨" }
     ]
