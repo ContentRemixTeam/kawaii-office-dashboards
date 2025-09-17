@@ -77,6 +77,29 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				/* TIMER THEME COLORS - Phase-specific colors that adapt to themes */
+				timer: {
+					'progress-bg': 'var(--timer-progress-bg)',
+					'progress-track': 'var(--timer-progress-track)',
+					'focus-fill': 'var(--timer-focus-fill)',
+					'focus-bg': 'var(--timer-focus-bg)',
+					'focus-glow': 'var(--timer-focus-glow)',
+					'short-fill': 'var(--timer-short-fill)',
+					'short-bg': 'var(--timer-short-bg)',
+					'short-glow': 'var(--timer-short-glow)',
+					'long-fill': 'var(--timer-long-fill)',
+					'long-bg': 'var(--timer-long-bg)',
+					'long-glow': 'var(--timer-long-glow)',
+					'idle-fill': 'var(--timer-idle-fill)',
+					'idle-bg': 'var(--timer-idle-bg)',
+					'text-primary': 'var(--timer-text-primary)',
+					'text-secondary': 'var(--timer-text-secondary)',
+					'button-bg': 'var(--timer-button-bg)',
+					'button-text': 'var(--timer-button-text)',
+					'button-outline': 'var(--timer-button-outline)',
+					'card-bg': 'var(--timer-card-bg)',
+					'card-border': 'var(--timer-card-border)'
 				}
 			},
 			borderRadius: {

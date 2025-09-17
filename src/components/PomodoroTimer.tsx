@@ -74,12 +74,21 @@ export default function PomodoroTimer() {
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
-  const getPhaseColor = () => {
+  const getPhaseProgressVariant = (): 'timer-focus' | 'timer-short' | 'timer-long' | 'timer-idle' => {
     switch (timerState.phase) {
-      case "focus": return "from-red-500 to-red-600";
-      case "short": return "from-green-500 to-green-600";
-      case "long": return "from-blue-500 to-blue-600";
-      default: return "from-gray-500 to-gray-600";
+      case "focus": return "timer-focus";
+      case "short": return "timer-short";
+      case "long": return "timer-long";
+      default: return "timer-idle";
+    }
+  };
+
+  const getPhaseHeaderClass = () => {
+    switch (timerState.phase) {
+      case "focus": return "timer-header-focus";
+      case "short": return "timer-header-short";
+      case "long": return "timer-header-long";
+      default: return "timer-header-idle";
     }
   };
 
@@ -95,8 +104,8 @@ export default function PomodoroTimer() {
   return (
     <div className="w-full max-w-md mx-auto space-y-6">
       {/* Main Timer Card */}
-      <Card className="overflow-hidden">
-        <CardHeader className={`bg-gradient-to-r ${getPhaseColor()} text-white pb-4`}>
+      <Card className="overflow-hidden border-timer-card-border bg-timer-card-bg">
+        <CardHeader className={`${getPhaseHeaderClass()} text-white pb-4 transition-all duration-500`}>
           <CardTitle className="text-center flex items-center justify-center gap-2">
             <span className="text-2xl">{getPhaseIcon()}</span>
             <span>{timerState.phaseLabel}</span>
@@ -105,12 +114,13 @@ export default function PomodoroTimer() {
         <CardContent className="p-6">
           {/* Timer Display */}
           <div className="text-center mb-6">
-            <div className="text-5xl font-mono font-bold text-foreground mb-2">
+            <div className="text-5xl font-mono font-bold timer-display-text mb-2">
               {formatTime(timerState.msLeft)}
             </div>
             <Progress 
               value={timerState.progress * 100} 
-              className="h-2"
+              variant={getPhaseProgressVariant()}
+              className="h-3 shadow-sm"
             />
           </div>
 
@@ -119,7 +129,7 @@ export default function PomodoroTimer() {
             {!timerState.isRunning ? (
               <Button
                 onClick={() => focusTimer.start(timerState.phase === "idle" ? "focus" : timerState.phase)}
-                className="flex items-center gap-2"
+                className="timer-button-primary flex items-center gap-2 shadow-sm"
               >
                 <Play className="w-4 h-4" />
                 {timerState.phase === "idle" ? "Start Focus" : "Resume"}
@@ -128,7 +138,7 @@ export default function PomodoroTimer() {
               <Button
                 onClick={() => focusTimer.pause()}
                 variant="outline"
-                className="flex items-center gap-2"
+                className="timer-button-outline flex items-center gap-2"
               >
                 <Pause className="w-4 h-4" />
                 Pause
@@ -138,7 +148,7 @@ export default function PomodoroTimer() {
             <Button
               onClick={() => focusTimer.stop()}
               variant="outline"
-              className="flex items-center gap-2"
+              className="timer-button-outline flex items-center gap-2"
             >
               <Square className="w-4 h-4" />
               Stop
@@ -148,7 +158,7 @@ export default function PomodoroTimer() {
               <Button
                 onClick={() => focusTimer.skip()}
                 variant="outline"
-                className="flex items-center gap-2"
+                className="timer-button-outline flex items-center gap-2"
               >
                 <SkipForward className="w-4 h-4" />
                 Skip
@@ -160,11 +170,11 @@ export default function PomodoroTimer() {
           <div className="grid grid-cols-2 gap-4 text-center text-sm">
             <div>
               <div className="text-2xl font-bold text-primary">{timerState.cycleCount}</div>
-              <div className="text-muted-foreground">Sessions Today</div>
+              <div className="timer-label-text">Sessions Today</div>
             </div>
             <div>
               <div className="text-2xl font-bold text-primary">{timerState.dailyGoal}</div>
-              <div className="text-muted-foreground">Daily Goal</div>
+              <div className="timer-label-text">Daily Goal</div>
             </div>
           </div>
 

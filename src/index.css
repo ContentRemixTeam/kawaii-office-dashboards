@@ -132,6 +132,38 @@
     --layout-z-tooltip: 1070;
     --layout-z-toast: 1080;
 
+    /* TIMER THEME SYSTEM - Component-specific theme variables */
+    /* Timer progress colors based on phase */
+    --timer-progress-bg: hsl(var(--muted) / 0.3);
+    --timer-progress-track: hsl(var(--border));
+    
+    --timer-focus-fill: 339 90% 51%;        /* Deep pink for focus */
+    --timer-focus-bg: 339 90% 96%;          /* Light pink background */
+    --timer-focus-glow: 339 90% 80%;        /* Pink glow */
+    
+    --timer-short-fill: 142 76% 36%;        /* Green for short break */
+    --timer-short-bg: 142 76% 96%;          /* Light green background */
+    --timer-short-glow: 142 76% 70%;        /* Green glow */
+    
+    --timer-long-fill: 217 91% 60%;         /* Blue for long break */
+    --timer-long-bg: 217 91% 96%;           /* Light blue background */
+    --timer-long-glow: 217 91% 80%;         /* Blue glow */
+    
+    --timer-idle-fill: hsl(var(--muted-foreground));
+    --timer-idle-bg: hsl(var(--muted));
+    
+    /* Timer text and UI colors */
+    --timer-text-primary: hsl(var(--text-primary));
+    --timer-text-secondary: hsl(var(--text-secondary));
+    --timer-button-bg: hsl(var(--primary));
+    --timer-button-text: hsl(var(--primary-foreground));
+    --timer-button-outline: hsl(var(--border));
+    
+    /* Timer card backgrounds */
+    --timer-card-bg: hsl(var(--card));
+    --timer-card-border: hsl(var(--border));
+    --timer-header-shadow: 0 4px 12px -4px;
+
     --sidebar-background: var(--bg-secondary);
     --sidebar-foreground: var(--text-primary);
     --sidebar-primary: var(--text-primary);
@@ -193,6 +225,27 @@
     --sidebar-accent-foreground: var(--text-secondary);
     --sidebar-border: var(--bg-tertiary);
     --sidebar-ring: 217 91% 60%;
+
+    /* DARK THEME - Timer colors for midnight mode */
+    /* Timer progress colors - adjusted for dark theme visibility */
+    --timer-focus-fill: 339 90% 65%;        /* Brighter pink for dark */
+    --timer-focus-bg: 339 30% 15%;          /* Dark pink background */
+    --timer-focus-glow: 339 90% 65%;        /* Bright pink glow */
+    
+    --timer-short-fill: 142 76% 50%;        /* Brighter green for dark */
+    --timer-short-bg: 142 30% 15%;          /* Dark green background */
+    --timer-short-glow: 142 76% 50%;        /* Bright green glow */
+    
+    --timer-long-fill: 217 91% 70%;         /* Brighter blue for dark */
+    --timer-long-bg: 217 30% 15%;           /* Dark blue background */
+    --timer-long-glow: 217 91% 70%;         /* Bright blue glow */
+    
+    /* Enhanced visibility in dark mode */
+    --timer-progress-bg: hsl(var(--muted) / 0.4);
+    --timer-progress-track: hsl(var(--border) / 0.6);
+    
+    /* Dark mode button adjustments */
+    --timer-button-outline: hsl(var(--border) / 0.7);
   }
 }
 
@@ -382,5 +435,86 @@
 
   .card-interactive {
     @apply card-standard hover:shadow-2xl hover:scale-[1.02] cursor-pointer transition-all duration-300;
+  }
+
+  /* TIMER COMPONENT CLASSES */
+  /* Timer progress bar base */
+  .timer-progress-bar {
+    background-color: var(--timer-progress-bg);
+    border: 1px solid var(--timer-progress-track);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Phase-specific progress fills */
+  .timer-progress-focus {
+    background: linear-gradient(90deg, hsl(var(--timer-focus-fill)), hsl(var(--timer-focus-glow)));
+    box-shadow: 0 0 12px hsl(var(--timer-focus-fill) / 0.5);
+  }
+  
+  .timer-progress-short {
+    background: linear-gradient(90deg, hsl(var(--timer-short-fill)), hsl(var(--timer-short-glow)));
+    box-shadow: 0 0 12px hsl(var(--timer-short-fill) / 0.5);
+  }
+  
+  .timer-progress-long {
+    background: linear-gradient(90deg, hsl(var(--timer-long-fill)), hsl(var(--timer-long-glow)));
+    box-shadow: 0 0 12px hsl(var(--timer-long-fill) / 0.5);
+  }
+  
+  .timer-progress-idle {
+    background: var(--timer-idle-fill);
+    box-shadow: none;
+  }
+  
+  /* Timer card headers with phase colors */
+  .timer-header-focus {
+    background: linear-gradient(135deg, hsl(var(--timer-focus-fill)), hsl(var(--timer-focus-glow)));
+    color: white;
+    box-shadow: var(--timer-header-shadow) hsl(var(--timer-focus-fill) / 0.3);
+  }
+  
+  .timer-header-short {
+    background: linear-gradient(135deg, hsl(var(--timer-short-fill)), hsl(var(--timer-short-glow)));
+    color: white;
+    box-shadow: var(--timer-header-shadow) hsl(var(--timer-short-fill) / 0.3);
+  }
+  
+  .timer-header-long {
+    background: linear-gradient(135deg, hsl(var(--timer-long-fill)), hsl(var(--timer-long-glow)));
+    color: white;
+    box-shadow: var(--timer-header-shadow) hsl(var(--timer-long-fill) / 0.3);
+  }
+  
+  .timer-header-idle {
+    background: linear-gradient(135deg, var(--timer-idle-fill), var(--timer-idle-bg));
+    color: hsl(var(--text-primary));
+    box-shadow: var(--timer-header-shadow) var(--timer-idle-fill);
+  }
+  
+  /* Timer text styles */
+  .timer-display-text {
+    color: var(--timer-text-primary);
+    font-variant-numeric: tabular-nums;
+  }
+  
+  .timer-label-text {
+    color: var(--timer-text-secondary);
+  }
+  
+  /* Theme-aware timer buttons */
+  .timer-button-primary {
+    background-color: var(--timer-button-bg);
+    color: var(--timer-button-text);
+    border: 1px solid transparent;
+  }
+  
+  .timer-button-outline {
+    background-color: transparent;
+    color: var(--timer-text-primary);
+    border: 1px solid var(--timer-button-outline);
+  }
+  
+  .timer-button-outline:hover {
+    background-color: var(--timer-progress-bg);
   }
 }
