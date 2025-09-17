@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   Heart, 
@@ -31,7 +32,7 @@ import { safeGet, safeSet, generateId, getTodayISO } from "@/lib/storage";
 import { getDailyData, setDailyData } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 import { emitChanged } from "@/lib/bus";
-import { K_AFFIRM } from "@/lib/topbar.readers";
+import { K_AFFIRM, K_ENERGY } from "@/lib/topbar.readers";
 
 // Affirmations data
 const AFFIRMATIONS = [
@@ -98,6 +99,12 @@ interface DailyCard {
   text: string;
 }
 
+interface EnergyWordData {
+  word: string;
+  isCustom: boolean;
+  pinned?: boolean;
+}
+
 // Helper functions
 const getWeekKey = (date: Date) => {
   const year = date.getFullYear();
@@ -121,6 +128,13 @@ const categories = [
   { value: "wins", label: "Big Wins", icon: "🏆" },
   { value: "memories", label: "Good Memories", icon: "📸" }
 ];
+
+// Energy Word presets
+const PRESET_WORDS = {
+  inspiring: ["Radiant", "Brilliant", "Luminous", "Vibrant", "Magnificent", "Sparkling", "Glowing", "Dazzling"],
+  calming: ["Serene", "Peaceful", "Tranquil", "Gentle", "Flowing", "Soft", "Harmonious", "Balanced"],
+  empowering: ["Fierce", "Unstoppable", "Confident", "Powerful", "Bold", "Courageous", "Strong", "Determined"]
+};
 
 export default function PositivityCabinet() {
   const navigate = useNavigate();
@@ -157,6 +171,11 @@ export default function PositivityCabinet() {
   const [hasDrawnToday, setHasDrawnToday] = useState(false);
   const [cardHistory, setCardHistory] = useState<{ [date: string]: DailyCard }>({});
 
+  // Energy Word state
+  const [todayWord, setTodayWord] = useState<EnergyWordData | null>(null);
+  const [customWord, setCustomWord] = useState("");
+  const [isPinned, setIsPinned] = useState(true);
+
   // Load data on mount
   useEffect(() => {
     // Load Future Notes
@@ -185,6 +204,11 @@ export default function PositivityCabinet() {
     // Load affirmation history
     const history = safeGet<{ [date: string]: DailyCard }>("fm_affirmation_history_v1", {});
     setCardHistory(history);
+
+    // Load today's energy word
+    const wordData = getDailyData("fm_energy_v1", null);
+    setTodayWord(wordData);
+    setIsPinned(wordData?.pinned !== false);
   }, []);
 
   // Future Notes functions
@@ -364,12 +388,51 @@ export default function PositivityCabinet() {
     }, 1000);
   };
 
+  // Energy Word functions
+  const selectWord = (word: string, isCustom = false) => {
+    const today = new Date().toISOString().slice(0, 10);
+    const wordData = { 
+      word, 
+      isCustom, 
+      pinned: isPinned
+    };
+    setTodayWord(wordData);
+    setDailyData("fm_energy_v1", wordData);
+    
+    emitChanged([K_ENERGY]);
+    
+    toast({
+      title: "✨ Energy word selected!",
+      description: `"${word}" will guide your day with positive energy.`
+    });
+  };
+
+  const selectCustomWord = () => {
+    if (!customWord.trim()) return;
+    selectWord(customWord.trim(), true);
+    setCustomWord("");
+  };
+
+  const togglePin = (newPinned: boolean) => {
+    setIsPinned(newPinned);
+    if (todayWord) {
+      const updatedData = { 
+        word: todayWord.word, 
+        isCustom: todayWord.isCustom,
+        pinned: newPinned 
+      };
+      setTodayWord({ ...todayWord, pinned: newPinned });
+      setDailyData("fm_energy_v1", updatedData);
+      emitChanged([K_ENERGY]);
+    }
+  };
+
   // Get recent wins for this week
   const thisWeekWins = microWins.filter(win => win.week === getWeekKey(new Date()));
   const todaysGratitude = gratitudeEntries.filter(entry => entry.date === getTodayISO());
 
   return (
-    <ToolShell title="Positivity Cabinet">
+    <ToolShell title="Positivity Corner">
       <div className="space-y-6">
         {/* Header */}
         <div className="bg-gradient-kawaii rounded-2xl p-6">
@@ -382,10 +445,11 @@ export default function PositivityCabinet() {
 
         {/* Tabs */}
         <Tabs defaultValue={defaultTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="wins">🏆 Micro Wins</TabsTrigger>
             <TabsTrigger value="gratitude">🙏 Gratitude</TabsTrigger>
             <TabsTrigger value="affirmations">🃏 Affirmations</TabsTrigger>
+            <TabsTrigger value="energy">⚡ Energy Word</TabsTrigger>
             <TabsTrigger value="future">💌 Future Notes</TabsTrigger>
             <TabsTrigger value="cabinet">📦 Encouragements</TabsTrigger>
             <TabsTrigger value="vision">🎯 Vision</TabsTrigger>
@@ -610,6 +674,133 @@ export default function PositivityCabinet() {
                 )
               )}
             </div>
+          </TabsContent>
+
+          {/* Energy Word Tab */}
+          <TabsContent value="energy" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Target className="w-5 h-5" />
+                  Daily Energy Word
+                </CardTitle>
+                <CardDescription>
+                  Choose a powerful word that embodies the energy you want to carry throughout your day.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {todayWord ? (
+                  <div className="space-y-4">
+                    <div className="bg-gradient-kawaii rounded-xl p-6 text-center">
+                      <h3 className="text-xl font-bold text-primary-foreground mb-2">Today's Energy Word</h3>
+                      <div className="text-3xl font-bold text-primary-foreground mb-2">"{todayWord.word}"</div>
+                      <p className="text-primary-foreground/80 text-sm">
+                        {todayWord.isCustom ? "Your personal power word" : "Let this word energize your day!"}
+                      </p>
+                    </div>
+
+                    <Card>
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <Label htmlFor="pin-toggle" className="text-sm font-medium">
+                              📌 Pin word to screen
+                            </Label>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Show a floating badge on all pages
+                            </p>
+                          </div>
+                          <Switch
+                            id="pin-toggle"
+                            checked={isPinned}
+                            onCheckedChange={togglePin}
+                          />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    <div className="grid md:grid-cols-3 gap-4">
+                      <div className="space-y-3">
+                        <h4 className="font-medium text-sm flex items-center gap-2">
+                          🌟 Inspiring
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                          {PRESET_WORDS.inspiring.map((word) => (
+                            <Button
+                              key={word}
+                              variant="outline"
+                              size="sm"
+                              onClick={() => selectWord(word)}
+                              className="text-xs"
+                            >
+                              {word}
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="space-y-3">
+                        <h4 className="font-medium text-sm flex items-center gap-2">
+                          🧘 Calming
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                          {PRESET_WORDS.calming.map((word) => (
+                            <Button
+                              key={word}
+                              variant="outline"
+                              size="sm"
+                              onClick={() => selectWord(word)}
+                              className="text-xs"
+                            >
+                              {word}
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="space-y-3">
+                        <h4 className="font-medium text-sm flex items-center gap-2">
+                          💪 Empowering
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                          {PRESET_WORDS.empowering.map((word) => (
+                            <Button
+                              key={word}
+                              variant="outline"
+                              size="sm"
+                              onClick={() => selectWord(word)}
+                              className="text-xs"
+                            >
+                              {word}
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <h4 className="font-medium text-sm">✨ Create Your Own</h4>
+                      <div className="flex gap-2">
+                        <Input
+                          value={customWord}
+                          onChange={(e) => setCustomWord(e.target.value)}
+                          placeholder="Enter your word..."
+                          onKeyDown={(e) => e.key === 'Enter' && selectCustomWord()}
+                        />
+                        <Button 
+                          onClick={selectCustomWord}
+                          disabled={!customWord.trim()}
+                        >
+                          Choose
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </TabsContent>
 
           {/* Future Notes Tab */}

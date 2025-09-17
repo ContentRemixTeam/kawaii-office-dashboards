@@ -19,8 +19,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Break Room", href: "/tools/break-room", emoji: "🛋️" },
   { label: "Soundscapes", href: "/tools/sounds", emoji: "🎵" },
   { label: "Theme", href: "/tools/theme", emoji: "🎨" },
-  { label: "Energy Word", href: "/tools/energy", emoji: "⚡" },
-  { label: "Positivity Cabinet", href: "/tools/positivity-cabinet", emoji: "💖" }
+  { label: "Positivity Corner", href: "/tools/positivity-cabinet", emoji: "💖" }
 ];
 
 export const NAV_SECTIONS: NavSection[] = [
