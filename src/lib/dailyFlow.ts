@@ -13,7 +13,7 @@ export function readTodayIntention(){
   const d = loadJSON(KEY_INTENT, null);
   return d?.date===todayISO()? d : null;
 }
-export function writeTodayIntention(p:{feel:string; focus:string; top3:string[]; notes?:string;}){
+export function writeTodayIntention(p:{feel:string; focus:string; top3:string[]; notes?:string; workSessionPlan?: {totalHours?: number; pomodoroBlocks?: number; pomodoroLength?: number}}){
   const v = { date: todayISO(), createdAt: nowISO(), ...p };
   saveJSON(KEY_INTENT, v); return v;
 }

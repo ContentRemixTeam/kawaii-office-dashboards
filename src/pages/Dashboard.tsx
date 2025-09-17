@@ -22,6 +22,7 @@ import { BigThreeCard } from "@/components/dashboard/BigThreeCard";
 import DashboardTrophyCase from "@/components/DashboardTrophyCase";
 import { AmbientPlayerCard } from "@/components/dashboard/AmbientPlayerCard";
 import { FocusTimerCard } from "@/components/dashboard/FocusTimerCard";
+import { WorkSessionCard } from "@/components/dashboard/WorkSessionCard";
 
 interface TaskData {
   tasks: string[];
@@ -124,7 +125,10 @@ const Dashboard = () => {
       </div>
 
       {/* Secondary Tools Grid */}
-      <div className="w-full max-w-6xl mb-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="w-full max-w-6xl mb-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <FeatureErrorBoundary featureName="Work Session Plan">
+          <WorkSessionCard />
+        </FeatureErrorBoundary>
         <FeatureErrorBoundary featureName="Ambient Player">
           <AmbientPlayerCard />
         </FeatureErrorBoundary>

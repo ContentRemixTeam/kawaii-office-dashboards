@@ -3,10 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { CheckCircle, Target, Flame, Trophy, HelpCircle } from "lucide-react";
+import { CheckCircle, Target, Flame, Trophy, HelpCircle, Clock } from "lucide-react";
 import { onChanged } from "@/lib/bus";
 import { readPetStage } from "@/lib/topbarState";
 import { getTrophyStats } from "@/lib/trophySystem";
+import { readTodayIntention } from "@/lib/dailyFlow";
 import focusTimer from "@/lib/focusTimer";
 
 export default function DailyProgressPanel() {
@@ -14,6 +15,7 @@ export default function DailyProgressPanel() {
   const [focusProgress, setFocusProgress] = useState(0);
   const [trophyCount, setTrophyCount] = useState(0);
   const [timerState, setTimerState] = useState(focusTimer.getState());
+  const [todayIntention, setTodayIntention] = useState(readTodayIntention());
 
   const loadData = () => {
     // Load task progress
@@ -26,10 +28,17 @@ export default function DailyProgressPanel() {
     console.log('Loading trophy stats:', trophyStats);
     setTrophyCount(trophyStats.todayTrophies || 0);
     
-    // Load timer state
+    // Load intention data
+    const intention = readTodayIntention();
+    setTodayIntention(intention);
+    
+    // Load timer state and calculate progress based on intention goal
     const currentTimerState = focusTimer.getState();
     setTimerState(currentTimerState);
-    const dailyProgress = Math.min((currentTimerState.cycleCount / currentTimerState.dailyGoal) * 100, 100);
+    
+    // Use the goal from today's intention if available, otherwise fall back to timer's daily goal
+    const dailyGoal = intention?.workSessionPlan?.pomodoroBlocks || currentTimerState.dailyGoal;
+    const dailyProgress = Math.min((currentTimerState.cycleCount / dailyGoal) * 100, 100);
     setFocusProgress(dailyProgress);
   };
 
@@ -49,12 +58,17 @@ export default function DailyProgressPanel() {
         console.log('Updated trophy stats:', trophyStats);
         setTrophyCount(trophyStats.todayTrophies || 0);
       }
+      if (keys.includes("fm_daily_intention_v1")) {
+        const updatedIntention = readTodayIntention();
+        setTodayIntention(updatedIntention);
+      }
     });
 
     // Timer updates
     const unsubscribeTimer = focusTimer.on("tick", (state) => {
       setTimerState(state);
-      const dailyProgress = Math.min((state.cycleCount / state.dailyGoal) * 100, 100);
+      const dailyGoal = todayIntention?.workSessionPlan?.pomodoroBlocks || state.dailyGoal;
+      const dailyProgress = Math.min((state.cycleCount / dailyGoal) * 100, 100);
       setFocusProgress(dailyProgress);
     });
 
@@ -62,7 +76,12 @@ export default function DailyProgressPanel() {
       unsubscribe();
       unsubscribeTimer();
     };
-  }, []);
+  }, [todayIntention]);
+
+  // Calculate display values based on intention
+  const dailyGoal = todayIntention?.workSessionPlan?.pomodoroBlocks || timerState.dailyGoal;
+  const sessionLength = todayIntention?.workSessionPlan?.pomodoroLength || 25;
+  const totalWorkHours = todayIntention?.workSessionPlan?.totalHours;
 
   const progressItems = [
     {
@@ -78,8 +97,8 @@ export default function DailyProgressPanel() {
       label: "Focus Sessions",
       progress: focusProgress,
       color: "bg-red-500", 
-      description: `${timerState.cycleCount}/${timerState.dailyGoal} sessions`,
-      tooltip: "Track Pomodoro focus sessions completed vs your daily goal to earn trophies and stay focused"
+      description: `${timerState.cycleCount}/${dailyGoal} sessions`,
+      tooltip: `Track ${sessionLength}-minute Pomodoro focus sessions completed vs your daily goal to earn trophies and stay focused`
     }
   ];
 
@@ -89,6 +108,12 @@ export default function DailyProgressPanel() {
         <CardTitle className="text-lg font-semibold flex items-center gap-2">
           <Flame className="w-5 h-5 text-orange-500" />
           Daily Progress
+          {totalWorkHours && (
+            <Badge variant="outline" className="ml-auto text-xs">
+              <Clock className="w-3 h-3 mr-1" />
+              {totalWorkHours}h planned
+            </Badge>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
