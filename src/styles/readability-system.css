@@ -1,0 +1,147 @@
+/* 
+ * READABILITY ENFORCEMENT SYSTEM
+ * 
+ * This file contains utilities and guidelines to ensure perfect readability
+ * across all themes and prevent future contrast issues.
+ */
+
+/* CONTRAST VALIDATION UTILITIES */
+.contrast-check {
+  /* Use this class during development to highlight contrast issues */
+  outline: 2px dashed red !important;
+}
+
+.contrast-check::after {
+  content: "⚠️ Check contrast ratio";
+  position: absolute;
+  background: red;
+  color: white;
+  padding: 2px 4px;
+  font-size: 10px;
+  z-index: 9999;
+}
+
+/* HIGH CONTRAST ENFORCEMENT */
+.force-readable {
+  color: hsl(var(--text-primary)) !important;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.force-readable-inverse {
+  color: hsl(var(--text-inverse)) !important;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* BRAND BACKGROUND TEXT ENFORCEMENT */
+.on-brand-bg {
+  color: hsl(var(--text-brand-contrast)) !important;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+/* ACCENT BACKGROUND TEXT ENFORCEMENT */
+.on-accent-bg {
+  color: hsl(var(--text-accent-contrast)) !important;
+  font-weight: 500;
+}
+
+/* GUARANTEED READABILITY COMBINATIONS */
+.text-combo-primary {
+  color: hsl(var(--text-primary));
+  background-color: hsl(var(--bg-primary));
+}
+
+.text-combo-secondary {
+  color: hsl(var(--text-secondary));
+  background-color: hsl(var(--bg-secondary));
+}
+
+.text-combo-inverse {
+  color: hsl(var(--text-inverse));
+  background-color: hsl(var(--text-primary));
+}
+
+/* ACCESSIBILITY HELPERS */
+.text-large {
+  font-size: 1.125rem; /* 18px - requires 3:1 contrast ratio */
+  line-height: 1.6;
+}
+
+.text-emphasis {
+  font-weight: 600;
+  color: hsl(var(--text-primary));
+}
+
+.text-de-emphasis {
+  color: hsl(var(--text-tertiary));
+  font-size: 0.875rem;
+}
+
+/* VALIDATION RULES FOR DEVELOPERS */
+/*
+ * ⚠️ IMPORTANT READABILITY RULES ⚠️
+ * 
+ * 1. NEVER use hardcoded colors like:
+ *    - text-white, text-black
+ *    - bg-white, bg-black
+ *    - text-gray-500, etc.
+ * 
+ * 2. ALWAYS use semantic variables:
+ *    - text-primary (highest contrast)
+ *    - text-secondary (medium contrast)
+ *    - text-tertiary (lower contrast)
+ *    - text-brand-contrast (for brand backgrounds)
+ *    - text-accent-contrast (for accent backgrounds)
+ * 
+ * 3. TEST in both light and dark themes
+ * 
+ * 4. MINIMUM contrast ratios:
+ *    - Normal text: 4.5:1
+ *    - Large text (18px+): 3:1
+ *    - UI components: 3:1
+ * 
+ * 5. USE helper classes:
+ *    - .text-brand-readable for text on brand backgrounds
+ *    - .text-accent-readable for text on accent backgrounds
+ *    - .force-readable for critical text that must be visible
+ * 
+ * 6. VALIDATE with tools:
+ *    - WebAIM Contrast Checker
+ *    - Browser DevTools Accessibility tab
+ *    - WAVE Web Accessibility Evaluator
+ */
+
+/* THEME-SPECIFIC OVERRIDES */
+[data-theme="midnight"] .ensure-midnight-readable {
+  color: hsl(var(--text-primary)) !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+[data-theme="light"] .ensure-light-readable {
+  color: hsl(var(--text-primary)) !important;
+}
+
+/* COMPONENT-SPECIFIC READABILITY */
+.tab-trigger-readable {
+  color: hsl(var(--text-primary)) !important;
+  font-weight: 500;
+  background-color: hsl(var(--bg-secondary));
+}
+
+.tab-trigger-readable[data-state="active"] {
+  background-color: hsl(var(--bg-primary));
+  font-weight: 600;
+}
+
+.nav-text-readable {
+  color: hsl(var(--text-primary)) !important;
+  font-weight: 500;
+}
+
+.gradient-text-readable {
+  color: hsl(var(--text-brand-contrast)) !important;
+  font-weight: 600;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}

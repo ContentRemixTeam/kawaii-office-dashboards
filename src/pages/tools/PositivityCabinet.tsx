@@ -434,25 +434,25 @@ export default function PositivityCabinet() {
   return (
     <ToolShell title="Positivity Corner">
       <div className="space-y-6">
-        {/* Header */}
-        <div className="bg-gradient-primary rounded-2xl p-6 text-white">
-          <h2 className="text-xl font-semibold mb-3">✨ Your Personal Vault of Positivity</h2>
-          <p className="text-white/90">
+        {/* Header with Perfect Contrast */}
+        <div className="bg-gradient-primary rounded-2xl p-6">
+          <h2 className="text-xl font-semibold mb-3 text-brand-readable">✨ Your Personal Vault of Positivity</h2>
+          <p className="text-brand-readable opacity-90">
             Store encouragement, celebrate wins, practice gratitude, and draw daily inspiration. 
             Everything you need to stay motivated and positive.
           </p>
         </div>
 
-        {/* Tabs */}
+        {/* Tabs with Enhanced Readability */}
         <Tabs defaultValue={defaultTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-7">
-            <TabsTrigger value="wins">🏆 Micro Wins</TabsTrigger>
-            <TabsTrigger value="gratitude">🙏 Gratitude</TabsTrigger>
-            <TabsTrigger value="affirmations">🃏 Affirmations</TabsTrigger>
-            <TabsTrigger value="energy">⚡ Energy Word</TabsTrigger>
-            <TabsTrigger value="future">💌 Future Notes</TabsTrigger>
-            <TabsTrigger value="cabinet">📦 Encouragements</TabsTrigger>
-            <TabsTrigger value="vision">🎯 Vision</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-7 bg-secondary">
+            <TabsTrigger value="wins" className="text-primary font-medium">🏆 Micro Wins</TabsTrigger>
+            <TabsTrigger value="gratitude" className="text-primary font-medium">🙏 Gratitude</TabsTrigger>
+            <TabsTrigger value="affirmations" className="text-primary font-medium">🃏 Affirmations</TabsTrigger>
+            <TabsTrigger value="energy" className="text-primary font-medium">⚡ Energy Word</TabsTrigger>
+            <TabsTrigger value="future" className="text-primary font-medium">💌 Future Notes</TabsTrigger>
+            <TabsTrigger value="cabinet" className="text-primary font-medium">📦 Encouragements</TabsTrigger>
+            <TabsTrigger value="vision" className="text-primary font-medium">🎯 Vision</TabsTrigger>
           </TabsList>
 
           {/* Micro Wins Tab */}

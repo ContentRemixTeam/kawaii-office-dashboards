@@ -38,12 +38,12 @@ const DEFAULT_THEME: ThemeData = {
     "--bg-start": "350 100% 98%",    // pastel pink
     "--bg-end": "150 40% 96%",       // mint
     "--brand": "340 75% 75%",        // pink accent
-    "--brand-fg": "0 0% 100%",       // white text on brand
+    "--brand-fg": "0 0% 100%",       // white text on brand - proper contrast
     "--accent": "150 60% 65%",       // mint accent
-    "--accent-fg": "160 30% 25%",    // dark text on accent
+    "--accent-fg": "160 30% 25%",    // dark text on accent - proper contrast
     "--card": "0 0% 100%",           // white
-    "--text": "340 15% 25%",         // dark gray
-    "--muted": "340 10% 45%",        // secondary text
+    "--text": "220 13% 18%",         // dark gray - high contrast
+    "--muted": "220 9% 46%",         // medium gray - good contrast
     "--ring": "340 75% 85%"          // focus ring
   },
   hiddenFeatures: {
@@ -80,7 +80,7 @@ export function applyTheme(theme: ThemeData) {
     root.style.setProperty(key, value);
   });
 
-  // Also update the main CSS system variables to match theme
+  // Also update the main CSS system variables to match theme with proper contrast
   root.style.setProperty('--primary', theme.vars['--brand']);
   root.style.setProperty('--primary-foreground', theme.vars['--brand-fg']);
   root.style.setProperty('--secondary', theme.vars['--accent']);
@@ -88,6 +88,13 @@ export function applyTheme(theme: ThemeData) {
   root.style.setProperty('--background', theme.vars['--bg-start']);
   root.style.setProperty('--foreground', theme.vars['--text']);
   root.style.setProperty('--muted-foreground', theme.vars['--muted']);
+  
+  // Update semantic text variables for perfect readability
+  root.style.setProperty('--text-primary', theme.vars['--text']);
+  root.style.setProperty('--text-secondary', theme.vars['--muted']);
+  root.style.setProperty('--text-brand-contrast', theme.vars['--brand-fg']);
+  root.style.setProperty('--text-accent-contrast', theme.vars['--accent-fg']);
+  root.style.setProperty('--bg-primary', theme.vars['--card']);
 
   if (theme.useImage && theme.backgroundImage) {
     document.body.style.backgroundImage = `url(${theme.backgroundImage})`;

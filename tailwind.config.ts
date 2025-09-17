@@ -19,6 +19,21 @@ export default {
 		},
 		extend: {
 			colors: {
+				/* SEMANTIC TEXT COLORS - Use these for guaranteed readability */
+				'text-primary': 'hsl(var(--text-primary))',
+				'text-secondary': 'hsl(var(--text-secondary))',
+				'text-tertiary': 'hsl(var(--text-tertiary))',
+				'text-inverse': 'hsl(var(--text-inverse))',
+				'text-brand-contrast': 'hsl(var(--text-brand-contrast))',
+				'text-accent-contrast': 'hsl(var(--text-accent-contrast))',
+				
+				/* SEMANTIC BACKGROUND COLORS */
+				'bg-primary': 'hsl(var(--bg-primary))',
+				'bg-secondary': 'hsl(var(--bg-secondary))',
+				'bg-tertiary': 'hsl(var(--bg-tertiary))',
+				'bg-interactive': 'hsl(var(--bg-interactive))',
+
+				/* Core shadcn colors with semantic mapping */
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
