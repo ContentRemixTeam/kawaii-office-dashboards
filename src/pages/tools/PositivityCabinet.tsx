@@ -435,9 +435,9 @@ export default function PositivityCabinet() {
     <ToolShell title="Positivity Corner">
       <div className="space-y-6">
         {/* Header */}
-        <div className="bg-gradient-kawaii rounded-2xl p-6">
-          <h2 className="text-xl font-semibold text-primary-foreground mb-3">✨ Your Personal Vault of Positivity</h2>
-          <p className="text-primary-foreground/90">
+        <div className="bg-gradient-primary rounded-2xl p-6 text-white">
+          <h2 className="text-xl font-semibold mb-3">✨ Your Personal Vault of Positivity</h2>
+          <p className="text-white/90">
             Store encouragement, celebrate wins, practice gratitude, and draw daily inspiration. 
             Everything you need to stay motivated and positive.
           </p>
@@ -613,14 +613,14 @@ export default function PositivityCabinet() {
                         isFlipping ? 'rotate-y-180' : ''
                       }`}
                     >
-                      <Card className="absolute inset-0 w-full h-full backface-hidden bg-gradient-kawaii border-2 border-primary/20 shadow-cute">
+                      <Card className="absolute inset-0 w-full h-full backface-hidden bg-gradient-primary border-2 border-primary/20 shadow-cute">
                         <CardContent className="flex items-center justify-center h-full p-6">
                           <div className="text-center">
-                            <Sparkles className="w-16 h-16 text-primary mx-auto mb-4" />
-                            <h3 className="text-xl font-semibold text-primary-foreground mb-2">
+                            <Sparkles className="w-16 h-16 text-white mx-auto mb-4" />
+                            <h3 className="text-xl font-semibold text-white mb-2">
                               Your Daily Affirmation
                             </h3>
-                            <p className="text-primary-foreground/80 text-sm">
+                            <p className="text-white/80 text-sm">
                               Click to reveal today's inspiration
                             </p>
                           </div>
@@ -656,11 +656,11 @@ export default function PositivityCabinet() {
                       Today's Card
                     </Badge>
                     
-                    <Card className="w-72 h-96 mx-auto bg-gradient-kawaii border-2 border-primary/20 shadow-cute">
+                    <Card className="w-72 h-96 mx-auto bg-gradient-primary border-2 border-primary/20 shadow-cute">
                       <CardContent className="flex items-center justify-center h-full p-6">
                         <div className="text-center">
-                          <Heart className="w-12 h-12 text-primary mx-auto mb-6" />
-                          <blockquote className="text-lg font-medium text-primary-foreground leading-relaxed">
+                          <Heart className="w-12 h-12 text-white mx-auto mb-6" />
+                          <blockquote className="text-lg font-medium text-white leading-relaxed">
                             "{todaysCard.text}"
                           </blockquote>
                         </div>
@@ -691,10 +691,10 @@ export default function PositivityCabinet() {
               <CardContent>
                 {todayWord ? (
                   <div className="space-y-4">
-                    <div className="bg-gradient-kawaii rounded-xl p-6 text-center">
-                      <h3 className="text-xl font-bold text-primary-foreground mb-2">Today's Energy Word</h3>
-                      <div className="text-3xl font-bold text-primary-foreground mb-2">"{todayWord.word}"</div>
-                      <p className="text-primary-foreground/80 text-sm">
+                    <div className="bg-gradient-primary rounded-xl p-6 text-center">
+                      <h3 className="text-xl font-bold text-white mb-2">Today's Energy Word</h3>
+                      <div className="text-3xl font-bold text-white mb-2">"{todayWord.word}"</div>
+                      <p className="text-white/80 text-sm">
                         {todayWord.isCustom ? "Your personal power word" : "Let this word energize your day!"}
                       </p>
                     </div>

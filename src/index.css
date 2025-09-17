@@ -55,13 +55,13 @@
     --radius: 1rem;
 
     /* Kawaii Gradients - Now using theme variables */
-    --gradient-kawaii: linear-gradient(135deg, hsl(340 75% 45%), hsl(340 75% 60%)); /* Dark pink for headers */
+    --gradient-kawaii: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow))); /* Now uses primary theme color */
     --gradient-kawaii-light: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow))); /* Light version for cards */
-    --gradient-primary: linear-gradient(135deg, hsl(340 75% 45%), hsl(340 75% 60%)); /* Dark pink for good contrast */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow))); /* Uses primary theme color */
     --gradient-background: linear-gradient(135deg, hsl(var(--bg-start)) 0%, hsl(var(--bg-end)) 100%);
     --gradient-card: linear-gradient(145deg, hsl(var(--card)) 0%, hsl(var(--card)) 100%);
-    --gradient-mint: linear-gradient(135deg, hsl(150 60% 45%), hsl(150 60% 60%)); /* Darker mint for headers */
-    --gradient-peach: linear-gradient(135deg, hsl(25 75% 65%), hsl(25 75% 75%)); /* Darker peach for headers */
+    --gradient-mint: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary-foreground))); /* Now uses secondary theme color */
+    --gradient-peach: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-foreground))); /* Now uses accent theme color */
 
     /* Kawaii Shadows */
     --shadow-soft: 0 4px 20px -4px hsl(var(--primary) / 0.25);
