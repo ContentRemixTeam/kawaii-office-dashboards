@@ -137,17 +137,17 @@
     --timer-progress-bg: hsl(var(--muted) / 0.3);
     --timer-progress-track: hsl(var(--border));
     
-    --timer-focus-fill: 339 90% 51%;        /* Deep pink for focus */
-    --timer-focus-bg: 339 90% 96%;          /* Light pink background */
-    --timer-focus-glow: 339 90% 80%;        /* Pink glow */
+    --timer-focus-fill: var(--brand);        /* Use theme brand color for focus */
+    --timer-focus-bg: hsl(var(--brand) / 0.1);          /* Light brand background */
+    --timer-focus-glow: hsl(var(--brand) / 0.6);        /* Brand glow */
     
-    --timer-short-fill: 142 76% 36%;        /* Green for short break */
-    --timer-short-bg: 142 76% 96%;          /* Light green background */
-    --timer-short-glow: 142 76% 70%;        /* Green glow */
+    --timer-short-fill: var(--accent);        /* Use theme accent for short break */
+    --timer-short-bg: hsl(var(--accent) / 0.1);          /* Light accent background */
+    --timer-short-glow: hsl(var(--accent) / 0.6);        /* Accent glow */
     
-    --timer-long-fill: 217 91% 60%;         /* Blue for long break */
-    --timer-long-bg: 217 91% 96%;           /* Light blue background */
-    --timer-long-glow: 217 91% 80%;         /* Blue glow */
+    --timer-long-fill: var(--secondary);         /* Use secondary for long break */
+    --timer-long-bg: hsl(var(--secondary) / 0.1);           /* Light secondary background */
+    --timer-long-glow: hsl(var(--secondary) / 0.6);         /* Secondary glow */
     
     --timer-idle-fill: hsl(var(--muted-foreground));
     --timer-idle-bg: hsl(var(--muted));
@@ -227,18 +227,18 @@
     --sidebar-ring: 217 91% 60%;
 
     /* DARK THEME - Timer colors for midnight mode */
-    /* Timer progress colors - adjusted for dark theme visibility */
-    --timer-focus-fill: 339 90% 65%;        /* Brighter pink for dark */
-    --timer-focus-bg: 339 30% 15%;          /* Dark pink background */
-    --timer-focus-glow: 339 90% 65%;        /* Bright pink glow */
+    /* Timer progress colors - theme-aware for dark mode */
+    --timer-focus-fill: var(--brand);        /* Use theme brand color */
+    --timer-focus-bg: hsl(var(--brand) / 0.15);          /* Dark theme brand background */
+    --timer-focus-glow: hsl(var(--brand) / 0.8);        /* Enhanced brand glow for dark */
     
-    --timer-short-fill: 142 76% 50%;        /* Brighter green for dark */
-    --timer-short-bg: 142 30% 15%;          /* Dark green background */
-    --timer-short-glow: 142 76% 50%;        /* Bright green glow */
+    --timer-short-fill: var(--accent);        /* Use theme accent */
+    --timer-short-bg: hsl(var(--accent) / 0.15);          /* Dark theme accent background */
+    --timer-short-glow: hsl(var(--accent) / 0.8);        /* Enhanced accent glow */
     
-    --timer-long-fill: 217 91% 70%;         /* Brighter blue for dark */
-    --timer-long-bg: 217 30% 15%;           /* Dark blue background */
-    --timer-long-glow: 217 91% 70%;         /* Bright blue glow */
+    --timer-long-fill: var(--secondary);         /* Use theme secondary */
+    --timer-long-bg: hsl(var(--secondary) / 0.15);           /* Dark theme secondary background */
+    --timer-long-glow: hsl(var(--secondary) / 0.8);         /* Enhanced secondary glow */
     
     /* Enhanced visibility in dark mode */
     --timer-progress-bg: hsl(var(--muted) / 0.4);
@@ -469,19 +469,19 @@
   /* Timer card headers with phase colors */
   .timer-header-focus {
     background: linear-gradient(135deg, hsl(var(--timer-focus-fill)), hsl(var(--timer-focus-glow)));
-    color: white;
+    color: hsl(var(--brand-fg));
     box-shadow: var(--timer-header-shadow) hsl(var(--timer-focus-fill) / 0.3);
   }
   
   .timer-header-short {
     background: linear-gradient(135deg, hsl(var(--timer-short-fill)), hsl(var(--timer-short-glow)));
-    color: white;
+    color: hsl(var(--accent-fg));
     box-shadow: var(--timer-header-shadow) hsl(var(--timer-short-fill) / 0.3);
   }
   
   .timer-header-long {
     background: linear-gradient(135deg, hsl(var(--timer-long-fill)), hsl(var(--timer-long-glow)));
-    color: white;
+    color: hsl(var(--secondary-foreground));
     box-shadow: var(--timer-header-shadow) hsl(var(--timer-long-fill) / 0.3);
   }
   

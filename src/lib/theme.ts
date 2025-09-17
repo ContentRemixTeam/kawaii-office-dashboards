@@ -95,6 +95,14 @@ export function applyTheme(theme: ThemeData) {
   root.style.setProperty('--text-brand-contrast', theme.vars['--brand-fg']);
   root.style.setProperty('--text-accent-contrast', theme.vars['--accent-fg']);
   root.style.setProperty('--bg-primary', theme.vars['--card']);
+  
+  // Ensure timer colors update with theme
+  root.style.setProperty('--timer-focus-fill', theme.vars['--brand']);
+  root.style.setProperty('--timer-short-fill', theme.vars['--accent']);
+  root.style.setProperty('--timer-long-fill', theme.vars['--accent']); // Use accent for long break too
+  root.style.setProperty('--timer-focus-glow', `hsl(${theme.vars['--brand']} / 0.6)`);
+  root.style.setProperty('--timer-short-glow', `hsl(${theme.vars['--accent']} / 0.6)`);
+  root.style.setProperty('--timer-long-glow', `hsl(${theme.vars['--accent']} / 0.6)`);
 
   if (theme.useImage && theme.backgroundImage) {
     document.body.style.backgroundImage = `url(${theme.backgroundImage})`;
