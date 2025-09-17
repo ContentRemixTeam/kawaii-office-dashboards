@@ -92,7 +92,7 @@ export function AppSidebar() {
                 <Home className="h-4 w-4 flex-shrink-0" />
                 {!isCollapsed && (
                   <span className="font-medium text-sm truncate">
-                    Home
+                    Office
                   </span>
                 )}
                 
