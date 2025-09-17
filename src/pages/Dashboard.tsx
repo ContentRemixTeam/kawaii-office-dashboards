@@ -4,9 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import DashboardPetHero from "@/components/DashboardPetHero";
 import VisionPreviewOverlay from "@/components/VisionPreviewOverlay";
-
 import { CelebrationNotesCard } from "@/components/dashboard/CelebrationNotesCard";
-
 import { SidebarGroup } from "@/components/dashboard/SidebarGroup";
 import { useGiphyCelebration } from "@/hooks/useGiphyCelebration";
 import GiphyCelebration from "@/components/GiphyCelebration";
