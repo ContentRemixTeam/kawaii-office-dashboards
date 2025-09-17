@@ -12,12 +12,10 @@ import { useGiphyCelebration } from "@/hooks/useGiphyCelebration";
 import GiphyCelebration from "@/components/GiphyCelebration";
 import { eventBus } from "@/lib/eventBus";
 import { initializeTasksFromIntention } from "@/lib/unifiedTasks";
-import { readVisionThumbs, readPetStage, readEarnedAnimals } from "@/lib/topbarState";
+import { readPetStage, readEarnedAnimals } from "@/lib/topbarState";
 import { readTodayIntention } from "@/lib/dailyFlow";
 import { onChanged } from "@/lib/bus";
 import { FeatureErrorBoundary } from "@/components/ErrorBoundary";
-import { HOTSPOTS, OFFICE_ALT, OFFICE_IMAGE_SRC } from "@/data/hotspots";
-import OfficeHero from "@/components/OfficeHero";
 import { Sparkles, Heart, Calendar } from "lucide-react";
 import useDailyFlow from "@/hooks/useDailyFlow";
 import { BigThreeCard } from "@/components/dashboard/BigThreeCard";
@@ -40,7 +38,6 @@ const Dashboard = () => {
     clearCelebration 
   } = useGiphyCelebration();
   
-  const [visionImages, setVisionImages] = useState<string[]>([]);
   const [todayIntention, setTodayIntention] = useState(null);
   const [earnedAnimals, setEarnedAnimals] = useState<Array<{ id: string; emoji: string }>>([]);
 
@@ -58,7 +55,6 @@ const Dashboard = () => {
     // Initialize tasks from intention if needed
     initializeTasksFromIntention();
     
-    setVisionImages(readVisionThumbs(4));
     setTodayIntention(readTodayIntention());
     setEarnedAnimals(readEarnedAnimals());
     
@@ -68,9 +64,6 @@ const Dashboard = () => {
   // Listen for data changes
   useEffect(() => {
     const unsubscribe = onChanged(keys => {
-      if (keys.includes("fm_vision_v1")) {
-        setVisionImages(readVisionThumbs(4));
-      }
       if (keys.includes("fm_daily_intention_v1")) {
         const newIntention = readTodayIntention();
         setTodayIntention(newIntention);
@@ -81,8 +74,6 @@ const Dashboard = () => {
     });
     return unsubscribe;
   }, []);
-
-  const boardHotspot = HOTSPOTS.find(h => h.id === 'board')!;
 
   return (
     <main className="min-h-screen body-gradient flex flex-col items-center py-6 px-4">
@@ -203,37 +194,6 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* Vision Board Section */}
-      <div className="w-full max-w-6xl mb-8">
-        <FeatureErrorBoundary featureName="Vision Board">
-          <div className="bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-2xl overflow-hidden">
-            <div className="p-6">
-              <div className="text-center mb-4">
-                <h2 className="text-xl font-bold text-primary mb-1">🎯 Hold the Vision</h2>
-                <p className="text-sm text-muted-foreground">Your vision board preview</p>
-              </div>
-              <div className="relative aspect-video rounded-xl overflow-hidden bg-muted/20">
-                <OfficeHero
-                  hotspots={HOTSPOTS}
-                  fallbackSrc={OFFICE_IMAGE_SRC}
-                  alt={OFFICE_ALT}
-                  aspectRatio={16/9}
-                />
-                <VisionPreviewOverlay boardBox={boardHotspot} />
-              </div>
-              <div className="mt-4">
-                <Button
-                  onClick={() => navigate('/tools/vision')}
-                  className="w-full"
-                  variant="outline"
-                >
-                  Open Vision Board
-                </Button>
-              </div>
-            </div>
-          </div>
-        </FeatureErrorBoundary>
-      </div>
 
       {/* Today's Earned Pets */}
       {earnedAnimals.length > 0 && (
@@ -282,7 +242,6 @@ const Dashboard = () => {
         <div className="flex items-center justify-center gap-6 text-xs text-muted-foreground/80">
           <span>🐱 Task Pets</span>
           <span>🏆 Trophy System</span>
-          <span>🎯 Vision Board</span>
           <span>💎 Focus Sessions</span>
         </div>
       </div>

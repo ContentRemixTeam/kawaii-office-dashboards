@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -19,9 +19,14 @@ import {
   Star,
   Gift,
   MessageCircle,
-  Trophy
+  Trophy,
+  Target
 } from "lucide-react";
 import ToolShell from "@/components/ToolShell";
+import OfficeHero from "@/components/OfficeHero";
+import VisionPreviewOverlay from "@/components/VisionPreviewOverlay";
+import { HOTSPOTS, OFFICE_ALT, OFFICE_IMAGE_SRC } from "@/data/hotspots";
+import { FeatureErrorBoundary } from "@/components/ErrorBoundary";
 import { safeGet, safeSet, generateId, getTodayISO } from "@/lib/storage";
 import { getDailyData, setDailyData } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
@@ -118,9 +123,12 @@ const categories = [
 ];
 
 export default function PositivityCabinet() {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const defaultTab = searchParams.get('tab') || 'wins';
   const { toast } = useToast();
+  
+  const boardHotspot = HOTSPOTS.find(h => h.id === 'board')!;
   
   // Future Notes state
   const [futureNotes, setFutureNotes] = useState<FutureNote[]>([]);
@@ -374,12 +382,13 @@ export default function PositivityCabinet() {
 
         {/* Tabs */}
         <Tabs defaultValue={defaultTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="wins">🏆 Micro Wins</TabsTrigger>
             <TabsTrigger value="gratitude">🙏 Gratitude</TabsTrigger>
             <TabsTrigger value="affirmations">🃏 Affirmations</TabsTrigger>
             <TabsTrigger value="future">💌 Future Notes</TabsTrigger>
             <TabsTrigger value="cabinet">📦 Encouragements</TabsTrigger>
+            <TabsTrigger value="vision">🎯 Vision</TabsTrigger>
           </TabsList>
 
           {/* Micro Wins Tab */}
@@ -788,7 +797,76 @@ export default function PositivityCabinet() {
                   )}
                 </TabsContent>
               ))}
-            </Tabs>
+          
+          <TabsContent value="vision" className="space-y-6">
+            <FeatureErrorBoundary featureName="Vision Board">
+              <Card className="p-6 bg-gradient-to-br from-card to-card/50 border-primary/20">
+                <CardHeader className="text-center pb-4">
+                  <CardTitle className="flex items-center justify-center gap-2 text-primary">
+                    <Target className="w-6 h-6" />
+                    🎯 Hold the Vision
+                  </CardTitle>
+                  <CardDescription>
+                    Your vision board for manifesting your dreams
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="relative aspect-video rounded-xl overflow-hidden bg-muted/20 mb-4">
+                    <OfficeHero
+                      hotspots={HOTSPOTS}
+                      fallbackSrc={OFFICE_IMAGE_SRC}
+                      alt={OFFICE_ALT}
+                      aspectRatio={16/9}
+                    />
+                    <VisionPreviewOverlay boardBox={boardHotspot} />
+                  </div>
+                  <Button
+                    onClick={() => navigate('/tools/vision')}
+                    className="w-full"
+                    variant="outline"
+                  >
+                    Open Full Vision Board
+                  </Button>
+                </CardContent>
+              </Card>
+            </FeatureErrorBoundary>
+          </TabsContent>
+        </Tabs>
+          </TabsContent>
+          
+          {/* Vision Board Tab */}
+          <TabsContent value="vision" className="space-y-6">
+            <FeatureErrorBoundary featureName="Vision Board">
+              <Card className="p-6 bg-gradient-to-br from-card to-card/50 border-primary/20">
+                <CardHeader className="text-center pb-4">
+                  <CardTitle className="flex items-center justify-center gap-2 text-primary">
+                    <Target className="w-6 h-6" />
+                    🎯 Hold the Vision
+                  </CardTitle>
+                  <CardDescription>
+                    Your vision board for manifesting your dreams
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="relative aspect-video rounded-xl overflow-hidden bg-muted/20 mb-4">
+                    <OfficeHero
+                      hotspots={HOTSPOTS}
+                      fallbackSrc={OFFICE_IMAGE_SRC}
+                      alt={OFFICE_ALT}
+                      aspectRatio={16/9}
+                    />
+                    <VisionPreviewOverlay boardBox={boardHotspot} />
+                  </div>
+                  <Button
+                    onClick={() => navigate('/tools/vision')}
+                    className="w-full"
+                    variant="outline"
+                  >
+                    Open Full Vision Board
+                  </Button>
+                </CardContent>
+              </Card>
+            </FeatureErrorBoundary>
           </TabsContent>
         </Tabs>
       </div>
