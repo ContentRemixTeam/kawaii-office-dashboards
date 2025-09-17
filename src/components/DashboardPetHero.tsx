@@ -6,7 +6,8 @@ import { useToast } from "@/hooks/use-toast";
 import { 
   getPetTaskData, 
   updatePetTask, 
-  updateSelectedAnimal 
+  updateSelectedAnimal,
+  resetPetTasks
 } from "@/lib/petTasks";
 import { useGiphyCelebration } from "@/hooks/useGiphyCelebration";
 
@@ -480,6 +481,14 @@ export default function DashboardPetHero() {
     }
   };
 
+  const handleResetTasks = () => {
+    resetPetTasks();
+    toast({
+      title: "🔄 New cycle started!",
+      description: "Ready for your next three tasks. Choose a new pet companion!"
+    });
+  };
+
   const completedCount = taskData.tasks.filter(task => task.completed).length;
 
   return (
@@ -496,7 +505,7 @@ export default function DashboardPetHero() {
       <AnimalSelector 
         selectedAnimal={taskData.selectedAnimal}
         onAnimalSelect={handleAnimalSelect}
-        disabled={taskData.tasks.some(task => task.completed)}
+        disabled={taskData.tasks.some(task => task.completed) && completedCount < 3}
       />
       
       <PetStage 
@@ -505,6 +514,22 @@ export default function DashboardPetHero() {
         tasks={taskData.tasks}
         onTaskToggle={toggleTaskCompleted}
       />
+      
+      {/* Reset Button - Show when all tasks completed */}
+      {completedCount === 3 && (
+        <div className="mt-6 text-center">
+          <Button 
+            onClick={handleResetTasks}
+            className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-semibold px-8 py-3 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+            size="lg"
+          >
+            🔄 Start New Cycle
+          </Button>
+          <p className="text-xs text-muted-foreground mt-2">
+            Round {taskData.roundsCompleted + 1} • {taskData.totalTasksCompleted} total tasks completed
+          </p>
+        </div>
+      )}
     </div>
   );
 }

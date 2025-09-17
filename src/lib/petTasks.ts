@@ -193,6 +193,23 @@ export const updateReflections = (reflections: string[]) => {
   savePetTaskData(updatedData);
 };
 
+/**
+ * Reset pet tasks for a new cycle
+ * Clears current tasks, increments rounds, allows new animal selection
+ */
+export function resetPetTasks(): void {
+  const data = getPetTaskData();
+  
+  const resetData: PetTaskData = {
+    ...getDefaultPetTaskData(),
+    totalTasksCompleted: data.totalTasksCompleted, // Keep total progress
+    roundsCompleted: data.roundsCompleted + 1, // Increment rounds
+    lastUpdated: new Date().toISOString()
+  };
+  
+  savePetTaskData(resetData);
+}
+
 // Get pet task completion stats
 export const getPetTaskStats = () => {
   const data = getPetTaskData();
