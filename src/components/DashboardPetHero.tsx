@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { 
   getPetTaskData, 
@@ -313,7 +314,7 @@ const PetStage = ({ completed, selectedAnimal, tasks, onTaskToggle }: {
 
       {/* Task Checklist */}
       <div className="p-6 bg-gradient-to-br from-background to-muted/30 rounded-3xl border-2 border-border/50 shadow-lg">
-        <h3 className="text-lg font-semibold text-main mb-4">📋 Today's First Three Tasks</h3>
+        <h3 className="text-lg font-semibold text-main mb-4">📋 Next Three Tasks</h3>
         <div className="space-y-4">
           {tasks.slice(0, 3).map((task, index) => (
             <div 
@@ -334,9 +335,82 @@ const PetStage = ({ completed, selectedAnimal, tasks, onTaskToggle }: {
             </div>
           ))}
           {tasks.length === 0 && (
-            <div className="text-center py-6 text-muted-foreground">
+            <div className="text-center py-6 text-muted-foreground space-y-3">
               <p className="text-sm mb-2">No tasks set yet!</p>
-              <p className="text-xs">Set your daily intention to add tasks</p>
+              <p className="text-xs mb-3">Add your next three tasks to get started</p>
+              <div className="space-y-2">
+                <Input 
+                  placeholder="Task 1"
+                  className="text-sm"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && e.currentTarget.value.trim()) {
+                      const task1 = e.currentTarget.value.trim();
+                      e.currentTarget.value = '';
+                      const task2Input = e.currentTarget.parentElement?.querySelector('input:nth-child(2)') as HTMLInputElement;
+                      task2Input?.focus();
+                    }
+                  }}
+                />
+                <Input 
+                  placeholder="Task 2"
+                  className="text-sm"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && e.currentTarget.value.trim()) {
+                      const task2 = e.currentTarget.value.trim();
+                      e.currentTarget.value = '';
+                      const task3Input = e.currentTarget.parentElement?.querySelector('input:nth-child(3)') as HTMLInputElement;
+                      task3Input?.focus();
+                    }
+                  }}
+                />
+                <Input 
+                  placeholder="Task 3"
+                  className="text-sm"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && e.currentTarget.value.trim()) {
+                      const task3 = e.currentTarget.value.trim();
+                      const task1Input = e.currentTarget.parentElement?.querySelector('input:nth-child(1)') as HTMLInputElement;
+                      const task2Input = e.currentTarget.parentElement?.querySelector('input:nth-child(2)') as HTMLInputElement;
+                      const task1 = task1Input.value.trim();
+                      const task2 = task2Input.value.trim();
+                      
+                      if (task1 && task2 && task3) {
+                        // Import and use setPetTasks
+                        import('@/lib/petTasks').then(({ setPetTasks }) => {
+                          setPetTasks(task1, task2, task3);
+                        });
+                        
+                        // Clear inputs
+                        task1Input.value = '';
+                        task2Input.value = '';
+                        e.currentTarget.value = '';
+                      }
+                    }
+                  }}
+                />
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => {
+                    const inputs = document.querySelectorAll('input[placeholder^="Task"]') as NodeListOf<HTMLInputElement>;
+                    const task1 = inputs[0]?.value.trim();
+                    const task2 = inputs[1]?.value.trim();
+                    const task3 = inputs[2]?.value.trim();
+                    
+                    if (task1 && task2 && task3) {
+                      import('@/lib/petTasks').then(({ setPetTasks }) => {
+                        setPetTasks(task1, task2, task3);
+                      });
+                      
+                      // Clear inputs
+                      inputs.forEach(input => input.value = '');
+                    }
+                  }}
+                  className="w-full"
+                >
+                  Add Tasks
+                </Button>
+              </div>
             </div>
           )}
         </div>
@@ -415,7 +489,7 @@ export default function DashboardPetHero() {
           🦄 Pet Growth Center
         </h2>
         <p className="text-muted-foreground text-sm">
-          Complete your first three tasks to grow your daily companion
+          Complete your next three tasks to grow your daily companion
         </p>
       </div>
 
