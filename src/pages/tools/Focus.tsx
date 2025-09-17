@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { RotateCcw, Volume2, VolumeX, Bell, Smartphone, Target, Calendar, TrendingUp } from "lucide-react";
+import { RotateCcw, Volume2, VolumeX, Bell, Target, Calendar, TrendingUp } from "lucide-react";
 import ToolShell from "@/components/ToolShell";
 import PomodoroTimer from "@/components/PomodoroTimer";
 import focusTimer, { FocusConfig, WorkflowType, SoundType } from "@/lib/focusTimer";
@@ -371,19 +371,6 @@ export default function Focus() {
                     />
                   </div>
 
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label className="flex items-center gap-2">
-                        <Smartphone className="w-4 h-4" />
-                        Vibration (Mobile)
-                      </Label>
-                      <p className="text-xs text-muted-foreground">Vibrate device on phase transitions</p>
-                    </div>
-                    <Switch
-                      checked={config.vibrate}
-                      onCheckedChange={(checked) => updateConfig({ vibrate: checked })}
-                    />
-                  </div>
                 </div>
 
                 {config.sound !== "off" && (
