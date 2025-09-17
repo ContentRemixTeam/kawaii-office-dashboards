@@ -24,11 +24,16 @@ export default function BreakPlayer() {
 
   // Pre-load YouTube API when component mounts
   useEffect(() => {
-    youtubeAPI.loadAPI().catch(error => {
-      console.error('Failed to preload YouTube API:', error);
-      toast.error('YouTube player failed to initialize');
-    });
-  }, []);
+    console.log('BreakPlayer: Component mounted, YouTube API state:', youtubeAPI.state);
+    
+    if (youtubeAPI.state === 'idle') {
+      console.log('BreakPlayer: Starting YouTube API load');
+      youtubeAPI.loadAPI().catch(error => {
+        console.error('BreakPlayer: Failed to preload YouTube API:', error);
+        toast.error('YouTube player failed to initialize. Please refresh the page.');
+      });
+    }
+  }, [youtubeAPI.state]);
 
   // Determine current video ID
   const getCurrentVideoId = (): string | null => {
@@ -46,27 +51,44 @@ export default function BreakPlayer() {
   const currentVideoId = getCurrentVideoId();
 
   const selectPreset = async (category: BreakCategory, preset: BreakPreset) => {
+    console.log('BreakPlayer: selectPreset called', { 
+      category: category.key, 
+      preset: preset.key,
+      apiState: youtubeAPI.state,
+      apiReady: youtubeAPI.isReady 
+    });
+
     if (!youtubeAPI.isReady) {
       setVideoLoading(true);
       toast.loading("Preparing your wellness video...", { id: "loading-video" });
       
       try {
+        console.log('BreakPlayer: Loading YouTube API...');
         await youtubeAPI.loadAPI();
+        console.log('BreakPlayer: YouTube API loaded successfully');
         toast.dismiss("loading-video");
         setVideoLoading(false);
         proceedWithPreset(category, preset);
       } catch (error) {
+        console.error('BreakPlayer: YouTube API load failed:', error);
         toast.dismiss("loading-video");
         setVideoLoading(false);
-        toast.error("Video player failed to load. Please try again.");
+        toast.error("Video player failed to load. Please refresh the page and try again.");
         return;
       }
     } else {
+      console.log('BreakPlayer: API ready, proceeding with preset');
       proceedWithPreset(category, preset);
     }
   };
 
   const proceedWithPreset = (category: BreakCategory, preset: BreakPreset) => {
+    console.log('BreakPlayer: proceedWithPreset called', { 
+      category: category.key, 
+      preset: preset.key,
+      videoId: preset.id 
+    });
+
     const newState = {
       ...state,
       activeCategory: category.key,
@@ -78,6 +100,8 @@ export default function BreakPlayer() {
     trackBreakSession(category.key, preset.key);
     setActiveVideoId(preset.id);
     setUrlError("");
+    
+    console.log('BreakPlayer: State updated, video ID set to:', preset.id);
     toast.success(`Started ${preset.title} break`);
   };
 

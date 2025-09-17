@@ -61,7 +61,20 @@ export default function SafeYouTube({
 
   // Initialize player when API is ready and videoId is provided
   useEffect(() => {
+    console.log('SafeYouTube: useEffect triggered', {
+      apiReady: youtubeAPI.isReady,
+      apiState: youtubeAPI.state,
+      videoId,
+      hasError,
+      retryAttempts
+    });
+
     if (!youtubeAPI.isReady || !videoId || hasError) {
+      console.log('SafeYouTube: Skipping initialization', {
+        apiReady: youtubeAPI.isReady,
+        hasVideoId: !!videoId,
+        hasError
+      });
       return;
     }
 
@@ -76,6 +89,7 @@ export default function SafeYouTube({
     }
     
     initTimeoutRef.current = setTimeout(() => {
+      console.log('SafeYouTube: Delayed initialization starting');
       initializePlayer();
     }, 500);
 
@@ -84,11 +98,25 @@ export default function SafeYouTube({
         clearTimeout(initTimeoutRef.current);
       }
     };
-  }, [youtubeAPI.isReady, videoId, retryAttempts]);
+  }, [youtubeAPI.isReady, youtubeAPI.state, videoId, retryAttempts]);
 
   const initializePlayer = async () => {
+    console.log('SafeYouTube: initializePlayer called', {
+      hasPlayerRef: !!playerRef.current,
+      hasYTPlayer: !!(window.YT?.Player),
+      YT: !!window.YT
+    });
+
     if (!playerRef.current || !window.YT?.Player) {
-      console.error('SafeYouTube: Player ref or YT.Player not available');
+      console.error('SafeYouTube: Player ref or YT.Player not available', {
+        playerRef: !!playerRef.current,
+        windowYT: !!window.YT,
+        YTPlayer: !!(window.YT?.Player)
+      });
+      setHasError(true);
+      setErrorMessage('YouTube player failed to initialize');
+      setIsLoading(false);
+      setIsInitializing(false);
       return;
     }
 
@@ -145,6 +173,10 @@ export default function SafeYouTube({
       console.log('SafeYouTube: Player instance created successfully');
     } catch (error) {
       console.error('SafeYouTube: Error initializing player:', error);
+      setHasError(true);
+      setErrorMessage('Failed to create video player');
+      setIsLoading(false);
+      setIsInitializing(false);
       handlePlayerError({ data: -1 });
     }
   };

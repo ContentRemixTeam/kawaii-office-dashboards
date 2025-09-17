@@ -140,19 +140,39 @@ export function useYouTubeAPI(): UseYouTubeAPIResult {
             
             // Wait a bit for full initialization, then verify
             setTimeout(() => {
-              if (window.YT && window.YT.Player && typeof window.YT.Player === 'function') {
-                console.log('YouTube API: Successfully loaded and verified');
-                globalAPIState = 'ready';
-                globalRetryCount = 0;
-                notifyListeners();
-                loadPromise = null;
-                resolve();
-              } else {
-                console.error('YouTube API: Callback triggered but API not functional');
+              try {
+                if (window.YT && window.YT.Player && typeof window.YT.Player === 'function' && window.YT.PlayerState) {
+                  console.log('YouTube API: Successfully loaded and verified');
+                  globalAPIState = 'ready';
+                  globalRetryCount = 0;
+                  notifyListeners();
+                  loadPromise = null;
+                  resolve();
+                } else {
+                  console.error('YouTube API: Callback triggered but API not functional', {
+                    hasYT: !!window.YT,
+                    hasPlayer: !!(window.YT && window.YT.Player),
+                    playerIsFunction: !!(window.YT && typeof window.YT.Player === 'function'),
+                    hasPlayerState: !!(window.YT && window.YT.PlayerState)
+                  });
+                  if (currentAttempt < maxAttempts) {
+                    setTimeout(() => attemptLoad(), 1000 * currentAttempt);
+                  } else {
+                    const errorMsg = 'YouTube API loaded but not functional';
+                    setError(errorMsg);
+                    globalAPIState = 'error';
+                    globalRetryCount = maxAttempts;
+                    notifyListeners();
+                    loadPromise = null;
+                    reject(new Error(errorMsg));
+                  }
+                }
+              } catch (e) {
+                console.error('YouTube API: Error during verification:', e);
                 if (currentAttempt < maxAttempts) {
                   setTimeout(() => attemptLoad(), 1000 * currentAttempt);
                 } else {
-                  const errorMsg = 'YouTube API loaded but not functional';
+                  const errorMsg = 'YouTube API verification failed';
                   setError(errorMsg);
                   globalAPIState = 'error';
                   globalRetryCount = maxAttempts;
@@ -161,7 +181,7 @@ export function useYouTubeAPI(): UseYouTubeAPIResult {
                   reject(new Error(errorMsg));
                 }
               }
-            }, 200); // Increased wait time for better stability
+            }, 500); // Increased wait time for better stability
           };
 
           // Add script to page
