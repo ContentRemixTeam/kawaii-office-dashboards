@@ -10,6 +10,7 @@ import { getBigThreeTasks, setBigThreeTasks, updateBigThreeTask, getBigThreeStat
 import { awardTaskTrophy } from "@/lib/trophySystem";
 import { toast } from "@/hooks/use-toast";
 import useDailyFlow from "@/hooks/useDailyFlow";
+import { TrophyCelebrationPopup } from "../TrophyCelebrationPopup";
 
 // TypeScript interfaces for task data structure
 interface DashboardData {
@@ -20,6 +21,8 @@ interface DashboardData {
 export function BigThreeCard() {
   const [streakData, setStreakData] = useState<DashboardData>({ streak: 0, lastCompletedDate: "" });
   const [bigThreeTasks, setBigThreeTasksState] = useState<[any, any, any]>([null, null, null]);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [celebratedTask, setCelebratedTask] = useState({ title: '', index: 0 });
   const { setShowIntention } = useDailyFlow();
 
   useEffect(() => {
@@ -64,9 +67,15 @@ export function BigThreeCard() {
     
     updateBigThreeTask(task.id, { completed: nowCompleted });
     
-    // Award trophy when completing a Big Three task (not when uncompleting)
+    // Award trophy and show celebration when completing a Big Three task (not when uncompleting)
     if (nowCompleted && !wasCompleted) {
       const { trophy, message } = awardTaskTrophy(10); // 10 minute equivalent for priority task
+      
+      // Show trophy celebration popup
+      setCelebratedTask({ title: task.title, index });
+      setShowCelebration(true);
+      
+      // Also show toast for trophy
       toast({
         title: "🏆 Trophy Earned!",
         description: `${message} You completed a Big Three priority!`
@@ -178,6 +187,14 @@ export function BigThreeCard() {
           Update Daily Intention
         </Button>
       )}
+
+      {/* Trophy Celebration Popup */}
+      <TrophyCelebrationPopup
+        isVisible={showCelebration}
+        onClose={() => setShowCelebration(false)}
+        taskTitle={celebratedTask.title}
+        taskIndex={celebratedTask.index}
+      />
     </div>
   );
 }
