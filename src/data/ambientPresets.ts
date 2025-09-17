@@ -9,10 +9,10 @@ export interface AmbientPreset {
 
 export const AMBIENT_PRESETS: AmbientPreset[] = [
   { key: 'lofi_girl', title: 'Lofi Study', id: 'jfKfPfyJRdk', emoji: '🎵' },
-  { key: 'coffee_shop', title: 'Cozy Café', id: 'lTRiuFIWV54', emoji: '☕' },
+  { key: 'coffee_shop', title: 'Cozy Café', id: 'uiMXGIG_DQo', emoji: '☕' },
   { key: 'fireplace', title: 'Fireplace', id: 'eyU3bRy2x44', emoji: '🔥' },
   { key: 'ocean', title: 'Ocean Waves', id: 'cjqDNEN_4ro', emoji: '🌊' },
-  { key: 'rain', title: 'Rain Window', id: '2Np_UNrAaF8', emoji: '🌧️' },
+  { key: 'rain', title: 'Thunderstorm', id: 'JFMY5NxXDhw', emoji: '⛈️' },
   { key: 'birds', title: 'Morning Birds', id: 'haggdJjc0zI', emoji: '🐦' },
   { key: 'coworking', title: 'Coworking', id: 'iDuxlrrN-wM', emoji: '🎥' },
   { key: 'body_double', title: 'Body Double', id: 'GkR-FhknLZE', emoji: '👯' },
