@@ -79,17 +79,22 @@ export function BigThreeCard() {
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-card-title flex items-center gap-3">
-          <span className="text-2xl">⭐</span>
-          The Big Three
-        </h2>
-        <div className="status-indicator status-success">
-          <Calendar className="w-4 h-4" />
-          <span>
-            {streakData.streak} day streak
-          </span>
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <h2 className="text-card-title flex items-center gap-3">
+            <span className="text-2xl">⭐</span>
+            The Big Three
+          </h2>
+          <div className="status-indicator status-success">
+            <Calendar className="w-4 h-4" />
+            <span>
+              {streakData.streak} day streak
+            </span>
+          </div>
         </div>
+        <p className="text-sm text-muted-foreground">
+          Your top 3 must-dos to make today awesome! Check one off = instant trophy! 🏆
+        </p>
       </div>
 
       {/* Show prompt if no tasks are set */}
