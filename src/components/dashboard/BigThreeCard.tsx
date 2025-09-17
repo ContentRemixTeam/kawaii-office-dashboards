@@ -1,4 +1,4 @@
-import { Calendar, CheckCircle } from "lucide-react";
+import { Calendar, CheckCircle, Trophy } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -7,6 +7,8 @@ import { safeStorage } from "@/lib/safeStorage";
 import { useState, useEffect } from "react";
 import { onChanged } from "@/lib/bus";
 import { getBigThreeTasks, setBigThreeTasks, updateBigThreeTask, getBigThreeStats } from "@/lib/bigThreeTasks";
+import { awardTaskTrophy } from "@/lib/trophySystem";
+import { toast } from "@/hooks/use-toast";
 import useDailyFlow from "@/hooks/useDailyFlow";
 
 // TypeScript interfaces for task data structure
@@ -57,7 +59,19 @@ export function BigThreeCard() {
     const task = bigThreeTasks[index];
     if (!task) return;
     
-    updateBigThreeTask(task.id, { completed: !task.completed });
+    const wasCompleted = task.completed;
+    const nowCompleted = !wasCompleted;
+    
+    updateBigThreeTask(task.id, { completed: nowCompleted });
+    
+    // Award trophy when completing a Big Three task (not when uncompleting)
+    if (nowCompleted && !wasCompleted) {
+      const { trophy, message } = awardTaskTrophy(10); // 10 minute equivalent for priority task
+      toast({
+        title: "🏆 Trophy Earned!",
+        description: `${message} You completed a Big Three priority!`
+      });
+    }
   };
 
   const stats = getBigThreeStats();
@@ -121,8 +135,9 @@ export function BigThreeCard() {
                 }`}
               />
               {task?.completed && (
-                <div className="text-primary text-xl animate-bounce">
-                  ✨
+                <div className="flex items-center gap-2 text-primary animate-bounce">
+                  <Trophy className="w-5 h-5" />
+                  <span className="text-xl">✨</span>
                 </div>
               )}
             </div>

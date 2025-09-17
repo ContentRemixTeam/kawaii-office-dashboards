@@ -1,13 +1,6 @@
 import { useState, useEffect } from "react";
-import DashboardPetHero from "@/components/DashboardPetHero";
 import VisionPreviewOverlay from "@/components/VisionPreviewOverlay";
 import NavPills from "@/components/NavPills";
-import BigThreeTasksSection from "@/components/BigThreeTasksSection";
-import DashboardTrophyCase from "@/components/DashboardTrophyCase";
-import { AmbientPlayerCard } from "@/components/dashboard/AmbientPlayerCard";
-import { FocusTimerCard } from "@/components/dashboard/FocusTimerCard";
-import { DailyWinsTracker } from "@/components/DailyWinsTracker";
-import DashboardHabitTracker from "@/components/DashboardHabitTracker";
 import { HOTSPOTS, OFFICE_ALT, OFFICE_IMAGE_SRC } from "@/data/hotspots";
 import { getHomeTitle, getHomeSubtitle } from "@/lib/storage";
 import { Sparkles, Heart } from "lucide-react";
@@ -50,42 +43,13 @@ const Index = () => {
         </p>
       </div>
 
-      {/* Hero Pet Section (Full Width) */}
-      <div className="w-full max-w-6xl mb-8">
-        <DashboardPetHero />
-      </div>
-
-      {/* Main Dashboard Grid */}
-      <div className="w-full max-w-6xl mb-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Trophy Case */}
-        <div className="bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-2xl overflow-hidden">
-          <DashboardTrophyCase />
+      {/* Simple Landing Content */}
+      <div className="w-full max-w-4xl mb-8">
+        <div className="text-center p-8 bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-2xl">
+          <p className="text-lg text-muted-foreground mb-6">
+            This is a simple landing page. Your main dashboard is available at the root route "/".
+          </p>
         </div>
-        
-        {/* Big Three Tasks */}
-        <div className="bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-2xl overflow-hidden">
-          <div className="p-6 h-full flex flex-col">
-            <div className="text-center mb-4 flex-shrink-0">
-              <h2 className="text-xl font-bold text-primary mb-1">⭐ The Big Three</h2>
-              <p className="text-sm text-muted-foreground">Your most important tasks today</p>
-            </div>
-            <div className="flex-1 overflow-y-auto">
-              <BigThreeTasksSection />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Secondary Tools Grid */}
-      <div className="w-full max-w-6xl mb-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-        <AmbientPlayerCard />
-        <FocusTimerCard />
-      </div>
-
-      {/* Progress Tracking Grid */}
-      <div className="w-full max-w-6xl mb-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-        <DashboardHabitTracker />
-        <DailyWinsTracker />
       </div>
 
       {/* Vision Board Section */}

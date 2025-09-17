@@ -4,25 +4,25 @@ import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import DashboardPetHero from "@/components/DashboardPetHero";
 import VisionPreviewOverlay from "@/components/VisionPreviewOverlay";
-import BigThreeTasksSection from "@/components/BigThreeTasksSection";
-import DashboardTrophyCase from "@/components/DashboardTrophyCase";
-import { AmbientPlayerCard } from "@/components/dashboard/AmbientPlayerCard";
-import { FocusTimerCard } from "@/components/dashboard/FocusTimerCard";
 import { DailyWinsTracker } from "@/components/DailyWinsTracker";
 import DashboardHabitTracker from "@/components/DashboardHabitTracker";
 import { SidebarGroup } from "@/components/dashboard/SidebarGroup";
 import { useGiphyCelebration } from "@/hooks/useGiphyCelebration";
 import GiphyCelebration from "@/components/GiphyCelebration";
 import { eventBus } from "@/lib/eventBus";
-import { getDailyData } from "@/lib/storage";
-import { getUnifiedTaskData, getBigThreeTasks, initializeTasksFromIntention } from "@/lib/unifiedTasks";
+import { initializeTasksFromIntention } from "@/lib/unifiedTasks";
 import { readVisionThumbs, readPetStage, readEarnedAnimals } from "@/lib/topbarState";
 import { readTodayIntention } from "@/lib/dailyFlow";
 import { onChanged } from "@/lib/bus";
 import { FeatureErrorBoundary } from "@/components/ErrorBoundary";
 import { HOTSPOTS, OFFICE_ALT, OFFICE_IMAGE_SRC } from "@/data/hotspots";
 import OfficeHero from "@/components/OfficeHero";
-import { Sparkles, Heart } from "lucide-react";
+import { Sparkles, Heart, Calendar } from "lucide-react";
+import useDailyFlow from "@/hooks/useDailyFlow";
+import { BigThreeCard } from "@/components/dashboard/BigThreeCard";
+import DashboardTrophyCase from "@/components/DashboardTrophyCase";
+import { AmbientPlayerCard } from "@/components/dashboard/AmbientPlayerCard";
+import { FocusTimerCard } from "@/components/dashboard/FocusTimerCard";
 
 interface TaskData {
   tasks: string[];
@@ -32,6 +32,7 @@ interface TaskData {
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const flow = useDailyFlow();
   const { 
     currentCelebration, 
     celebratePomodoro, 
@@ -95,6 +96,17 @@ const Dashboard = () => {
         <p className="text-lg text-muted max-w-2xl mx-auto leading-relaxed">
           Complete your tasks to grow your daily companion!
         </p>
+        {!todayIntention && (
+          <div className="mt-6">
+            <Button
+              onClick={() => flow.setShowIntention(true)}
+              className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+            >
+              <Calendar className="w-5 h-5 mr-2" />
+              Set Daily Intention
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Hero Pet Section (Full Width) */}
@@ -115,17 +127,7 @@ const Dashboard = () => {
         
         {/* Big Three Tasks */}
         <FeatureErrorBoundary featureName="Big Three Tasks">
-          <div className="bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-2xl overflow-hidden">
-            <div className="p-6 h-full flex flex-col">
-              <div className="text-center mb-4 flex-shrink-0">
-                <h2 className="text-xl font-bold text-primary mb-1">⭐ The Big Three</h2>
-                <p className="text-sm text-muted-foreground">Your most important tasks today</p>
-              </div>
-              <div className="flex-1 overflow-y-auto">
-                <BigThreeTasksSection />
-              </div>
-            </div>
-          </div>
+          <BigThreeCard />
         </FeatureErrorBoundary>
       </div>
 
