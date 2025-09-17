@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import BreakPlayer from "@/components/BreakPlayer";
+import YouTubeErrorBoundary from "@/components/YouTubeErrorBoundary";
 
 export default function BreakRoom() {
   return (
@@ -28,7 +29,9 @@ export default function BreakRoom() {
 
           {/* Break Player */}
           <div className="text-main leading-relaxed">
-            <BreakPlayer />
+            <YouTubeErrorBoundary fallbackMessage="Break Room encountered an error. Please refresh the page or try again later.">
+              <BreakPlayer />
+            </YouTubeErrorBoundary>
           </div>
 
           {/* Instructions */}

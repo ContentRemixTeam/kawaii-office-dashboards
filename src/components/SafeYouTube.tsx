@@ -67,8 +67,16 @@ export default function SafeYouTube({
       apiState: youtubeAPI.state,
       videoId,
       hasError,
-      retryAttempts
+      retryAttempts,
+      isConnected: youtubeAPI.isConnected
     });
+
+    if (!youtubeAPI.isConnected) {
+      setHasError(true);
+      setErrorMessage('No internet connection');
+      setIsLoading(false);
+      return;
+    }
 
     if (!youtubeAPI.isReady || !videoId || hasError) {
       console.log('SafeYouTube: Skipping initialization', {
@@ -107,7 +115,7 @@ export default function SafeYouTube({
         clearTimeout(initTimeoutRef.current);
       }
     };
-  }, [youtubeAPI.isReady, youtubeAPI.state, videoId, retryAttempts]);
+  }, [youtubeAPI.isReady, youtubeAPI.state, youtubeAPI.isConnected, videoId, retryAttempts]);
 
   const initializePlayer = async () => {
     console.log('SafeYouTube: initializePlayer called', {
@@ -358,25 +366,37 @@ export default function SafeYouTube({
     };
   }, [player]);
 
-  // Error state with automatic retry info
+  // Error state with enhanced messaging and connection status
   if (hasError) {
     return (
       <Card className={`w-full ${className}`}>
         <CardContent className="p-6 text-center">
           <div className="text-destructive mb-4">
-            ⚠️ Video Error
+            {!youtubeAPI.isConnected ? '📶' : '⚠️'} {!youtubeAPI.isConnected ? 'Connection Error' : 'Video Error'}
           </div>
           <p className="text-sm text-muted-foreground mb-4">
             {errorMessage}
           </p>
+          {!youtubeAPI.isConnected && (
+            <p className="text-xs text-muted-foreground mb-4">
+              Check your internet connection and try again
+            </p>
+          )}
           <div className="space-y-3">
             <Button 
               onClick={retry}
               variant="outline"
               size="sm"
-              disabled={youtubeAPI.state === 'loading'}
+              disabled={youtubeAPI.state === 'loading' || !youtubeAPI.isConnected}
             >
-              {youtubeAPI.state === 'loading' ? 'Loading...' : 'Try Again'}
+              {youtubeAPI.state === 'loading' ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Loading...
+                </>
+              ) : (
+                'Try Again'
+              )}
             </Button>
             <Button 
               onClick={() => window.open(`https://youtube.com/watch?v=${videoId}`, '_blank')}
@@ -402,7 +422,9 @@ export default function SafeYouTube({
           </div>
           <p className="text-sm text-muted-foreground">
             {!youtubeAPI.isReady 
-              ? 'Loading video player...' 
+              ? youtubeAPI.isConnected 
+                ? 'Loading video player...' 
+                : 'Waiting for connection...'
               : isInitializing 
                 ? 'Initializing video...' 
                 : 'Preparing video...'}
@@ -410,6 +432,11 @@ export default function SafeYouTube({
           {retryAttempts > 0 && (
             <p className="text-xs text-muted-foreground mt-2">
               Retry attempt {retryAttempts}
+            </p>
+          )}
+          {youtubeAPI.error && (
+            <p className="text-xs text-destructive mt-2">
+              {youtubeAPI.error}
             </p>
           )}
         </CardContent>

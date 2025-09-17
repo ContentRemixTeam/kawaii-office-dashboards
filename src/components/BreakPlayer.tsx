@@ -11,6 +11,7 @@ import { BreakState, loadBreakState, saveBreakState, trackBreakSession } from "@
 import { extractYouTubeId } from "@/lib/youtube";
 import { useYouTubeAPI } from "@/hooks/useYouTubeAPI";
 import SafeYouTube from "@/components/SafeYouTube";
+import YouTubeErrorBoundary from "@/components/YouTubeErrorBoundary";
 
 export default function BreakPlayer() {
   const [state, setState] = useState<BreakState>(loadBreakState);
@@ -26,14 +27,20 @@ export default function BreakPlayer() {
   useEffect(() => {
     console.log('BreakPlayer: Component mounted, YouTube API state:', youtubeAPI.state);
     
-    if (youtubeAPI.state === 'idle') {
-      console.log('BreakPlayer: Starting YouTube API load');
+    if (youtubeAPI.state === 'idle' && youtubeAPI.isConnected) {
+      console.log('BreakPlayer: Starting YouTube API preload');
       youtubeAPI.loadAPI().catch(error => {
         console.error('BreakPlayer: Failed to preload YouTube API:', error);
-        toast.error('YouTube player failed to initialize. Please refresh the page.');
+        if (youtubeAPI.isConnected) {
+          toast.error('YouTube player failed to initialize. Please refresh and try again.');
+        } else {
+          toast.error('No internet connection. Please check your connection and try again.');
+        }
       });
+    } else if (!youtubeAPI.isConnected) {
+      toast.error('No internet connection detected');
     }
-  }, [youtubeAPI.state]);
+  }, [youtubeAPI.state, youtubeAPI.isConnected]);
 
   // Determine current video ID
   const getCurrentVideoId = (): string | null => {
@@ -58,6 +65,11 @@ export default function BreakPlayer() {
       apiReady: youtubeAPI.isReady 
     });
 
+    if (!youtubeAPI.isConnected) {
+      toast.error("No internet connection. Please check your connection and try again.");
+      return;
+    }
+
     if (!youtubeAPI.isReady) {
       setVideoLoading(true);
       toast.loading("Loading video player...", { id: "loading-video" });
@@ -73,7 +85,10 @@ export default function BreakPlayer() {
         console.error('BreakPlayer: YouTube API load failed:', error);
         toast.dismiss("loading-video");
         setVideoLoading(false);
-        toast.error("Unable to load video player. Please check your connection and try again.");
+        const errorMessage = youtubeAPI.isConnected 
+          ? "Unable to load video player. Please refresh and try again."
+          : "Connection lost. Please check your internet and try again.";
+        toast.error(errorMessage);
         return;
       }
     } else {
@@ -112,6 +127,11 @@ export default function BreakPlayer() {
       return;
     }
 
+    if (!youtubeAPI.isConnected) {
+      toast.error("No internet connection. Please check your connection and try again.");
+      return;
+    }
+
     if (!youtubeAPI.isReady) {
       setVideoLoading(true);
       toast.loading("Loading video player...", { id: "loading-custom" });
@@ -124,7 +144,10 @@ export default function BreakPlayer() {
       } catch (error) {
         toast.dismiss("loading-custom");
         setVideoLoading(false);
-        toast.error("Unable to load video player. Please check your connection and try again.");
+        const errorMessage = youtubeAPI.isConnected 
+          ? "Unable to load video player. Please refresh and try again."
+          : "Connection lost. Please check your internet and try again.";
+        toast.error(errorMessage);
         return;
       }
     } else {
@@ -205,15 +228,22 @@ export default function BreakPlayer() {
           <div className="text-center space-y-4">
             <AlertCircle className="w-12 h-12 mx-auto text-destructive" />
             <div>
-              <p className="text-main font-medium">Video Player Error</p>
-              <p className="text-sm text-muted-foreground mt-1">{youtubeAPI.error}</p>
+              <p className="text-main font-medium">
+                {youtubeAPI.isConnected ? 'Video Player Error' : 'Connection Error'}
+              </p>
+              <p className="text-sm text-muted-foreground mt-1">
+                {youtubeAPI.error || (youtubeAPI.isConnected 
+                  ? 'Unable to load video player' 
+                  : 'No internet connection')}
+              </p>
               <Button 
                 variant="outline" 
                 size="sm" 
                 onClick={youtubeAPI.retry}
                 className="mt-2"
+                disabled={!youtubeAPI.isConnected}
               >
-                Retry
+                {youtubeAPI.isConnected ? 'Retry' : 'Check Connection'}
               </Button>
             </div>
           </div>
@@ -237,12 +267,17 @@ export default function BreakPlayer() {
       {!videoLoading && youtubeAPI.state !== 'loading' && youtubeAPI.state !== 'error' && currentVideoId ? (
         <div className={`${state.isHeroMode ? 'fixed inset-0 z-50 bg-black' : 'relative'}`}>
           <div className={`${state.isHeroMode ? 'h-full' : 'aspect-video'} rounded-xl overflow-hidden`}>
-            <SafeYouTube
+            <YouTubeErrorBoundary 
               videoId={currentVideoId}
-              onError={handleVideoError}
-              onReady={handleVideoReady}
-              className="w-full h-full"
-            />
+              fallbackMessage="Break Room video failed to load. Try selecting a different video or refresh the page."
+            >
+              <SafeYouTube
+                videoId={currentVideoId}
+                onError={handleVideoError}
+                onReady={handleVideoReady}
+                className="w-full h-full"
+              />
+            </YouTubeErrorBoundary>
           </div>
           {state.isHeroMode && (
             <Button
@@ -295,7 +330,7 @@ export default function BreakPlayer() {
                       }
                       onClick={() => selectPreset(category, preset)}
                       className="h-auto p-3 flex flex-col items-start text-left"
-                      disabled={videoLoading || youtubeAPI.state === 'loading'}
+                      disabled={videoLoading || youtubeAPI.state === 'loading' || !youtubeAPI.isConnected}
                     >
                       <div className="font-medium text-sm">{preset.title}</div>
                       {!youtubeAPI.isReady && youtubeAPI.state === 'loading' && (
@@ -338,7 +373,7 @@ export default function BreakPlayer() {
             />
             <Button 
               onClick={handleCustomUrlSubmit} 
-              disabled={!customUrl.trim() || videoLoading || youtubeAPI.state === 'loading'}
+              disabled={!customUrl.trim() || videoLoading || youtubeAPI.state === 'loading' || !youtubeAPI.isConnected}
             >
               {(videoLoading || youtubeAPI.state === 'loading') ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
               Load
