@@ -60,12 +60,12 @@ export default function DashboardTrophyCase() {
 
   if (stats.totalTrophies === 0) {
     return (
-      <Card className="bg-gradient-to-br from-yellow-50/50 to-amber-50/50 border-yellow-200/50">
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center justify-between text-lg">
+      <div className="min-h-[200px]">
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <Trophy className="w-5 h-5 text-yellow-600" />
-              Trophy Case
+              <h3 className="text-lg font-semibold">Trophy Case</h3>
             </div>
             <Button
               variant="outline"
@@ -76,40 +76,40 @@ export default function DashboardTrophyCase() {
               <ExternalLink className="w-3 h-3" />
               Start Earning
             </Button>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="text-center py-6">
-          <div className="text-4xl mb-2">🏆</div>
-          <p className="text-sm text-muted-foreground">Complete focus sessions to earn trophies</p>
-        </CardContent>
-      </Card>
+          </div>
+          <div className="text-center py-6">
+            <div className="text-4xl mb-2">🏆</div>
+            <p className="text-sm text-muted-foreground">Complete focus sessions to earn trophies</p>
+          </div>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Card className="bg-gradient-to-br from-yellow-50/50 to-amber-50/50 border-yellow-200/50">
-      <CardHeader className="pb-3">
-        <CardTitle className="flex items-center justify-between text-lg">
+    <div className="min-h-[200px]">
+      <div className="p-6">
+        <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Trophy className="w-5 h-5 text-yellow-600" />
-            Trophy Case
+            <h3 className="text-lg font-semibold">Trophy Case</h3>
           </div>
           <Badge variant="outline" className="bg-background/80">
             {stats.totalTrophies} total
           </Badge>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="text-center">
-        <div className="text-4xl mb-2">🏆</div>
-        <div className="text-2xl font-bold text-yellow-600 mb-1">{stats.todayTrophies}</div>
-        <p className="text-sm text-muted-foreground">earned today</p>
-        
-        {stats.currentStreak > 0 && (
-          <div className="mt-3 p-2 bg-orange-100/50 rounded-lg">
-            <span className="text-sm">🔥 {stats.currentStreak} session streak</span>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+        </div>
+        <div className="text-center">
+          <div className="text-4xl mb-2">🏆</div>
+          <div className="text-2xl font-bold text-yellow-600 mb-1">{stats.todayTrophies}</div>
+          <p className="text-sm text-muted-foreground">earned today</p>
+          
+          {stats.currentStreak > 0 && (
+            <div className="mt-3 p-2 bg-orange-100/50 rounded-lg">
+              <span className="text-sm">🔥 {stats.currentStreak} session streak</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }

@@ -243,7 +243,7 @@ export default function BigThreeTasksSection() {
 
   if (showCelebration) {
     return (
-      <div className="relative">
+      <div className="relative min-h-[300px] flex items-center justify-center">
         <div className="text-center py-8">
           <div className="text-6xl mb-4 animate-bounce">🎉</div>
           <h3 className="text-xl font-bold text-primary mb-2">All Tasks Complete!</h3>

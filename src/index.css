@@ -1,5 +1,6 @@
 @import "./styles/ui-tokens.css";
 @import "./styles/readability-system.css";
+@import "./styles/dashboard-layout.css";
 
 @tailwind base;
 @tailwind components;
