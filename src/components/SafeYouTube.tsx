@@ -84,15 +84,23 @@ export default function SafeYouTube({
     setIsInitializing(true);
     setIsVisible(false);
     
-    // Add 500ms delay before initialization for better stability
+    // Small delay to ensure container is ready
     if (initTimeoutRef.current) {
       clearTimeout(initTimeoutRef.current);
     }
     
     initTimeoutRef.current = setTimeout(() => {
-      console.log('SafeYouTube: Delayed initialization starting');
-      initializePlayer();
-    }, 500);
+      if (containerRef.current) {
+        console.log('SafeYouTube: Container ready, initializing player');
+        initializePlayer();
+      } else {
+        console.error('SafeYouTube: Container not available after delay');
+        setHasError(true);
+        setErrorMessage('Video container not ready');
+        setIsLoading(false);
+        setIsInitializing(false);
+      }
+    }, 100);
 
     return () => {
       if (initTimeoutRef.current) {
@@ -219,46 +227,46 @@ export default function SafeYouTube({
     
     switch (errorCode) {
       case 2:
-        message = 'Invalid video ID or corrupted video data.';
+        message = 'Invalid video ID. Please check the YouTube URL.';
         shouldRetry = false;
         break;
       case 5:
-        message = 'HTML5 player error occurred.';
+        message = 'Video player error. Trying again...';
         shouldRetry = true;
         break;
       case 100:
-        message = 'Video not found or has been removed.';
+        message = 'Video not found or removed.';
         shouldRetry = false;
         break;
       case 101:
       case 150:
-        message = 'Video cannot be embedded or is restricted.';
+        message = 'Video cannot be embedded. Try opening in YouTube.';
         shouldRetry = false;
         break;
       case -1:
-        message = 'Network or loading error occurred.';
+        message = 'Network error. Checking connection...';
         shouldRetry = true;
         break;
       default:
-        message = `Video error (code: ${errorCode}). Please try again.`;
+        message = `Video error (${errorCode}). Please try again.`;
         shouldRetry = true;
     }
     
     console.error(`SafeYouTube: Player error for video ${videoId}:`, errorCode, message);
     
-    // Automatic retry logic for retryable errors
-    if (shouldRetry && retryAttempts < 3) {
-      console.log(`SafeYouTube: Auto-retrying (attempt ${retryAttempts + 1}/3) after error:`, message);
+    // Simplified retry logic - only retry once for retryable errors
+    if (shouldRetry && retryAttempts === 0) {
+      console.log(`SafeYouTube: Auto-retrying once after error:`, message);
       
       if (retryTimeoutRef.current) {
         clearTimeout(retryTimeoutRef.current);
       }
       
       retryTimeoutRef.current = setTimeout(() => {
-        setRetryAttempts(prev => prev + 1);
+        setRetryAttempts(1);
         setHasError(false);
         setErrorMessage('');
-      }, 1000 * (retryAttempts + 1)); // Progressive delay: 1s, 2s, 3s
+      }, 2000);
       
       return;
     }
@@ -322,8 +330,12 @@ export default function SafeYouTube({
     setErrorMessage('');
     setIsLoading(true);
     setIsVisible(false);
-    setRetryAttempts(prev => prev + 1);
-    youtubeAPI.retry();
+    setRetryAttempts(0);
+    
+    // If API needs retry, do that first
+    if (youtubeAPI.state === 'error') {
+      youtubeAPI.retry();
+    }
   };
 
   // Cleanup
@@ -357,11 +369,7 @@ export default function SafeYouTube({
           <p className="text-sm text-muted-foreground mb-4">
             {errorMessage}
           </p>
-          {retryAttempts < 3 ? (
-            <p className="text-xs text-muted-foreground mb-4">
-              Automatic retry in progress... (Attempt {retryAttempts + 1}/3)
-            </p>
-          ) : (
+          <div className="space-y-3">
             <Button 
               onClick={retry}
               variant="outline"
@@ -370,7 +378,15 @@ export default function SafeYouTube({
             >
               {youtubeAPI.state === 'loading' ? 'Loading...' : 'Try Again'}
             </Button>
-          )}
+            <Button 
+              onClick={() => window.open(`https://youtube.com/watch?v=${videoId}`, '_blank')}
+              variant="ghost"
+              size="sm"
+              className="text-xs"
+            >
+              Open in YouTube
+            </Button>
+          </div>
         </CardContent>
       </Card>
     );

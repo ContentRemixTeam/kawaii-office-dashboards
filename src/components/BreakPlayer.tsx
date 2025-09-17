@@ -60,7 +60,7 @@ export default function BreakPlayer() {
 
     if (!youtubeAPI.isReady) {
       setVideoLoading(true);
-      toast.loading("Preparing your wellness video...", { id: "loading-video" });
+      toast.loading("Loading video player...", { id: "loading-video" });
       
       try {
         console.log('BreakPlayer: Loading YouTube API...');
@@ -73,7 +73,7 @@ export default function BreakPlayer() {
         console.error('BreakPlayer: YouTube API load failed:', error);
         toast.dismiss("loading-video");
         setVideoLoading(false);
-        toast.error("Video player failed to load. Please refresh the page and try again.");
+        toast.error("Unable to load video player. Please check your connection and try again.");
         return;
       }
     } else {
@@ -114,7 +114,7 @@ export default function BreakPlayer() {
 
     if (!youtubeAPI.isReady) {
       setVideoLoading(true);
-      toast.loading("Preparing your custom video...", { id: "loading-custom" });
+      toast.loading("Loading video player...", { id: "loading-custom" });
       
       try {
         await youtubeAPI.loadAPI();
@@ -124,7 +124,7 @@ export default function BreakPlayer() {
       } catch (error) {
         toast.dismiss("loading-custom");
         setVideoLoading(false);
-        toast.error("Video player failed to load. Please try again.");
+        toast.error("Unable to load video player. Please check your connection and try again.");
         return;
       }
     } else {
@@ -156,7 +156,7 @@ export default function BreakPlayer() {
   const handleVideoError = (error: any) => {
     console.error("YouTube video error:", error);
     setVideoLoading(false);
-    toast.error("Video failed to load. Please try selecting a different video or check your connection.");
+    toast.error("Video failed to load. Please try a different video or check your connection.");
   };
 
   const handleVideoReady = () => {

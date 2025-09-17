@@ -12,6 +12,7 @@ import DebriefModal from "./components/DebriefModal";
 import { useTodayPet } from "./hooks/useTodayPet";
 import PomodoroWinModal from "./components/PomodoroWinModal";
 import focusTimer from "@/lib/focusTimer";
+import { useYouTubeAPI } from "./hooks/useYouTubeAPI";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import Tasks from "./pages/tools/Tasks";
@@ -33,6 +34,9 @@ const App = () => {
   const selectedAnimal = useTodayPet();
   const [showPomodoroWin, setShowPomodoroWin] = useState(false);
   const [sessionDuration, setSessionDuration] = useState(25);
+  
+  // Preload YouTube API for Break Room functionality
+  const youtubeAPI = useYouTubeAPI();
 
   useEffect(() => {
     const unsubscribe = focusTimer.on("complete", (phase) => {
@@ -45,6 +49,21 @@ const App = () => {
 
     return unsubscribe;
   }, []);
+
+  // Preload YouTube API in background for smoother Break Room experience
+  useEffect(() => {
+    // Only preload if not already loaded/loading and if user is likely to use break room
+    if (youtubeAPI.state === 'idle') {
+      const timer = setTimeout(() => {
+        console.log('App: Preloading YouTube API for Break Room');
+        youtubeAPI.loadAPI().catch(error => {
+          console.log('App: YouTube API preload failed (non-critical):', error);
+        });
+      }, 3000); // Wait 3 seconds after app load
+      
+      return () => clearTimeout(timer);
+    }
+  }, [youtubeAPI.state]);
   
   return (
     <AppErrorBoundary>
