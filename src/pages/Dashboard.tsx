@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import DashboardPetHero from "@/components/DashboardPetHero";
 import VisionPreviewOverlay from "@/components/VisionPreviewOverlay";
-import { DailyWinsTracker } from "@/components/DailyWinsTracker";
+
 import { CelebrationNotesCard } from "@/components/dashboard/CelebrationNotesCard";
 
 import { SidebarGroup } from "@/components/dashboard/SidebarGroup";
@@ -133,25 +133,13 @@ const Dashboard = () => {
         </FeatureErrorBoundary>
       </div>
 
-      {/* Daily Progress Section */}
+      {/* Today's Celebrations Section */}
       <div className="w-full max-w-6xl mb-8">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          <div className="lg:col-span-3">
-            <FeatureErrorBoundary featureName="Daily Wins">
-              <div className="bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-2xl overflow-hidden h-full">
-                <DailyWinsTracker />
-              </div>
-            </FeatureErrorBoundary>
+        <FeatureErrorBoundary featureName="Celebration Notes">
+          <div className="bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-2xl overflow-hidden">
+            <CelebrationNotesCard />
           </div>
-          
-          <div className="lg:col-span-2">
-            <FeatureErrorBoundary featureName="Celebration Notes">
-              <div className="bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-2xl overflow-hidden h-full">
-                <CelebrationNotesCard />
-              </div>
-            </FeatureErrorBoundary>
-          </div>
-        </div>
+        </FeatureErrorBoundary>
       </div>
 
       {/* Today's Intention Section */}
