@@ -83,23 +83,14 @@ export function useYouTubeAPI(): UseYouTubeAPIResult {
 
         try {
           // Check if API is already loaded and functional
-          if (window.YT && window.YT.Player) {
-            // Test that the API actually works with a lightweight check
-            try {
-              // Quick functional test without creating an actual player
-              if (typeof window.YT.Player === 'function' && window.YT.PlayerState) {
-                console.log('YouTube API: Already loaded and functional');
-                globalAPIState = 'ready';
-                globalRetryCount = 0;
-                notifyListeners();
-                loadPromise = null;
-                resolve();
-                return;
-              }
-            } catch (e) {
-              console.log('YouTube API: Present but not functional, reloading');
-              // API not fully ready, continue with loading
-            }
+          if (window.YT && window.YT.Player && typeof window.YT.Player === 'function') {
+            console.log('YouTube API: Already loaded and functional');
+            globalAPIState = 'ready';
+            globalRetryCount = 0;
+            notifyListeners();
+            loadPromise = null;
+            resolve();
+            return;
           }
 
           // Check network connectivity
@@ -141,7 +132,7 @@ export function useYouTubeAPI(): UseYouTubeAPIResult {
             // Wait a bit for full initialization, then verify
             setTimeout(() => {
               try {
-                if (window.YT && window.YT.Player && typeof window.YT.Player === 'function' && window.YT.PlayerState) {
+                if (window.YT && window.YT.Player && typeof window.YT.Player === 'function') {
                   console.log('YouTube API: Successfully loaded and verified');
                   globalAPIState = 'ready';
                   globalRetryCount = 0;
@@ -152,8 +143,7 @@ export function useYouTubeAPI(): UseYouTubeAPIResult {
                   console.error('YouTube API: Callback triggered but API not functional', {
                     hasYT: !!window.YT,
                     hasPlayer: !!(window.YT && window.YT.Player),
-                    playerIsFunction: !!(window.YT && typeof window.YT.Player === 'function'),
-                    hasPlayerState: !!(window.YT && window.YT.PlayerState)
+                    playerIsFunction: !!(window.YT && typeof window.YT.Player === 'function')
                   });
                   if (currentAttempt < maxAttempts) {
                     setTimeout(() => attemptLoad(), 1000 * currentAttempt);
@@ -181,7 +171,7 @@ export function useYouTubeAPI(): UseYouTubeAPIResult {
                   reject(new Error(errorMsg));
                 }
               }
-            }, 500); // Increased wait time for better stability
+            }, 500);
           };
 
           // Add script to page
