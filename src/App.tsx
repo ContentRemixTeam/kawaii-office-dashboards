@@ -18,10 +18,10 @@ import Tasks from "./pages/tools/Tasks";
 import Vision from "./pages/tools/Vision";
 import Sounds from "./pages/tools/Sounds";
 import Energy from "./pages/tools/Energy";
-import Habits from "./pages/tools/Habits";
+
 import Theme from "./pages/tools/Theme";
 import Focus from "./pages/tools/Focus";
-import BeatClock from "./pages/tools/BeatClock";
+
 import PositivityCabinet from "./pages/tools/PositivityCabinet";
 import BreakRoom from "./pages/tools/BreakRoom";
 import Testing from "./pages/Testing";
@@ -66,10 +66,10 @@ const App = () => {
                   <Route path="/tools/vision" element={<Vision />} />
                   <Route path="/tools/sounds" element={<Sounds />} />
                   <Route path="/tools/energy" element={<Energy />} />
-                  <Route path="/tools/habits" element={<Habits />} />
+                  
                   <Route path="/tools/theme" element={<Theme />} />
                   <Route path="/tools/focus" element={<Focus />} />
-                  <Route path="/tools/beat-clock" element={<BeatClock />} />
+                  
                   <Route path="/tools/break-room" element={<BreakRoom />} />
                   <Route path="/testing" element={<Testing />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

@@ -6,7 +6,7 @@ import DashboardPetHero from "@/components/DashboardPetHero";
 import VisionPreviewOverlay from "@/components/VisionPreviewOverlay";
 import { DailyWinsTracker } from "@/components/DailyWinsTracker";
 import { CelebrationNotesCard } from "@/components/dashboard/CelebrationNotesCard";
-import DashboardHabitTracker from "@/components/DashboardHabitTracker";
+
 import { SidebarGroup } from "@/components/dashboard/SidebarGroup";
 import { useGiphyCelebration } from "@/hooks/useGiphyCelebration";
 import GiphyCelebration from "@/components/GiphyCelebration";
@@ -142,30 +142,20 @@ const Dashboard = () => {
         </FeatureErrorBoundary>
       </div>
 
-      {/* Progress Tracking Grid */}
-      <div className="w-full max-w-6xl mb-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-        <FeatureErrorBoundary featureName="Habit Garden">
-          <div className="bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-2xl overflow-hidden">
-            <div className="p-6">
-              <DashboardHabitTracker />
-            </div>
-          </div>
-        </FeatureErrorBoundary>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
+      {/* Daily Progress Section */}
+      <div className="w-full max-w-6xl mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          <div className="lg:col-span-3">
             <FeatureErrorBoundary featureName="Daily Wins">
-              <div className="bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-2xl overflow-hidden">
-                <div className="p-6">
-                  <DailyWinsTracker />
-                </div>
+              <div className="bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-2xl overflow-hidden h-full">
+                <DailyWinsTracker />
               </div>
             </FeatureErrorBoundary>
           </div>
           
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-2">
             <FeatureErrorBoundary featureName="Celebration Notes">
-              <div className="bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-2xl overflow-hidden">
+              <div className="bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-2xl overflow-hidden h-full">
                 <CelebrationNotesCard />
               </div>
             </FeatureErrorBoundary>
@@ -293,7 +283,7 @@ const Dashboard = () => {
           <span>🐱 Task Pets</span>
           <span>🏆 Trophy System</span>
           <span>🎯 Vision Board</span>
-          <span>🌱 Habit Garden</span>
+          <span>💎 Focus Sessions</span>
         </div>
       </div>
       

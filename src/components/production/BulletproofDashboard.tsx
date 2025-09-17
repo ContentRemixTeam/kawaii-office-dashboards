@@ -14,7 +14,7 @@ import { AmbientPlayerCard } from '@/components/dashboard/AmbientPlayerCard';
 import { BigThreeCard } from '@/components/dashboard/BigThreeCard';
 import { FocusTimerCard } from '@/components/dashboard/FocusTimerCard';
 import { SidebarGroup } from '@/components/dashboard/SidebarGroup';
-import DashboardHabitTracker from '@/components/DashboardHabitTracker';
+
 import DashboardTrophyCase from '@/components/DashboardTrophyCase';
 import { RecentWinsPanel } from '@/components/RecentWinsPanel';
 import PetStatusCard from '@/components/PetStatusCard';
@@ -290,16 +290,6 @@ export const BulletproofDashboard: React.FC = () => {
               <PetStatusCard />
             </BulletproofCard>
             
-            <BulletproofCard
-              title="Habit Garden"
-              icon={undefined}
-              variant="elevated"
-              className="mb-6"
-              retryable={true}
-              dismissible={false}
-            >
-              <DashboardHabitTracker />
-            </BulletproofCard>
             
             <BulletproofCard
               title="Today's Intention"
