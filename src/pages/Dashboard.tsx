@@ -5,6 +5,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import DashboardPetHero from "@/components/DashboardPetHero";
 import VisionPreviewOverlay from "@/components/VisionPreviewOverlay";
 import { DailyWinsTracker } from "@/components/DailyWinsTracker";
+import { CelebrationNotesCard } from "@/components/dashboard/CelebrationNotesCard";
 import DashboardHabitTracker from "@/components/DashboardHabitTracker";
 import { SidebarGroup } from "@/components/dashboard/SidebarGroup";
 import { useGiphyCelebration } from "@/hooks/useGiphyCelebration";
@@ -151,13 +152,25 @@ const Dashboard = () => {
           </div>
         </FeatureErrorBoundary>
         
-        <FeatureErrorBoundary featureName="Daily Wins">
-          <div className="bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-2xl overflow-hidden">
-            <div className="p-6">
-              <DailyWinsTracker />
-            </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <FeatureErrorBoundary featureName="Daily Wins">
+              <div className="bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-2xl overflow-hidden">
+                <div className="p-6">
+                  <DailyWinsTracker />
+                </div>
+              </div>
+            </FeatureErrorBoundary>
           </div>
-        </FeatureErrorBoundary>
+          
+          <div className="lg:col-span-1">
+            <FeatureErrorBoundary featureName="Celebration Notes">
+              <div className="bg-card/80 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-2xl overflow-hidden">
+                <CelebrationNotesCard />
+              </div>
+            </FeatureErrorBoundary>
+          </div>
+        </div>
       </div>
 
       {/* Today's Intention Section */}
