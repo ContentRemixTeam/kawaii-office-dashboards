@@ -11,6 +11,8 @@ import { awardTaskTrophy } from "@/lib/trophySystem";
 import { toast } from "@/hooks/use-toast";
 import useDailyFlow from "@/hooks/useDailyFlow";
 import { TrophyCelebrationPopup } from "../TrophyCelebrationPopup";
+import { saveDailyWin } from "@/lib/dailyWins";
+import { addEarnedAnimal } from "@/lib/topbarState";
 
 // TypeScript interfaces for task data structure
 interface DashboardData {
@@ -70,6 +72,14 @@ export function BigThreeCard() {
     // Award trophy and show celebration when completing a Big Three task (not when uncompleting)
     if (nowCompleted && !wasCompleted) {
       const { trophy, message } = awardTaskTrophy(10); // 10 minute equivalent for priority task
+      
+      // Save as daily win with task details
+      saveDailyWin({
+        taskTitle: task.title,
+        taskIndex: index,
+        celebrationNote: `Completed Big Three task: ${task.title}`,
+        completedAt: new Date().toISOString()
+      });
       
       // Show trophy celebration popup
       setCelebratedTask({ title: task.title, index });

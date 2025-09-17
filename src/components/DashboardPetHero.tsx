@@ -10,6 +10,7 @@ import {
   resetPetTasks
 } from "@/lib/petTasks";
 import { useGiphyCelebration } from "@/hooks/useGiphyCelebration";
+import PetCelebrationModal from "./PetCelebrationModal";
 
 const ANIMALS = [
   { 
@@ -423,6 +424,7 @@ const PetStage = ({ completed, selectedAnimal, tasks, onTaskToggle }: {
 export default function DashboardPetHero() {
   const { toast } = useToast();
   const [taskData, setTaskData] = useState(getPetTaskData());
+  const [showCelebrationModal, setShowCelebrationModal] = useState(false);
   const { celebrateTask, celebrateAllTasks } = useGiphyCelebration();
 
   useEffect(() => {
@@ -468,14 +470,12 @@ export default function DashboardPetHero() {
       celebrateTask(taskData.selectedAnimal, index + 1);
     }
     
-    // Show full completion celebration
+    // Show full completion celebration with modal
     if (completedCount === 3 && previousCompletedCount < 3) {
       const animal = ANIMALS.find(a => a.id === taskData.selectedAnimal) || ANIMALS[0];
       
-      toast({
-        title: "🎉 All tasks completed!",
-        description: `Your ${animal.name.toLowerCase()} has reached maximum power! You're amazing!`
-      });
+      // Show celebration modal instead of just toast
+      setShowCelebrationModal(true);
       
       celebrateAllTasks(taskData.selectedAnimal);
     }
@@ -483,6 +483,7 @@ export default function DashboardPetHero() {
 
   const handleResetTasks = () => {
     resetPetTasks();
+    setShowCelebrationModal(false);
     toast({
       title: "🔄 New cycle started!",
       description: "Ready for your next three tasks. Choose a new pet companion!"
@@ -530,6 +531,16 @@ export default function DashboardPetHero() {
           </p>
         </div>
       )}
+      
+      {/* Pet Celebration Modal */}
+      <PetCelebrationModal
+        open={showCelebrationModal}
+        onClose={() => setShowCelebrationModal(false)}
+        animalId={taskData.selectedAnimal}
+        animalName={ANIMALS.find(a => a.id === taskData.selectedAnimal)?.name || "Pet"}
+        animalEmoji={ANIMALS.find(a => a.id === taskData.selectedAnimal)?.emoji || "🦄"}
+        onReset={handleResetTasks}
+      />
     </div>
   );
 }
