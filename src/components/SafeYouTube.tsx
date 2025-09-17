@@ -55,7 +55,8 @@ export default function SafeYouTube({
   const [isInitializing, setIsInitializing] = useState(false);
   
   const youtubeAPI = useYouTubeAPI();
-  const playerRef = useRef<HTMLDivElement>(null);
+  const playerRef = useRef<YouTubePlayer | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const initTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -107,9 +108,9 @@ export default function SafeYouTube({
       YT: !!window.YT
     });
 
-    if (!playerRef.current || !window.YT?.Player) {
-      console.error('SafeYouTube: Player ref or YT.Player not available', {
-        playerRef: !!playerRef.current,
+    if (!containerRef.current || !window.YT?.Player) {
+      console.error('SafeYouTube: Container ref or YT.Player not available', {
+        containerRef: !!containerRef.current,
         windowYT: !!window.YT,
         YTPlayer: !!(window.YT?.Player)
       });
@@ -124,9 +125,9 @@ export default function SafeYouTube({
       console.log('SafeYouTube: Creating YouTube player instance');
       
       // Clean up existing player
-      if (player) {
+      if (playerRef.current) {
         try {
-          player.destroy();
+          playerRef.current.destroy();
           console.log('SafeYouTube: Destroyed existing player');
         } catch (e) {
           console.warn('SafeYouTube: Error destroying existing player:', e);
@@ -134,13 +135,13 @@ export default function SafeYouTube({
       }
 
       // Clear the container
-      playerRef.current.innerHTML = '';
+      containerRef.current.innerHTML = '';
 
       // Create unique player ID
       const playerId = `yt-player-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       const playerDiv = document.createElement('div');
       playerDiv.id = playerId;
-      playerRef.current.appendChild(playerDiv);
+      containerRef.current.appendChild(playerDiv);
 
       // Create player instance with enhanced error handling
       const newPlayer = new window.YT.Player(playerId, {
@@ -170,6 +171,7 @@ export default function SafeYouTube({
       });
 
       setPlayer(newPlayer);
+      playerRef.current = newPlayer;
       console.log('SafeYouTube: Player instance created successfully');
     } catch (error) {
       console.error('SafeYouTube: Error initializing player:', error);
@@ -333,9 +335,9 @@ export default function SafeYouTube({
       if (initTimeoutRef.current) {
         clearTimeout(initTimeoutRef.current);
       }
-      if (player) {
+      if (playerRef.current) {
         try {
-          player.destroy();
+          playerRef.current.destroy();
           console.log('SafeYouTube: Player destroyed during cleanup');
         } catch (e) {
           console.warn('SafeYouTube: Error during cleanup:', e);
@@ -403,7 +405,7 @@ export default function SafeYouTube({
     <div className={`relative w-full ${className}`}>
       {/* YouTube Player */}
       <div 
-        ref={playerRef}
+        ref={containerRef}
         className={`w-full h-full min-h-[200px] bg-black rounded-lg overflow-hidden transition-opacity duration-300 ${
           isVisible ? 'opacity-100' : 'opacity-0'
         }`}
