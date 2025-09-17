@@ -38,8 +38,6 @@ export default function BreakRoom() {
               <li>• Choose from 6 break categories designed for focus and energy</li>
               <li>• Each category has 3-4 curated options to avoid overwhelm</li>
               <li>• Use Hero Mode for full-screen immersive breaks</li>
-              <li>• Add your own custom YouTube break videos</li>
-              <li>• Your last break type is saved for quick repeats</li>
             </ul>
           </div>
         </div>
