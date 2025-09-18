@@ -66,8 +66,13 @@ const DEFAULT_THEME: ThemeData = {
 export function initializeTheme() {
   if (typeof window === 'undefined') return;
   
-  const savedTheme = safeGet<ThemeData>('fm_theme_v1', DEFAULT_THEME);
-  applyTheme(savedTheme);
+  // Reset to default kawaii theme and clear any theme data attributes
+  document.documentElement.removeAttribute('data-theme');
+  document.documentElement.classList.remove('theme-green', 'dark', 'light');
+  
+  // Clear green theme from localStorage and use default kawaii theme
+  localStorage.removeItem('fm_theme_v1');
+  applyTheme(DEFAULT_THEME);
 }
 
 export function applyTheme(theme: ThemeData) {
