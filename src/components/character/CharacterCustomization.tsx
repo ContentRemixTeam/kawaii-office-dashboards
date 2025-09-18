@@ -28,6 +28,7 @@ import CharacterPreview from './CharacterPreview';
 import CharacterCustomizationContent from './CharacterCustomizationContent';
 import { PNGCharacter, CharacterAsset, EquippedAccessory, AccessoryPosition } from '@/types/character';
 import { getAllAssets, getAssetsByType, getAssetsByCategory, getAssetById, getRarityColor, DEFAULT_POSITIONS, removeAssetsByPattern } from '@/lib/assetManager';
+import designStudioLogo from '@/assets/design-studio-logo.png';
 
 // Default PNG character setup
 const DEFAULT_PNG_CHARACTER: PNGCharacter = {
@@ -236,7 +237,11 @@ export default function CharacterCustomization({ onBack }: CharacterCustomizatio
             </Button>
             <div className="flex items-center space-x-3">
               <Palette className="w-8 h-8 text-primary" />
-              <h1 className="text-4xl md:text-6xl font-bold text-foreground">DESIGN STUDIO</h1>
+              <img 
+                src={designStudioLogo} 
+                alt="Design Studio" 
+                className="h-16 md:h-20 w-auto"
+              />
             </div>
           </div>
           
