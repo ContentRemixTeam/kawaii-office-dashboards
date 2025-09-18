@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Sparkles, Crown } from 'lucide-react';
+import { ArrowLeft, Sparkles, Crown, BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { CharacterCreation, Character, calculateLevel } from '@/components/quest/CharacterCreation';
 import CharacterDisplay from '@/components/quest/CharacterDisplay';
 import QuestSystem from '@/components/quest/QuestSystem';
+import QuestWelcome from '@/components/quest/QuestWelcome';
+import QuestInstructions from '@/components/quest/QuestInstructions';
 
 const QUEST_CHARACTER_KEY = 'quest_character_v1';
 const QUEST_STORAGE_PREFIX = 'quest_mode_';
@@ -13,10 +15,14 @@ export default function QuestMode() {
   const navigate = useNavigate();
   const [character, setCharacter] = useState<Character | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showWelcome, setShowWelcome] = useState(false);
+  const [showInstructions, setShowInstructions] = useState(false);
 
   useEffect(() => {
     // Load existing character
     const savedCharacter = localStorage.getItem(QUEST_CHARACTER_KEY);
+    const hasSeenWelcome = localStorage.getItem('quest_seen_welcome');
+    
     if (savedCharacter) {
       try {
         const parsed = JSON.parse(savedCharacter);
@@ -24,12 +30,30 @@ export default function QuestMode() {
       } catch (error) {
         console.error('Failed to load character:', error);
       }
+    } else if (!hasSeenWelcome) {
+      // First time user - show welcome
+      setShowWelcome(true);
     }
     setIsLoading(false);
   }, []);
 
   const handleCharacterCreated = (newCharacter: Character) => {
     setCharacter(newCharacter);
+    setShowWelcome(false);
+    localStorage.setItem('quest_seen_welcome', 'true');
+  };
+
+  const handleGetStarted = () => {
+    setShowWelcome(false);
+    localStorage.setItem('quest_seen_welcome', 'true');
+  };
+
+  const handleShowInstructions = () => {
+    setShowInstructions(true);
+  };
+
+  const handleCloseInstructions = () => {
+    setShowInstructions(false);
   };
 
   const handleQuestComplete = (questId: string, expGained: number) => {
@@ -90,6 +114,16 @@ export default function QuestMode() {
     );
   }
 
+  // Show welcome screen for first-time users
+  if (showWelcome) {
+    return (
+      <QuestWelcome 
+        onGetStarted={handleGetStarted}
+        onShowInstructions={handleShowInstructions}
+      />
+    );
+  }
+
   // Show character creation if no character exists
   if (!character) {
     return <CharacterCreation onCharacterCreated={handleCharacterCreated} />;
@@ -97,6 +131,13 @@ export default function QuestMode() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 p-6">
+      {/* Instructions Modal */}
+      {showInstructions && (
+        <QuestInstructions 
+          onClose={handleCloseInstructions}
+          onStartAdventure={handleGetStarted}
+        />
+      )}
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -120,13 +161,23 @@ export default function QuestMode() {
             </div>
           </div>
           
-          <Button 
-            onClick={handleResetCharacter}
-            variant="outline"
-            className="bg-red-900/20 border-red-500/30 text-red-200 hover:bg-red-900/30"
-          >
-            Reset Character
-          </Button>
+          <div className="flex gap-3">
+            <Button 
+              onClick={handleShowInstructions}
+              variant="outline"
+              className="bg-black/20 border-blue-500/30 text-blue-200 hover:bg-blue-900/30"
+            >
+              <BookOpen className="w-4 h-4 mr-2" />
+              View Guide
+            </Button>
+            <Button 
+              onClick={handleResetCharacter}
+              variant="outline"
+              className="bg-red-900/20 border-red-500/30 text-red-200 hover:bg-red-900/30"
+            >
+              Reset Character
+            </Button>
+          </div>
         </div>
 
         <div className="space-y-8">

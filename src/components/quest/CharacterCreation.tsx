@@ -102,47 +102,43 @@ export interface Quest {
   difficulty: 'easy' | 'medium' | 'hard' | 'legendary';
   experienceReward: number;
   goldReward: number;
-  requirements: {
-    tasks?: number;
-    focusMinutes?: number;
-    wins?: number;
-    days?: number;
-  };
+  requirements: Record<string, number>;
   progress: {
     current: number;
     required: number;
   };
   isCompleted: boolean;
   isActive: boolean;
-  deadline?: string;
   category: 'productivity' | 'focus' | 'balance' | 'growth';
+  deadline?: string;
 }
 
-// Storage keys
 const QUEST_CHARACTER_KEY = 'quest_character_v1';
-const QUEST_DATA_KEY = 'quest_data_v1';
 
-// Character creation component
-export function CharacterCreation({ onCharacterCreated }: { onCharacterCreated: (character: Character) => void }) {
+interface CharacterCreationProps {
+  onCharacterCreated: (character: Character) => void;
+}
+
+export function CharacterCreation({ onCharacterCreated }: CharacterCreationProps) {
   const [selectedClass, setSelectedClass] = useState<keyof typeof CHARACTER_CLASSES>('warrior');
   const [characterName, setCharacterName] = useState('');
-  const [selectedColor, setSelectedColor] = useState('#3b82f6');
-  const [selectedAccessory, setSelectedAccessory] = useState('none');
+  const [selectedColor, setSelectedColor] = useState('#6366f1');
+  const [selectedAccessory, setSelectedAccessory] = useState<string>('none');
 
-  const colors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
+  const colors = ['#6366f1', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444'];
   const accessories = ['none', 'crown', 'glasses', 'hat', 'bandana'];
 
   const handleCreateCharacter = () => {
     if (!characterName.trim()) return;
 
-    const selectedClassData = CHARACTER_CLASSES[selectedClass];
+    const classData = CHARACTER_CLASSES[selectedClass];
     const newCharacter: Character = {
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       name: characterName.trim(),
       class: selectedClass,
       level: 1,
       experience: 0,
-      stats: { ...selectedClassData.baseStats },
+      stats: { ...classData.baseStats },
       avatar: {
         color: selectedColor,
         accessory: selectedAccessory
@@ -161,8 +157,11 @@ export function CharacterCreation({ onCharacterCreated }: { onCharacterCreated: 
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 p-6">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">Create Your Character</h1>
-          <p className="text-blue-200">Choose your path in the Quest for Productivity</p>
+          <h1 className="text-4xl font-bold text-white mb-4 flex items-center justify-center gap-3">
+            <Crown className="w-8 h-8 text-yellow-400" />
+            Create Your Hero
+          </h1>
+          <p className="text-blue-200 text-lg">Choose your path and begin your epic productivity adventure!</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -174,14 +173,14 @@ export function CharacterCreation({ onCharacterCreated }: { onCharacterCreated: 
             <CardContent className="text-center">
               <div className="mb-6">
                 <div 
-                  className="w-32 h-32 mx-auto rounded-full flex items-center justify-center text-6xl border-4 border-white/20"
+                  className="w-32 h-32 mx-auto rounded-full flex items-center justify-center text-6xl border-4 border-white/20 relative"
                   style={{ backgroundColor: selectedColor }}
                 >
                   {CHARACTER_CLASSES[selectedClass].emoji}
-                  {selectedAccessory === 'crown' && <div className="absolute -mt-8">👑</div>}
-                  {selectedAccessory === 'glasses' && <div className="absolute">👓</div>}
-                  {selectedAccessory === 'hat' && <div className="absolute -mt-8">🎩</div>}
-                  {selectedAccessory === 'bandana' && <div className="absolute -mt-4">🎽</div>}
+                  {selectedAccessory === 'crown' && <div className="absolute -top-3 text-2xl">👑</div>}
+                  {selectedAccessory === 'glasses' && <div className="absolute text-2xl">👓</div>}
+                  {selectedAccessory === 'hat' && <div className="absolute -top-3 text-2xl">🎩</div>}
+                  {selectedAccessory === 'bandana' && <div className="absolute -top-2 text-lg">🎽</div>}
                 </div>
               </div>
               
@@ -213,65 +212,42 @@ export function CharacterCreation({ onCharacterCreated }: { onCharacterCreated: 
             {/* Class Selection */}
             <Card className="bg-black/20 border-purple-500/30 backdrop-blur-sm">
               <CardContent className="p-4">
-                <label className="block text-white font-medium mb-4">Choose Your Class</label>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="mb-4">
+                  <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                    <Star className="w-5 h-5 text-yellow-400" />
+                    Choose Your Class
+                  </h3>
+                  <p className="text-blue-200 text-sm">Each class affects your quest types and rewards:</p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {Object.entries(CHARACTER_CLASSES).map(([classKey, classData]) => (
                     <button
                       key={classKey}
                       onClick={() => setSelectedClass(classKey as keyof typeof CHARACTER_CLASSES)}
-                      className={`p-3 rounded-lg border-2 transition-all ${
+                      className={`p-4 rounded-lg border-2 transition-all text-left ${
                         selectedClass === classKey 
                           ? 'border-purple-400 bg-purple-600/30' 
                           : 'border-purple-500/30 bg-black/20 hover:border-purple-400/50'
                       }`}
                     >
-                      <div className="text-2xl mb-2">{classData.emoji}</div>
-                      <div className="text-white text-sm font-medium">{classData.name}</div>
-                    </button>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Color Selection */}
-            <Card className="bg-black/20 border-purple-500/30 backdrop-blur-sm">
-              <CardContent className="p-4">
-                <label className="block text-white font-medium mb-3">Avatar Color</label>
-                <div className="flex gap-2">
-                  {colors.map((color) => (
-                    <button
-                      key={color}
-                      onClick={() => setSelectedColor(color)}
-                      className={`w-8 h-8 rounded-full border-2 ${
-                        selectedColor === color ? 'border-white' : 'border-gray-600'
-                      }`}
-                      style={{ backgroundColor: color }}
-                    />
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Accessory Selection */}
-            <Card className="bg-black/20 border-purple-500/30 backdrop-blur-sm">
-              <CardContent className="p-4">
-                <label className="block text-white font-medium mb-3">Accessory</label>
-                <div className="grid grid-cols-5 gap-2">
-                  {accessories.map((accessory) => (
-                    <button
-                      key={accessory}
-                      onClick={() => setSelectedAccessory(accessory)}
-                      className={`p-2 rounded border-2 transition-all ${
-                        selectedAccessory === accessory 
-                          ? 'border-purple-400 bg-purple-600/30' 
-                          : 'border-purple-500/30 bg-black/20'
-                      }`}
-                    >
-                      <div className="text-white text-xs">
-                        {accessory === 'none' ? 'None' : 
-                         accessory === 'crown' ? '👑' :
-                         accessory === 'glasses' ? '👓' :
-                         accessory === 'hat' ? '🎩' : '🎽'}
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className="text-2xl">{classData.emoji}</span>
+                        <h4 className="text-white font-bold text-sm">{classData.name}</h4>
+                      </div>
+                      <p className="text-gray-300 text-xs mb-2">{classData.description}</p>
+                      <div className="space-y-1">
+                        <p className="text-blue-200 text-xs font-medium">Specializes in:</p>
+                        <div className="flex flex-wrap gap-1">
+                          {Object.entries(classData.growthRates)
+                            .sort(([,a], [,b]) => b - a)
+                            .slice(0, 2)
+                            .map(([stat]) => (
+                              <Badge key={stat} className="bg-purple-600/20 text-purple-200 text-xs capitalize">
+                                {stat}
+                              </Badge>
+                            ))
+                          }
+                        </div>
                       </div>
                     </button>
                   ))}
@@ -279,18 +255,80 @@ export function CharacterCreation({ onCharacterCreated }: { onCharacterCreated: 
               </CardContent>
             </Card>
 
+            {/* Customization Section */}
+            <Card className="bg-black/20 border-purple-500/30 backdrop-blur-sm">
+              <CardContent className="p-4">
+                <div className="mb-4">
+                  <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-purple-400" />
+                    Customize Your Hero
+                  </h3>
+                  <p className="text-blue-200 text-sm">Personalize your character's appearance:</p>
+                </div>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-white font-medium mb-3">Avatar Color</label>
+                    <div className="flex gap-2">
+                      {colors.map((color) => (
+                        <button
+                          key={color}
+                          onClick={() => setSelectedColor(color)}
+                          className={`w-8 h-8 rounded-full border-2 transition-all ${
+                            selectedColor === color ? 'border-white scale-110' : 'border-gray-600 hover:border-gray-400'
+                          }`}
+                          style={{ backgroundColor: color }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-white font-medium mb-3">Accessory</label>
+                    <div className="grid grid-cols-5 gap-2">
+                      {accessories.map((accessory) => (
+                        <button
+                          key={accessory}
+                          onClick={() => setSelectedAccessory(accessory)}
+                          className={`p-2 rounded border-2 transition-all ${
+                            selectedAccessory === accessory 
+                              ? 'border-purple-400 bg-purple-600/30' 
+                              : 'border-purple-500/30 bg-black/20'
+                          }`}
+                        >
+                          <div className="text-white text-xs">
+                            {accessory === 'none' ? 'None' : 
+                             accessory === 'crown' ? '👑' :
+                             accessory === 'glasses' ? '👓' :
+                             accessory === 'hat' ? '🎩' : '🎽'}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Create Button */}
-            <Button 
-              onClick={handleCreateCharacter}
-              disabled={!characterName.trim()}
-              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-3 text-lg"
-            >
-              <Sparkles className="w-5 h-5 mr-2" />
-              Begin Your Quest
-            </Button>
+            <div className="text-center space-y-4">
+              <Button 
+                onClick={handleCreateCharacter}
+                disabled={!characterName.trim()}
+                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3 px-8 text-lg"
+              >
+                <Crown className="w-5 h-5 mr-2" />
+                Begin Your Adventure!
+              </Button>
+              <p className="text-gray-400 text-sm">
+                Ready to transform your productivity into an epic quest?
+              </p>
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
 }
+
+export { CharacterCreation as default };
