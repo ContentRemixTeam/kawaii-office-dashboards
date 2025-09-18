@@ -184,32 +184,32 @@ export default function ProductivityRewards({ onCoinsEarned, onSpecialCurrencyEa
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            <div className="flex justify-between items-center p-3 bg-pink-50 rounded-lg">
-              <span className="text-pink-700">Complete any task</span>
+            <div className="flex justify-between items-center p-3 bg-white border border-gray-200 rounded-lg">
+              <span className="text-gray-700">Complete any task</span>
               <Badge className="bg-yellow-100 text-yellow-700">
                 <Coins className="w-3 h-3 mr-1" />
                 {REWARD_RATES.TASK_COMPLETION} coins
               </Badge>
             </div>
             
-            <div className="flex justify-between items-center p-3 bg-pink-50 rounded-lg">
-              <span className="text-pink-700">Complete Big Three task</span>
+            <div className="flex justify-between items-center p-3 bg-white border border-gray-200 rounded-lg">
+              <span className="text-gray-700">Complete Big Three task</span>
               <Badge className="bg-yellow-100 text-yellow-700">
                 <Coins className="w-3 h-3 mr-1" />
                 +{REWARD_RATES.BIG_THREE_BONUS} bonus
               </Badge>
             </div>
             
-            <div className="flex justify-between items-center p-3 bg-pink-50 rounded-lg">
-              <span className="text-pink-700">Daily streak</span>
+            <div className="flex justify-between items-center p-3 bg-white border border-gray-200 rounded-lg">
+              <span className="text-gray-700">Daily streak</span>
               <Badge className="bg-yellow-100 text-yellow-700">
                 <Coins className="w-3 h-3 mr-1" />
                 {REWARD_RATES.DAILY_STREAK} coins/day
               </Badge>
             </div>
             
-            <div className="flex justify-between items-center p-3 bg-pink-50 rounded-lg">
-              <span className="text-pink-700">Weekly goal completion</span>
+            <div className="flex justify-between items-center p-3 bg-white border border-gray-200 rounded-lg">
+              <span className="text-gray-700">Weekly goal completion</span>
               <Badge className="bg-yellow-100 text-yellow-700">
                 <Coins className="w-3 h-3 mr-1" />
                 {REWARD_RATES.WEEKLY_GOAL} coins

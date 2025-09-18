@@ -48,7 +48,7 @@ export default function InspirationCorner() {
           variant="ghost"
           size="sm"
           onClick={refreshInspiration}
-          className="h-8 w-8 p-0 hover:bg-pink-50"
+          className="h-8 w-8 p-0 hover:bg-gray-50"
         >
           <RefreshCw className="w-4 h-4" />
         </Button>

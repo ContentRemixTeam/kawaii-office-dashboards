@@ -31,8 +31,8 @@ const difficultyConfig = {
 };
 
 const themeGradients = {
-  productivity: 'from-blue-500/20 via-purple-500/20 to-pink-500/20',
-  adventure: 'from-purple-500/20 via-pink-500/20 to-orange-500/20',
+  productivity: 'from-blue-500/20 via-purple-500/20 to-indigo-500/20',
+  adventure: 'from-purple-500/20 via-indigo-500/20 to-orange-500/20',
   maze: 'from-green-500/20 via-blue-500/20 to-purple-500/20'
 };
 
