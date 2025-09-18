@@ -241,10 +241,10 @@ export default function CharacterCustomization({ onBack }: CharacterCustomizatio
             <div>
               <h1 className="text-5xl font-bold text-gray-900 flex items-center gap-4">
                 <Heart className="w-10 h-10 text-pink-500" />
-                CHARACTER MODE
+                DESIGN STUDIO
               </h1>
               <p className="text-gray-600 mt-3 text-lg">
-                Customize your kawaii character with productivity rewards! ✨
+                Customize your character with productivity rewards! ✨
               </p>
             </div>
           </div>

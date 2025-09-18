@@ -15,7 +15,7 @@ export interface NavSection {
 
 export const NAV_ITEMS: NavItem[] = [
   { label: "Task Pets", href: "/tools/tasks", emoji: "🐾" },
-  { label: "Character Mode", href: "/quest", emoji: "💖" },
+  { label: "Design Studio", href: "/quest", emoji: "💖" },
   { label: "Pomodoro Timer", href: "/tools/focus", emoji: "⏰" },
   { label: "Break Room", href: "/tools/break-room", emoji: "🛋️" },
   { label: "Soundscapes", href: "/tools/sounds", emoji: "🎵" },
