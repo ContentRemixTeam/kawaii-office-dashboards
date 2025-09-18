@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import DashboardPetHero from "@/components/DashboardPetHero";
 import VisionPreviewOverlay from "@/components/VisionPreviewOverlay";
 import { CelebrationNotesCard } from "@/components/dashboard/CelebrationNotesCard";
 import { SidebarGroup } from "@/components/dashboard/SidebarGroup";
 import { useGiphyCelebration } from "@/hooks/useGiphyCelebration";
 import GiphyCelebration from "@/components/GiphyCelebration";
+import UnifiedModeAwareDashboard from "@/components/dashboard/UnifiedModeAwareDashboard";
 import { eventBus } from "@/lib/eventBus";
 import { initializeTasksFromIntention } from "@/lib/unifiedTasks";
 import { readPetStage, readEarnedAnimals } from "@/lib/topbarState";
@@ -105,10 +105,10 @@ const Dashboard = () => {
           </div>
         </section>
 
-        {/* Hero Pet Section */}
+        {/* Mode-Aware Hero Section */}
         <section className="dashboard-hero">
-          <FeatureErrorBoundary featureName="Pet Growth Center">
-            <DashboardPetHero />
+          <FeatureErrorBoundary featureName="Mode-Aware Dashboard">
+            <UnifiedModeAwareDashboard />
           </FeatureErrorBoundary>
         </section>
 
