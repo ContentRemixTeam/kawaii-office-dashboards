@@ -3,6 +3,7 @@
 @import "./styles/dashboard-layout.css";
 @import "./styles/green-theme-fixes.css";
 @import "./styles/professional-ui-standards.css";
+@import "./styles/positivity-theme-system.css";
 
 @tailwind base;
 @tailwind components;
@@ -166,6 +167,18 @@
     --timer-card-border: hsl(var(--border));
     --timer-header-shadow: 0 4px 12px -4px;
 
+    /* POSITIVITY CORNER THEME SYSTEM - Adaptive to all themes */
+    --positivity-bg-primary: hsl(var(--primary) / 0.1);        /* Light primary wash */
+    --positivity-bg-secondary: hsl(var(--accent) / 0.08);      /* Light accent wash */
+    --positivity-bg-tertiary: hsl(var(--secondary) / 0.08);   /* Light secondary wash */
+    --positivity-card-bg: hsl(var(--card) / 0.95);            /* Semi-transparent card */
+    --positivity-card-border: hsl(var(--primary) / 0.3);      /* Primary border */
+    --positivity-text-primary: hsl(var(--foreground));        /* Theme text */
+    --positivity-text-secondary: hsl(var(--muted-foreground)); /* Muted text */
+    --positivity-accent-bright: hsl(var(--primary));          /* Bright accent */
+    --positivity-accent-soft: hsl(var(--primary) / 0.7);      /* Soft accent */
+    --positivity-shadow: 0 8px 30px -8px hsl(var(--primary) / 0.3); /* Theme shadow */
+
     --sidebar-background: var(--bg-secondary);
     --sidebar-foreground: var(--text-primary);
     --sidebar-primary: var(--text-primary);
@@ -248,6 +261,14 @@
     
     /* Dark mode button adjustments */
     --timer-button-outline: hsl(var(--border) / 0.7);
+
+    /* POSITIVITY CORNER - Dark Theme Adaptations */
+    --positivity-bg-primary: hsl(var(--primary) / 0.15);      /* Enhanced primary for dark */
+    --positivity-bg-secondary: hsl(var(--accent) / 0.12);     /* Enhanced accent for dark */
+    --positivity-bg-tertiary: hsl(var(--secondary) / 0.12);   /* Enhanced secondary for dark */
+    --positivity-card-bg: hsl(var(--card) / 0.9);             /* Less transparent in dark */
+    --positivity-card-border: hsl(var(--primary) / 0.4);      /* Brighter border for dark */
+    --positivity-shadow: 0 8px 30px -8px hsl(var(--primary) / 0.4); /* Enhanced shadow */
   }
 }
 
@@ -303,6 +324,16 @@
     --sidebar-accent-foreground: var(--text-primary);
     --sidebar-border: var(--bg-tertiary);
     --sidebar-ring: 150 80% 60%;
+
+    /* POSITIVITY CORNER - Green Theme Adaptations */
+    --positivity-bg-primary: hsl(150 60% 40% / 0.2);          /* Green primary wash */
+    --positivity-bg-secondary: hsl(120 100% 35% / 0.15);      /* Lime accent wash */
+    --positivity-bg-tertiary: hsl(150 40% 45% / 0.15);        /* Forest secondary wash */
+    --positivity-card-bg: hsl(var(--card) / 0.85);            /* Card with green tint */
+    --positivity-card-border: hsl(150 80% 60% / 0.5);         /* Bright green border */
+    --positivity-accent-bright: hsl(120 100% 50%);            /* Vibrant lime */
+    --positivity-accent-soft: hsl(150 80% 60%);               /* Soft green */
+    --positivity-shadow: 0 8px 30px -8px hsl(150 80% 45% / 0.4); /* Green shadow */
 
     /* GREEN THEME - Timer colors for nature mode */
     --timer-focus-fill: hsl(150 80% 50%);         /* Bright green for focus */

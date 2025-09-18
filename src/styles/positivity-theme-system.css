@@ -1,0 +1,109 @@
+/* POSITIVITY CORNER THEME SYSTEM */
+/* Dynamic theme-adaptive backgrounds and colors for all themes */
+
+/* Theme-adaptive gradient system for Positivity Corner */
+  /* Theme-adaptive gradient system for Positivity Corner */
+  .positivity-bg-adaptive {
+    background: linear-gradient(
+      135deg,
+      var(--positivity-bg-primary) 0%,
+      var(--positivity-bg-secondary) 50%,
+      var(--positivity-bg-tertiary) 100%
+    );
+  }
+
+  /* Affirmation card theme-adaptive styling */
+  .affirmation-card-undrawn {
+    background: linear-gradient(
+      135deg,
+      var(--positivity-bg-primary),
+      var(--positivity-bg-secondary)
+    );
+    border: 3px solid var(--positivity-card-border);
+    box-shadow: var(--positivity-shadow);
+    backdrop-filter: blur(10px);
+  }
+
+  .affirmation-card-drawn {
+    background: linear-gradient(
+      135deg,
+      var(--positivity-bg-secondary),
+      var(--positivity-bg-tertiary)
+    );
+    border: 3px solid var(--positivity-card-border);
+    box-shadow: var(--positivity-shadow);
+    backdrop-filter: blur(10px);
+  }
+
+  /* Theme-adaptive button styling */
+  .positivity-button {
+    background: linear-gradient(
+      135deg,
+      var(--positivity-accent-bright),
+      var(--positivity-accent-soft)
+    );
+    color: hsl(var(--primary-foreground));
+    border: 2px solid var(--positivity-card-border);
+    box-shadow: var(--positivity-shadow);
+  }
+
+  .positivity-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 40px -12px var(--positivity-accent-bright);
+  }
+
+  /* Theme-adaptive badge styling */
+  .positivity-badge {
+    background: linear-gradient(
+      135deg,
+      var(--positivity-bg-primary),
+      var(--positivity-bg-secondary)
+    );
+    color: var(--positivity-text-primary);
+    border: 1px solid var(--positivity-card-border);
+  }
+
+  /* Theme-adaptive decorative elements */
+  .positivity-decorative-bg {
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMiIgZmlsbD0idmFyKC0tcG9zaXRpdml0eS1jYXJkLWJvcmRlcikiLz4KPGNpcmNsZSBjeD0iMTAiIGN5PSIxMCIgcj0iMSIgZmlsbD0idmFyKC0tcG9zaXRpdml0eS1hY2NlbnQtc29mdCkiLz4KPGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMS41IiBmaWxsPSJ2YXIoLS1wb3NpdGl2aXR5LWFjY2VudC1icmlnaHQpIi8+Cjwvc3ZnPg==');
+    opacity: 0.4;
+  }
+
+  /* Theme-adaptive icon colors */
+  .positivity-icon-primary {
+    color: var(--positivity-accent-bright);
+  }
+
+  .positivity-icon-secondary {
+    color: var(--positivity-accent-soft);
+  }
+
+  /* Theme-adaptive text colors */
+  .positivity-text-primary {
+    color: var(--positivity-text-primary);
+  }
+
+  .positivity-text-secondary {
+    color: var(--positivity-text-secondary);
+  }
+
+  /* Background utility classes */
+  .positivity-card-bg {
+    background: var(--positivity-card-bg);
+  }
+
+  .positivity-card-border {
+    border-color: var(--positivity-card-border);
+  }
+
+  /* Theme-adaptive gradient text */
+  .positivity-gradient-text {
+    background: linear-gradient(
+      135deg,
+      var(--positivity-accent-bright),
+      var(--positivity-accent-soft)
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
