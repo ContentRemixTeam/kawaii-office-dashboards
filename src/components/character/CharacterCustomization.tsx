@@ -211,7 +211,7 @@ export default function CharacterCustomization({ onBack }: CharacterCustomizatio
   };
 
   return (
-    <div className="body-gradient min-h-screen">
+    <div className="min-h-screen">{/* Remove body-gradient - let BackgroundManager handle it */}
       {/* Dashboard Container */}
       <div className="dashboard-responsive-container">
         {/* Header Section */}
