@@ -47,16 +47,16 @@ interface ThemeData {
 
 const DEFAULT_THEME: ThemeData = {
   vars: {
-    "--bg-start": "350 100% 98%",    // pastel pink
-    "--bg-end": "150 40% 96%",       // mint
-    "--brand": "340 75% 75%",        // pink accent
+    "--bg-start": "0 0% 100%",       // pure white
+    "--bg-end": "0 0% 98%",          // off white
+    "--brand": "220 13% 60%",        // neutral gray
     "--brand-fg": "0 0% 100%",       // white text on brand
-    "--accent": "150 60% 65%",       // mint accent
-    "--accent-fg": "160 30% 25%",    // dark text on accent
+    "--accent": "220 13% 70%",       // light neutral gray
+    "--accent-fg": "220 13% 25%",    // dark text on accent
     "--card": "0 0% 100%",           // white
-    "--text": "340 15% 25%",         // dark gray
-    "--muted": "340 10% 45%",        // secondary text
-    "--ring": "340 75% 85%"          // focus ring
+    "--text": "220 13% 18%",         // dark gray
+    "--muted": "220 9% 46%",         // secondary text
+    "--ring": "220 13% 75%"          // neutral focus ring
   },
   hiddenFeatures: {
     topBarEnergyWord: false,
