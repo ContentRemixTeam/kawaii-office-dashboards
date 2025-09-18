@@ -36,6 +36,9 @@ import { getDailyData, setDailyData } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 import { emitChanged } from "@/lib/bus";
 import { K_AFFIRM, K_ENERGY } from "@/lib/topbar.readers";
+import useDailyFlow from "@/hooks/useDailyFlow";
+import DailyIntentionModal from "@/components/DailyIntentionModal";
+import DebriefModal from "@/components/DebriefModal";
 
 import VisionBoardSection from "@/components/VisionBoardSection";
 
@@ -142,6 +145,7 @@ const PRESET_WORDS = {
 };
 
 export default function PositivityCabinet() {
+  const flow = useDailyFlow();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const defaultTab = searchParams.get('tab') || 'wins';
@@ -436,6 +440,58 @@ export default function PositivityCabinet() {
   const thisWeekWins = microWins.filter(win => win.week === getWeekKey(new Date()));
   const todaysGratitude = gratitudeEntries.filter(entry => entry.date === getTodayISO());
 
+  const sortedHistory = Object.values(cardHistory).sort((a, b) => 
+    new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
+
+  // CRITICAL FUNCTIONALITY PROTECTION
+  // Error handling wrapper for button clicks
+  const safeButtonClick = (action: () => void, actionName: string) => {
+    try {
+      console.log(`[FUNC_TEST] ${actionName} button clicked`);
+      action();
+      console.log(`[FUNC_TEST] ${actionName} executed successfully`);
+    } catch (error) {
+      console.error(`[FUNC_TEST] ${actionName} failed:`, error);
+      toast({
+        title: "Feature temporarily unavailable",
+        description: `${actionName} feature encountered an error. Please try again.`,
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Protected button handlers
+  const handleIntentionClick = () => {
+    safeButtonClick(() => {
+      flow.setShowIntention(true);
+    }, "Daily Intention");
+  };
+
+  const handleDebriefClick = () => {
+    safeButtonClick(() => {
+      flow.setShowDebrief(true);
+    }, "Daily Debrief");
+  };
+
+  const handleAddMicroWin = () => {
+    safeButtonClick(() => {
+      addMicroWin();
+    }, "Add Micro Win");
+  };
+
+  const handleAddGratitude = () => {
+    safeButtonClick(() => {
+      addGratitude();
+    }, "Add Gratitude");
+  };
+
+  const handleDrawCard = () => {
+    safeButtonClick(() => {
+      drawDailyCard();
+    }, "Draw Affirmation Card");
+  };
+
   return (
     <ToolShell title="Positivity Corner">
       <div className="space-y-6">
@@ -446,6 +502,49 @@ export default function PositivityCabinet() {
             Store encouragement, celebrate wins, practice gratitude, and draw daily inspiration. 
             Everything you need to stay motivated and positive.
           </p>
+        </div>
+
+        {/* CRITICAL: Daily Flow Action Buttons */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-semibold text-foreground">🎯 Daily Intention</h3>
+                  <p className="text-sm text-muted-foreground">Set your focus for today</p>
+                </div>
+                <Button 
+                  onClick={handleIntentionClick}
+                  variant="outline"
+                  size="sm"
+                  className="font-medium"
+                  data-testid="intention-button"
+                >
+                  Set Intention
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-accent/20 bg-gradient-to-r from-accent/5 to-accent/10">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-semibold text-foreground">📝 Daily Debrief</h3>
+                  <p className="text-sm text-muted-foreground">Reflect on your day</p>
+                </div>
+                <Button 
+                  onClick={handleDebriefClick}
+                  variant="outline"
+                  size="sm"
+                  className="font-medium"
+                  data-testid="debrief-button"
+                >
+                  Start Debrief
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Professional Clean Menu Design */}
@@ -526,7 +625,7 @@ export default function PositivityCabinet() {
                     onChange={(e) => setNewMicroWin(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && addMicroWin()}
                   />
-                  <Button onClick={addMicroWin} disabled={!newMicroWin.trim()}>
+                  <Button onClick={handleAddMicroWin} disabled={!newMicroWin.trim()}>
                     <Plus className="w-4 h-4" />
                   </Button>
                 </div>
@@ -587,7 +686,7 @@ export default function PositivityCabinet() {
                     onChange={(e) => setNewGratitude(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && addGratitude()}
                   />
-                  <Button onClick={addGratitude} disabled={!newGratitude.trim()}>
+                  <Button onClick={handleAddGratitude} disabled={!newGratitude.trim()}>
                     <Plus className="w-4 h-4" />
                   </Button>
                 </div>
@@ -698,7 +797,7 @@ export default function PositivityCabinet() {
                   </div>
                   
                   <Button 
-                    onClick={drawDailyCard}
+                    onClick={handleDrawCard}
                     disabled={isFlipping}
                     size="lg"
                     className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground border-0 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 rounded-2xl px-8 py-4 text-lg font-semibold"
@@ -1081,6 +1180,17 @@ export default function PositivityCabinet() {
             <VisionBoardSection />
           </TabsContent>
         </Tabs>
+
+        {/* CRITICAL: Daily Flow Modals */}
+        <DailyIntentionModal 
+          open={flow.showIntention} 
+          onClose={() => flow.setShowIntention(false)} 
+        />
+        <DebriefModal 
+          open={flow.showDebrief} 
+          onClose={() => flow.setShowDebrief(false)}
+          selectedAnimal="unicorn" // Default pet for now
+        />
       </div>
     </ToolShell>
   );
