@@ -233,7 +233,7 @@ export default function Arcade() {
           </div>
 
           {/* Info Section */}
-          <Card className="mt-8 bg-muted/30">
+          <Card className="mt-8 bg-card border border-border">
             <CardContent className="p-6">
               <div className="flex items-start gap-4">
                 <Zap className="w-6 h-6 text-primary mt-1" />
