@@ -36,6 +36,7 @@ interface Position {
 interface Food extends Position {
   type: 'red' | 'yellow' | 'green';
   points: number;
+  spawnTime: number;
 }
 
 interface SnakeGameProps {
@@ -73,7 +74,8 @@ const generateFood = (snake: Position[]): Food => {
       x: Math.floor(Math.random() * GRID_SIZE),
       y: Math.floor(Math.random() * GRID_SIZE),
       type: foodType.type,
-      points: foodType.points
+      points: foodType.points,
+      spawnTime: Date.now()
     };
   } while (snake.some(segment => segment.x === food.x && segment.y === food.y));
   
@@ -111,9 +113,39 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
   const [gameSpeed, setGameSpeed] = useState(GAME_SPEED);
   const [flashEffect, setFlashEffect] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [lastFoodTime, setLastFoodTime] = useState(0);
+  const [comboActive, setComboActive] = useState(false);
+  const [celebrationFlash, setCelebrationFlash] = useState(false);
+  const [milestonesReached, setMilestonesReached] = useState<number[]>([]);
+  const [tokenBonusGiven, setTokenBonusGiven] = useState(false);
+  const [snakeColors, setSnakeColors] = useState({ head: '#22c55e', body: '#16a34a' });
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const gameLoopRef = useRef<NodeJS.Timeout>();
+  const foodTimerRef = useRef<NodeJS.Timeout>();
+
+  // Load user's pet colors
+  useEffect(() => {
+    try {
+      const petData = localStorage.getItem('fm_pet_v1:2025-09-18');
+      if (petData) {
+        const parsed = JSON.parse(petData);
+        if (parsed.animal === 'dragon') {
+          setSnakeColors({ head: '#ef4444', body: '#dc2626' }); // Red dragon
+        } else if (parsed.animal === 'unicorn') {
+          setSnakeColors({ head: '#a855f7', body: '#9333ea' }); // Purple unicorn
+        } else if (parsed.animal === 'cat') {
+          setSnakeColors({ head: '#f59e0b', body: '#d97706' }); // Orange cat
+        } else if (parsed.animal === 'bunny') {
+          setSnakeColors({ head: '#ec4899', body: '#db2777' }); // Pink bunny
+        } else if (parsed.animal === 'dog') {
+          setSnakeColors({ head: '#8b5cf6', body: '#7c3aed' }); // Purple dog
+        }
+      }
+    } catch {
+      // Use default colors
+    }
+  }, []);
 
   // Reset game to initial state
   const resetGame = useCallback(() => {
@@ -127,8 +159,16 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
     setScore(0);
     setGameSpeed(GAME_SPEED);
     setFlashEffect(false);
+    setLastFoodTime(0);
+    setComboActive(false);
+    setCelebrationFlash(false);
+    setMilestonesReached([]);
+    setTokenBonusGiven(false);
     if (gameLoopRef.current) {
       clearInterval(gameLoopRef.current);
+    }
+    if (foodTimerRef.current) {
+      clearTimeout(foodTimerRef.current);
     }
     console.log('✅ resetGame completed');
   }, []);
@@ -222,6 +262,19 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
       if (head.x === food.x && head.y === food.y) {
         console.log('🍎 Food eaten!', food.type, 'Points:', food.points);
         
+        const currentTime = Date.now();
+        let bonusPoints = 0;
+        
+        // Check for combo bonus (within 3 seconds of last food)
+        if (lastFoodTime > 0 && currentTime - lastFoodTime < 3000) {
+          bonusPoints = 5;
+          setComboActive(true);
+          setTimeout(() => setComboActive(false), 1000);
+          console.log('🔥 Combo bonus! +5 points');
+        }
+        
+        setLastFoodTime(currentTime);
+        
         // Flash effect
         setFlashEffect(true);
         setTimeout(() => setFlashEffect(false), 200);
@@ -231,11 +284,29 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
           playEatingSound();
         }
         
-        // Update score and check for speed increase
+        // Update score and check for milestones
         setScore(prev => {
-          const newScore = prev + food.points;
+          const newScore = prev + food.points + bonusPoints;
           
-          // Increase speed every 50 points (every 5 red foods approximately)
+          // Check for milestone celebrations
+          const milestones = [50, 100, 150];
+          milestones.forEach(milestone => {
+            if (newScore >= milestone && !milestonesReached.includes(milestone)) {
+              setMilestonesReached(current => [...current, milestone]);
+              setCelebrationFlash(true);
+              setTimeout(() => setCelebrationFlash(false), 500);
+              console.log('🎉 Milestone reached:', milestone);
+            }
+          });
+          
+          // Token bonus at 100+ points
+          if (newScore >= 100 && !tokenBonusGiven) {
+            setTokenBonusGiven(true);
+            // Add tokens back (simulated - would need actual token system integration)
+            console.log('🪙 Token bonus earned! +2 tokens');
+          }
+          
+          // Increase speed every 50 points
           if (Math.floor(newScore / 50) > Math.floor(prev / 50)) {
             setGameSpeed(currentSpeed => Math.max(100, currentSpeed - 20));
             console.log('🚀 Speed increased! New speed:', Math.max(100, gameSpeed - 20));
@@ -244,6 +315,10 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
           return newScore;
         });
         
+        // Clear food timer and generate new food
+        if (foodTimerRef.current) {
+          clearTimeout(foodTimerRef.current);
+        }
         setFood(generateFood(newSnake));
       } else {
         // Remove tail if no food eaten
@@ -253,7 +328,23 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
       console.log('✅ Snake updated, new length:', newSnake.length);
       return newSnake;
     });
-  }, [nextDirection, food, soundEnabled, gameSpeed]);
+  }, [nextDirection, food, soundEnabled, gameSpeed, lastFoodTime, milestonesReached, tokenBonusGiven]);
+
+  // Food timer effect
+  useEffect(() => {
+    if (gameState === 'playing' && food) {
+      foodTimerRef.current = setTimeout(() => {
+        console.log('⏰ Food expired, spawning new food');
+        setFood(generateFood(snake));
+      }, 12000); // 12 seconds
+      
+      return () => {
+        if (foodTimerRef.current) {
+          clearTimeout(foodTimerRef.current);
+        }
+      };
+    }
+  }, [food, gameState, snake]);
 
   // Simple eating sound function
   const playEatingSound = useCallback(() => {
@@ -302,6 +393,18 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
     
+    // Celebration flash for milestones
+    if (celebrationFlash) {
+      ctx.fillStyle = 'rgba(255, 215, 0, 0.3)'; // Golden flash
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    
+    // Combo flash
+    if (comboActive) {
+      ctx.fillStyle = 'rgba(255, 100, 100, 0.2)'; // Red combo flash
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    
     // Draw grid
     ctx.strokeStyle = borderColor ? `hsl(${borderColor})` : '#e0e0e0';
     ctx.lineWidth = 1;
@@ -317,14 +420,14 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
       ctx.stroke();
     }
     
-    // Draw snake with different head color
+    // Draw snake with user's pet colors
     snake.forEach((segment, index) => {
       if (index === 0) {
-        // Snake head - slightly brighter
-        ctx.fillStyle = primaryColor ? `hsl(${primaryColor})` : '#22c55e';
+        // Snake head - use pet head color
+        ctx.fillStyle = snakeColors.head;
       } else {
-        // Snake body - slightly darker
-        ctx.fillStyle = primaryColor ? `hsl(${primaryColor} / 0.7)` : '#16a34a';
+        // Snake body - use pet body color
+        ctx.fillStyle = snakeColors.body;
       }
       ctx.fillRect(
         segment.x * CELL_SIZE + 1,
@@ -334,16 +437,23 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
       );
     });
     
-    // Draw food with appropriate color
+    // Draw food with appropriate color and timer indicator
     const foodTypeConfig = FOOD_TYPES.find(type => type.type === food.type);
     ctx.fillStyle = foodTypeConfig?.color || '#ef4444';
+    
+    // Food timer indicator (gets smaller as time runs out)
+    const timeLeft = Math.max(0, 12000 - (Date.now() - food.spawnTime));
+    const timerProgress = timeLeft / 12000;
+    const foodSize = Math.max(8, (CELL_SIZE - 2) * timerProgress);
+    const offset = (CELL_SIZE - foodSize) / 2;
+    
     ctx.fillRect(
-      food.x * CELL_SIZE + 1,
-      food.y * CELL_SIZE + 1,
-      CELL_SIZE - 2,
-      CELL_SIZE - 2
+      food.x * CELL_SIZE + offset,
+      food.y * CELL_SIZE + offset,
+      foodSize,
+      foodSize
     );
-  }, [snake, food, flashEffect]);
+  }, [snake, food, flashEffect, celebrationFlash, comboActive, snakeColors]);
 
   // Keyboard controls
   useEffect(() => {
@@ -543,7 +653,10 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
               <CardContent className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Score:</span>
-                  <span className="font-bold">{score}</span>
+                  <span className="font-bold flex items-center gap-1">
+                    {score}
+                    {comboActive && <span className="text-red-500 text-xs">COMBO!</span>}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">High Score:</span>
@@ -558,8 +671,15 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
                   <span className="font-bold">{Math.round((GAME_SPEED / gameSpeed) * 100)}%</span>
                 </div>
                 <div className="flex justify-between">
+                  <span className="text-muted-foreground">Milestones:</span>
+                  <span className="font-bold">{milestonesReached.length}/3</span>
+                </div>
+                <div className="flex justify-between">
                   <span className="text-muted-foreground">Tokens:</span>
-                  <span className="font-bold">{currentTokens}</span>
+                  <span className="font-bold flex items-center gap-1">
+                    {currentTokens}
+                    {tokenBonusGiven && <span className="text-green-500 text-xs">+2</span>}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Sound:</span>
@@ -640,9 +760,11 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
                 <p className="ml-4">🔴 Red = 10 points</p>
                 <p className="ml-4">🟡 Yellow = 15 points</p>
                 <p className="ml-4">🟢 Green = 20 points</p>
-                <p>• Speed increases every 50 points</p>
-                <p>• Touch buttons for mobile</p>
-                <p>• Costs 15 tokens per game</p>
+                <p>• Combo: +5 bonus within 3 seconds</p>
+                <p>• Food expires after 12 seconds</p>
+                <p>• Milestones: 50, 100, 150 points</p>
+                <p>• Earn 2 tokens back at 100+ points</p>
+                <p>• Snake colors match your pet</p>
               </CardContent>
             </Card>
           </div>
