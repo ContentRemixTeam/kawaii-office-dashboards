@@ -26,8 +26,8 @@ export default function BeeGlassesTest() {
         {/* Bee with glasses overlay */}
         <div className="text-center">
           <h3 className="text-lg font-semibold mb-4 text-foreground">Bee + Glasses</h3>
-          <div className="relative w-32 h-32 border-2 border-dashed border-muted-foreground rounded-lg flex items-center justify-center">
-            {/* Bee base */}
+          <div className="relative w-32 h-32 border-2 border-dashed border-muted-foreground rounded-lg flex items-center justify-center bg-background">
+            {/* Bee base - make sure it's visible */}
             <img 
               src="/characters/bases/bee/bee-base.png" 
               alt="Bee base" 
@@ -35,14 +35,15 @@ export default function BeeGlassesTest() {
               onError={(e) => {
                 console.error('Failed to load bee image in overlay:', e);
                 e.currentTarget.style.border = '2px solid red';
+                e.currentTarget.style.backgroundColor = 'pink';
               }}
               onLoad={() => console.log('Bee overlay image loaded successfully')}
             />
-            {/* Glasses overlay */}
+            {/* Glasses overlay - positioned over the bee */}
             <img 
               src="/characters/customization/accessories/glasses-round.png" 
               alt="Glasses" 
-              className="absolute w-16 h-16 object-contain z-20 transform translate-y-[-2px]"
+              className="absolute w-16 h-16 object-contain z-20 transform translate-y-[-4px]"
               onError={(e) => {
                 console.error('Failed to load glasses image in overlay:', e);
                 e.currentTarget.style.border = '2px solid red';
