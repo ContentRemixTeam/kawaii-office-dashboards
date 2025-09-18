@@ -448,16 +448,65 @@ export default function PositivityCabinet() {
           </p>
         </div>
 
-        {/* Tabs with Enhanced Readability */}
+        {/* Professional Clean Menu Design */}
         <Tabs defaultValue={defaultTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-7 bg-secondary ensure-contrast">
-            <TabsTrigger value="wins" className="ensure-contrast data-[state=active]:text-brand-readable data-[state=active]:bg-primary font-medium">🏆 Micro Wins</TabsTrigger>
-            <TabsTrigger value="gratitude" className="ensure-contrast data-[state=active]:text-brand-readable data-[state=active]:bg-primary font-medium">🙏 Gratitude</TabsTrigger>
-            <TabsTrigger value="affirmations" className="ensure-contrast data-[state=active]:text-brand-readable data-[state=active]:bg-primary font-medium">🃏 Affirmations</TabsTrigger>
-            <TabsTrigger value="energy" className="ensure-contrast data-[state=active]:text-brand-readable data-[state=active]:bg-primary font-medium">⚡ Energy Word</TabsTrigger>
-            <TabsTrigger value="future" className="ensure-contrast data-[state=active]:text-brand-readable data-[state=active]:bg-primary font-medium">💌 Future Notes</TabsTrigger>
-            <TabsTrigger value="cabinet" className="ensure-contrast data-[state=active]:text-brand-readable data-[state=active]:bg-primary font-medium">📦 Encouragements</TabsTrigger>
-            <TabsTrigger value="vision" className="ensure-contrast data-[state=active]:text-brand-readable data-[state=active]:bg-primary font-medium">🎯 Vision</TabsTrigger>
+          <TabsList className="w-full h-auto p-1 bg-card border border-border rounded-xl grid grid-cols-7 gap-1">
+            <TabsTrigger 
+              value="wins" 
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm text-sm font-medium px-3 py-2.5 rounded-lg transition-all duration-200 hover:bg-muted/80"
+            >
+              <Trophy className="w-4 h-4 mr-2" />
+              <span className="hidden sm:inline">Micro Wins</span>
+              <span className="sm:hidden">Wins</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="gratitude" 
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm text-sm font-medium px-3 py-2.5 rounded-lg transition-all duration-200 hover:bg-muted/80"
+            >
+              <Heart className="w-4 h-4 mr-2" />
+              <span className="hidden sm:inline">Gratitude</span>
+              <span className="sm:hidden">Thanks</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="affirmations" 
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm text-sm font-medium px-3 py-2.5 rounded-lg transition-all duration-200 hover:bg-muted/80"
+            >
+              <Sparkles className="w-4 h-4 mr-2" />
+              <span className="hidden sm:inline">Affirmations</span>
+              <span className="sm:hidden">Cards</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="energy" 
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm text-sm font-medium px-3 py-2.5 rounded-lg transition-all duration-200 hover:bg-muted/80"
+            >
+              <Star className="w-4 h-4 mr-2" />
+              <span className="hidden sm:inline">Energy</span>
+              <span className="sm:hidden">Word</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="future" 
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm text-sm font-medium px-3 py-2.5 rounded-lg transition-all duration-200 hover:bg-muted/80"
+            >
+              <Calendar className="w-4 h-4 mr-2" />
+              <span className="hidden sm:inline">Future Notes</span>
+              <span className="sm:hidden">Future</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="cabinet" 
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm text-sm font-medium px-3 py-2.5 rounded-lg transition-all duration-200 hover:bg-muted/80"
+            >
+              <Gift className="w-4 h-4 mr-2" />
+              <span className="hidden sm:inline">Cabinet</span>
+              <span className="sm:hidden">Store</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="vision" 
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm text-sm font-medium px-3 py-2.5 rounded-lg transition-all duration-200 hover:bg-muted/80"
+            >
+              <Target className="w-4 h-4 mr-2" />
+              <span className="hidden sm:inline">Vision</span>
+              <span className="sm:hidden">Goals</span>
+            </TabsTrigger>
           </TabsList>
 
           {/* Micro Wins Tab */}

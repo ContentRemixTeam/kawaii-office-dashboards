@@ -1,0 +1,121 @@
+/* PROFESSIONAL UI STANDARDS - Positivity Corner Menu */
+
+/* Clean Tab Menu Design System */
+.positivity-menu {
+  /* Modern tab container */
+  .tabs-list {
+    @apply w-full h-auto p-1 bg-card border border-border rounded-xl;
+    @apply grid grid-cols-7 gap-1;
+    @apply shadow-sm;
+  }
+
+  /* Professional tab buttons */
+  .tab-trigger {
+    @apply px-3 py-2.5 rounded-lg;
+    @apply text-sm font-medium;
+    @apply transition-all duration-200;
+    @apply hover:bg-muted/80;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary/20;
+    
+    /* Active state */
+    &[data-state="active"] {
+      @apply bg-primary text-primary-foreground shadow-sm;
+    }
+    
+    /* Icon and text layout */
+    @apply flex items-center justify-center gap-2;
+    
+    /* Responsive text */
+    .tab-text-full { @apply hidden sm:inline; }
+    .tab-text-short { @apply sm:hidden; }
+  }
+}
+
+/* DESIGN SYSTEM STANDARDS FOR FUTURE UI ELEMENTS */
+
+/* Professional Button Standards */
+.professional-button {
+  /* Base button styling - USE THESE STANDARDS */
+  @apply px-4 py-2 rounded-lg;
+  @apply font-medium text-sm;
+  @apply border border-border;
+  @apply transition-all duration-200;
+  @apply focus:outline-none focus:ring-2 focus:ring-primary/20;
+  
+  /* Variants */
+  &.primary {
+    @apply bg-primary text-primary-foreground border-primary;
+    @apply hover:bg-primary/90;
+  }
+  
+  &.secondary {
+    @apply bg-card text-card-foreground;
+    @apply hover:bg-muted/80;
+  }
+  
+  &.outline {
+    @apply bg-transparent text-foreground;
+    @apply hover:bg-muted/50;
+  }
+}
+
+/* Professional Card Standards */
+.professional-card {
+  /* Base card styling - MAINTAIN CONSISTENCY */
+  @apply bg-card border border-border rounded-xl;
+  @apply shadow-sm;
+  @apply p-6;
+  
+  /* Card header */
+  .card-header {
+    @apply mb-4 pb-4 border-b border-border/50;
+  }
+  
+  /* Card content */
+  .card-content {
+    @apply space-y-4;
+  }
+}
+
+/* Menu Group Standards */
+.menu-group {
+  /* Professional menu container */
+  @apply bg-card border border-border rounded-xl p-1;
+  @apply shadow-sm;
+  
+  /* Menu items */
+  .menu-item {
+    @apply px-3 py-2 rounded-lg;
+    @apply text-sm font-medium;
+    @apply transition-colors duration-200;
+    @apply hover:bg-muted/80;
+    @apply flex items-center gap-2;
+    
+    &.active {
+      @apply bg-primary text-primary-foreground;
+    }
+  }
+}
+
+/* DESIGN PRINCIPLES TO FOLLOW */
+/*
+1. NO speech bubbles, chat bubbles, or decorative shapes
+2. ALWAYS use consistent rounded rectangles (8px radius)
+3. MAINTAIN consistent padding: 12px vertical, 16-24px horizontal
+4. USE semantic color tokens from design system
+5. ENSURE proper hover and focus states
+6. MATCH dashboard card styling and spacing
+7. KEEP professional, clean aesthetic throughout
+8. TEST with all theme colors for consistency
+*/
+
+/* Responsive Design Standards */
+@media (max-width: 640px) {
+  .positivity-menu .tabs-list {
+    @apply grid-cols-4 gap-0.5;
+  }
+  
+  .positivity-menu .tab-trigger {
+    @apply px-2 py-2 text-xs;
+  }
+}

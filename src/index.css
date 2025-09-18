@@ -2,6 +2,7 @@
 @import "./styles/readability-system.css";
 @import "./styles/dashboard-layout.css";
 @import "./styles/green-theme-fixes.css";
+@import "./styles/professional-ui-standards.css";
 
 @tailwind base;
 @tailwind components;
