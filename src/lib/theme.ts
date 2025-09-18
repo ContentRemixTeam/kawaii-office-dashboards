@@ -35,16 +35,16 @@ interface ThemeData {
 
 const DEFAULT_THEME: ThemeData = {
   vars: {
-    "--bg-start": "0 0% 100%",       // pure white
-    "--bg-end": "210 100% 98%",      // very light blue
-    "--brand": "220 30% 85%",        // light pastel blue
+    "--bg-start": "220 5% 98%",      // very light background
+    "--bg-end": "220 5% 99%",        // almost white
+    "--brand": "220 13% 90%",        // light pastel blue
     "--brand-fg": "220 15% 25%",     // dark text on brand - proper contrast
-    "--accent": "200 25% 88%",       // very light pastel blue-gray
+    "--accent": "200 25% 92%",       // very light pastel blue-gray
     "--accent-fg": "200 15% 30%",    // dark text on accent - proper contrast
     "--card": "0 0% 100%",           // white
     "--text": "220 13% 18%",         // dark gray - high contrast
     "--muted": "220 9% 55%",         // medium gray - good contrast
-    "--ring": "220 25% 80%"          // light pastel focus ring
+    "--ring": "220 25% 85%"          // light pastel focus ring
   },
   hiddenFeatures: {
     topBarEnergyWord: false,
