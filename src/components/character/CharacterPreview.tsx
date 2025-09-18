@@ -11,8 +11,8 @@ interface CharacterPreviewProps {
 
 const sizeMap = {
   small: { width: 120, height: 120, padding: 16 },   // inset-4 = 16px
-  medium: { width: 200, height: 200, padding: 16 },  // inset-4 = 16px  
-  large: { width: 300, height: 300, padding: 32 }    // inset-8 = 32px
+  medium: { width: 200, height: 200, padding: 16 },  // inset-4 = 16px - matches BeeAccessoriesCustomizer mini preview
+  large: { width: 400, height: 400, padding: 32 }    // inset-8 = 32px - matches BeeAccessoriesCustomizer positioning view
 };
 
 export default function CharacterPreview({ 
