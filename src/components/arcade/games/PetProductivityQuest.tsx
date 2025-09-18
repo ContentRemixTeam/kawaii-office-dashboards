@@ -48,7 +48,7 @@ interface Platform {
 interface Collectible {
   x: number;
   y: number;
-  type: 'coffee' | 'notebook' | 'task';
+  type: 'star' | 'rainbow' | 'crystal';
   points: number;
   collected: boolean;
   emoji: string;
@@ -59,7 +59,7 @@ interface Obstacle {
   y: number;
   width: number;
   height: number;
-  type: 'notification' | 'distraction' | 'lazy';
+  type: 'storm' | 'void' | 'lightning';
   emoji: string;
 }
 
@@ -105,9 +105,9 @@ const PET_CONFIG = {
   unicorn: { 
     emoji: '🦄', 
     name: 'Unicorn',
-    ability: 'Double Jump',
+    ability: 'Rainbow Double Jump',
     jumpForce: -15,
-    specialAbility: 'double-jump'
+    specialAbility: 'rainbow-jump'
   },
   bunny: { 
     emoji: '🐰', 
@@ -122,8 +122,8 @@ const PET_CONFIG = {
 const LEVELS: Level[] = [
   {
     id: 1,
-    name: "Morning Rush",
-    background: "🌅",
+    name: "Twilight Meadows",
+    background: "🌸",
     goalX: 750,
     platforms: [
       { x: 0, y: 350, width: 150, height: 50, type: 'desk' },
@@ -133,21 +133,21 @@ const LEVELS: Level[] = [
       { x: 670, y: 270, width: 130, height: 50, type: 'desk' }
     ],
     collectibles: [
-      { x: 230, y: 270, type: 'coffee', points: 10, collected: false, emoji: '☕' },
-      { x: 380, y: 220, type: 'notebook', points: 15, collected: false, emoji: '📓' },
-      { x: 550, y: 290, type: 'task', points: 25, collected: false, emoji: '✅' },
-      { x: 700, y: 240, type: 'coffee', points: 10, collected: false, emoji: '☕' }
+      { x: 230, y: 270, type: 'star', points: 10, collected: false, emoji: '⭐' },
+      { x: 380, y: 220, type: 'rainbow', points: 15, collected: false, emoji: '🌈' },
+      { x: 550, y: 290, type: 'crystal', points: 25, collected: false, emoji: '💎' },
+      { x: 700, y: 240, type: 'star', points: 10, collected: false, emoji: '⭐' }
     ],
     obstacles: [
-      { x: 160, y: 320, width: 30, height: 30, type: 'notification', emoji: '📱' },
-      { x: 320, y: 220, width: 25, height: 25, type: 'distraction', emoji: '💭' },
-      { x: 480, y: 290, width: 35, height: 35, type: 'lazy', emoji: '😴' }
+      { x: 160, y: 320, width: 30, height: 30, type: 'storm', emoji: '☁️' },
+      { x: 320, y: 220, width: 25, height: 25, type: 'void', emoji: '🌑' },
+      { x: 480, y: 290, width: 35, height: 35, type: 'lightning', emoji: '⚡' }
     ]
   },
   {
     id: 2,
-    name: "Afternoon Focus",
-    background: "☀️",
+    name: "Crystal Caverns",
+    background: "💜",
     goalX: 750,
     platforms: [
       { x: 0, y: 350, width: 120, height: 50, type: 'desk' },
@@ -158,22 +158,22 @@ const LEVELS: Level[] = [
       { x: 720, y: 320, width: 80, height: 50, type: 'desk' }
     ],
     collectibles: [
-      { x: 210, y: 250, type: 'notebook', points: 15, collected: false, emoji: '📓' },
-      { x: 350, y: 170, type: 'task', points: 25, collected: false, emoji: '✅' },
-      { x: 510, y: 230, type: 'coffee', points: 10, collected: false, emoji: '☕' },
-      { x: 650, y: 150, type: 'task', points: 25, collected: false, emoji: '✅' }
+      { x: 210, y: 250, type: 'rainbow', points: 15, collected: false, emoji: '🌈' },
+      { x: 350, y: 170, type: 'crystal', points: 25, collected: false, emoji: '💎' },
+      { x: 510, y: 230, type: 'star', points: 10, collected: false, emoji: '⭐' },
+      { x: 650, y: 150, type: 'crystal', points: 25, collected: false, emoji: '💎' }
     ],
     obstacles: [
-      { x: 140, y: 320, width: 30, height: 30, type: 'notification', emoji: '📱' },
-      { x: 280, y: 170, width: 25, height: 25, type: 'distraction', emoji: '💭' },
-      { x: 440, y: 230, width: 35, height: 35, type: 'lazy', emoji: '😴' },
-      { x: 580, y: 150, width: 30, height: 30, type: 'notification', emoji: '📱' }
+      { x: 140, y: 320, width: 30, height: 30, type: 'storm', emoji: '☁️' },
+      { x: 280, y: 170, width: 25, height: 25, type: 'void', emoji: '🌑' },
+      { x: 440, y: 230, width: 35, height: 35, type: 'lightning', emoji: '⚡' },
+      { x: 580, y: 150, width: 30, height: 30, type: 'storm', emoji: '☁️' }
     ]
   },
   {
     id: 3,
-    name: "Evening Wrap-up",
-    background: "🌆",
+    name: "Starlight Summit",
+    background: "🌟",
     goalX: 750,
     platforms: [
       { x: 0, y: 350, width: 100, height: 50, type: 'desk' },
@@ -185,18 +185,18 @@ const LEVELS: Level[] = [
       { x: 720, y: 300, width: 80, height: 50, type: 'desk' }
     ],
     collectibles: [
-      { x: 180, y: 270, type: 'coffee', points: 10, collected: false, emoji: '☕' },
-      { x: 300, y: 220, type: 'notebook', points: 15, collected: false, emoji: '📓' },
-      { x: 430, y: 150, type: 'task', points: 25, collected: false, emoji: '✅' },
-      { x: 570, y: 190, type: 'task', points: 25, collected: false, emoji: '✅' },
-      { x: 700, y: 120, type: 'notebook', points: 15, collected: false, emoji: '📓' }
+      { x: 180, y: 270, type: 'star', points: 10, collected: false, emoji: '⭐' },
+      { x: 300, y: 220, type: 'rainbow', points: 15, collected: false, emoji: '🌈' },
+      { x: 430, y: 150, type: 'crystal', points: 25, collected: false, emoji: '💎' },
+      { x: 570, y: 190, type: 'crystal', points: 25, collected: false, emoji: '💎' },
+      { x: 700, y: 120, type: 'rainbow', points: 15, collected: false, emoji: '🌈' }
     ],
     obstacles: [
-      { x: 120, y: 320, width: 25, height: 25, type: 'distraction', emoji: '💭' },
-      { x: 240, y: 220, width: 30, height: 30, type: 'notification', emoji: '📱' },
-      { x: 360, y: 150, width: 35, height: 35, type: 'lazy', emoji: '😴' },
-      { x: 500, y: 190, width: 30, height: 30, type: 'notification', emoji: '📱' },
-      { x: 640, y: 120, width: 25, height: 25, type: 'distraction', emoji: '💭' }
+      { x: 120, y: 320, width: 25, height: 25, type: 'void', emoji: '🌑' },
+      { x: 240, y: 220, width: 30, height: 30, type: 'storm', emoji: '☁️' },
+      { x: 360, y: 150, width: 35, height: 35, type: 'lightning', emoji: '⚡' },
+      { x: 500, y: 190, width: 30, height: 30, type: 'storm', emoji: '☁️' },
+      { x: 640, y: 120, width: 25, height: 25, type: 'void', emoji: '🌑' }
     ]
   }
 ];
@@ -630,9 +630,9 @@ export default function PetProductivityQuest({ onExit, onTokenSpent, currentToke
           <div className="flex items-center gap-3">
             <div className="text-3xl">{petConfig.emoji}</div>
             <div>
-              <h1 className="text-3xl font-bold text-foreground">Pet's Productivity Quest</h1>
+              <h1 className="text-3xl font-bold text-foreground">Unicorn's Dream Quest</h1>
               <p className="text-muted-foreground">
-                Guide {petConfig.name} through productivity challenges!
+                Journey through magical dreamscapes and restore the world's magic!
               </p>
             </div>
           </div>
@@ -660,15 +660,15 @@ export default function PetProductivityQuest({ onExit, onTokenSpent, currentToke
                   {gameState === 'menu' && (
                     <div className="absolute inset-0 bg-primary/20 backdrop-blur-sm flex items-center justify-center rounded-lg">
                       <div className="text-center text-foreground">
-                        <h2 className="text-2xl font-bold mb-4">Ready for Productivity Quest?</h2>
-                        <p className="mb-4">{petConfig.name} needs to complete daily tasks!</p>
+                        <h2 className="text-2xl font-bold mb-4">Ready for Dream Quest?</h2>
+                        <p className="mb-4">{petConfig.name} must collect magical energy to restore the world!</p>
                         <Button 
                           onClick={startGame} 
                           disabled={!canPlay}
                           size="lg"
                         >
                           <Play className="w-4 h-4 mr-2" />
-                          {canPlay ? 'Start Quest' : `Need ${30 - currentTokens} more tokens`}
+                          {canPlay ? 'Start Dream Quest' : `Need ${30 - currentTokens} more tokens`}
                         </Button>
                       </div>
                     </div>
@@ -677,11 +677,11 @@ export default function PetProductivityQuest({ onExit, onTokenSpent, currentToke
                   {gameState === 'levelComplete' && (
                     <div className="absolute inset-0 bg-green-500/20 backdrop-blur-sm flex items-center justify-center rounded-lg">
                       <div className="text-center text-foreground">
-                        <h2 className="text-2xl font-bold mb-4">Level Complete! 🎉</h2>
+                        <h2 className="text-2xl font-bold mb-4">Dreamscape Complete! ✨</h2>
                         <p className="text-lg mb-4">Score: {score}</p>
                         <Button onClick={nextLevel} size="lg">
                           <Star className="w-4 h-4 mr-2" />
-                          Next Level
+                          Next Dreamscape
                         </Button>
                       </div>
                     </div>
@@ -690,7 +690,7 @@ export default function PetProductivityQuest({ onExit, onTokenSpent, currentToke
                   {gameState === 'gameComplete' && (
                     <div className="absolute inset-0 bg-yellow-500/20 backdrop-blur-sm flex items-center justify-center rounded-lg">
                       <div className="text-center text-foreground">
-                        <h2 className="text-2xl font-bold mb-4">Quest Complete! 🏆</h2>
+                        <h2 className="text-2xl font-bold mb-4">Magic Restored! 🌟</h2>
                         <p className="text-lg mb-4">Total Score: {totalScore + score}</p>
                         <div className="flex gap-2 justify-center">
                           <Button onClick={startGame}>
@@ -718,16 +718,16 @@ export default function PetProductivityQuest({ onExit, onTokenSpent, currentToke
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Trophy className="w-5 h-5" />
-                  Quest Progress
+                  Dream Progress
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Level:</span>
+                  <span className="text-muted-foreground">Dreamscape:</span>
                   <span className="font-bold">{currentLevel + 1}/3</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Score:</span>
+                  <span className="text-muted-foreground">Magic:</span>
                   <span className="font-bold">{score}</span>
                 </div>
                 <div className="flex justify-between">
@@ -800,10 +800,10 @@ export default function PetProductivityQuest({ onExit, onTokenSpent, currentToke
               <CardContent className="text-base space-y-3 text-muted-foreground">
                 <p>• Move: Arrow keys or A/D</p>
                 <p>• Jump: Spacebar or Up arrow</p>
-                <p>• Collect: ☕ (10) 📓 (15) ✅ (25)</p>
-                <p>• Avoid: 📱 💭 😴 obstacles</p>
-                <p>• {petConfig.name} Special: {petConfig.ability}</p>
-                <p>• Reach the 🏁 flag to win!</p>
+                <p>• Collect: ⭐ (10) 🌈 (15) 💎 (25)</p>
+                <p>• Avoid: ☁️ 🌑 ⚡ obstacles</p>
+                <p>• Unicorn Special: Rainbow Double Jump</p>
+                <p>• Reach the 🏁 flag to restore magic!</p>
                 <p>• Costs 30 tokens per game</p>
               </CardContent>
             </Card>
