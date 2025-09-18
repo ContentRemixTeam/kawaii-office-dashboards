@@ -327,27 +327,27 @@ export default function CharacterCustomization({ onBack }: CharacterCustomizatio
               <CardContent className="p-0">
                 <Tabs value={selectedTab} onValueChange={(value) => setSelectedTab(value as typeof selectedTab)}>
                   <TabsList className="grid w-full grid-cols-6 bg-gray-50 p-2 rounded-2xl">
-                    <TabsTrigger value="character" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-200/40 data-[state=active]:to-pink-200/40 data-[state=active]:text-purple-700 font-semibold rounded-xl transition-all duration-300">
+                    <TabsTrigger value="character" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-200/40 data-[state=active]:to-pink-200/40 data-[state=active]:text-purple-700 text-gray-700 font-semibold rounded-xl transition-all duration-300">
                       <User className="w-4 h-4 mr-2" />
                       Character
                     </TabsTrigger>
-                    <TabsTrigger value="accessories" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-200/40 data-[state=active]:to-pink-200/40 data-[state=active]:text-purple-700 font-semibold rounded-xl transition-all duration-300">
+                    <TabsTrigger value="accessories" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-200/40 data-[state=active]:to-pink-200/40 data-[state=active]:text-purple-700 text-gray-700 font-semibold rounded-xl transition-all duration-300">
                       <Shirt className="w-4 h-4 mr-2" />
                       Accessories
                     </TabsTrigger>
-                    <TabsTrigger value="positioning" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-200/40 data-[state=active]:to-pink-200/40 data-[state=active]:text-purple-700 font-semibold rounded-xl transition-all duration-300">
+                    <TabsTrigger value="positioning" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-200/40 data-[state=active]:to-pink-200/40 data-[state=active]:text-purple-700 text-gray-700 font-semibold rounded-xl transition-all duration-300">
                       <Settings className="w-4 h-4 mr-2" />
                       Positioning
                     </TabsTrigger>
-                    <TabsTrigger value="shop" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-200/40 data-[state=active]:to-pink-200/40 data-[state=active]:text-purple-700 font-semibold rounded-xl transition-all duration-300">
+                    <TabsTrigger value="shop" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-200/40 data-[state=active]:to-pink-200/40 data-[state=active]:text-purple-700 text-gray-700 font-semibold rounded-xl transition-all duration-300">
                       <ShoppingBag className="w-4 h-4 mr-2" />
                       Shop
                     </TabsTrigger>
-                    <TabsTrigger value="upload" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-200/40 data-[state=active]:to-pink-200/40 data-[state=active]:text-purple-700 font-semibold rounded-xl transition-all duration-300">
+                    <TabsTrigger value="upload" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-200/40 data-[state=active]:to-pink-200/40 data-[state=active]:text-purple-700 text-gray-700 font-semibold rounded-xl transition-all duration-300">
                       <Upload className="w-4 h-4 mr-2" />
                       Upload
                     </TabsTrigger>
-                    <TabsTrigger value="rewards" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-200/40 data-[state=active]:to-pink-200/40 data-[state=active]:text-purple-700 font-semibold rounded-xl transition-all duration-300">
+                    <TabsTrigger value="rewards" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-200/40 data-[state=active]:to-pink-200/40 data-[state=active]:text-purple-700 text-gray-700 font-semibold rounded-xl transition-all duration-300">
                       <Gift className="w-4 h-4 mr-2" />
                       Rewards
                     </TabsTrigger>
