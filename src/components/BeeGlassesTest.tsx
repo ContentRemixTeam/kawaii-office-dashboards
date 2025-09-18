@@ -26,40 +26,46 @@ export default function BeeGlassesTest() {
         {/* Bee with glasses overlay */}
         <div className="text-center">
           <h3 className="text-lg font-semibold mb-4 text-foreground">Bee + Glasses</h3>
-          <div className="relative w-64 h-64 border-2 border-dashed border-muted-foreground rounded-lg bg-gradient-to-br from-blue-50 to-yellow-50">
-            {/* Bee base - positioned absolutely and centered */}
+          <div className="relative w-64 h-64 border-2 border-dashed border-muted-foreground rounded-lg bg-gradient-to-br from-blue-50 to-yellow-50 overflow-visible">
+            {/* Debug info */}
+            <div className="absolute top-0 left-0 text-xs text-red-600 z-50">
+              Debug: Container 256x256px
+            </div>
+            {/* Bee base - positioned and visible */}
             <img 
               src="/characters/bases/bee/bee-base.png" 
               alt="Bee base" 
-              className="absolute w-56 h-56 object-contain"
+              className="absolute w-48 h-48 object-contain border-2 border-red-500"
               style={{ 
-                top: '50%', 
-                left: '50%', 
-                transform: 'translate(-50%, -50%)',
+                top: '8px', 
+                left: '8px', 
                 zIndex: 1 
               }}
               onError={(e) => {
-                console.error('Failed to load bee image in overlay:', e);
-                e.currentTarget.style.border = '3px solid red';
+                console.error('OVERLAY BEE FAILED TO LOAD:', e);
+                e.currentTarget.style.backgroundColor = 'red';
               }}
-              onLoad={() => console.log('Bee overlay image loaded successfully')}
+              onLoad={() => {
+                console.log('OVERLAY BEE LOADED SUCCESSFULLY - should be visible now!');
+              }}
             />
             {/* Glasses overlay - positioned on bee's face */}
             <img 
               src="/characters/customization/accessories/glasses-round.png" 
               alt="Glasses" 
-              className="absolute w-32 h-32 object-contain"
+              className="absolute w-24 h-24 object-contain border-2 border-blue-500"
               style={{ 
-                top: '42%', 
-                left: '50%', 
-                transform: 'translate(-50%, -50%)',
+                top: '60px', 
+                left: '80px', 
                 zIndex: 2
               }}
               onError={(e) => {
-                console.error('Failed to load glasses image in overlay:', e);
-                e.currentTarget.style.border = '3px solid blue';
+                console.error('OVERLAY GLASSES FAILED TO LOAD:', e);
+                e.currentTarget.style.backgroundColor = 'blue';
               }}
-              onLoad={() => console.log('Glasses overlay image loaded successfully')}
+              onLoad={() => {
+                console.log('OVERLAY GLASSES LOADED SUCCESSFULLY');
+              }}
             />
           </div>
         </div>
