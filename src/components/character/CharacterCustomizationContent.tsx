@@ -9,7 +9,6 @@ import { PNGCharacter, CharacterAsset, EquippedAccessory, AccessoryPosition } fr
 import { getAssetsByType, getAssetsByCategory, getAssetById, getRarityColor } from '@/lib/assetManager';
 import CharacterPreview from './CharacterPreview';
 import AccessoryPositioner from './AccessoryPositioner';
-import AssetUploader from './AssetUploader';
 import ProductivityRewards from './ProductivityRewards';
 import { ShopItemCard } from './ShopItemCard';
 
@@ -50,13 +49,13 @@ export default function CharacterCustomizationContent({
   updateAccessoryPosition,
   changeCharacterBase,
   updateCharacterName,
-  isAccessoryEquipped
-}: CharacterCustomizationContentProps) {
+  isAccessoryEquipped,
+}) {
 
   return (
     <>
       {/* Character Tab */}
-      <TabsContent value="character" className="p-8 space-y-8 theme-card rounded-2xl border-2 theme-border theme-shadow">
+      <TabsContent value="character" className="p-6 space-y-6">
         <div className="space-y-6">
           <div>
             <Label htmlFor="character-name" className="theme-text-title font-semibold">Character Name</Label>
@@ -65,39 +64,37 @@ export default function CharacterCustomizationContent({
               value={character.name}
               onChange={(e) => updateCharacterName(e.target.value)}
               placeholder="Enter character name"
-              className="max-w-md theme-input border-2 border-purple-200 rounded-xl theme-text-title font-medium"
+              className="max-w-md theme-input mt-2"
             />
           </div>
 
           <div>
             <h3 className="text-xl font-bold theme-text-title mb-4">Character Base</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {getAssetsByType('base').map((asset) => (
                 <button
                   key={asset.id}
                   onClick={() => changeCharacterBase(asset.id)}
                   disabled={!isUnlocked(asset.id)}
-                  className={`p-6 rounded-2xl border-2 transition-all duration-300 ${
+                  className={`p-4 rounded-xl border-2 transition-all duration-300 ${
                     character.baseAsset === asset.id
-                      ? 'border-purple-400 bg-white shadow-md scale-105'
+                      ? 'border-purple-400 theme-card theme-card-elevated scale-105'
                       : isUnlocked(asset.id)
-                      ? 'border-purple-200 bg-white hover:border-purple-300 hover:shadow-sm hover:scale-102'
-                      : 'border-gray-200 bg-gray-50 opacity-50 cursor-not-allowed'
+                      ? 'theme-card hover:theme-card-elevated hover:scale-102'
+                      : 'theme-card opacity-50 cursor-not-allowed'
                   }`}
                 >
-                  <div className="w-20 h-20 mx-auto mb-2 relative">
+                  <div className="w-16 h-16 mx-auto mb-2 relative">
                     <img 
                       src={asset.filepath.startsWith('data:') ? asset.filepath : `${asset.filepath}?v=${Date.now()}`}
                       alt={asset.name}
                       className="w-full h-full object-contain"
                     />
                   </div>
-                  <div className="text-base font-bold text-gray-800">{asset.name}</div>
-                  {!isUnlocked(asset.id) && (
-                    <div className="text-sm text-gray-600 mt-2 font-medium">
-                      {asset.price} {asset.currency}
-                    </div>
-                  )}
+                  <div className="text-sm font-bold theme-text-title">{asset.name}</div>
+                  <Badge className={`mt-1 ${getRarityColor(asset.rarity)}`}>
+                    {asset.rarity}
+                  </Badge>
                 </button>
               ))}
             </div>
@@ -105,8 +102,8 @@ export default function CharacterCustomizationContent({
         </div>
       </TabsContent>
 
-      {/* Accessories Tab */}
-      <TabsContent value="accessories" className="p-8 space-y-8 theme-card rounded-2xl border-2 theme-border theme-shadow">
+      {/* My Closet Tab */}
+      <TabsContent value="accessories" className="p-6 space-y-6">
         <div>
           <h3 className="text-xl font-bold theme-text-title mb-4">My Closet</h3>
           
@@ -144,7 +141,7 @@ export default function CharacterCustomizationContent({
                             : 'bg-gradient-to-br from-blue-100 to-blue-200 hover:from-blue-200 hover:to-blue-300 hover:shadow-lg hover:scale-102'
                         }`}
                       >
-                        <div className="w-full h-full bg-white rounded-xl p-3 flex flex-col items-center justify-center border border-blue-200/50">
+                        <div className="w-full h-full theme-card rounded-xl p-3 flex flex-col items-center justify-center border border-blue-200/50">
                           <div className="w-16 h-16 mx-auto mb-2 relative">
                             <img 
                               src={asset.filepath.startsWith('data:') ? asset.filepath : `${asset.filepath}?v=${Date.now()}`}
@@ -185,7 +182,7 @@ export default function CharacterCustomizationContent({
       </TabsContent>
 
       {/* Positioning Tab */}
-      <TabsContent value="positioning" className="p-8 space-y-8 theme-card rounded-2xl border-2 theme-border theme-shadow">
+      <TabsContent value="positioning" className="p-6 space-y-6">
         {selectedAccessory ? (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div>
@@ -206,8 +203,8 @@ export default function CharacterCustomizationContent({
             </div>
           </div>
         ) : (
-          <div className="text-center py-12 theme-bg-primary rounded-2xl border-2 border-purple-200">
-            <p className="theme-text-secondary mb-4 font-medium">Select an equipped accessory from the Accessories tab to position it</p>
+          <div className="text-center py-12 theme-card rounded-xl">
+            <p className="theme-text-secondary mb-4 font-medium">Select an equipped accessory from My Closet to position it</p>
             <Button 
               onClick={() => onAccessorySelect(character.equippedAccessories[0] || null)}
               disabled={character.equippedAccessories.length === 0}
@@ -219,7 +216,7 @@ export default function CharacterCustomizationContent({
       </TabsContent>
 
       {/* Shop Tab */}
-      <TabsContent value="shop" className="p-8 space-y-8 theme-card rounded-2xl border-2 theme-border theme-shadow">
+      <TabsContent value="shop" className="p-6 space-y-6">
         <div>
           <h3 className="text-xl font-bold theme-text-title mb-4">SHOP</h3>
           
@@ -250,13 +247,8 @@ export default function CharacterCustomizationContent({
         </div>
       </TabsContent>
 
-      {/* Upload Tab */}
-      <TabsContent value="upload" className="p-8 bg-card rounded-2xl border-2 border-border shadow-sm">
-        <AssetUploader onAssetAdded={onAssetsRefresh} />
-      </TabsContent>
-
       {/* Rewards Tab */}
-      <TabsContent value="rewards" className="p-8 bg-card rounded-2xl border-2 border-border shadow-sm">
+      <TabsContent value="rewards" className="p-6">
         <ProductivityRewards 
           onCoinsEarned={onCoinsEarned}
           onSpecialCurrencyEarned={onSpecialCurrencyEarned}
