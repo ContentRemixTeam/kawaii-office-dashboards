@@ -43,7 +43,7 @@ export default function CharacterDisplay({ character, onLevelUp }: CharacterDisp
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* Character Avatar & Info */}
-      <Card className="bg-black/40 border-purple-500/30 backdrop-blur-sm">
+      <Card className="bg-slate-900/80 border-purple-500/30 backdrop-blur-sm">
         <CardHeader className="text-center">
           <div className="relative mx-auto mb-4">
             <div 
@@ -94,7 +94,7 @@ export default function CharacterDisplay({ character, onLevelUp }: CharacterDisp
       </Card>
 
       {/* Character Stats */}
-      <Card className="bg-black/40 border-blue-500/30 backdrop-blur-sm">
+      <Card className="bg-slate-900/80 border-indigo-500/30 backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="text-white font-bold flex items-center gap-2">
             <Sword className="w-5 h-5 text-blue-400" />
@@ -134,7 +134,7 @@ export default function CharacterDisplay({ character, onLevelUp }: CharacterDisp
       </Card>
 
       {/* Achievements & Progress */}
-      <Card className="bg-black/40 border-green-500/30 backdrop-blur-sm">
+      <Card className="bg-slate-900/80 border-purple-500/30 backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="text-white font-bold flex items-center gap-2">
             <Crown className="w-5 h-5 text-yellow-400" />

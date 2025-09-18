@@ -154,7 +154,7 @@ export function CharacterCreation({ onCharacterCreated }: CharacterCreationProps
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900 p-6">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-4 flex items-center justify-center gap-3">
@@ -315,7 +315,7 @@ export function CharacterCreation({ onCharacterCreated }: CharacterCreationProps
               <Button 
                 onClick={handleCreateCharacter}
                 disabled={!characterName.trim()}
-                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3 px-8 text-lg"
+                className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold py-3 px-8 text-lg"
               >
                 <Crown className="w-5 h-5 mr-2" />
                 Begin Your Adventure!

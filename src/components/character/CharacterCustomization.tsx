@@ -215,7 +215,7 @@ export default function CharacterCustomization({ onBack }: CharacterCustomizatio
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-100 via-purple-50 to-blue-100 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-50 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -223,17 +223,17 @@ export default function CharacterCustomization({ onBack }: CharacterCustomizatio
             <Button 
               onClick={onBack}
               variant="outline"
-              className="bg-white/80 border-pink-200 text-pink-700 hover:bg-pink-50"
+              className="bg-white/90 border-purple-300 text-purple-700 hover:bg-purple-50"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Office
             </Button>
             <div>
-              <h1 className="text-4xl font-bold text-pink-700 flex items-center gap-3 font-cinzel">
-                <Heart className="w-8 h-8 text-pink-500" />
+              <h1 className="text-4xl font-bold text-slate-800 flex items-center gap-3 font-cinzel">
+                <Heart className="w-8 h-8 text-purple-600" />
                 Character Mode
               </h1>
-              <p className="text-pink-600 mt-2">
+              <p className="text-slate-700 mt-2 font-semibold">
                 Customize your kawaii character with productivity rewards!
               </p>
             </div>
@@ -241,11 +241,11 @@ export default function CharacterCustomization({ onBack }: CharacterCustomizatio
           
           {/* Currency Display */}
           <div className="flex gap-4">
-            <Badge className="bg-yellow-500/20 text-yellow-700 border-yellow-400/30 text-lg px-4 py-2">
+            <Badge className="bg-yellow-100 text-yellow-800 border-yellow-300 text-lg px-4 py-2 font-semibold">
               <Coins className="w-4 h-4 mr-2" />
               {character.coins} Coins
             </Badge>
-            <Badge className="bg-purple-500/20 text-purple-700 border-purple-400/30 text-lg px-4 py-2">
+            <Badge className="bg-purple-100 text-purple-800 border-purple-300 text-lg px-4 py-2 font-semibold">
               <Star className="w-4 h-4 mr-2" />
               {character.specialCurrency} Special
             </Badge>
@@ -255,9 +255,9 @@ export default function CharacterCustomization({ onBack }: CharacterCustomizatio
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Character Preview */}
           <div className="lg:col-span-1">
-            <Card className="bg-white/80 backdrop-blur-sm border-pink-200 shadow-lg">
+            <Card className="bg-white/95 backdrop-blur-sm border-purple-200 shadow-lg">
               <CardHeader>
-                <CardTitle className="text-pink-700 font-cinzel flex items-center gap-2">
+                <CardTitle className="text-slate-800 font-cinzel flex items-center gap-2 font-bold">
                   <User className="w-5 h-5" />
                   {character.name}
                 </CardTitle>
@@ -272,20 +272,20 @@ export default function CharacterCustomization({ onBack }: CharacterCustomizatio
                 
                 {/* Character Info */}
                 <div className="mt-4 text-center space-y-2">
-                  <h3 className="text-lg font-bold text-pink-700">{character.name}</h3>
+                  <h3 className="text-lg font-bold text-slate-800">{character.name}</h3>
                   <div className="flex justify-center gap-2 flex-wrap">
-                    <Badge className="bg-pink-100 text-pink-700">
+                    <Badge className="bg-purple-100 text-purple-800 font-semibold">
                       {getAssetById(character.baseAsset)?.name || 'Unknown Base'}
                     </Badge>
-                    <Badge className="bg-purple-100 text-purple-700">
+                    <Badge className="bg-indigo-100 text-indigo-800 font-semibold">
                       {character.equippedAccessories.length} accessories
                     </Badge>
                   </div>
                 </div>
                 
                 {/* Equipped Accessories List */}
-                <div className="mt-6 bg-gradient-to-br from-blue-50 to-green-50 rounded-xl p-4 border-2 border-blue-200">
-                  <h4 className="text-sm font-medium text-blue-700 mb-2 flex items-center gap-1">
+                <div className="mt-6 bg-gradient-to-br from-slate-50 to-purple-50 rounded-xl p-4 border-2 border-purple-200">
+                  <h4 className="text-sm font-semibold text-slate-800 mb-2 flex items-center gap-1">
                     <Shirt className="w-4 h-4" />
                     Equipped Accessories
                   </h4>
@@ -313,31 +313,31 @@ export default function CharacterCustomization({ onBack }: CharacterCustomizatio
 
           {/* Customization Tabs */}
           <div className="lg:col-span-2">
-            <Card className="bg-white/80 backdrop-blur-sm border-pink-200 shadow-lg">
+            <Card className="bg-white/95 backdrop-blur-sm border-purple-200 shadow-lg">
               <CardContent className="p-0">
                 <Tabs value={selectedTab} onValueChange={(value) => setSelectedTab(value as typeof selectedTab)}>
-                  <TabsList className="grid w-full grid-cols-6 bg-pink-50">
-                    <TabsTrigger value="character" className="data-[state=active]:bg-pink-200">
+                  <TabsList className="grid w-full grid-cols-6 bg-slate-50">
+                    <TabsTrigger value="character" className="data-[state=active]:bg-purple-200 font-semibold">
                       <User className="w-4 h-4 mr-2" />
                       Character
                     </TabsTrigger>
-                    <TabsTrigger value="accessories" className="data-[state=active]:bg-pink-200">
+                    <TabsTrigger value="accessories" className="data-[state=active]:bg-purple-200 font-semibold">
                       <Shirt className="w-4 h-4 mr-2" />
                       Accessories
                     </TabsTrigger>
-                    <TabsTrigger value="positioning" className="data-[state=active]:bg-pink-200">
+                    <TabsTrigger value="positioning" className="data-[state=active]:bg-purple-200 font-semibold">
                       <Settings className="w-4 h-4 mr-2" />
                       Positioning
                     </TabsTrigger>
-                    <TabsTrigger value="shop" className="data-[state=active]:bg-pink-200">
+                    <TabsTrigger value="shop" className="data-[state=active]:bg-purple-200 font-semibold">
                       <ShoppingBag className="w-4 h-4 mr-2" />
                       Shop
                     </TabsTrigger>
-                    <TabsTrigger value="upload" className="data-[state=active]:bg-pink-200">
+                    <TabsTrigger value="upload" className="data-[state=active]:bg-purple-200 font-semibold">
                       <Upload className="w-4 h-4 mr-2" />
                       Upload
                     </TabsTrigger>
-                    <TabsTrigger value="rewards" className="data-[state=active]:bg-pink-200">
+                    <TabsTrigger value="rewards" className="data-[state=active]:bg-purple-200 font-semibold">
                       <Gift className="w-4 h-4 mr-2" />
                       Rewards
                     </TabsTrigger>
