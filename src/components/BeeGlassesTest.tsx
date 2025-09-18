@@ -26,7 +26,7 @@ export default function BeeGlassesTest() {
               <div className="text-center">
                 <div className="relative inline-block bg-muted/20 p-8 rounded-lg">
                   <img 
-                    src="/characters/bases/bee/bee-base.png" 
+                    src={`/characters/bases/bee/bee-base.png?v=${Date.now()}`}
                     alt="Your bee character"
                     className="block relative z-10"
                     style={{ 
@@ -40,7 +40,7 @@ export default function BeeGlassesTest() {
                     }}
                   />
                   <img 
-                    src="/characters/customization/accessories/glasses-round.png" 
+                    src={`/characters/customization/accessories/glasses-round.png?v=${Date.now()}`}
                     alt=""
                     className="absolute top-8 left-8 z-20 pointer-events-none"
                     style={{ 
@@ -132,13 +132,13 @@ export default function BeeGlassesTest() {
                 >
                   <div className="relative inline-block mb-2">
                     <img 
-                      src="/characters/bases/bee/bee-base.png" 
+                      src={`/characters/bases/bee/bee-base.png?v=${Date.now()}`}
                       alt="Bee"
                       className="block relative z-10"
                       style={{ width: '60px', height: '60px', objectFit: 'contain' }}
                     />
                     <img 
-                      src="/characters/customization/accessories/glasses-round.png" 
+                      src={`/characters/customization/accessories/glasses-round.png?v=${Date.now()}`}
                       alt=""
                       className="absolute top-0 left-0 z-20 pointer-events-none"
                       style={{ 
@@ -167,7 +167,7 @@ export default function BeeGlassesTest() {
                 <h3 className="text-lg font-medium mb-4">Your Bee Character</h3>
                 <div className="relative inline-block border-2 border-dashed border-muted-foreground p-4">
                   <img 
-                    src="/characters/bases/bee/bee-base.png" 
+                    src={`/characters/bases/bee/bee-base.png?v=${Date.now()}`}
                     alt="Your bee character"
                     className="block"
                     style={{ 
@@ -191,7 +191,7 @@ export default function BeeGlassesTest() {
                 <h3 className="text-lg font-medium mb-4">Your Glasses</h3>
                 <div className="relative inline-block border-2 border-dashed border-muted-foreground p-4 bg-muted/20">
                   <img 
-                    src="/characters/customization/accessories/glasses-round.png" 
+                    src={`/characters/customization/accessories/glasses-round.png?v=${Date.now()}`}
                     alt="Your round glasses"
                     className="block"
                     style={{ 
