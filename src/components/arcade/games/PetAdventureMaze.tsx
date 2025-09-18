@@ -53,7 +53,7 @@ interface PetAdventureMazeProps {
   currentTokens: number;
 }
 
-// Pet configurations with appropriate enemies
+// Pet configurations with one main enemy each
 const PET_CONFIG = {
   cat: { 
     emoji: '🐱', 
@@ -61,7 +61,7 @@ const PET_CONFIG = {
     powerTreat: '💝',
     color: '#f59e0b',
     name: 'Kitty',
-    enemies: ['🐕', '👨‍⚕️', '🪣', '💧'] // dogs, vets, vacuum, water
+    enemy: '🐕' // Just dogs for cats
   },
   dog: { 
     emoji: '🐕', 
@@ -69,7 +69,7 @@ const PET_CONFIG = {
     powerTreat: '💝',
     color: '#8b5cf6',
     name: 'Puppy',
-    enemies: ['🐱', '🛁', '💉', '🧹'] // cats, bath, shots, broom
+    enemy: '🐱' // Just cats for dogs
   },
   dragon: { 
     emoji: '🐉', 
@@ -77,7 +77,7 @@ const PET_CONFIG = {
     powerTreat: '💝',
     color: '#ef4444',
     name: 'Dragon',
-    enemies: ['🏰', '⚔️', '🛡️', '❄️'] // knights, swords, shields, ice
+    enemy: '⚔️' // Just knights for dragons
   },
   unicorn: { 
     emoji: '🦄', 
@@ -85,7 +85,7 @@ const PET_CONFIG = {
     powerTreat: '💝',
     color: '#a855f7',
     name: 'Unicorn',
-    enemies: ['🌑', '⚡', '🕳️', '🌪️'] // darkness, lightning, holes, storms
+    enemy: '🌑' // Just darkness for unicorns
   },
   bunny: { 
     emoji: '🐰', 
@@ -93,7 +93,7 @@ const PET_CONFIG = {
     powerTreat: '💝',
     color: '#ec4899',
     name: 'Bunny',
-    enemies: ['🦊', '🪤', '🕳️', '🌨️'] // foxes, traps, holes, snow
+    enemy: '🦊' // Just foxes for bunnies
   }
 };
 
@@ -143,7 +143,7 @@ const generateTreats = (maze: boolean[][]): Treat[] => {
   return treats;
 };
 
-// Generate enemies with pet-specific types
+// Generate enemies with just one type per pet
 const generateEnemies = (maze: boolean[][], petType: keyof typeof PET_CONFIG): Enemy[] => {
   const enemies: Enemy[] = [];
   const possiblePositions: Position[] = [];
@@ -157,14 +157,14 @@ const generateEnemies = (maze: boolean[][], petType: keyof typeof PET_CONFIG): E
     }
   }
   
-  // Place 3-4 enemies with pet-specific types
-  for (let i = 0; i < Math.min(4, Math.floor(possiblePositions.length / 8)); i++) {
+  // Place just 2-3 enemies of the same type for simplicity
+  for (let i = 0; i < Math.min(3, Math.floor(possiblePositions.length / 10)); i++) {
     const pos = possiblePositions[Math.floor(Math.random() * possiblePositions.length)];
     enemies.push({
       ...pos,
       direction: Object.values(DIRECTIONS)[Math.floor(Math.random() * 4)],
       speed: 1,
-      type: PET_CONFIG[petType].enemies[i % PET_CONFIG[petType].enemies.length]
+      type: PET_CONFIG[petType].enemy // Just one enemy type
     });
   }
   
@@ -723,7 +723,7 @@ export default function PetAdventureMaze({ onExit, onTokenSpent, currentTokens }
               <CardContent className="text-sm space-y-2 text-muted-foreground">
                 <p>• Move with arrow keys or WASD</p>
                 <p>• Collect all {petConfig.treat} treats to win</p>
-                <p>• Avoid the {petConfig.enemies.join(' ')} obstacles</p>
+                <p>• Avoid the {petConfig.enemy} obstacles</p>
                 <p>• {petConfig.powerTreat} Power treats give invincibility</p>
                 <p>• You have 3 lives per adventure</p>
                 <p>• Touch buttons work on mobile</p>
