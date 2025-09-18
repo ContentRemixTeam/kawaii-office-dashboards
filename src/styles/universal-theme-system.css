@@ -1,0 +1,319 @@
+/**
+ * UNIVERSAL THEME SYSTEM
+ * Comprehensive theme variables that work across ALL color schemes
+ * Ensures professional appearance and proper contrast in every theme
+ */
+
+:root {
+  /* Universal Text System - Always readable */
+  --text-primary: hsl(var(--foreground));
+  --text-secondary: hsl(var(--muted-foreground));
+  --text-tertiary: hsl(var(--muted-foreground) / 0.7);
+  --text-inverse: hsl(var(--primary-foreground));
+  --text-on-accent: hsl(var(--accent-foreground));
+  --text-success: hsl(142 76% 36%);
+  --text-warning: hsl(38 92% 50%);
+  --text-error: hsl(0 72% 51%);
+
+  /* Universal Background System */
+  --bg-primary: hsl(var(--background));
+  --bg-secondary: hsl(var(--card));
+  --bg-tertiary: hsl(var(--muted) / 0.1);
+  --bg-accent: hsl(var(--accent) / 0.1);
+  --bg-brand: hsl(var(--primary));
+  --bg-overlay: hsl(var(--background) / 0.95);
+  --bg-glass: hsl(var(--card) / 0.8);
+
+  /* Interactive Element System */
+  --button-primary-bg: hsl(var(--primary));
+  --button-primary-fg: hsl(var(--primary-foreground));
+  --button-primary-hover: hsl(var(--primary) / 0.9);
+  --button-secondary-bg: hsl(var(--secondary));
+  --button-secondary-fg: hsl(var(--secondary-foreground));
+  --button-secondary-hover: hsl(var(--secondary) / 0.8);
+  --button-outline-border: hsl(var(--border));
+  --button-outline-hover: hsl(var(--accent));
+
+  /* Border and Shadow System */
+  --border-primary: hsl(var(--border));
+  --border-secondary: hsl(var(--border) / 0.5);
+  --border-accent: hsl(var(--primary) / 0.3);
+  --shadow-sm: 0 1px 2px 0 hsl(var(--foreground) / 0.05);
+  --shadow-md: 0 4px 6px -1px hsl(var(--foreground) / 0.1);
+  --shadow-lg: 0 10px 15px -3px hsl(var(--foreground) / 0.1);
+  --shadow-glow: 0 0 20px hsl(var(--primary) / 0.3);
+
+  /* State Colors - Theme Adaptive */
+  --state-success-bg: hsl(142 76% 36% / 0.1);
+  --state-success-border: hsl(142 76% 36% / 0.3);
+  --state-warning-bg: hsl(38 92% 50% / 0.1);
+  --state-warning-border: hsl(38 92% 50% / 0.3);
+  --state-error-bg: hsl(0 72% 51% / 0.1);
+  --state-error-border: hsl(0 72% 51% / 0.3);
+
+  /* Focus and Selection System */
+  --focus-ring: hsl(var(--ring));
+  --selection-bg: hsl(var(--primary) / 0.2);
+  --selection-fg: var(--text-primary);
+
+  /* Spacing System */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+
+  /* Border Radius System */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"],
+.dark {
+  --text-success: hsl(142 76% 46%);
+  --text-warning: hsl(38 92% 60%);
+  --text-error: hsl(0 72% 61%);
+  --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.1);
+  --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.2);
+  --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.3);
+}
+
+/**
+ * UNIVERSAL COMPONENT PATTERNS
+ * Standardized patterns that work across all themes
+ */
+
+/* Universal Card Pattern */
+.theme-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.theme-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-accent);
+}
+
+.theme-card-elevated {
+  box-shadow: var(--shadow-md);
+}
+
+.theme-card-glass {
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-secondary);
+}
+
+/* Universal Button Patterns */
+.theme-button-primary {
+  background: var(--button-primary-bg);
+  color: var(--button-primary-fg);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+}
+
+.theme-button-primary:hover {
+  background: var(--button-primary-hover);
+  box-shadow: var(--shadow-glow);
+}
+
+.theme-button-secondary {
+  background: var(--button-secondary-bg);
+  color: var(--button-secondary-fg);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.theme-button-secondary:hover {
+  background: var(--button-secondary-hover);
+}
+
+.theme-button-outline {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--button-outline-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.theme-button-outline:hover {
+  background: var(--button-outline-hover);
+  color: var(--text-on-accent);
+}
+
+/* Universal Text Patterns */
+.theme-text-title {
+  color: var(--text-primary);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.theme-text-body {
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.theme-text-secondary {
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.theme-text-tertiary {
+  color: var(--text-tertiary);
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+/* Universal Input Patterns */
+.theme-input {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  padding: var(--space-sm) var(--space-md);
+  transition: all 0.2s ease;
+}
+
+.theme-input:focus {
+  outline: none;
+  border-color: var(--focus-ring);
+  box-shadow: 0 0 0 2px var(--focus-ring);
+}
+
+.theme-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* Universal Section Patterns */
+.theme-section {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  padding: var(--space-xl);
+  border-radius: var(--radius-lg);
+}
+
+.theme-section-accent {
+  background: var(--bg-accent);
+  border: 1px solid var(--border-accent);
+}
+
+/* Universal Modal/Overlay Patterns */
+.theme-overlay {
+  background: var(--bg-overlay);
+  backdrop-filter: blur(8px);
+}
+
+.theme-modal {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  color: var(--text-primary);
+}
+
+/* Universal State Patterns */
+.theme-success {
+  background: var(--state-success-bg);
+  border: 1px solid var(--state-success-border);
+  color: var(--text-success);
+}
+
+.theme-warning {
+  background: var(--state-warning-bg);
+  border: 1px solid var(--state-warning-border);
+  color: var(--text-warning);
+}
+
+.theme-error {
+  background: var(--state-error-bg);
+  border: 1px solid var(--state-error-border);
+  color: var(--text-error);
+}
+
+/* Universal Animation Patterns */
+.theme-transition {
+  transition: all 0.2s ease;
+}
+
+.theme-transition-slow {
+  transition: all 0.3s ease;
+}
+
+.theme-hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.theme-hover-glow:hover {
+  box-shadow: var(--shadow-glow);
+}
+
+/* Responsive Design Patterns */
+@media (max-width: 640px) {
+  .theme-card {
+    border-radius: var(--radius-md);
+    margin: var(--space-sm);
+  }
+  
+  .theme-button-primary,
+  .theme-button-secondary,
+  .theme-button-outline {
+    padding: var(--space-md) var(--space-lg);
+    font-size: 1rem;
+    min-height: 44px; /* Touch target */
+  }
+  
+  .theme-section {
+    padding: var(--space-lg);
+  }
+}
+
+/* Accessibility Enhancements */
+.theme-focus-visible:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.theme-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Utilities for quick theme-responsive styling */
+.theme-bg-primary { background: var(--bg-primary); }
+.theme-bg-secondary { background: var(--bg-secondary); }
+.theme-bg-accent { background: var(--bg-accent); }
+.theme-text-primary { color: var(--text-primary); }
+.theme-text-secondary { color: var(--text-secondary); }
+.theme-border { border-color: var(--border-primary); }
+.theme-shadow { box-shadow: var(--shadow-md); }

@@ -496,9 +496,9 @@ export default function PositivityCabinet() {
     <ToolShell title="Positivity Corner">
       <div className="space-y-6">
         {/* Clean Header - matches app's card style */}
-        <div className="bg-gradient-to-r from-primary/10 to-accent/5 rounded-2xl p-6 border border-primary/20">
-          <h2 className="text-xl font-semibold mb-3 text-foreground">✨ Your Personal Vault of Positivity</h2>
-          <p className="text-muted-foreground">
+        <div className="theme-card theme-card-glass p-6">
+          <h2 className="text-xl font-semibold mb-3 theme-text-title">✨ Your Personal Vault of Positivity</h2>
+          <p className="theme-text-secondary">
             Store encouragement, celebrate wins, practice gratitude, and draw daily inspiration. 
             Everything you need to stay motivated and positive.
           </p>
@@ -506,18 +506,18 @@ export default function PositivityCabinet() {
 
         {/* CRITICAL: Daily Flow Action Buttons */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10">
+          <Card className="theme-card theme-hover-lift">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-semibold text-foreground">🎯 Daily Intention</h3>
-                  <p className="text-sm text-muted-foreground">Set your focus for today</p>
+                  <h3 className="font-semibold theme-text-title">🎯 Daily Intention</h3>
+                  <p className="text-sm theme-text-secondary">Set your focus for today</p>
                 </div>
                 <Button 
                   onClick={handleIntentionClick}
                   variant="outline"
                   size="sm"
-                  className="font-medium"
+                  className="theme-button-outline font-medium"
                   data-testid="intention-button"
                 >
                   Set Intention
@@ -526,18 +526,18 @@ export default function PositivityCabinet() {
             </CardContent>
           </Card>
           
-          <Card className="border-accent/20 bg-gradient-to-r from-accent/5 to-accent/10">
+          <Card className="theme-card theme-hover-lift">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-semibold text-foreground">📝 Daily Debrief</h3>
-                  <p className="text-sm text-muted-foreground">Reflect on your day</p>
+                  <h3 className="font-semibold theme-text-title">📝 Daily Debrief</h3>
+                  <p className="text-sm theme-text-secondary">Reflect on your day</p>
                 </div>
                 <Button 
                   onClick={handleDebriefClick}
                   variant="outline"
                   size="sm"
-                  className="font-medium"
+                  className="theme-button-outline font-medium"
                   data-testid="debrief-button"
                 >
                   Start Debrief
