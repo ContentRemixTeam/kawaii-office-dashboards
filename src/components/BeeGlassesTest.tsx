@@ -15,6 +15,59 @@ export default function BeeGlassesTest() {
       </h1>
       
       <div className="max-w-6xl mx-auto space-y-8">
+        {/* App Preview Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle>How It Will Look in the App</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex justify-center">
+              <div className="text-center space-y-4">
+                <div className="relative mx-auto" style={{ width: '200px', height: '200px' }}>
+                  <div 
+                    className="absolute inset-0 rounded-2xl"
+                    style={{
+                      background: 'linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary)) 50%, hsl(var(--accent)) 100%)',
+                      opacity: 0.1
+                    }}
+                  />
+                  <div className="relative z-10 flex items-center justify-center h-full">
+                    <div className="relative">
+                      <img 
+                        src={`/characters/bases/bee/bee-base.png?v=${Date.now()}`}
+                        alt="Bee character in app"
+                        className="block relative z-10"
+                        style={{ 
+                          width: '120px', 
+                          height: '120px', 
+                          objectFit: 'contain'
+                        }}
+                      />
+                      <img 
+                        src={`/characters/customization/accessories/glasses-round.png?v=${Date.now()}`}
+                        alt=""
+                        className="absolute z-20 pointer-events-none"
+                        style={{ 
+                          top: '0',
+                          left: '0',
+                          width: '120px',
+                          height: '120px',
+                          objectFit: 'contain',
+                          transform: `translate(0px, -25px) scale(0.8)`
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <h3 className="text-lg font-medium">Growing Bee</h3>
+                  <p className="text-sm text-muted-foreground">Complete tasks to help your bee grow!</p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Interactive Positioning Controls */}
         <Card>
           <CardHeader>

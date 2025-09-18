@@ -123,6 +123,20 @@ const ANIMALS = [
     ]
   },
   { 
+    id: "bee", 
+    name: "Bee", 
+    emoji: "🐝", 
+    imageBase: "/characters/bases/bee/bee-base.png",
+    accessories: { glasses: "/characters/customization/accessories/glasses-round.png" },
+    stages: ["🥚", "🐛", "🐝", "👑🐝✨"], 
+    encouragement: [
+      "Your bee is starting to buzz! 🐝✨",
+      "Buzzing with productivity! 🍯",
+      "Sweet progress, keep it up! 🐝💫",
+      "Bee-utiful work achieved! 👑🐝"
+    ] 
+  },
+  { 
     id: "hamster", 
     name: "Hamster", 
     emoji: "🐹",
@@ -279,7 +293,37 @@ const PetStage = ({ completed, selectedAnimal, tasks, onTaskToggle }: {
         
         <div className="mb-4 relative">
           <div className={`${currentStage.size} mb-2 ${currentStage.animation} transition-all duration-500`}>
-            {currentEmoji}
+            {animal.imageBase ? (
+              <div className="relative inline-block">
+                <img 
+                  src={animal.imageBase}
+                  alt={animal.name}
+                  className="block relative z-10"
+                  style={{ 
+                    width: '120px', 
+                    height: '120px', 
+                    objectFit: 'contain'
+                  }}
+                />
+                {animal.accessories?.glasses && (
+                  <img 
+                    src={animal.accessories.glasses}
+                    alt=""
+                    className="absolute z-20 pointer-events-none"
+                    style={{ 
+                      top: '0',
+                      left: '0',
+                      width: '120px',
+                      height: '120px',
+                      objectFit: 'contain',
+                      transform: 'translate(0px, -25px) scale(0.8)'
+                    }}
+                  />
+                )}
+              </div>
+            ) : (
+              currentEmoji
+            )}
           </div>
           
           {completed > 0 && (
