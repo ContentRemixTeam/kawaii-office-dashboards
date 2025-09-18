@@ -111,14 +111,19 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
     
     if (!tokenSpent) {
       console.log('💰 Spending token');
-      onTokenSpent(); // Spend token only once per game session
+      // onTokenSpent(); // Temporarily disabled for testing
       setTokenSpent(true);
     }
     
     console.log('🔄 Resetting game and starting');
     resetGame();
-    setGameState('playing');
-    console.log('✅ Game state set to playing');
+    
+    // Wait 1 second before starting (like the working debug version)
+    setTimeout(() => {
+      console.log('🚀 Starting game after delay');
+      setGameState('playing');
+    }, 1000);
+    console.log('✅ Game setup complete, will start in 1 second');
   }, [currentTokens, tokenSpent, onTokenSpent, resetGame]);
 
   // Toggle pause
@@ -149,24 +154,29 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
 
   // Game loop
   const moveSnake = useCallback(() => {
+    console.log('🏃 moveSnake called');
     setDirection(nextDirection);
     
     setSnake(currentSnake => {
+      console.log('🐍 Current snake state:', currentSnake);
       const newSnake = [...currentSnake];
       const head = { ...newSnake[0] };
       
       // Move head in current direction
       head.x += nextDirection.x;
       head.y += nextDirection.y;
+      console.log('👆 New head position:', head, 'Direction:', nextDirection);
       
       // Check wall collision
       if (head.x < 0 || head.x >= GRID_SIZE || head.y < 0 || head.y >= GRID_SIZE) {
+        console.log('💥 Wall collision at:', head);
         setGameState('gameOver');
         return currentSnake;
       }
       
       // Check self collision
       if (newSnake.some(segment => segment.x === head.x && segment.y === head.y)) {
+        console.log('💥 Self collision at:', head);
         setGameState('gameOver');
         return currentSnake;
       }
@@ -176,6 +186,7 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
       
       // Check food collision
       if (head.x === food.x && head.y === food.y) {
+        console.log('🍎 Food eaten!');
         setScore(prev => prev + 10);
         setFood(generateFood(newSnake));
       } else {
@@ -183,6 +194,7 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
         newSnake.pop();
       }
       
+      console.log('✅ Snake updated, new length:', newSnake.length);
       return newSnake;
     });
   }, [nextDirection, food]);
@@ -195,12 +207,19 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     
-    // Clear canvas
-    ctx.fillStyle = 'hsl(var(--background))';
+    // Get CSS custom property values
+    const computedStyle = getComputedStyle(document.documentElement);
+    const bgColor = computedStyle.getPropertyValue('--background').trim();
+    const borderColor = computedStyle.getPropertyValue('--border').trim();
+    const primaryColor = computedStyle.getPropertyValue('--primary').trim();
+    const destructiveColor = computedStyle.getPropertyValue('--destructive').trim();
+    
+    // Clear canvas with proper background
+    ctx.fillStyle = bgColor ? `hsl(${bgColor})` : '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
     // Draw grid
-    ctx.strokeStyle = 'hsl(var(--border))';
+    ctx.strokeStyle = borderColor ? `hsl(${borderColor})` : '#e0e0e0';
     ctx.lineWidth = 1;
     for (let i = 0; i <= GRID_SIZE; i++) {
       ctx.beginPath();
@@ -216,7 +235,11 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
     
     // Draw snake
     snake.forEach((segment, index) => {
-      ctx.fillStyle = index === 0 ? 'hsl(var(--primary))' : 'hsl(var(--primary) / 0.8)';
+      if (index === 0) {
+        ctx.fillStyle = primaryColor ? `hsl(${primaryColor})` : '#22c55e';
+      } else {
+        ctx.fillStyle = primaryColor ? `hsl(${primaryColor} / 0.8)` : '#16a34a';
+      }
       ctx.fillRect(
         segment.x * CELL_SIZE + 1,
         segment.y * CELL_SIZE + 1,
@@ -226,7 +249,7 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
     });
     
     // Draw food
-    ctx.fillStyle = 'hsl(var(--destructive))';
+    ctx.fillStyle = destructiveColor ? `hsl(${destructiveColor})` : '#ef4444';
     ctx.fillRect(
       food.x * CELL_SIZE + 1,
       food.y * CELL_SIZE + 1,
