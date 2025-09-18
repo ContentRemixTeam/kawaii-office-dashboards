@@ -118,30 +118,33 @@ const PET_CONFIG = {
   }
 };
 
-// Level data
+// Level data with progressive difficulty
 const LEVELS: Level[] = [
   {
     id: 1,
     name: "Twilight Meadows",
     background: "🌸",
     goalX: 750,
+    // Level 1: Very Easy - Low platforms, close spacing, minimal obstacles
     platforms: [
-      { x: 0, y: 350, width: 150, height: 50, type: 'desk' },
-      { x: 200, y: 300, width: 100, height: 20, type: 'book' },
-      { x: 350, y: 250, width: 120, height: 20, type: 'shelf' },
-      { x: 520, y: 320, width: 100, height: 20, type: 'book' },
-      { x: 670, y: 270, width: 130, height: 50, type: 'desk' }
+      { x: 0, y: 350, width: 200, height: 50, type: 'desk' },
+      { x: 180, y: 320, width: 120, height: 20, type: 'book' },
+      { x: 280, y: 290, width: 150, height: 20, type: 'shelf' },
+      { x: 410, y: 330, width: 130, height: 20, type: 'book' },
+      { x: 520, y: 300, width: 140, height: 20, type: 'shelf' },
+      { x: 640, y: 320, width: 160, height: 50, type: 'desk' }
     ],
     collectibles: [
-      { x: 230, y: 270, type: 'star', points: 10, collected: false, emoji: '⭐' },
-      { x: 380, y: 220, type: 'rainbow', points: 15, collected: false, emoji: '🌈' },
-      { x: 550, y: 290, type: 'crystal', points: 25, collected: false, emoji: '💎' },
-      { x: 700, y: 240, type: 'star', points: 10, collected: false, emoji: '⭐' }
+      { x: 220, y: 290, type: 'star', points: 10, collected: false, emoji: '⭐' },
+      { x: 340, y: 260, type: 'rainbow', points: 15, collected: false, emoji: '🌈' },
+      { x: 470, y: 300, type: 'star', points: 10, collected: false, emoji: '⭐' },
+      { x: 580, y: 270, type: 'crystal', points: 25, collected: false, emoji: '💎' },
+      { x: 700, y: 290, type: 'star', points: 10, collected: false, emoji: '⭐' }
     ],
     obstacles: [
-      { x: 160, y: 320, width: 30, height: 30, type: 'storm', emoji: '☁️' },
-      { x: 320, y: 220, width: 25, height: 25, type: 'void', emoji: '🌑' },
-      { x: 480, y: 290, width: 35, height: 35, type: 'lightning', emoji: '⚡' }
+      // Only 2 easy obstacles, not blocking main path
+      { x: 250, y: 360, width: 25, height: 25, type: 'storm', emoji: '☁️' },
+      { x: 600, y: 270, width: 25, height: 25, type: 'void', emoji: '🌑' }
     ]
   },
   {
@@ -149,25 +152,28 @@ const LEVELS: Level[] = [
     name: "Crystal Caverns",
     background: "💜",
     goalX: 750,
+    // Level 2: Medium - Higher platforms, wider gaps, more obstacles
     platforms: [
       { x: 0, y: 350, width: 120, height: 50, type: 'desk' },
-      { x: 180, y: 280, width: 80, height: 20, type: 'book' },
-      { x: 320, y: 200, width: 100, height: 20, type: 'shelf' },
-      { x: 480, y: 260, width: 90, height: 20, type: 'book' },
-      { x: 620, y: 180, width: 100, height: 20, type: 'shelf' },
+      { x: 150, y: 290, width: 90, height: 20, type: 'book' },
+      { x: 280, y: 220, width: 100, height: 20, type: 'shelf' },
+      { x: 420, y: 280, width: 80, height: 20, type: 'book' },
+      { x: 540, y: 200, width: 90, height: 20, type: 'shelf' },
+      { x: 670, y: 260, width: 100, height: 20, type: 'book' },
       { x: 720, y: 320, width: 80, height: 50, type: 'desk' }
     ],
     collectibles: [
-      { x: 210, y: 250, type: 'rainbow', points: 15, collected: false, emoji: '🌈' },
-      { x: 350, y: 170, type: 'crystal', points: 25, collected: false, emoji: '💎' },
-      { x: 510, y: 230, type: 'star', points: 10, collected: false, emoji: '⭐' },
-      { x: 650, y: 150, type: 'crystal', points: 25, collected: false, emoji: '💎' }
+      { x: 190, y: 260, type: 'star', points: 10, collected: false, emoji: '⭐' },
+      { x: 320, y: 190, type: 'rainbow', points: 15, collected: false, emoji: '🌈' },
+      { x: 460, y: 250, type: 'crystal', points: 25, collected: false, emoji: '💎' },
+      { x: 580, y: 170, type: 'crystal', points: 25, collected: false, emoji: '💎' },
+      { x: 710, y: 230, type: 'rainbow', points: 15, collected: false, emoji: '🌈' }
     ],
     obstacles: [
-      { x: 140, y: 320, width: 30, height: 30, type: 'storm', emoji: '☁️' },
-      { x: 280, y: 170, width: 25, height: 25, type: 'void', emoji: '🌑' },
-      { x: 440, y: 230, width: 35, height: 35, type: 'lightning', emoji: '⚡' },
-      { x: 580, y: 150, width: 30, height: 30, type: 'storm', emoji: '☁️' }
+      { x: 120, y: 320, width: 25, height: 25, type: 'storm', emoji: '☁️' },
+      { x: 250, y: 190, width: 25, height: 25, type: 'void', emoji: '🌑' },
+      { x: 390, y: 250, width: 25, height: 25, type: 'lightning', emoji: '⚡' },
+      { x: 510, y: 170, width: 25, height: 25, type: 'storm', emoji: '☁️' }
     ]
   },
   {
@@ -175,28 +181,32 @@ const LEVELS: Level[] = [
     name: "Starlight Summit",
     background: "🌟",
     goalX: 750,
+    // Level 3: Hard - High platforms, big gaps, many obstacles
     platforms: [
-      { x: 0, y: 350, width: 100, height: 50, type: 'desk' },
-      { x: 150, y: 300, width: 70, height: 20, type: 'book' },
-      { x: 270, y: 250, width: 80, height: 20, type: 'shelf' },
-      { x: 400, y: 180, width: 90, height: 20, type: 'book' },
-      { x: 540, y: 220, width: 80, height: 20, type: 'shelf' },
-      { x: 670, y: 150, width: 70, height: 20, type: 'book' },
-      { x: 720, y: 300, width: 80, height: 50, type: 'desk' }
+      { x: 0, y: 350, width: 80, height: 50, type: 'desk' },
+      { x: 120, y: 280, width: 60, height: 20, type: 'book' },
+      { x: 220, y: 200, width: 70, height: 20, type: 'shelf' },
+      { x: 330, y: 160, width: 80, height: 20, type: 'book' },
+      { x: 450, y: 240, width: 70, height: 20, type: 'shelf' },
+      { x: 560, y: 180, width: 60, height: 20, type: 'book' },
+      { x: 660, y: 140, width: 70, height: 20, type: 'shelf' },
+      { x: 740, y: 300, width: 60, height: 50, type: 'desk' }
     ],
     collectibles: [
-      { x: 180, y: 270, type: 'star', points: 10, collected: false, emoji: '⭐' },
-      { x: 300, y: 220, type: 'rainbow', points: 15, collected: false, emoji: '🌈' },
-      { x: 430, y: 150, type: 'crystal', points: 25, collected: false, emoji: '💎' },
-      { x: 570, y: 190, type: 'crystal', points: 25, collected: false, emoji: '💎' },
-      { x: 700, y: 120, type: 'rainbow', points: 15, collected: false, emoji: '🌈' }
+      { x: 150, y: 250, type: 'star', points: 10, collected: false, emoji: '⭐' },
+      { x: 250, y: 170, type: 'rainbow', points: 15, collected: false, emoji: '🌈' },
+      { x: 360, y: 130, type: 'crystal', points: 25, collected: false, emoji: '💎' },
+      { x: 480, y: 210, type: 'crystal', points: 25, collected: false, emoji: '💎' },
+      { x: 590, y: 150, type: 'star', points: 10, collected: false, emoji: '⭐' },
+      { x: 690, y: 110, type: 'rainbow', points: 15, collected: false, emoji: '🌈' }
     ],
     obstacles: [
-      { x: 120, y: 320, width: 25, height: 25, type: 'void', emoji: '🌑' },
-      { x: 240, y: 220, width: 30, height: 30, type: 'storm', emoji: '☁️' },
-      { x: 360, y: 150, width: 35, height: 35, type: 'lightning', emoji: '⚡' },
-      { x: 500, y: 190, width: 30, height: 30, type: 'storm', emoji: '☁️' },
-      { x: 640, y: 120, width: 25, height: 25, type: 'void', emoji: '🌑' }
+      { x: 90, y: 320, width: 25, height: 25, type: 'void', emoji: '🌑' },
+      { x: 190, y: 170, width: 25, height: 25, type: 'storm', emoji: '☁️' },
+      { x: 300, y: 130, width: 25, height: 25, type: 'lightning', emoji: '⚡' },
+      { x: 420, y: 210, width: 25, height: 25, type: 'void', emoji: '🌑' },
+      { x: 530, y: 150, width: 25, height: 25, type: 'storm', emoji: '☁️' },
+      { x: 630, y: 110, width: 25, height: 25, type: 'lightning', emoji: '⚡' }
     ]
   }
 ];
