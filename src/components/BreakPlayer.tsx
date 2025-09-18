@@ -5,21 +5,72 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink, AlertCircle, Play, Maximize2, Minimize2 } from "lucide-react";
-import YouTubeAmbient from "@/components/YouTubeAmbient";
+import { ExternalLink, AlertCircle, Play, Maximize2, Minimize2, RefreshCw } from "lucide-react";
 import { BREAK_CATEGORIES, BreakCategory, BreakPreset } from "@/data/breakPresets";
 import { extractYouTubeId } from "@/lib/youtube";
 import { BreakState, loadBreakState, saveBreakState, trackBreakSession } from "@/lib/breakStore";
 import { useToast } from "@/hooks/use-toast";
+import { useYouTubeAPI } from "@/hooks/useYouTubeAPI";
+
+// Simple, direct YouTube embed component for Break Room
+function DirectYouTubePlayer({ videoId, onError }: { videoId: string; onError?: () => void }) {
+  const [hasError, setHasError] = useState(false);
+
+  if (hasError) {
+    return (
+      <div className="w-full h-full bg-muted/20 flex items-center justify-center">
+        <div className="text-center">
+          <AlertCircle className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+          <p className="text-sm text-muted-foreground">Video unavailable</p>
+          <Button 
+            size="sm" 
+            variant="outline" 
+            onClick={() => setHasError(false)}
+            className="mt-2"
+          >
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Retry
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <iframe
+      width="100%"
+      height="100%"
+      src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&controls=1`}
+      title="Break Room Video"
+      frameBorder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowFullScreen
+      onError={() => {
+        setHasError(true);
+        onError?.();
+      }}
+      style={{ borderRadius: '12px' }}
+    />
+  );
+}
 
 export default function BreakPlayer() {
   const { toast } = useToast();
+  const youtubeAPI = useYouTubeAPI();
   const [state, setState] = useState<BreakState>(() => loadBreakState());
   const [customUrl, setCustomUrl] = useState(state.customUrl || "");
   const [currentVideoId, setCurrentVideoId] = useState<string>("");
   const [urlError, setUrlError] = useState<string>("");
+  const [videoError, setVideoError] = useState(false);
 
-  // Determine current video ID (copied from working AmbientPlayer logic)
+  // Initialize YouTube API
+  useEffect(() => {
+    if (youtubeAPI.state === 'idle') {
+      youtubeAPI.loadAPI().catch(console.error);
+    }
+  }, [youtubeAPI]);
+
+  // Determine current video ID
   useEffect(() => {
     let videoId = "";
     
@@ -33,8 +84,9 @@ export default function BreakPlayer() {
       }
     }
     
-    console.log("[BreakPlayer] Current video ID:", videoId, "State:", state);
+    console.log("[BreakPlayer] Setting video ID:", videoId);
     setCurrentVideoId(videoId);
+    setVideoError(false);
   }, [state]);
 
   const selectPreset = (category: BreakCategory, preset: BreakPreset) => {
@@ -44,24 +96,23 @@ export default function BreakPlayer() {
       ...state, 
       activeCategory: category.key, 
       activePreset: preset.key,
-      customUrl: undefined // Clear custom URL when selecting preset
+      customUrl: undefined
     };
     
-    console.log("[BreakPlayer] New state:", newState);
     setState(newState);
     saveBreakState(newState);
     trackBreakSession(category.key, preset.key);
     setUrlError("");
+    setVideoError(false);
     
     toast({
-      title: `🎬 Started ${preset.title}`,
-      description: `${category.title} break session loaded`
+      title: `🎬 ${preset.title}`,
+      description: `Starting ${category.title.toLowerCase()} break`
     });
   };
 
   const handleCustomUrlSubmit = () => {
     const trimmedUrl = customUrl.trim();
-    console.log("[BreakPlayer] Setting custom URL:", trimmedUrl);
     
     if (!trimmedUrl) {
       setUrlError("Please enter a YouTube URL");
@@ -69,7 +120,6 @@ export default function BreakPlayer() {
     }
 
     const videoId = extractYouTubeId(trimmedUrl);
-    console.log("[BreakPlayer] Extracted video ID:", videoId);
     
     if (!videoId) {
       setUrlError("Invalid YouTube URL. Please check the format.");
@@ -83,15 +133,15 @@ export default function BreakPlayer() {
       activePreset: undefined
     };
     
-    console.log("[BreakPlayer] Saving custom URL state:", newState);
     setState(newState);
     saveBreakState(newState);
     trackBreakSession("custom");
     setUrlError("");
+    setVideoError(false);
     
     toast({
-      title: "✅ Custom break video set",
-      description: "Your YouTube video has been loaded"
+      title: "✅ Custom video loaded",
+      description: "Your break video is ready"
     });
   };
 
@@ -102,19 +152,16 @@ export default function BreakPlayer() {
     
     toast({
       title: newState.isHeroMode ? "🎬 Hero Mode ON" : "📱 Hero Mode OFF",
-      description: newState.isHeroMode ? "Full-screen immersive experience" : "Regular view restored"
+      description: newState.isHeroMode ? "Full-screen experience" : "Regular view"
     });
   };
 
-  const handleVideoError = (error: { code: number; message: string; retryable: boolean }) => {
-    console.warn(`[BreakPlayer] YouTube error ${error.code}: ${error.message} for video ${currentVideoId}`);
-    
-    // Show error message
+  const handleVideoError = () => {
+    setVideoError(true);
     toast({
       title: "Video Error",
-      description: "This video cannot be embedded. Try a different one.",
-      variant: "destructive",
-      duration: 5000
+      description: "This video cannot be played. Try a different one.",
+      variant: "destructive"
     });
   };
 
@@ -144,11 +191,9 @@ export default function BreakPlayer() {
       {currentVideoId ? (
         <div className={`${state.isHeroMode ? 'fixed inset-0 z-50 bg-black' : 'relative'}`}>
           <div className={`${state.isHeroMode ? 'h-full' : 'aspect-video'} rounded-xl overflow-hidden`}>
-            <YouTubeAmbient
+            <DirectYouTubePlayer
               videoId={currentVideoId}
               onError={handleVideoError}
-              startMuted={false}
-              className="w-full h-full"
             />
           </div>
           {state.isHeroMode && (
@@ -203,7 +248,7 @@ export default function BreakPlayer() {
                       <div className="font-medium text-sm">{preset.title}</div>
                       {state.activeCategory === category.key && state.activePreset === preset.key && (
                         <Badge className="absolute -top-1 -right-1 h-5 text-xs">
-                          Active
+                          ▶
                         </Badge>
                       )}
                     </Button>
