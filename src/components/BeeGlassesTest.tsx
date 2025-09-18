@@ -53,7 +53,7 @@ export default function BeeGlassesTest() {
                           width: '120px',
                           height: '120px',
                           objectFit: 'contain',
-                          transform: `translate(0px, -25px) scale(0.8)`
+                          transform: `translate(${glassesX[0] * 0.4}px, ${glassesY[0] * 0.4}px) scale(${glassesScale[0]})`
                         }}
                       />
                     </div>
