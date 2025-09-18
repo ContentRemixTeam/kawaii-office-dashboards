@@ -117,6 +117,13 @@ export default function CharacterCustomizationContent({
 
             return (
               <div key={category} className="space-y-4">
+                <h4 className="text-lg font-bold text-gray-800 capitalize flex items-center gap-2">
+                  {category === 'glasses' && '👓'} 
+                  {category === 'hats' && '👒'} 
+                  {category === 'clothing' && '👕'} 
+                  {category === 'pets' && '🐾'} 
+                  {category}
+                </h4>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {categoryAssets.map((asset) => (
                     <div key={asset.id} className="relative group">
@@ -134,22 +141,12 @@ export default function CharacterCustomizationContent({
                             : 'bg-gradient-to-br from-blue-100 to-blue-200 hover:from-blue-200 hover:to-blue-300 hover:shadow-lg hover:scale-102'
                         }`}
                       >
-                        <div className="w-full h-full bg-white/90 rounded-xl p-1 flex flex-col items-center justify-center border border-blue-200/50">
-                          {/* Category label centered at top */}
-                          <div className="text-lg font-bold text-gray-700 flex items-center gap-1 mb-2">
-                            {category === 'glasses' && '👓'} 
-                            {category === 'hats' && '👒'} 
-                            {category === 'clothing' && '👕'} 
-                            {category === 'pets' && '🐾'} 
-                            {category}
-                          </div>
-                          <div className="flex-1 w-full flex items-center justify-center">
-                            <img 
-                              src={asset.filepath.startsWith('data:') ? asset.filepath : `${asset.filepath}?v=${Date.now()}`}
-                              alt={asset.name}
-                              className="w-full h-full object-contain max-h-[70%]"
-                            />
-                          </div>
+                        <div className="w-full h-full bg-white/90 rounded-xl p-1 flex items-center justify-center border border-blue-200/50">
+                          <img 
+                            src={asset.filepath.startsWith('data:') ? asset.filepath : `${asset.filepath}?v=${Date.now()}`}
+                            alt={asset.name}
+                            className="w-full h-full object-contain"
+                          />
                         </div>
                       </button>
                       
