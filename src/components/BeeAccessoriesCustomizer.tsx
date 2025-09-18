@@ -247,7 +247,7 @@ export default function BeeAccessoriesCustomizer() {
                 {/* Large Preview */}
                 <div className="relative mx-auto bg-muted/20 p-8 rounded-lg" style={{ width: '400px', height: '400px' }}>
                   <img 
-                    src={`/characters/bases/bee/bee-base.png?v=${Date.now()}`}
+                    src={`${getAssetById('bee-base')?.filepath || '/characters/bases/bee/bee-base.png'}?v=${Date.now()}`}
                     alt="Your bee character"
                     className="absolute inset-8 w-auto h-auto object-contain"
                     style={{ 
@@ -281,7 +281,7 @@ export default function BeeAccessoriesCustomizer() {
                 {/* Mini App Preview */}
                 <div className="relative mx-auto p-4 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg" style={{ width: '200px', height: '200px' }}>
                   <img 
-                    src={`/characters/bases/bee/bee-base.png?v=${Date.now()}`}
+                    src={`${getAssetById('bee-base')?.filepath || '/characters/bases/bee/bee-base.png'}?v=${Date.now()}`}
                     alt="App preview"
                     className="absolute inset-4 w-auto h-auto object-contain"
                     style={{ 

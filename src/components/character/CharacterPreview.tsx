@@ -35,8 +35,11 @@ export default function CharacterPreview({
     );
   }
 
-  // Use the same position multiplier as BeeAccessoriesCustomizer for consistency
-  const POSITION_MULTIPLIER = 0.5;
+  // Use different positioning logic based on size to match BeeAccessoriesCustomizer
+  // Large size (400px) uses raw positions (like positioning view)
+  // Medium/Small sizes (200px/120px) use 0.5 multiplier (like mini preview)
+  const useRawPositions = size === 'large';
+  const POSITION_MULTIPLIER = useRawPositions ? 1.0 : 0.5;
 
   return (
     <div 
