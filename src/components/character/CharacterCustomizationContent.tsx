@@ -135,14 +135,14 @@ export default function CharacterCustomizationContent({
                             equipAccessory(asset.id);
                           }
                         }}
-                        className={`w-full h-40 p-1 rounded-2xl transition-all duration-300 ${
+                        className={`w-full h-48 p-1 rounded-2xl transition-all duration-300 ${
                           isAccessoryEquipped(asset.id)
                             ? 'bg-gradient-to-br from-blue-200 to-blue-300 shadow-lg scale-105'
                             : 'bg-gradient-to-br from-blue-100 to-blue-200 hover:from-blue-200 hover:to-blue-300 hover:shadow-lg hover:scale-102'
                         }`}
                       >
-                        <div className="w-full h-full theme-card rounded-xl p-3 flex flex-col items-center justify-center border border-blue-200/50">
-                          <div className="w-16 h-16 mx-auto mb-2 relative">
+                        <div className="w-full h-full theme-card rounded-xl p-4 flex flex-col items-center justify-center border border-blue-200/50">
+                          <div className="w-24 h-24 mx-auto mb-3 relative">
                             <img 
                               src={asset.filepath.startsWith('data:') ? asset.filepath : `${asset.filepath}?v=${Date.now()}`}
                               alt={asset.name}
