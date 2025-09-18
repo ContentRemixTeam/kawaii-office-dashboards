@@ -14,7 +14,8 @@ import {
   RotateCw,
   Eye,
   Move,
-  Zap
+  Zap,
+  Trash2
 } from 'lucide-react';
 import AssetUploader from '@/components/character/AssetUploader';
 import { 
@@ -167,6 +168,32 @@ export default function BeeAccessoriesCustomizer() {
     updatedCharacter.unlockedAssets.push(asset.id);
     saveCharacter(updatedCharacter);
     refreshAssets();
+  };
+
+  const deleteAsset = (assetId: string) => {
+    if (confirm('Are you sure you want to delete this accessory? This cannot be undone.')) {
+      // Remove from assets
+      const assets = getAllAssets();
+      const filteredAssets = assets.filter(asset => asset.id !== assetId);
+      localStorage.setItem('character_assets', JSON.stringify(filteredAssets));
+      
+      // Remove from character's unlocked assets
+      const updatedCharacter = { ...character };
+      updatedCharacter.unlockedAssets = updatedCharacter.unlockedAssets.filter(id => id !== assetId);
+      
+      // Remove from equipped accessories if equipped
+      updatedCharacter.equippedAccessories = updatedCharacter.equippedAccessories.filter(
+        acc => acc.assetId !== assetId
+      );
+      
+      saveCharacter(updatedCharacter);
+      refreshAssets();
+      
+      // Clear selection if this was selected
+      if (selectedAccessory === assetId) {
+        setSelectedAccessory(null);
+      }
+    }
   };
 
   const accessories = getAssetsByCategory('glasses')
@@ -349,11 +376,19 @@ export default function BeeAccessoriesCustomizer() {
                               <Button 
                                 onClick={() => equipAccessory(asset.id)}
                                 size="sm"
-                                className="w-full text-xs"
+                                className="flex-1 text-xs"
                               >
                                 Equip
                               </Button>
                             )}
+                            <Button 
+                              onClick={() => deleteAsset(asset.id)}
+                              variant="outline" 
+                              size="sm"
+                              className="text-xs text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </Button>
                           </div>
                         </div>
                       ))}
