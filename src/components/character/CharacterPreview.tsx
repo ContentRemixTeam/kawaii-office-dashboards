@@ -55,6 +55,15 @@ export default function CharacterPreview({
         const accessory = getAssetById(equipped.assetId);
         if (!accessory) return null;
 
+        // Debug logging
+        console.log('CharacterPreview rendering accessory:', {
+          assetId: equipped.assetId,
+          assetName: accessory.name,
+          position: equipped.position,
+          containerSize: dimensions,
+          showBackground
+        });
+
         // Improved positioning to match bee test page
         const containerScale = showBackground ? 0.8 : 1.0;
         const baseScale = equipped.position.scale * containerScale;
@@ -63,6 +72,14 @@ export default function CharacterPreview({
         const sizeMultiplier = dimensions.width / 200; // Base size is 200px
         const adjustedX = equipped.position.x * sizeMultiplier * containerScale;
         const adjustedY = equipped.position.y * sizeMultiplier * containerScale;
+
+        console.log('CharacterPreview calculated transform:', {
+          baseScale,
+          sizeMultiplier,
+          adjustedX,
+          adjustedY,
+          transform: `translate(${adjustedX}px, ${adjustedY}px) scale(${baseScale}) rotate(${equipped.position.rotation || 0}deg)`
+        });
 
         return (
           <img
