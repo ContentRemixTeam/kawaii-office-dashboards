@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -10,36 +10,61 @@ import {
   ArrowRight,
   Crown,
   Shirt,
-  Eye
+  Eye,
+  Coins
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import CharacterPreview from '@/components/character/CharacterPreview';
+import { getAllAssets } from '@/lib/assetManager';
+import type { PNGCharacter } from '@/types/character';
 
 interface DesignStudioModeContentProps {
-  characterData?: any;
   coins: number;
   gems: number;
 }
 
-export default function DesignStudioModeContent({ characterData, coins, gems }: DesignStudioModeContentProps) {
-  const navigate = useNavigate();
-
-  // Mock popular shop items - in real app would come from assetManager
-  const popularItems = [
-    { name: 'Sparkle Glasses', price: 50, currency: 'coins', rarity: 'common' },
-    { name: 'Crown Hat', price: 2, currency: 'gems', rarity: 'rare' },
-    { name: 'Rainbow Wings', price: 100, currency: 'coins', rarity: 'epic' },
-    { name: 'Magic Wand', price: 1, currency: 'gems', rarity: 'rare' }
-  ];
-
-  const getRarityColor = (rarity: string) => {
-    switch (rarity) {
-      case 'common': return 'bg-gray-100 text-gray-700 border-gray-200';
-      case 'rare': return 'bg-blue-100 text-blue-700 border-blue-200';
-      case 'epic': return 'bg-purple-100 text-purple-700 border-purple-200';
-      default: return 'bg-gray-100 text-gray-700 border-gray-200';
+// Default character structure matching what's used in Design Studio
+const DEFAULT_CHARACTER: PNGCharacter = {
+  id: crypto.randomUUID(),
+  name: 'My Character',
+  baseAsset: 'bee-base',
+  equippedAccessories: [
+    {
+      assetId: 'glasses-round',
+      position: { x: 0, y: -15, scale: 0.85, rotation: 0, opacity: 1 }
     }
-  };
+  ],
+  coins: 150,
+  specialCurrency: 1,
+  unlockedAssets: ['bee-base', 'glasses-round'],
+  room: {
+    background: 'default',
+    decorations: []
+  }
+};
+
+export default function DesignStudioModeContent({ coins, gems }: DesignStudioModeContentProps) {
+  const navigate = useNavigate();
+  const [character, setCharacter] = useState<PNGCharacter>(DEFAULT_CHARACTER);
+  const [availableAssets, setAvailableAssets] = useState<any[]>([]);
+
+  // Load character data from localStorage (same as Design Studio)
+  useEffect(() => {
+    const saved = localStorage.getItem('png_character_v1');
+    if (saved) {
+      try {
+        const loadedCharacter = JSON.parse(saved);
+        setCharacter(loadedCharacter);
+      } catch (error) {
+        console.error('Failed to load character:', error);
+      }
+    }
+
+    // Load available assets
+    const assets = getAllAssets();
+    const shopAssets = assets.filter(asset => !character.unlockedAssets.includes(asset.id)).slice(0, 4);
+    setAvailableAssets(shopAssets);
+  }, [character.unlockedAssets]);
 
   return (
     <div className="space-y-6">
@@ -48,24 +73,33 @@ export default function DesignStudioModeContent({ characterData, coins, gems }: 
         <CardHeader>
           <CardTitle className="text-pink-700 flex items-center gap-2">
             <Palette className="w-5 h-5" />
-            Your Character
+            Design Studio - Character Customization
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid md:grid-cols-2 gap-6">
             {/* Character preview */}
             <div className="text-center">
-              <div className="w-32 h-32 mx-auto bg-gradient-to-br from-pink-100 to-rose-100 rounded-full flex items-center justify-center border-4 border-pink-200">
-                {characterData ? (
-                  <CharacterPreview character={characterData} />
-                ) : (
-                  <div className="text-4xl">🐝</div>
-                )}
+              <div className="w-32 h-32 mx-auto bg-gradient-to-br from-pink-100 to-rose-100 rounded-full flex items-center justify-center border-4 border-pink-200 mb-4">
+                <div className="scale-110">
+                  <CharacterPreview character={character} />
+                </div>
               </div>
-              <h3 className="mt-3 text-lg font-semibold text-pink-700">
-                {characterData?.name || 'My Character'}
+              <h3 className="text-lg font-semibold text-pink-700 mb-2">
+                {character.name}
               </h3>
-              <p className="text-sm text-pink-600">Looking stylish!</p>
+              
+              {/* Character currency display (matches Design Studio) */}
+              <div className="flex justify-center gap-4 mb-3">
+                <div className="flex items-center space-x-2 bg-yellow-500/20 px-4 py-2 rounded-full border border-yellow-400">
+                  <Coins className="w-4 h-4 text-yellow-600" />
+                  <span className="font-bold text-yellow-700">{character.coins}</span>
+                </div>
+                <div className="flex items-center space-x-2 bg-purple-500/20 px-4 py-2 rounded-full border border-purple-400">
+                  <Star className="w-4 h-4 text-purple-600" />
+                  <span className="font-bold text-purple-700">{character.specialCurrency}</span>
+                </div>
+              </div>
             </div>
 
             {/* Character stats */}
@@ -73,10 +107,10 @@ export default function DesignStudioModeContent({ characterData, coins, gems }: 
               <div className="flex items-center justify-between p-3 bg-white/50 rounded-lg">
                 <span className="text-pink-700 flex items-center gap-2">
                   <Shirt className="w-4 h-4" />
-                  Accessories
+                  Equipped Accessories
                 </span>
                 <Badge variant="secondary" className="bg-pink-100 text-pink-700">
-                  {characterData?.equippedAccessories?.length || 1}
+                  {character.equippedAccessories?.length || 0}
                 </Badge>
               </div>
               
@@ -86,24 +120,24 @@ export default function DesignStudioModeContent({ characterData, coins, gems }: 
                   Unlocked Items
                 </span>
                 <Badge variant="secondary" className="bg-pink-100 text-pink-700">
-                  {characterData?.unlockedAssets?.length || 2}
+                  {character.unlockedAssets?.length || 0}
                 </Badge>
               </div>
 
               <div className="flex items-center justify-between p-3 bg-white/50 rounded-lg">
                 <span className="text-pink-700 flex items-center gap-2">
                   <Sparkles className="w-4 h-4" />
-                  Style Level
+                  Base Character
                 </span>
-                <Badge variant="secondary" className="bg-pink-100 text-pink-700">
-                  Trendy
+                <Badge variant="secondary" className="bg-pink-100 text-pink-700 capitalize">
+                  {character.baseAsset.replace('-', ' ')}
                 </Badge>
               </div>
             </div>
           </div>
 
           {/* Quick customize buttons */}
-          <div className="mt-4 flex gap-2">
+          <div className="mt-6 flex gap-2">
             <Button 
               variant="outline" 
               size="sm" 
@@ -111,7 +145,7 @@ export default function DesignStudioModeContent({ characterData, coins, gems }: 
               onClick={() => navigate('/design')}
             >
               <Eye className="w-4 h-4 mr-1" />
-              Customize
+              Customize Character
             </Button>
             <Button 
               variant="outline" 
@@ -120,51 +154,62 @@ export default function DesignStudioModeContent({ characterData, coins, gems }: 
               onClick={() => navigate('/design')}
             >
               <ShoppingBag className="w-4 h-4 mr-1" />
-              Shop
+              Browse Shop
             </Button>
           </div>
         </CardContent>
       </Card>
 
-      {/* Popular Shop Items */}
+      {/* Shop Preview (Real assets from the actual shop) */}
       <Card className="bg-white/50 border-pink-200">
         <CardHeader>
           <CardTitle className="text-pink-700 flex items-center gap-2">
             <ShoppingBag className="w-5 h-5" />
-            Popular in Shop
+            Available in Shop
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 gap-3">
-            {popularItems.map((item, index) => (
-              <div 
-                key={index}
-                className="p-3 bg-gradient-to-br from-pink-50 to-rose-50 rounded-lg border border-pink-200"
-              >
-                <div className="text-center space-y-2">
-                  <div className="text-2xl">
-                    {index === 0 ? '👓' : index === 1 ? '👑' : index === 2 ? '🌈' : '🪄'}
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-pink-700">{item.name}</p>
-                    <div className="flex items-center justify-center gap-1 mt-1">
-                      {item.currency === 'coins' ? (
-                        <span className="text-xs text-yellow-600">💰 {item.price}</span>
-                      ) : (
-                        <span className="text-xs text-purple-600">⭐ {item.price}</span>
-                      )}
-                      <Badge 
-                        variant="secondary" 
-                        className={`text-xs ${getRarityColor(item.rarity)}`}
-                      >
-                        {item.rarity}
-                      </Badge>
+          {availableAssets.length > 0 ? (
+            <div className="grid grid-cols-2 gap-3">
+              {availableAssets.map((asset, index) => (
+                <div 
+                  key={asset.id}
+                  className="p-3 bg-gradient-to-br from-pink-50 to-rose-50 rounded-lg border border-pink-200"
+                >
+                  <div className="text-center space-y-2">
+                    <div className="w-12 h-12 mx-auto bg-white rounded-lg flex items-center justify-center">
+                      {/* Asset preview or icon */}
+                      <div className="text-2xl">
+                        {asset.category === 'accessories' ? '👓' : 
+                         asset.category === 'hats' ? '👑' : 
+                         asset.category === 'clothing' ? '👕' : '✨'}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-pink-700">{asset.name}</p>
+                      <div className="flex items-center justify-center gap-1 mt-1">
+                        <span className="text-xs text-yellow-600 flex items-center gap-1">
+                          <Coins className="w-3 h-3" />
+                          {asset.price || 50}
+                        </span>
+                        <Badge 
+                          variant="secondary" 
+                          className="text-xs bg-gray-100 text-gray-700"
+                        >
+                          {asset.rarity || 'common'}
+                        </Badge>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-4">
+              <p className="text-pink-600">All available items unlocked!</p>
+              <p className="text-sm text-pink-500">Visit the Design Studio to upload new assets</p>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -174,7 +219,7 @@ export default function DesignStudioModeContent({ characterData, coins, gems }: 
           <div className="flex items-center justify-between">
             <div>
               <h3 className="font-semibold text-pink-700">Full Design Studio</h3>
-              <p className="text-sm text-pink-600">Access all customization tools and shop items</p>
+              <p className="text-sm text-pink-600">Access all customization tools, shop, and asset uploads</p>
             </div>
             <Button 
               onClick={() => navigate('/design')}

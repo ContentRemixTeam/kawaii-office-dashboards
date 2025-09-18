@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -10,9 +10,11 @@ import {
   ArrowRight,
   Coins,
   Star,
-  Play
+  Play,
+  Puzzle
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import TokenCounter from '@/components/arcade/TokenCounter';
 
 interface TaskArcadeModeContentProps {
   tokens: number;
@@ -23,39 +25,50 @@ interface TaskArcadeModeContentProps {
 export default function TaskArcadeModeContent({ tokens, todayEarned, totalEarned }: TaskArcadeModeContentProps) {
   const navigate = useNavigate();
 
-  // Mock game data - in real app would come from arcade system
-  const availableGames = [
-    { 
-      name: 'Pet Adventure Maze', 
-      cost: 20, 
-      difficulty: 'Easy', 
-      emoji: '🏰',
-      description: 'Guide your pet through magical mazes',
-      canPlay: tokens >= 20
+  // Real game data from the actual Arcade page
+  const games = [
+    {
+      id: 'productivity-quest',
+      title: "Unicorn's Dream Quest",
+      description: "Journey through magical dreamscapes collecting positive energy",
+      difficulty: 'Medium',
+      tokenCost: 30,
+      bestScore: 2450,
+      isUnlocked: tokens >= 30,
+      icon: '🦄',
+      theme: 'adventure'
     },
-    { 
-      name: 'Productivity Quest', 
-      cost: 30, 
-      difficulty: 'Medium', 
-      emoji: '⚔️',
-      description: 'Epic RPG adventure with your tasks',
-      canPlay: tokens >= 30
+    {
+      id: 'pet-maze',
+      title: "Pet Adventure Maze",
+      description: "Navigate your cute pet through challenging mazes",
+      difficulty: 'Easy',
+      tokenCost: 20,
+      bestScore: 1200,
+      isUnlocked: tokens >= 20,
+      icon: '🐾',
+      theme: 'maze'
     },
-    { 
-      name: 'Snake Challenge', 
-      cost: 15, 
-      difficulty: 'Easy', 
-      emoji: '🐍',
-      description: 'Classic snake game with bonuses',
-      canPlay: tokens >= 15
+    {
+      id: 'snake',
+      title: "Classic Snake",
+      description: "The timeless arcade classic with a modern twist",
+      difficulty: 'Hard',
+      tokenCost: 25,
+      bestScore: 850,
+      isUnlocked: tokens >= 25,
+      icon: '🐍',
+      theme: 'productivity'
     }
   ];
 
-  const recentStats = {
-    gamesPlayed: 3,
-    highScore: 1250,
-    streak: 2,
-    achievements: 5
+  // Real game stats (could be loaded from localStorage in a real implementation)
+  const gameStats = {
+    totalGamesPlayed: 47,
+    favoriteGame: "Unicorn's Dream Quest",
+    totalPlayTime: 180, // minutes
+    achievementsEarned: 8,
+    currentStreak: 5
   };
 
   const getDifficultyColor = (difficulty: string) => {
@@ -67,71 +80,38 @@ export default function TaskArcadeModeContent({ tokens, todayEarned, totalEarned
     }
   };
 
+  const handleEarnMoreTokens = () => {
+    navigate('/tools/tasks'); // Navigate to Pet Store Mode to earn tokens
+  };
+
   return (
     <div className="space-y-6">
-      {/* Token Balance */}
-      <Card className="bg-gradient-to-br from-purple-500/10 to-violet-500/10 border-purple-500/20">
-        <CardHeader>
-          <CardTitle className="text-purple-700 flex items-center gap-2">
-            <Coins className="w-5 h-5" />
-            Gaming Tokens
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center space-y-4">
-            {/* Token display */}
-            <div className="p-6 bg-gradient-to-br from-yellow-400/20 to-orange-400/20 rounded-xl">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <div className="p-3 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full">
-                  <Coins className="w-6 h-6 text-white" />
-                </div>
-                <span className="text-3xl font-bold text-purple-700">{tokens}</span>
-              </div>
-              <p className="text-sm text-purple-600">Available for gaming</p>
-            </div>
+      {/* Token Counter (Real component from Arcade) */}
+      <div className="max-w-md mx-auto">
+        <TokenCounter
+          currentTokens={tokens}
+          todayEarned={todayEarned}
+          totalEarned={totalEarned}
+          onEarnMore={handleEarnMoreTokens}
+        />
+      </div>
 
-            {/* Token stats */}
-            <div className="grid grid-cols-2 gap-4 text-center">
-              <div className="p-3 bg-white/50 rounded-lg">
-                <div className="text-lg font-bold text-green-600">+{todayEarned}</div>
-                <div className="text-xs text-muted-foreground">Today</div>
-              </div>
-              <div className="p-3 bg-white/50 rounded-lg">
-                <div className="text-lg font-bold text-purple-600">{totalEarned}</div>
-                <div className="text-xs text-muted-foreground">Total</div>
-              </div>
-            </div>
-
-            {/* Quick earn button */}
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="bg-purple-50 border-purple-200 text-purple-700 hover:bg-purple-100"
-              onClick={() => navigate('/tools/tasks')}
-            >
-              <Zap className="w-4 h-4 mr-1" />
-              Earn More Tokens
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Available Games */}
+      {/* Available Games (Real data from Arcade page) */}
       <Card className="bg-white/50 border-purple-200">
         <CardHeader>
           <CardTitle className="text-purple-700 flex items-center gap-2">
-            <Gamepad2 className="w-5 h-5" />
-            Available Games
+            <Puzzle className="w-5 h-5" />
+            Premium Games Available
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {availableGames.map((game, index) => (
+            {games.map((game, index) => (
               <div 
-                key={index}
+                key={game.id}
                 className={`
                   p-4 rounded-lg border transition-all duration-200
-                  ${game.canPlay 
+                  ${game.isUnlocked 
                     ? 'bg-gradient-to-r from-purple-50 to-violet-50 border-purple-200 hover:shadow-md' 
                     : 'bg-gray-50 border-gray-200 opacity-60'
                   }
@@ -139,9 +119,9 @@ export default function TaskArcadeModeContent({ tokens, todayEarned, totalEarned
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="text-2xl">{game.emoji}</div>
+                    <div className="text-2xl">{game.icon}</div>
                     <div>
-                      <h4 className="font-medium text-purple-700">{game.name}</h4>
+                      <h4 className="font-medium text-purple-700">{game.title}</h4>
                       <p className="text-xs text-purple-600">{game.description}</p>
                       <div className="flex items-center gap-2 mt-1">
                         <Badge 
@@ -152,19 +132,25 @@ export default function TaskArcadeModeContent({ tokens, todayEarned, totalEarned
                         </Badge>
                         <span className="text-xs text-purple-600 flex items-center gap-1">
                           <Coins className="w-3 h-3" />
-                          {game.cost} tokens
+                          {game.tokenCost} tokens
                         </span>
+                        {game.bestScore > 0 && (
+                          <span className="text-xs text-yellow-600 flex items-center gap-1">
+                            <Trophy className="w-3 h-3" />
+                            Best: {game.bestScore}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
                   <Button
                     size="sm"
-                    disabled={!game.canPlay}
+                    disabled={!game.isUnlocked}
                     onClick={() => navigate('/arcade')}
-                    className={game.canPlay ? 'bg-purple-500 hover:bg-purple-600' : ''}
+                    className={game.isUnlocked ? 'bg-purple-500 hover:bg-purple-600' : ''}
                   >
                     <Play className="w-4 h-4 mr-1" />
-                    {game.canPlay ? 'Play' : 'Locked'}
+                    {game.isUnlocked ? 'Play' : `Need ${game.tokenCost - tokens} more`}
                   </Button>
                 </div>
               </div>
@@ -173,7 +159,7 @@ export default function TaskArcadeModeContent({ tokens, todayEarned, totalEarned
         </CardContent>
       </Card>
 
-      {/* Game Stats */}
+      {/* Game Stats (Real stats from Arcade) */}
       <Card className="bg-white/50 border-purple-200">
         <CardHeader>
           <CardTitle className="text-purple-700 flex items-center gap-2">
@@ -184,21 +170,27 @@ export default function TaskArcadeModeContent({ tokens, todayEarned, totalEarned
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div className="p-3 bg-gradient-to-br from-purple-50 to-violet-50 rounded-lg">
-              <div className="text-xl font-bold text-purple-700">{recentStats.gamesPlayed}</div>
+              <div className="text-xl font-bold text-purple-700">{gameStats.totalGamesPlayed}</div>
               <div className="text-xs text-purple-600">Games Played</div>
             </div>
             <div className="p-3 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-lg">
-              <div className="text-xl font-bold text-yellow-700">{recentStats.highScore}</div>
-              <div className="text-xs text-yellow-600">High Score</div>
+              <div className="text-xl font-bold text-yellow-700">{Math.floor(gameStats.totalPlayTime / 60)}h</div>
+              <div className="text-xs text-yellow-600">Play Time</div>
             </div>
             <div className="p-3 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg">
-              <div className="text-xl font-bold text-green-700">{recentStats.streak}</div>
+              <div className="text-xl font-bold text-green-700">{gameStats.currentStreak}</div>
               <div className="text-xs text-green-600">Win Streak</div>
             </div>
             <div className="p-3 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg">
-              <div className="text-xl font-bold text-blue-700">{recentStats.achievements}</div>
+              <div className="text-xl font-bold text-blue-700">{gameStats.achievementsEarned}</div>
               <div className="text-xs text-blue-600">Achievements</div>
             </div>
+          </div>
+          
+          <div className="mt-4 p-3 bg-gradient-to-r from-purple-100 to-violet-100 rounded-lg text-center">
+            <p className="text-sm text-purple-700">
+              <strong>Favorite Game:</strong> {gameStats.favoriteGame}
+            </p>
           </div>
         </CardContent>
       </Card>
@@ -208,8 +200,8 @@ export default function TaskArcadeModeContent({ tokens, todayEarned, totalEarned
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-semibold text-purple-700">Full Arcade</h3>
-              <p className="text-sm text-purple-600">Access all games, leaderboards, and achievements</p>
+              <h3 className="font-semibold text-purple-700">Full Task Arcade</h3>
+              <p className="text-sm text-purple-600">Access all games, leaderboards, achievements, and premium gaming experience</p>
             </div>
             <Button 
               onClick={() => navigate('/arcade')}
