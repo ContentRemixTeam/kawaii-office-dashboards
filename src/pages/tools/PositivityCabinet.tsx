@@ -439,10 +439,10 @@ export default function PositivityCabinet() {
   return (
     <ToolShell title="Positivity Corner">
       <div className="space-y-6">
-        {/* Header with Perfect Contrast */}
-        <div className="bg-gradient-primary rounded-2xl p-6">
-          <h2 className="text-xl font-semibold mb-3 text-brand-readable">✨ Your Personal Vault of Positivity</h2>
-          <p className="text-brand-readable opacity-90">
+        {/* Clean Header - matches app's card style */}
+        <div className="bg-gradient-to-r from-primary/10 to-accent/5 rounded-2xl p-6 border border-primary/20">
+          <h2 className="text-xl font-semibold mb-3 text-foreground">✨ Your Personal Vault of Positivity</h2>
+          <p className="text-muted-foreground">
             Store encouragement, celebrate wins, practice gratitude, and draw daily inspiration. 
             Everything you need to stay motivated and positive.
           </p>
