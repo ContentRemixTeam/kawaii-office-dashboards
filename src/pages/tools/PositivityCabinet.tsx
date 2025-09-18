@@ -667,14 +667,14 @@ export default function PositivityCabinet() {
                         isFlipping ? 'rotate-y-180' : ''
                       }`}
                     >
-                      <Card className="absolute inset-0 w-full h-full backface-hidden bg-gradient-primary border-2 border-primary/20 shadow-cute">
+                      <Card className="absolute inset-0 w-full h-full backface-hidden bg-white/95 border-4 border-white/80 shadow-[0_8px_30px_rgba(0,0,0,0.12)] backdrop-blur-sm">
                         <CardContent className="flex items-center justify-center h-full p-6">
                           <div className="text-center">
-                            <Sparkles className="w-16 h-16 text-white mx-auto mb-4" />
-                            <h3 className="text-xl font-semibold text-white mb-2">
+                            <Sparkles className="w-16 h-16 text-primary mx-auto mb-4" />
+                            <h3 className="text-xl font-semibold text-foreground mb-2">
                               Your Daily Affirmation
                             </h3>
-                            <p className="text-white/80 text-sm">
+                            <p className="text-muted-foreground text-sm">
                               Click to reveal today's inspiration
                             </p>
                           </div>
@@ -687,7 +687,7 @@ export default function PositivityCabinet() {
                     onClick={drawDailyCard}
                     disabled={isFlipping}
                     size="lg"
-                    className="btn btn-primary"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground border-2 border-white/40 shadow-lg backdrop-blur-sm"
                   >
                     {isFlipping ? (
                       <>
@@ -710,11 +710,11 @@ export default function PositivityCabinet() {
                       Today's Card
                     </Badge>
                     
-                    <Card className="w-72 h-96 mx-auto bg-gradient-primary border-4 border-white shadow-2xl shadow-primary/30 ring-2 ring-primary/50 backdrop-blur-sm">
+                    <Card className="w-72 h-96 mx-auto bg-white/95 border-4 border-white/80 shadow-[0_8px_30px_rgba(0,0,0,0.12)] backdrop-blur-sm">
                       <CardContent className="flex items-center justify-center h-full p-6">
                         <div className="text-center">
-                          <Heart className="w-12 h-12 text-white mx-auto mb-6" />
-                          <blockquote className="text-lg font-medium text-white leading-relaxed">
+                          <Heart className="w-12 h-12 text-primary mx-auto mb-6" />
+                          <blockquote className="text-lg font-medium text-foreground leading-relaxed">
                             "{todaysCard.text}"
                           </blockquote>
                         </div>
