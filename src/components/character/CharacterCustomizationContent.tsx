@@ -219,7 +219,7 @@ export default function CharacterCustomizationContent({
       {/* Shop Tab */}
       <TabsContent value="shop" className="p-8 space-y-8 bg-card rounded-2xl border-2 border-border shadow-sm">
         <div>
-          <h3 className="text-xl font-bold text-gray-800 mb-4">Asset Shop</h3>
+          <h3 className="text-xl font-bold text-gray-800 mb-4">SHOP</h3>
           
           {/* Locked Assets */}
           {['base', 'accessory'].map((type) => {
@@ -231,7 +231,7 @@ export default function CharacterCustomizationContent({
 
             return (
               <div key={type} className="space-y-3">
-                <h4 className="text-lg font-bold text-gray-800 capitalize">{type}s</h4>
+                <h4 className="text-lg font-bold text-gray-800 capitalize">{type === 'accessory' ? 'Accessories' : type + 's'}</h4>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {lockedAssets.map((asset) => (
                     <ShopItemCard
