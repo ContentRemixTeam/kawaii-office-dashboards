@@ -37,9 +37,9 @@
     --text-on-dark: var(--text-inverse);
 
     /* Theme System Variables - Can be overridden by user preferences */
-    --bg-start: 350 100% 98%;        /* pastel pink */
-    --bg-end: 150 40% 96%;           /* mint */
-    --brand: 340 75% 75%;            /* pink accent */
+    --bg-start: 0 0% 100%;           /* pure white */
+    --bg-end: 210 20% 98%;           /* very light gray */
+    --brand: 220 13% 60%;            /* neutral gray accent */
     --brand-fg: var(--text-brand-contrast); /* Use semantic text */
     --accent: 150 60% 65%;           /* mint accent */
     --accent-fg: var(--text-accent-contrast); /* Use semantic text */
@@ -56,10 +56,10 @@
     --popover: var(--bg-primary);
     --popover-foreground: var(--text-primary);
 
-    /* Kawaii Pink Primary - with proper contrast */
-    --primary: 340 75% 75%;
+    /* Neutral Primary Colors - with proper contrast */
+    --primary: 220 13% 60%;
     --primary-foreground: var(--text-brand-contrast);
-    --primary-glow: 340 80% 85%;
+    --primary-glow: 220 13% 70%;
 
     /* Mint Secondary - with proper contrast */
     --secondary: 150 60% 85%;
@@ -76,9 +76,9 @@
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: var(--text-inverse);
 
-    --border: 340 30% 90%;
-    --input: 340 20% 95%;
-    --ring: 340 75% 75%;
+    --border: 220 13% 90%;
+    --input: 220 13% 95%;
+    --ring: 220 13% 75%;
 
     --radius: 1rem;
 
