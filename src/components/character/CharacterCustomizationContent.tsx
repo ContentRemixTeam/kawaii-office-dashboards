@@ -56,21 +56,21 @@ export default function CharacterCustomizationContent({
   return (
     <>
       {/* Character Tab */}
-      <TabsContent value="character" className="p-8 space-y-8 bg-card rounded-2xl border-2 border-border shadow-sm">
+      <TabsContent value="character" className="p-8 space-y-8 theme-card rounded-2xl border-2 theme-border theme-shadow">
         <div className="space-y-6">
           <div>
-            <Label htmlFor="character-name" className="text-gray-800 font-semibold">Character Name</Label>
+            <Label htmlFor="character-name" className="theme-text-title font-semibold">Character Name</Label>
             <Input
               id="character-name"
               value={character.name}
               onChange={(e) => updateCharacterName(e.target.value)}
               placeholder="Enter character name"
-              className="max-w-md bg-white border-2 border-purple-200 rounded-xl text-gray-800 font-medium"
+              className="max-w-md theme-input border-2 border-purple-200 rounded-xl theme-text-title font-medium"
             />
           </div>
 
           <div>
-            <h3 className="text-xl font-bold text-gray-800 mb-4">Character Base</h3>
+            <h3 className="text-xl font-bold theme-text-title mb-4">Character Base</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {getAssetsByType('base').map((asset) => (
                 <button
@@ -106,9 +106,9 @@ export default function CharacterCustomizationContent({
       </TabsContent>
 
       {/* Accessories Tab */}
-      <TabsContent value="accessories" className="p-8 space-y-8 bg-card rounded-2xl border-2 border-border shadow-sm">
+      <TabsContent value="accessories" className="p-8 space-y-8 theme-card rounded-2xl border-2 theme-border theme-shadow">
         <div>
-          <h3 className="text-xl font-bold text-gray-800 mb-4">My Closet</h3>
+          <h3 className="text-xl font-bold theme-text-title mb-4">My Closet</h3>
           
           {/* Categories */}
           {['glasses', 'hats', 'clothing', 'pets'].map((category) => {
@@ -120,7 +120,7 @@ export default function CharacterCustomizationContent({
 
             return (
               <div key={category} className="space-y-4">
-                <h4 className="text-lg font-bold text-gray-800 capitalize flex items-center gap-2">
+                <h4 className="text-lg font-bold theme-text-title capitalize flex items-center gap-2">
                   {category === 'glasses' && '👓'} 
                   {category === 'hats' && '👒'} 
                   {category === 'clothing' && '👕'} 
@@ -152,7 +152,7 @@ export default function CharacterCustomizationContent({
                               className="w-full h-full object-contain"
                             />
                           </div>
-                          <div className="text-sm font-bold text-gray-800 mb-1 truncate">{asset.name}</div>
+                          <div className="text-sm font-bold theme-text-title mb-1 truncate">{asset.name}</div>
                           <Badge className={`text-xs ${getRarityColor(asset.rarity)}`}>
                             {asset.rarity}
                           </Badge>
@@ -185,7 +185,7 @@ export default function CharacterCustomizationContent({
       </TabsContent>
 
       {/* Positioning Tab */}
-      <TabsContent value="positioning" className="p-8 space-y-8 bg-card rounded-2xl border-2 border-border shadow-sm">
+      <TabsContent value="positioning" className="p-8 space-y-8 theme-card rounded-2xl border-2 theme-border theme-shadow">
         {selectedAccessory ? (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div>
@@ -206,8 +206,8 @@ export default function CharacterCustomizationContent({
             </div>
           </div>
         ) : (
-          <div className="text-center py-12 bg-white rounded-2xl border-2 border-purple-200">
-            <p className="text-gray-700 mb-4 font-medium">Select an equipped accessory from the Accessories tab to position it</p>
+          <div className="text-center py-12 theme-bg-primary rounded-2xl border-2 border-purple-200">
+            <p className="theme-text-secondary mb-4 font-medium">Select an equipped accessory from the Accessories tab to position it</p>
             <Button 
               onClick={() => onAccessorySelect(character.equippedAccessories[0] || null)}
               disabled={character.equippedAccessories.length === 0}
@@ -219,9 +219,9 @@ export default function CharacterCustomizationContent({
       </TabsContent>
 
       {/* Shop Tab */}
-      <TabsContent value="shop" className="p-8 space-y-8 bg-card rounded-2xl border-2 border-border shadow-sm">
+      <TabsContent value="shop" className="p-8 space-y-8 theme-card rounded-2xl border-2 theme-border theme-shadow">
         <div>
-          <h3 className="text-xl font-bold text-gray-800 mb-4">SHOP</h3>
+          <h3 className="text-xl font-bold theme-text-title mb-4">SHOP</h3>
           
           {/* Locked Assets */}
           {['base', 'accessory'].map((type) => {
@@ -233,7 +233,7 @@ export default function CharacterCustomizationContent({
 
             return (
               <div key={type} className="space-y-3">
-                <h4 className="text-lg font-bold text-gray-800 capitalize">{type === 'accessory' ? 'Accessories' : type + 's'}</h4>
+                <h4 className="text-lg font-bold theme-text-title capitalize">{type === 'accessory' ? 'Accessories' : type + 's'}</h4>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {lockedAssets.map((asset) => (
                     <ShopItemCard

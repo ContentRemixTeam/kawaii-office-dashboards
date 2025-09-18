@@ -240,7 +240,7 @@ export default function CharacterCustomization({ onBack }: CharacterCustomizatio
   };
 
   return (
-    <div className="min-h-screen bg-white p-8">
+    <div className="min-h-screen theme-bg-primary p-8">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-12">
@@ -248,17 +248,17 @@ export default function CharacterCustomization({ onBack }: CharacterCustomizatio
             <Button 
               onClick={onBack}
               variant="outline"
-              className="bg-white border-gray-200 text-gray-700 hover:bg-gray-50 shadow-sm rounded-full px-6 py-2"
+              className="theme-button-outline border-gray-200 text-gray-700 hover:bg-gray-50 shadow-sm rounded-full px-6 py-2"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Office
             </Button>
             <div>
-              <h1 className="text-5xl font-bold text-gray-900 flex items-center gap-4">
+              <h1 className="text-5xl font-bold theme-text-title flex items-center gap-4">
                 <Heart className="w-10 h-10 text-pink-500" />
                 DESIGN STUDIO
               </h1>
-              <p className="text-gray-600 mt-3 text-lg">
+              <p className="theme-text-secondary mt-3 text-lg">
                 Customize your character with productivity rewards! ✨
               </p>
             </div>
@@ -266,11 +266,11 @@ export default function CharacterCustomization({ onBack }: CharacterCustomizatio
           
           {/* Currency Display */}
           <div className="flex gap-6">
-            <div className="bg-white border-2 border-yellow-400 text-gray-900 px-6 py-3 rounded-full shadow-sm flex items-center gap-2 font-bold text-lg">
+            <div className="theme-card border-2 border-yellow-400 theme-text-title px-6 py-3 rounded-full shadow-sm flex items-center gap-2 font-bold text-lg">
               <Coins className="w-5 h-5 text-yellow-500" />
               {character.coins}
             </div>
-            <div className="bg-white border-2 border-purple-400 text-gray-900 px-6 py-3 rounded-full shadow-sm flex items-center gap-2 font-bold text-lg">
+            <div className="theme-card border-2 border-purple-400 theme-text-title px-6 py-3 rounded-full shadow-sm flex items-center gap-2 font-bold text-lg">
               <Star className="w-5 h-5 text-purple-500" />
               {character.specialCurrency}
             </div>
@@ -280,9 +280,9 @@ export default function CharacterCustomization({ onBack }: CharacterCustomizatio
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           {/* Character Preview */}
           <div className="lg:col-span-1">
-            <Card className="bg-white border border-gray-200 shadow-lg rounded-3xl overflow-hidden">
+            <Card className="theme-card border border-gray-200 shadow-lg rounded-3xl overflow-hidden">
               <CardHeader>
-                <CardTitle className="text-gray-900 font-bold text-xl flex items-center gap-2">
+                <CardTitle className="theme-text-title font-bold text-xl flex items-center gap-2">
                   <User className="w-5 h-5 text-gray-700" />
                   {character.name}
                 </CardTitle>
@@ -297,7 +297,7 @@ export default function CharacterCustomization({ onBack }: CharacterCustomizatio
                 
                 {/* Character Info */}
                 <div className="mt-4 text-center space-y-2">
-                  <h3 className="text-xl font-bold text-gray-900">{character.name}</h3>
+                  <h3 className="text-xl font-bold theme-text-title">{character.name}</h3>
                   <div className="flex justify-center gap-2 flex-wrap">
                     <div className="bg-white border border-purple-300 text-purple-700 px-4 py-2 rounded-full font-semibold text-sm">
                       {getAssetById(character.baseAsset)?.name || 'Unknown Base'}
@@ -338,27 +338,27 @@ export default function CharacterCustomization({ onBack }: CharacterCustomizatio
 
           {/* Customization Tabs */}
           <div className="lg:col-span-2">
-            <Card className="bg-white border border-gray-200 shadow-lg rounded-3xl overflow-hidden">
+            <Card className="theme-card border border-gray-200 shadow-lg rounded-3xl overflow-hidden">
               <CardContent className="p-0">
                 <Tabs value={selectedTab} onValueChange={(value) => setSelectedTab(value as typeof selectedTab)}>
-                  <TabsList className="grid w-full grid-cols-5 bg-gray-50 p-2 rounded-2xl border-b border-gray-200">
-                    <TabsTrigger value="character" className="data-[state=active]:bg-white data-[state=active]:text-purple-700 data-[state=active]:border data-[state=active]:border-purple-200 text-gray-700 font-semibold rounded-xl transition-all duration-300">
+                  <TabsList className="grid w-full grid-cols-5 theme-bg-secondary p-2 rounded-2xl border-b theme-border">
+                    <TabsTrigger value="character" className="data-[state=active]:theme-bg-primary data-[state=active]:text-purple-700 data-[state=active]:border data-[state=active]:border-purple-200 theme-text-secondary font-semibold rounded-xl transition-all duration-300">
                       <User className="w-4 h-4 mr-2" />
                       Character
                     </TabsTrigger>
-                    <TabsTrigger value="accessories" className="data-[state=active]:bg-white data-[state=active]:text-purple-700 data-[state=active]:border data-[state=active]:border-purple-200 text-gray-700 font-semibold rounded-xl transition-all duration-300">
+                    <TabsTrigger value="accessories" className="data-[state=active]:theme-bg-primary data-[state=active]:text-purple-700 data-[state=active]:border data-[state=active]:border-purple-200 theme-text-secondary font-semibold rounded-xl transition-all duration-300">
                       <Shirt className="w-4 h-4 mr-2" />
                       My Closet
                     </TabsTrigger>
-                    <TabsTrigger value="positioning" className="data-[state=active]:bg-white data-[state=active]:text-purple-700 data-[state=active]:border data-[state=active]:border-purple-200 text-gray-700 font-semibold rounded-xl transition-all duration-300">
+                    <TabsTrigger value="positioning" className="data-[state=active]:theme-bg-primary data-[state=active]:text-purple-700 data-[state=active]:border data-[state=active]:border-purple-200 theme-text-secondary font-semibold rounded-xl transition-all duration-300">
                       <Settings className="w-4 h-4 mr-2" />
                       Positioning
                     </TabsTrigger>
-                    <TabsTrigger value="shop" className="data-[state=active]:bg-white data-[state=active]:text-purple-700 data-[state=active]:border data-[state=active]:border-purple-200 text-gray-700 font-semibold rounded-xl transition-all duration-300">
+                    <TabsTrigger value="shop" className="data-[state=active]:theme-bg-primary data-[state=active]:text-purple-700 data-[state=active]:border data-[state=active]:border-purple-200 theme-text-secondary font-semibold rounded-xl transition-all duration-300">
                       <ShoppingBag className="w-4 h-4 mr-2" />
                       Shop
                     </TabsTrigger>
-                    <TabsTrigger value="rewards" className="data-[state=active]:bg-white data-[state=active]:text-purple-700 data-[state=active]:border data-[state=active]:border-purple-200 text-gray-700 font-semibold rounded-xl transition-all duration-300">
+                    <TabsTrigger value="rewards" className="data-[state=active]:theme-bg-primary data-[state=active]:text-purple-700 data-[state=active]:border data-[state=active]:border-purple-200 theme-text-secondary font-semibold rounded-xl transition-all duration-300">
                       <Gift className="w-4 h-4 mr-2" />
                       Rewards
                     </TabsTrigger>
