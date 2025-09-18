@@ -46,7 +46,7 @@
     --card: var(--bg-primary);       /* Use semantic background */
     --text: var(--text-primary);     /* Use semantic text */
     --muted: var(--text-secondary);  /* Use semantic text */
-    --ring: 340 75% 85%;             /* focus ring */
+    --ring: 220 13% 75%;             /* focus ring - neutral gray */
 
     /* Kawaii Color Palette - Now using semantic variables */
     --background: var(--bg-primary);
@@ -94,7 +94,7 @@
     /* Kawaii Shadows */
     --shadow-soft: 0 4px 20px -4px hsl(var(--primary) / 0.25);
     --shadow-glow: 0 0 30px hsl(var(--primary-glow) / 0.4);
-    --shadow-cute: 0 8px 25px -8px hsl(340 50% 80% / 0.3);
+    --shadow-cute: 0 8px 25px -8px hsl(220 20% 80% / 0.3);
 
     /* Kawaii Animations */
     --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
