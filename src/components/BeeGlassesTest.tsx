@@ -1,214 +1,228 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { GlassesBackgroundRemover } from './GlassesBackgroundRemover';
+import { Slider } from '@/components/ui/slider';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function BeeGlassesTest() {
+  const [glassesX, setGlassesX] = useState([0]);
+  const [glassesY, setGlassesY] = useState([-15]);
+  const [glassesScale, setGlassesScale] = useState([0.85]);
+
   return (
-    <div className="flex flex-col items-center gap-6 p-8 bg-background">
-      <h2 className="text-2xl font-bold text-foreground">Bee + Glasses Alignment Test</h2>
+    <div className="min-h-screen bg-background p-8">
+      <h1 className="text-3xl font-bold mb-8 text-center text-foreground">
+        Your Bee + Glasses Customization
+      </h1>
       
-      <GlassesBackgroundRemover />
-      
-      <div className="flex gap-8">
-        {/* Bee only */}
-        <div className="text-center">
-          <h3 className="text-lg font-semibold mb-4 text-foreground">Bee Base Only</h3>
-          <div className="relative w-32 h-32 border-2 border-dashed border-muted-foreground rounded-lg flex items-center justify-center">
-            <img 
-              src="/characters/bases/bee/bee-base.png" 
-              alt="Bee base" 
-              className="w-24 h-24 object-contain"
-              onError={(e) => {
-                console.error('Failed to load bee image:', e);
-                e.currentTarget.style.border = '2px solid red';
-              }}
-              onLoad={() => console.log('Bee image loaded successfully')}
-            />
-          </div>
-        </div>
-
-        {/* Bee with glasses overlay - PROPERLY CENTERED */}
-        <div className="text-center">
-          <h3 className="text-lg font-semibold mb-4 text-foreground">Bee + Glasses (Centered)</h3>
-          <div className="relative w-64 h-64 border-2 border-dashed border-muted-foreground rounded-lg bg-gradient-to-br from-blue-50 to-yellow-50 overflow-visible">
-            {/* Debug info */}
-            <div className="absolute top-0 left-0 text-xs text-red-600 z-50 bg-white/80 px-1">
-              Container: 256×256px | Bee: centered | Glasses: -10px up
-            </div>
-            
-            {/* Bee base - CENTERED */}
-            <img 
-              src="/characters/bases/bee/bee-base.png" 
-              alt="Bee base" 
-              className="absolute object-contain border-2 border-red-500"
-              style={{ 
-                width: '180px',
-                height: '180px',
-                top: '50%', 
-                left: '50%', 
-                transform: 'translate(-50%, -50%)',
-                zIndex: 1 
-              }}
-              onError={(e) => {
-                console.error('CENTERED BEE FAILED TO LOAD:', e);
-                e.currentTarget.style.backgroundColor = 'red';
-              }}
-              onLoad={() => {
-                console.log('CENTERED BEE LOADED - Position: center');
-              }}
-            />
-            
-            {/* Glasses overlay - CENTERED then offset upward to sit on bee's eyes */}
-            <img 
-              src="/characters/customization/accessories/glasses-round.png" 
-              alt="Glasses" 
-              className="absolute object-contain border-2 border-blue-500"
-              style={{ 
-                width: '110px',
-                height: 'auto',
-                top: '50%', 
-                left: '50%', 
-                transform: 'translate(-50%, -60%)', // -60% moves glasses up to sit on bee's eyes
-                zIndex: 2
-              }}
-              onError={(e) => {
-                console.error('CENTERED GLASSES FAILED TO LOAD:', e);
-                e.currentTarget.style.backgroundColor = 'blue';
-              }}
-              onLoad={() => {
-                console.log('CENTERED GLASSES LOADED - Position: center + up offset');
-              }}
-            />
-          </div>
-        </div>
-
-        {/* Multiple positioning tests */}
-        <div className="text-center">
-          <h3 className="text-lg font-semibold mb-4 text-foreground">Position Variations</h3>
-          <div className="grid grid-cols-3 gap-4">
-            {[
-              { label: 'Glasses Higher', transform: 'translate(-50%, -70%)' },
-              { label: 'Perfect Position', transform: 'translate(-50%, -60%)' },
-              { label: 'Glasses Lower', transform: 'translate(-50%, -50%)' },
-            ].map(({ label, transform }) => (
-              <div key={label} className="text-center">
-                <p className="text-xs font-medium mb-2 text-foreground">{label}</p>
-                <div className="relative w-32 h-32 border border-muted rounded-lg bg-gradient-to-br from-blue-50 to-yellow-50 mx-auto">
-                  {/* Bee base */}
+      <div className="max-w-6xl mx-auto space-y-8">
+        {/* Interactive Positioning Controls */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Interactive Glasses Positioning</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Live Preview */}
+              <div className="text-center">
+                <div className="relative inline-block bg-muted/20 p-8 rounded-lg">
                   <img 
                     src="/characters/bases/bee/bee-base.png" 
-                    alt="Bee base" 
-                    className="absolute object-contain"
+                    alt="Your bee character"
+                    className="block relative z-10"
                     style={{ 
-                      width: '120px',
-                      height: '120px',
-                      top: '50%', 
-                      left: '50%', 
-                      transform: 'translate(-50%, -50%)',
-                      zIndex: 1 
+                      width: '300px',
+                      height: '300px',
+                      objectFit: 'contain'
+                    }}
+                    onError={(e) => {
+                      console.error('Failed to load your bee image');
+                      e.currentTarget.style.display = 'none';
                     }}
                   />
-                  {/* Glasses with different positions */}
                   <img 
                     src="/characters/customization/accessories/glasses-round.png" 
-                    alt="Glasses" 
-                    className="absolute object-contain"
+                    alt=""
+                    className="absolute top-8 left-8 z-20 pointer-events-none"
                     style={{ 
-                      width: '72px',
-                      height: 'auto',
-                      top: '50%', 
-                      left: '50%', 
-                      transform: transform,
-                      zIndex: 2
+                      width: '300px',
+                      height: '300px',
+                      objectFit: 'contain',
+                      transform: `translate(${glassesX[0]}px, ${glassesY[0]}px) scale(${glassesScale[0]})`
+                    }}
+                    onError={(e) => {
+                      console.error('Failed to load glasses image');
                     }}
                   />
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
 
-        {/* Clean version without debug borders */}
-        <div className="text-center">
-          <h3 className="text-lg font-semibold mb-4 text-foreground">Final Clean Version</h3>
-          <div className="relative w-64 h-64 border-2 border-dashed border-muted-foreground rounded-lg bg-gradient-to-br from-blue-50 to-yellow-50">
-            {/* Bee base - clean */}
-            <img 
-              src="/characters/bases/bee/bee-base.png" 
-              alt="Bee base" 
-              className="absolute object-contain"
-              style={{ 
-                width: '180px',
-                height: '180px',
-                top: '50%', 
-                left: '50%', 
-                transform: 'translate(-50%, -50%)',
-                zIndex: 1 
-              }}
-            />
-            {/* Glasses overlay - clean */}
-            <img 
-              src="/characters/customization/accessories/glasses-round.png" 
-              alt="Glasses" 
-              className="absolute object-contain"
-              style={{ 
-                width: '110px',
-                height: 'auto',
-                top: '50%', 
-                left: '50%', 
-                transform: 'translate(-50%, -60%)',
-                zIndex: 2
-              }}
-            />
-          </div>
-        </div>
+              {/* Controls */}
+              <div className="space-y-6">
+                <div>
+                  <label className="text-sm font-medium mb-2 block">
+                    Horizontal Position: {glassesX[0]}px
+                  </label>
+                  <Slider
+                    value={glassesX}
+                    onValueChange={setGlassesX}
+                    min={-50}
+                    max={50}
+                    step={1}
+                  />
+                </div>
 
-        {/* Glasses only for reference */}
-        <div className="text-center">
-          <h3 className="text-lg font-semibold mb-4 text-foreground">Glasses Only</h3>
-          <div className="relative w-32 h-32 border-2 border-dashed border-muted-foreground rounded-lg flex items-center justify-center">
-            <img 
-              src="/characters/customization/accessories/glasses-round.png" 
-              alt="Glasses" 
-              className="w-16 h-16 object-contain"
-            />
-          </div>
-        </div>
-      </div>
+                <div>
+                  <label className="text-sm font-medium mb-2 block">
+                    Vertical Position: {glassesY[0]}px
+                  </label>
+                  <Slider
+                    value={glassesY}
+                    onValueChange={setGlassesY}
+                    min={-50}
+                    max={50}
+                    step={1}
+                  />
+                </div>
 
-      {/* Interactive positioning test */}
-      <div className="mt-8">
-        <h3 className="text-lg font-semibold mb-4 text-foreground">Interactive Position Test</h3>
-        <p className="text-sm text-muted-foreground mb-4">
-          Hover to see different positioning options
-        </p>
-        
-        <div className="grid grid-cols-3 gap-4">
-          {[
-            { label: 'Default', transform: 'translate-y-[-2px]' },
-            { label: 'Higher', transform: 'translate-y-[-6px]' },
-            { label: 'Lower', transform: 'translate-y-[2px]' },
-          ].map(({ label, transform }) => (
-            <div key={label} className="text-center">
-              <p className="text-sm font-medium mb-2 text-foreground">{label}</p>
-              <div className="relative w-24 h-24 border border-muted rounded-lg flex items-center justify-center mx-auto hover:border-primary transition-colors">
-                <img 
-                  src="/characters/bases/bee/bee-base.png" 
-                  alt="Bee base" 
-                  className="absolute w-20 h-20 object-contain z-10"
-                  onError={(e) => {
-                    console.error(`Failed to load bee image in ${label}:`, e);
-                    e.currentTarget.style.border = '1px solid red';
-                  }}
-                />
-                <img 
-                  src="/characters/customization/accessories/glasses-round.png" 
-                  alt="Glasses" 
-                  className={`absolute w-14 h-14 object-contain z-20 transform ${transform}`}
-                />
+                <div>
+                  <label className="text-sm font-medium mb-2 block">
+                    Scale: {Math.round(glassesScale[0] * 100)}%
+                  </label>
+                  <Slider
+                    value={glassesScale}
+                    onValueChange={setGlassesScale}
+                    min={0.5}
+                    max={1.2}
+                    step={0.05}
+                  />
+                </div>
+
+                <div className="p-4 bg-muted/50 rounded-lg">
+                  <h4 className="font-medium mb-2">Current Settings:</h4>
+                  <code className="text-sm">
+                    transform: translate({glassesX[0]}px, {glassesY[0]}px) scale({glassesScale[0]})
+                  </code>
+                </div>
               </div>
             </div>
-          ))}
-        </div>
+          </CardContent>
+        </Card>
+
+        {/* Quick Presets */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Quick Position Presets</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                { name: "Default", x: 0, y: -15, scale: 0.85 },
+                { name: "Higher", x: 0, y: -25, scale: 0.8 },
+                { name: "Lower", x: 0, y: -5, scale: 0.9 },
+                { name: "Smaller", x: 0, y: -15, scale: 0.7 }
+              ].map((preset) => (
+                <button
+                  key={preset.name}
+                  onClick={() => {
+                    setGlassesX([preset.x]);
+                    setGlassesY([preset.y]);
+                    setGlassesScale([preset.scale]);
+                  }}
+                  className="p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                >
+                  <div className="relative inline-block mb-2">
+                    <img 
+                      src="/characters/bases/bee/bee-base.png" 
+                      alt="Bee"
+                      className="block relative z-10"
+                      style={{ width: '60px', height: '60px', objectFit: 'contain' }}
+                    />
+                    <img 
+                      src="/characters/customization/accessories/glasses-round.png" 
+                      alt=""
+                      className="absolute top-0 left-0 z-20 pointer-events-none"
+                      style={{ 
+                        width: '60px', 
+                        height: '60px', 
+                        objectFit: 'contain',
+                        transform: `translate(${preset.x}px, ${preset.y}px) scale(${preset.scale})`
+                      }}
+                    />
+                  </div>
+                  <div className="text-sm font-medium">{preset.name}</div>
+                </button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Your Images */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Your Character Assets</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="text-center">
+                <h3 className="text-lg font-medium mb-4">Your Bee Character</h3>
+                <div className="relative inline-block border-2 border-dashed border-muted-foreground p-4">
+                  <img 
+                    src="/characters/bases/bee/bee-base.png" 
+                    alt="Your bee character"
+                    className="block"
+                    style={{ 
+                      width: 'auto',
+                      height: 'auto',
+                      maxWidth: '250px',
+                      maxHeight: '250px'
+                    }}
+                    onError={(e) => {
+                      console.error('Failed to load your bee image');
+                      e.currentTarget.style.display = 'none';
+                    }}
+                    onLoad={(e) => {
+                      console.log('Your bee loaded:', e.currentTarget.naturalWidth, 'x', e.currentTarget.naturalHeight);
+                    }}
+                  />
+                </div>
+              </div>
+              
+              <div className="text-center">
+                <h3 className="text-lg font-medium mb-4">Your Glasses</h3>
+                <div className="relative inline-block border-2 border-dashed border-muted-foreground p-4 bg-muted/20">
+                  <img 
+                    src="/characters/customization/accessories/glasses-round.png" 
+                    alt="Your round glasses"
+                    className="block"
+                    style={{ 
+                      width: 'auto',
+                      height: 'auto',
+                      maxWidth: '200px',
+                      maxHeight: '200px'
+                    }}
+                    onError={(e) => {
+                      console.error('Failed to load your glasses');
+                      e.currentTarget.style.display = 'none';
+                    }}
+                    onLoad={(e) => {
+                      console.log('Your glasses loaded:', e.currentTarget.naturalWidth, 'x', e.currentTarget.naturalHeight);
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Background Remover Tool */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Glasses Background Remover</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <GlassesBackgroundRemover />
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
