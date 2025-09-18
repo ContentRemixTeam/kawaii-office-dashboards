@@ -85,6 +85,7 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
 
   // Reset game to initial state
   const resetGame = useCallback(() => {
+    console.log('🔄 resetGame called');
     setGameState('waiting');
     const initialSnake = [{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }];
     setSnake(initialSnake);
@@ -95,21 +96,28 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
     if (gameLoopRef.current) {
       clearInterval(gameLoopRef.current);
     }
+    console.log('✅ resetGame completed');
   }, []);
 
   // Start new game
   const startGame = useCallback(() => {
+    console.log('🎮 startGame called', { currentTokens, tokenSpent, canPlay });
+    
     if (currentTokens < 15 && !tokenSpent) {
+      console.log('❌ Not enough tokens');
       return; // Not enough tokens
     }
     
     if (!tokenSpent) {
+      console.log('💰 Spending token');
       onTokenSpent(); // Spend token only once per game session
       setTokenSpent(true);
     }
     
+    console.log('🔄 Resetting game and starting');
     resetGame();
     setGameState('playing');
+    console.log('✅ Game state set to playing');
   }, [currentTokens, tokenSpent, onTokenSpent, resetGame]);
 
   // Toggle pause
@@ -269,9 +277,12 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
 
   // Game loop effect
   useEffect(() => {
+    console.log('🔄 Game loop effect triggered', { gameState });
     if (gameState === 'playing') {
+      console.log('▶️ Starting game loop interval');
       gameLoopRef.current = setInterval(moveSnake, GAME_SPEED);
     } else {
+      console.log('⏹️ Stopping game loop interval');
       if (gameLoopRef.current) {
         clearInterval(gameLoopRef.current);
       }
@@ -352,7 +363,10 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
                           </p>
                         )}
                         <Button 
-                          onClick={startGame} 
+                          onClick={() => {
+                            console.log('🖱️ Start Game button clicked!', { gameState, canPlay, tokenSpent });
+                            startGame();
+                          }} 
                           disabled={!canPlay}
                           size="lg"
                         >
