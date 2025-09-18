@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -36,7 +36,7 @@ import { getDailyData, setDailyData } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 import { emitChanged } from "@/lib/bus";
 import { K_AFFIRM, K_ENERGY } from "@/lib/topbar.readers";
-import { useState, useEffect, useRef } from "react";
+
 import VisionBoardSection from "@/components/VisionBoardSection";
 
 // Affirmations data
@@ -993,7 +993,9 @@ export default function PositivityCabinet() {
                   )}
                 </TabsContent>
               ))}
-          
+            </Tabs>
+          </TabsContent>
+
           {/* Vision Board Tab */}
           <TabsContent value="vision" className="space-y-6">
             <VisionBoardSection />
