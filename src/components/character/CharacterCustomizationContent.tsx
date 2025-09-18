@@ -55,7 +55,7 @@ export default function CharacterCustomizationContent({
   return (
     <>
       {/* Character Tab */}
-      <TabsContent value="character" style={{backgroundColor: 'white', padding: '2rem', borderRadius: '1rem', border: '2px solid #e5e7eb', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)', gap: '2rem', display: 'flex', flexDirection: 'column'}}>
+      <TabsContent value="character" className="p-8 space-y-8 bg-card rounded-2xl border-2 border-border shadow-sm">
         <div className="space-y-6">
           <div>
             <Label htmlFor="character-name" className="text-gray-800 font-semibold">Character Name</Label>
@@ -105,7 +105,7 @@ export default function CharacterCustomizationContent({
       </TabsContent>
 
       {/* Accessories Tab */}
-      <TabsContent value="accessories" style={{backgroundColor: 'white', padding: '2rem', borderRadius: '1rem', border: '2px solid #e5e7eb', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)', gap: '2rem', display: 'flex', flexDirection: 'column'}}>
+      <TabsContent value="accessories" className="p-8 space-y-8 bg-card rounded-2xl border-2 border-border shadow-sm">
         <div>
           <h3 className="text-xl font-bold text-gray-800 mb-4">Available Accessories</h3>
           
@@ -182,7 +182,7 @@ export default function CharacterCustomizationContent({
       </TabsContent>
 
       {/* Positioning Tab */}
-      <TabsContent value="positioning" style={{backgroundColor: 'white', padding: '2rem', borderRadius: '1rem', border: '2px solid #e5e7eb', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)', gap: '2rem', display: 'flex', flexDirection: 'column'}}>
+      <TabsContent value="positioning" className="p-8 space-y-8 bg-card rounded-2xl border-2 border-border shadow-sm">
         {selectedAccessory ? (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div>
@@ -216,7 +216,7 @@ export default function CharacterCustomizationContent({
       </TabsContent>
 
       {/* Shop Tab */}
-      <TabsContent value="shop" style={{backgroundColor: 'white', padding: '2rem', borderRadius: '1rem', border: '2px solid #e5e7eb', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)', gap: '2rem', display: 'flex', flexDirection: 'column'}}>
+      <TabsContent value="shop" className="p-8 space-y-8 bg-card rounded-2xl border-2 border-border shadow-sm">
         <div>
           <h3 className="text-xl font-bold text-gray-800 mb-4">Asset Shop</h3>
           
@@ -267,12 +267,12 @@ export default function CharacterCustomizationContent({
       </TabsContent>
 
       {/* Upload Tab */}
-      <TabsContent value="upload" style={{backgroundColor: 'white', padding: '2rem', borderRadius: '1rem', border: '2px solid #e5e7eb', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'}}>
+      <TabsContent value="upload" className="p-8 bg-card rounded-2xl border-2 border-border shadow-sm">
         <AssetUploader onAssetAdded={onAssetsRefresh} />
       </TabsContent>
 
       {/* Rewards Tab */}
-      <TabsContent value="rewards" style={{backgroundColor: 'white', padding: '2rem', borderRadius: '1rem', border: '2px solid #e5e7eb', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'}}>
+      <TabsContent value="rewards" className="p-8 bg-card rounded-2xl border-2 border-border shadow-sm">
         <ProductivityRewards 
           onCoinsEarned={onCoinsEarned}
           onSpecialCurrencyEarned={onSpecialCurrencyEarned}

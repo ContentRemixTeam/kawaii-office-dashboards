@@ -72,7 +72,12 @@ export function initializeTheme() {
   
   // Clear green theme from localStorage and use default kawaii theme
   localStorage.removeItem('fm_theme_v1');
+  
+  // Force apply the default theme immediately
   applyTheme(DEFAULT_THEME);
+  
+  // Also trigger a re-render by dispatching a custom event
+  window.dispatchEvent(new CustomEvent('themeChanged'));
 }
 
 export function applyTheme(theme: ThemeData) {
