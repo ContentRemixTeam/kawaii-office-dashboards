@@ -11,6 +11,7 @@ import CharacterPreview from './CharacterPreview';
 import AccessoryPositioner from './AccessoryPositioner';
 import AssetUploader from './AssetUploader';
 import ProductivityRewards from './ProductivityRewards';
+import { ShopItemCard } from './ShopItemCard';
 
 interface CharacterCustomizationContentProps {
   character: PNGCharacter;
@@ -231,33 +232,14 @@ export default function CharacterCustomizationContent({
             return (
               <div key={type} className="space-y-3">
                 <h4 className="text-lg font-bold text-gray-800 capitalize">{type}s</h4>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {lockedAssets.map((asset) => (
-                    <div key={asset.id} className="relative">
-                      <div className={`p-4 rounded-xl border-2 ${getRarityColor(asset.rarity)}`}>
-                        <div className="w-24 h-24 mx-auto mb-2 relative">
-                          <img 
-                            src={asset.filepath.startsWith('data:') ? asset.filepath : `${asset.filepath}?v=${Date.now()}`}
-                            alt={asset.name}
-                            className="w-full h-full object-contain"
-                          />
-                        </div>
-                        <div className="text-base font-bold text-gray-800">{asset.name}</div>
-                        <Badge className={`mt-1 ${getRarityColor(asset.rarity)}`}>
-                          {asset.rarity}
-                        </Badge>
-                        <div className="mt-2 text-center">
-                          <Button
-                            onClick={() => purchaseAsset(asset)}
-                            disabled={!canAfford(asset)}
-                            size="sm"
-                            className="w-full"
-                          >
-                            {asset.price} {asset.currency}
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
+                    <ShopItemCard
+                      key={asset.id}
+                      asset={asset}
+                      onPurchase={() => purchaseAsset(asset)}
+                      canAfford={canAfford(asset)}
+                    />
                   ))}
                 </div>
               </div>
