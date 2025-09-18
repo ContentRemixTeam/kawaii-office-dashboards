@@ -211,152 +211,122 @@ export default function CharacterCustomization({ onBack }: CharacterCustomizatio
   };
 
   return (
-    <div className="min-h-screen theme-bg-primary p-4 md:p-8">
-      <div className="max-w-7xl mx-auto space-y-8">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
-          <div className="flex items-center gap-4">
-            <Button 
-              onClick={onBack}
-              variant="outline"
-              className="theme-button-outline rounded-full px-4 py-2"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Office
-            </Button>
-            <div>
-              <h1 className="text-3xl md:text-5xl font-bold theme-text-title flex items-center gap-4">
-                <Heart className="w-8 h-8 md:w-10 md:h-10 text-pink-500" />
-                DESIGN STUDIO
-              </h1>
-              <p className="theme-text-secondary mt-2 text-sm md:text-lg">
-                Customize your character with productivity rewards! ✨
-              </p>
+    <div className="body-gradient min-h-screen">
+      {/* Dashboard Container */}
+      <div className="dashboard-responsive-container">
+        {/* Header Section */}
+        <div className="dashboard-header">
+          <div className="flex items-center justify-between w-full max-w-4xl">
+            <div className="flex items-center space-x-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onBack}
+                className="text-foreground hover:bg-white/10"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back
+              </Button>
+              <div className="flex items-center space-x-2">
+                <Palette className="w-5 h-5 text-primary" />
+                <h1 className="text-xl font-bold text-foreground">DESIGN STUDIO</h1>
+              </div>
             </div>
-          </div>
-          
-          {/* Currency Display */}
-          <div className="flex gap-4">
-            <div className="theme-card border-2 border-yellow-400 px-4 py-2 rounded-full flex items-center gap-2 font-bold">
-              <Coins className="w-4 h-4 text-yellow-500" />
-              <span className="theme-text-title">{character.coins}</span>
-            </div>
-            <div className="theme-card border-2 border-purple-400 px-4 py-2 rounded-full flex items-center gap-2 font-bold">
-              <Star className="w-4 h-4 text-purple-500" />
-              <span className="theme-text-title">{character.specialCurrency}</span>
+            
+            <div className="flex items-center space-x-6">
+              <div className="flex items-center space-x-2 text-sm">
+                <Coins className="w-4 h-4 text-yellow-400" />
+                <span className="font-medium text-foreground">{character.coins}</span>
+              </div>
+              <div className="flex items-center space-x-2 text-sm">
+                <Star className="w-4 h-4 text-purple-400" />
+                <span className="font-medium text-foreground">{character.specialCurrency}</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Character Preview */}
-          <div className="lg:col-span-1">
-            <Card className="theme-card theme-card-elevated">
-              <CardHeader>
-                <CardTitle className="theme-text-title font-bold flex items-center gap-2">
-                  <User className="w-5 h-5" />
-                  {character.name}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {/* Character Preview */}
-                <CharacterPreview 
-                  character={character} 
-                  size="medium" 
-                  showBackground={true}
-                />
-                
-                {/* Character Info */}
-                <div className="mt-4 text-center space-y-2">
-                  <h3 className="text-xl font-bold theme-text-title">{character.name}</h3>
-                  <div className="flex justify-center gap-2 flex-wrap">
-                    <div className="theme-card border border-purple-300 text-purple-700 px-3 py-1 rounded-full font-semibold text-sm">
-                      {getAssetById(character.baseAsset)?.name || 'Unknown Base'}
-                    </div>
-                    <div className="theme-card border border-blue-300 text-blue-700 px-3 py-1 rounded-full font-semibold text-sm">
-                      {character.equippedAccessories.length} accessories
-                    </div>
-                  </div>
+        {/* Primary Grid - Character Preview & Customization */}
+        <div className="dashboard-primary-grid">
+          {/* Character Preview Column */}
+          <div className="dashboard-card p-6">
+            <h2 className="text-lg font-semibold text-card-foreground mb-4 flex items-center gap-2">
+              <User className="w-5 h-5" />
+              {character.name}
+            </h2>
+            <div className="aspect-square bg-gradient-to-br from-primary/10 to-secondary/10 rounded-lg p-4 flex items-center justify-center mb-4">
+              <CharacterPreview character={character} />
+            </div>
+            
+            {/* Character Info */}
+            <div className="space-y-3">
+              <div className="flex flex-wrap gap-2">
+                <div className="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium">
+                  {getAssetById(character.baseAsset)?.name || 'Unknown Base'}
                 </div>
-                
-                {/* Equipped Accessories List */}
-                <div className="mt-6 theme-card-glass rounded-xl p-4">
-                  <h4 className="text-base font-bold theme-text-title mb-3 flex items-center gap-2">
-                    <Shirt className="w-4 h-4 text-purple-500" />
-                    Equipped Accessories
-                  </h4>
-                  {character.equippedAccessories.length > 0 ? (
-                    <div className="space-y-2">
-                      {character.equippedAccessories.map((equipped, index) => {
-                        const asset = getAssetById(equipped.assetId);
-                        return (
-                          <div key={index} className="flex items-center justify-between theme-card p-2 rounded-lg">
-                            <span className="font-medium theme-text-title text-sm">{asset?.name || 'Unknown'}</span>
-                            <Badge className={getRarityColor(asset?.rarity || 'common')}>
-                              {asset?.rarity || 'common'}
-                            </Badge>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <p className="text-sm theme-text-secondary font-medium">No accessories equipped</p>
-                  )}
+                <div className="px-3 py-1 bg-secondary/10 text-secondary rounded-full text-xs font-medium">
+                  {character.equippedAccessories.length} accessories
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+              
+              {/* Equipped Accessories */}
+              {character.equippedAccessories.length > 0 && (
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium text-card-foreground flex items-center gap-2">
+                    <Shirt className="w-4 h-4" />
+                    Equipped Items
+                  </h3>
+                  {character.equippedAccessories.map((equipped, index) => {
+                    const asset = getAssetById(equipped.assetId);
+                    return (
+                      <div key={index} className="flex items-center justify-between p-2 bg-background/50 rounded-lg">
+                        <span className="text-xs text-muted-foreground">{asset?.name || 'Unknown'}</span>
+                        <Badge variant="secondary" className="text-xs">
+                          {asset?.rarity || 'common'}
+                        </Badge>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Customization Tabs */}
-          <div className="lg:col-span-2">
-            <Card className="theme-card theme-card-elevated">
-              <CardContent className="p-0">
-                <Tabs value={selectedTab} onValueChange={(value) => setSelectedTab(value as typeof selectedTab)}>
-                  <TabsList className="grid w-full grid-cols-5 theme-bg-secondary p-2 rounded-t-xl">
-                    <TabsTrigger value="character" className="data-[state=active]:theme-bg-primary data-[state=active]:theme-text-title theme-text-secondary font-semibold rounded-lg transition-all duration-300">
-                      <User className="w-4 h-4 mr-2" />
-                      Character
-                    </TabsTrigger>
-                    <TabsTrigger value="accessories" className="data-[state=active]:theme-bg-primary data-[state=active]:theme-text-title theme-text-secondary font-semibold rounded-lg transition-all duration-300">
-                      <Shirt className="w-4 h-4 mr-2" />
-                      My Closet
-                    </TabsTrigger>
-                    <TabsTrigger value="positioning" className="data-[state=active]:theme-bg-primary data-[state=active]:theme-text-title theme-text-secondary font-semibold rounded-lg transition-all duration-300">
-                      <Settings className="w-4 h-4 mr-2" />
-                      Positioning
-                    </TabsTrigger>
-                    <TabsTrigger value="shop" className="data-[state=active]:theme-bg-primary data-[state=active]:theme-text-title theme-text-secondary font-semibold rounded-lg transition-all duration-300">
-                      <ShoppingBag className="w-4 h-4 mr-2" />
-                      Shop
-                    </TabsTrigger>
-                    <TabsTrigger value="rewards" className="data-[state=active]:theme-bg-primary data-[state=active]:theme-text-title theme-text-secondary font-semibold rounded-lg transition-all duration-300">
-                      <Gift className="w-4 h-4 mr-2" />
-                      Rewards
-                    </TabsTrigger>
-                  </TabsList>
-
-                  <CharacterCustomizationContent
-                    character={character}
-                    allAssets={allAssets}
-                    selectedAccessory={selectedAccessory}
-                    onCharacterChange={saveCharacter}
-                    onCoinsEarned={handleCoinsEarned}
-                    onSpecialCurrencyEarned={handleSpecialCurrencyEarned}
-                    onAccessorySelect={setSelectedAccessory}
-                    onAssetsRefresh={refreshAssets}
-                    canAfford={canAfford}
-                    isUnlocked={isUnlocked}
-                    purchaseAsset={purchaseAsset}
-                    equipAccessory={equipAccessory}
-                    unequipAccessory={unequipAccessory}
-                    updateAccessoryPosition={updateAccessoryPosition}
-                    changeCharacterBase={changeCharacterBase}
-                    updateCharacterName={updateCharacterName}
-                    isAccessoryEquipped={isAccessoryEquipped}
-                  />
-                </Tabs>
-              </CardContent>
-            </Card>
+          {/* Customization Content Column */}
+          <div className="dashboard-card">
+            <Tabs value={selectedTab} onValueChange={(value) => setSelectedTab(value as typeof selectedTab)}>
+              <div className="border-b border-border/50">
+                <TabsList className="grid w-full grid-cols-5 bg-background/50">
+                  <TabsTrigger value="character" className="text-xs">Character</TabsTrigger>
+                  <TabsTrigger value="accessories" className="text-xs">My Closet</TabsTrigger>
+                  <TabsTrigger value="positioning" className="text-xs">Positioning</TabsTrigger>
+                  <TabsTrigger value="shop" className="text-xs">Shop</TabsTrigger>
+                  <TabsTrigger value="rewards" className="text-xs">Rewards</TabsTrigger>
+                </TabsList>
+              </div>
+              
+              <div className="p-6">
+                <CharacterCustomizationContent
+                  character={character}
+                  allAssets={allAssets}
+                  selectedAccessory={selectedAccessory}
+                  onCharacterChange={saveCharacter}
+                  onCoinsEarned={handleCoinsEarned}
+                  onSpecialCurrencyEarned={handleSpecialCurrencyEarned}
+                  onAccessorySelect={setSelectedAccessory}
+                  onAssetsRefresh={refreshAssets}
+                  canAfford={canAfford}
+                  isUnlocked={isUnlocked}
+                  purchaseAsset={purchaseAsset}
+                  equipAccessory={equipAccessory}
+                  unequipAccessory={unequipAccessory}
+                  updateAccessoryPosition={updateAccessoryPosition}
+                  changeCharacterBase={changeCharacterBase}
+                  updateCharacterName={updateCharacterName}
+                  isAccessoryEquipped={isAccessoryEquipped}
+                />
+              </div>
+            </Tabs>
           </div>
         </div>
       </div>
