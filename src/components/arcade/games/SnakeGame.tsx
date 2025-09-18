@@ -304,7 +304,7 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
     };
   }, []);
 
-  const canPlay = currentTokens >= 15 || tokenSpent;
+  const canPlay = true; // Temporarily disabled for testing
 
   return (
     <div className="min-h-screen bg-background py-4 px-4">
