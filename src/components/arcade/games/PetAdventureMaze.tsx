@@ -220,12 +220,13 @@ export default function PetAdventureMaze({ onExit, onTokenSpent, currentTokens }
 
   // Start game
   const startGame = useCallback(() => {
-    if (currentTokens < 20 && !tokenSpent) {
-      return;
-    }
+    // TEMPORARILY DISABLED FOR TESTING
+    // if (currentTokens < 20 && !tokenSpent) {
+    //   return;
+    // }
     
     if (!tokenSpent) {
-      onTokenSpent();
+      // onTokenSpent(); // Temporarily disabled for testing
       setTokenSpent(true);
     }
     
@@ -458,7 +459,7 @@ export default function PetAdventureMaze({ onExit, onTokenSpent, currentTokens }
     draw();
   }, [draw]);
 
-  const canPlay = currentTokens >= 20 || tokenSpent;
+  const canPlay = true; // Temporarily disabled for testing
   const treatsRemaining = treats.filter(t => !t.collected).length;
 
   return (
