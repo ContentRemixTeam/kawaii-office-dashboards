@@ -159,10 +159,10 @@ export default function ProductivityRewards({ onCoinsEarned, onSpecialCurrencyEa
               <div className="text-sm text-purple-600">Special Currency</div>
             </div>
             
-            <div className="text-center p-3 bg-green-100 rounded-lg">
-              <Target className="w-8 h-8 text-green-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold text-green-700">{dailyStats.completedTasks}</div>
-              <div className="text-sm text-green-600">Tasks Done</div>
+            <div className="text-center p-3 bg-indigo-100 rounded-lg">
+              <Target className="w-8 h-8 text-indigo-600 mx-auto mb-2" />
+              <div className="text-2xl font-bold text-indigo-700">{dailyStats.completedTasks}</div>
+              <div className="text-sm text-indigo-600">Tasks Done</div>
             </div>
             
             <div className="text-center p-3 bg-blue-100 rounded-lg">
@@ -242,7 +242,7 @@ export default function ProductivityRewards({ onCoinsEarned, onSpecialCurrencyEa
             </button>
             <button
               onClick={triggerBigThreeReward}
-              className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+              className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
             >
               Simulate Big Three
             </button>

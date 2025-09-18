@@ -55,21 +55,21 @@ export default function CharacterCustomizationContent({
   return (
     <>
       {/* Character Tab */}
-      <TabsContent value="character" className="p-8 space-y-8">
+      <TabsContent value="character" className="p-8 space-y-8 bg-white rounded-2xl">
         <div className="space-y-6">
           <div>
-            <Label htmlFor="character-name">Character Name</Label>
+            <Label htmlFor="character-name" className="text-gray-800 font-semibold">Character Name</Label>
             <Input
               id="character-name"
               value={character.name}
               onChange={(e) => updateCharacterName(e.target.value)}
               placeholder="Enter character name"
-              className="max-w-md bg-white border-purple-200 rounded-xl"
+              className="max-w-md bg-white border-purple-200 rounded-xl text-gray-800 font-medium"
             />
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold text-slate-800 mb-3">Character Base</h3>
+            <h3 className="text-xl font-bold text-gray-800 mb-4">Character Base</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {getAssetsByType('base').map((asset) => (
                 <button
@@ -93,7 +93,7 @@ export default function CharacterCustomizationContent({
                   </div>
                   <div className="text-base font-bold text-gray-800">{asset.name}</div>
                   {!isUnlocked(asset.id) && (
-                    <div className="text-xs text-gray-500 mt-1">
+                    <div className="text-sm text-gray-600 mt-2 font-medium">
                       {asset.price} {asset.currency}
                     </div>
                   )}
@@ -105,9 +105,9 @@ export default function CharacterCustomizationContent({
       </TabsContent>
 
       {/* Accessories Tab */}
-      <TabsContent value="accessories" className="p-8 space-y-8">
+      <TabsContent value="accessories" className="p-8 space-y-8 bg-white rounded-2xl">
         <div>
-          <h3 className="text-lg font-semibold text-slate-800 mb-3">Available Accessories</h3>
+          <h3 className="text-xl font-bold text-gray-800 mb-4">Available Accessories</h3>
           
           {/* Categories */}
           {['glasses', 'hats', 'clothing', 'pets'].map((category) => {
@@ -182,7 +182,7 @@ export default function CharacterCustomizationContent({
       </TabsContent>
 
       {/* Positioning Tab */}
-      <TabsContent value="positioning" className="p-8 space-y-8">
+      <TabsContent value="positioning" className="p-8 space-y-8 bg-white rounded-2xl">
         {selectedAccessory ? (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div>
@@ -203,8 +203,8 @@ export default function CharacterCustomizationContent({
             </div>
           </div>
         ) : (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground mb-4">Select an equipped accessory from the Accessories tab to position it</p>
+          <div className="text-center py-12 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl">
+            <p className="text-gray-700 mb-4 font-medium">Select an equipped accessory from the Accessories tab to position it</p>
             <Button 
               onClick={() => onAccessorySelect(character.equippedAccessories[0] || null)}
               disabled={character.equippedAccessories.length === 0}
@@ -216,9 +216,9 @@ export default function CharacterCustomizationContent({
       </TabsContent>
 
       {/* Shop Tab */}
-      <TabsContent value="shop" className="p-8 space-y-8">
+      <TabsContent value="shop" className="p-8 space-y-8 bg-white rounded-2xl">
         <div>
-          <h3 className="text-lg font-semibold text-slate-800 mb-3">Asset Shop</h3>
+          <h3 className="text-xl font-bold text-gray-800 mb-4">Asset Shop</h3>
           
           {/* Locked Assets */}
           {['base', 'accessory'].map((type) => {
@@ -230,7 +230,7 @@ export default function CharacterCustomizationContent({
 
             return (
               <div key={type} className="space-y-3">
-                <h4 className="text-md font-medium text-purple-700 capitalize">{type}s</h4>
+                <h4 className="text-lg font-bold text-gray-800 capitalize">{type}s</h4>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {lockedAssets.map((asset) => (
                     <div key={asset.id} className="relative">
@@ -242,7 +242,7 @@ export default function CharacterCustomizationContent({
                             className="w-full h-full object-contain"
                           />
                         </div>
-                        <div className="text-sm font-medium">{asset.name}</div>
+                        <div className="text-base font-bold text-gray-800">{asset.name}</div>
                         <Badge className={`mt-1 ${getRarityColor(asset.rarity)}`}>
                           {asset.rarity}
                         </Badge>
@@ -267,12 +267,12 @@ export default function CharacterCustomizationContent({
       </TabsContent>
 
       {/* Upload Tab */}
-      <TabsContent value="upload" className="p-8">
+      <TabsContent value="upload" className="p-8 bg-white rounded-2xl">
         <AssetUploader onAssetAdded={onAssetsRefresh} />
       </TabsContent>
 
       {/* Rewards Tab */}
-      <TabsContent value="rewards" className="p-8">
+      <TabsContent value="rewards" className="p-8 bg-white rounded-2xl">
         <ProductivityRewards 
           onCoinsEarned={onCoinsEarned}
           onSpecialCurrencyEarned={onSpecialCurrencyEarned}
