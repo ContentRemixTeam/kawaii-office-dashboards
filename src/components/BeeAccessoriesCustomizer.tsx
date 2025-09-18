@@ -133,6 +133,19 @@ export default function BeeAccessoriesCustomizer() {
     if (accessoryIndex !== -1) {
       updatedCharacter.equippedAccessories[accessoryIndex].position = position;
       saveCharacter(updatedCharacter);
+      
+      // Update the asset's default position for store customers
+      const asset = getAssetById(assetId);
+      if (asset) {
+        const updatedAsset = { ...asset, defaultPosition: position };
+        const assets = getAllAssets();
+        const assetIndex = assets.findIndex(a => a.id === assetId);
+        if (assetIndex !== -1) {
+          assets[assetIndex] = updatedAsset;
+          localStorage.setItem('character_assets', JSON.stringify(assets));
+          refreshAssets();
+        }
+      }
     }
   };
 
