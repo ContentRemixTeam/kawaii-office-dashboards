@@ -186,16 +186,18 @@ const getUserSelectedPet = (): keyof typeof PET_CONFIG => {
 };
 
 export default function PetAdventureMaze({ onExit, onTokenSpent, currentTokens }: PetAdventureMazeProps) {
-  // Game state
+  // Get selected pet first
+  const [selectedPet] = useState(() => getUserSelectedPet());
+  
+  // Game state - initialize maze and then enemies with selectedPet
   const [gameState, setGameState] = useState<'waiting' | 'playing' | 'paused' | 'gameOver' | 'victory'>('waiting');
   const [playerPos, setPlayerPos] = useState<Position>({ x: 1, y: 1 });
   const [maze, setMaze] = useState<boolean[][]>(() => generateMaze());
   const [treats, setTreats] = useState<Treat[]>(() => generateTreats(maze));
-  const [enemies, setEnemies] = useState<Enemy[]>(() => generateEnemies(maze, selectedPet));
+  const [enemies, setEnemies] = useState<Enemy[]>(() => generateEnemies(generateMaze(), selectedPet));
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
   const [invulnerable, setInvulnerable] = useState(false);
-  const [selectedPet] = useState(() => getUserSelectedPet());
   const [tokenSpent, setTokenSpent] = useState(false);
   const [highScore, setHighScore] = useState(() => {
     try {
