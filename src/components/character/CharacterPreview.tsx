@@ -35,9 +35,8 @@ export default function CharacterPreview({
     );
   }
 
-  // Calculate scaling factor relative to the BeeAccessoriesCustomizer's 400px container
-  const baseContainerSize = 400; // BeeAccessoriesCustomizer uses 400px
-  const scaleFactor = config.width / baseContainerSize;
+  // Use the same position multiplier as BeeAccessoriesCustomizer for consistency
+  const POSITION_MULTIPLIER = 0.5;
 
   return (
     <div 
@@ -61,9 +60,9 @@ export default function CharacterPreview({
         const accessory = getAssetById(equipped.assetId);
         if (!accessory) return null;
 
-        // Scale positions proportionally based on container size
-        const scaledX = equipped.position.x * scaleFactor;
-        const scaledY = equipped.position.y * scaleFactor;
+        // Use the same position logic as BeeAccessoriesCustomizer
+        const scaledX = equipped.position.x * POSITION_MULTIPLIER;
+        const scaledY = equipped.position.y * POSITION_MULTIPLIER;
 
         return (
           <img
