@@ -133,18 +133,23 @@ export default function BeeAccessoriesCustomizer() {
     if (accessoryIndex !== -1) {
       updatedCharacter.equippedAccessories[accessoryIndex].position = position;
       saveCharacter(updatedCharacter);
-      
-      // Update the asset's default position for store customers
-      const asset = getAssetById(assetId);
-      if (asset) {
-        const updatedAsset = { ...asset, defaultPosition: position };
-        const assets = getAllAssets();
-        const assetIndex = assets.findIndex(a => a.id === assetId);
-        if (assetIndex !== -1) {
-          assets[assetIndex] = updatedAsset;
-          localStorage.setItem('character_assets', JSON.stringify(assets));
-          refreshAssets();
-        }
+    }
+  };
+
+  const lockAccessoryPosition = (assetId: string) => {
+    const equippedAccessory = getEquippedAccessory(assetId);
+    if (!equippedAccessory) return;
+
+    // Save the current position as the default for store customers
+    const asset = getAssetById(assetId);
+    if (asset) {
+      const updatedAsset = { ...asset, defaultPosition: equippedAccessory.position };
+      const assets = getAllAssets();
+      const assetIndex = assets.findIndex(a => a.id === assetId);
+      if (assetIndex !== -1) {
+        assets[assetIndex] = updatedAsset;
+        localStorage.setItem('character_assets', JSON.stringify(assets));
+        refreshAssets();
       }
     }
   };
@@ -472,6 +477,20 @@ export default function BeeAccessoriesCustomizer() {
                             </Button>
                           ))}
                         </div>
+                      </div>
+
+                      {/* Lock Position Button */}
+                      <div className="pt-4 border-t">
+                        <Button
+                          onClick={() => lockAccessoryPosition(selectedAccessory!)}
+                          className="w-full"
+                          size="sm"
+                        >
+                          🔒 Lock Position for Store
+                        </Button>
+                        <p className="text-xs text-muted-foreground mt-1 text-center">
+                          Customers will get this accessory in this exact position
+                        </p>
                       </div>
                     </div>
                   ) : (
