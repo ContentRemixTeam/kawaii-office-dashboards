@@ -26,16 +26,16 @@ export default function BeeGlassesTest() {
         {/* Bee with glasses overlay */}
         <div className="text-center">
           <h3 className="text-lg font-semibold mb-4 text-foreground">Bee + Glasses</h3>
-          <div className="relative w-32 h-32 border-2 border-dashed border-muted-foreground rounded-lg flex items-center justify-center bg-white">
+          <div className="relative w-80 h-80 border-2 border-dashed border-muted-foreground rounded-lg flex items-center justify-center bg-white">
             {/* Bee base */}
             <img 
               src="/characters/bases/bee/bee-base.png" 
               alt="Bee base" 
-              className="absolute w-24 h-24 object-contain"
-              style={{ zIndex: 1 }}
+              className="w-72 h-72 object-contain"
+              style={{ position: 'absolute', zIndex: 1 }}
               onError={(e) => {
                 console.error('Failed to load bee image in overlay:', e);
-                e.currentTarget.style.border = '2px solid red';
+                e.currentTarget.style.border = '3px solid red';
               }}
               onLoad={() => console.log('Bee overlay image loaded successfully')}
             />
@@ -43,11 +43,15 @@ export default function BeeGlassesTest() {
             <img 
               src="/characters/customization/accessories/glasses-round.png" 
               alt="Glasses" 
-              className="absolute w-16 h-16 object-contain transform translate-y-[-4px]"
-              style={{ zIndex: 2 }}
+              className="w-48 h-48 object-contain"
+              style={{ 
+                position: 'absolute', 
+                zIndex: 2,
+                transform: 'translateY(-20px)'
+              }}
               onError={(e) => {
                 console.error('Failed to load glasses image in overlay:', e);
-                e.currentTarget.style.border = '2px solid red';
+                e.currentTarget.style.border = '3px solid blue';
               }}
               onLoad={() => console.log('Glasses overlay image loaded successfully')}
             />
