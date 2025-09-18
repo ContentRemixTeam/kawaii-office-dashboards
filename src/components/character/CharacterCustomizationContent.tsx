@@ -142,7 +142,7 @@ export default function CharacterCustomizationContent({
                         }`}
                       >
                         <div className="w-full h-full theme-card rounded-xl p-4 flex flex-col items-center justify-center border border-blue-200/50">
-                          <div className="w-24 h-24 mx-auto mb-3 relative">
+                          <div className="w-28 h-28 mx-auto mb-3 relative">{/* Even bigger for glasses */}
                             <img 
                               src={asset.filepath.startsWith('data:') ? asset.filepath : `${asset.filepath}?v=${Date.now()}`}
                               alt={asset.name}
