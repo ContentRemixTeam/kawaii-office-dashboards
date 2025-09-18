@@ -240,7 +240,7 @@ export default function CharacterCustomization({ onBack }: CharacterCustomizatio
               <img 
                 src={designStudioLogo} 
                 alt="Design Studio" 
-                className="h-32 md:h-40 lg:h-48 w-auto"
+                className="h-48 md:h-56 lg:h-64 w-auto"
               />
             </div>
           </div>

@@ -141,12 +141,12 @@ export default function CharacterCustomizationContent({
                             : 'bg-gradient-to-br from-blue-100 to-blue-200 hover:from-blue-200 hover:to-blue-300 hover:shadow-lg hover:scale-102'
                         }`}
                       >
-                        <div className="w-full h-full bg-white/90 rounded-xl p-4 flex flex-col items-center justify-center border border-blue-200/50">
-                          <div className="w-full h-full flex items-center justify-center">{/* Fill the entire card */}
+                        <div className="w-full h-full bg-white/90 rounded-xl p-2 flex flex-col items-center justify-center border border-blue-200/50">
+                          <div className="w-full h-full flex items-center justify-center">{/* Fill almost the entire card */}
                             <img 
                               src={asset.filepath.startsWith('data:') ? asset.filepath : `${asset.filepath}?v=${Date.now()}`}
                               alt={asset.name}
-                              className="w-3/4 h-3/4 object-contain"
+                              className="w-full h-full object-contain max-w-[90%] max-h-[90%]"
                             />
                           </div>
                         </div>
