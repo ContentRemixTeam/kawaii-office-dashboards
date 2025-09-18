@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import SnakeGame from '@/components/arcade/games/SnakeGame';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -94,18 +95,27 @@ function setArcadeTokens(tokens: number): void {
 
 export default function Arcade() {
   const [tokens, setTokens] = useState(getArcadeTokens);
+  const [currentGame, setCurrentGame] = useState<string | null>(null);
 
   const handlePlayGame = (game: typeof ARCADE_GAMES[0]) => {
     if (tokens >= game.cost) {
-      const newTokens = tokens - game.cost;
-      setTokens(newTokens);
-      setArcadeTokens(newTokens);
-      
-      // Placeholder for actual game launch
-      alert(`Launching ${game.name}! (Game implementation coming soon)\nTokens remaining: ${newTokens}`);
+      setCurrentGame(game.id);
     } else {
       alert(`Not enough tokens! You need ${game.cost} tokens but only have ${tokens}.`);
     }
+  };
+
+  const handleTokenSpent = () => {
+    const game = ARCADE_GAMES.find(g => g.id === currentGame);
+    if (game) {
+      const newTokens = tokens - game.cost;
+      setTokens(newTokens);
+      setArcadeTokens(newTokens);
+    }
+  };
+
+  const handleExitGame = () => {
+    setCurrentGame(null);
   };
 
   const getDifficultyColor = (difficulty: string) => {
@@ -116,6 +126,17 @@ export default function Arcade() {
       default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
+
+  // Render specific game
+  if (currentGame === 'snake') {
+    return (
+      <SnakeGame 
+        onExit={handleExitGame}
+        onTokenSpent={handleTokenSpent}
+        currentTokens={tokens}
+      />
+    );
+  }
 
   return (
     <main className="min-h-screen bg-background py-10 px-4">
