@@ -656,7 +656,7 @@ export default function PositivityCabinet() {
                       Today's Card
                     </Badge>
                     
-                    <Card className="w-72 h-96 mx-auto bg-gradient-primary border-2 border-primary/20 shadow-cute">
+                    <Card className="w-72 h-96 mx-auto bg-gradient-primary border-4 border-white shadow-2xl shadow-primary/30 ring-2 ring-primary/50 backdrop-blur-sm">
                       <CardContent className="flex items-center justify-center h-full p-6">
                         <div className="text-center">
                           <Heart className="w-12 h-12 text-white mx-auto mb-6" />
