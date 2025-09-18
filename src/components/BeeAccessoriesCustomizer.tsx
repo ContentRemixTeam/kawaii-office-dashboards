@@ -403,8 +403,8 @@ export default function BeeAccessoriesCustomizer() {
                               ...selectedEquippedAccessory.position, 
                               y 
                             })}
-                            min={-50}
-                            max={50}
+                            min={-100}
+                            max={100}
                             step={1}
                           />
                         </div>
