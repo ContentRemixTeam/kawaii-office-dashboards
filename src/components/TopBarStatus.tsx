@@ -77,9 +77,9 @@ export default function TopBarStatus(){
       />
       <Pill 
         icon={petEmoji} 
-        label="Pet" 
+        label="Pet Store" 
         value={petDisplay} 
-        title="Go to Task Pets" 
+        title="Go to Pet Store Mode" 
         onClick={() => navigate('/tools/tasks')}
         isEmpty={!pet.animal}
       />

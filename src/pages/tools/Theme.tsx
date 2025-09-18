@@ -805,8 +805,8 @@ export default function Theme() {
                     </div>
                     <div className="flex items-center justify-between">
                       <div>
-                        <Label htmlFor="hide-pet">🐾 Task Pet</Label>
-                        <p className="text-xs text-muted-foreground">Show your task completion pet</p>
+                        <Label htmlFor="hide-pet">🐾 Pet Store</Label>
+                        <p className="text-xs text-muted-foreground">Show your pet store companions</p>
                       </div>
                       <Switch
                         id="hide-pet"

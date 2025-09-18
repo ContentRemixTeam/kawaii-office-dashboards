@@ -2,7 +2,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const TOOLS = [
-  { href: "/tools/tasks", title: "Task Pets", emoji: "🐾" },
+  { href: "/tools/tasks", title: "Pet Store Mode", emoji: "🐾" },
   { href: "/tools/cabinet", title: "Positivity Cabinet", emoji: "📁" },
   { href: "/tools/vision", title: "Vision Board", emoji: "🖼️" },
   { href: "/tools/money", title: "Money Tracker", emoji: "🐷" },

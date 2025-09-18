@@ -161,7 +161,7 @@ const AnimalSelector = ({ selectedAnimal, onAnimalSelect, disabled }: {
 }) => {
   return (
     <div className="mb-6">
-      <h3 className="text-lg font-semibold text-main mb-3">🎯 Choose Your Daily Pet</h3>
+      <h3 className="text-lg font-semibold text-main mb-3">🐾 Pet Store - Choose Your Daily Pet</h3>
       <div className="grid grid-cols-5 gap-2">
         {ANIMALS.map((animal) => (
           <button
@@ -456,7 +456,7 @@ export default function Tasks() {
   const selectedAnimal = ANIMALS.find(a => a.id === taskData.selectedAnimal) || ANIMALS[0];
 
   return (
-    <ToolShell title="Daily Task Pets + Intention">
+    <ToolShell title="Pet Store Mode - Daily Tasks & Pets">
       <div className="space-y-6">
         {showConfetti && (
           <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">

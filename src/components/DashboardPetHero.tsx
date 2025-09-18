@@ -157,7 +157,7 @@ const AnimalSelector = ({ selectedAnimal, onAnimalSelect, disabled }: {
 }) => {
   return (
     <div className="mb-6">
-      <h3 className="text-lg font-semibold text-main mb-3">🎯 Choose Your Daily Pet</h3>
+      <h3 className="text-lg font-semibold text-main mb-3">🐾 Pet Store - Choose Your Daily Pet</h3>
       <div className="grid grid-cols-5 gap-2">
         {ANIMALS.map((animal) => (
           <button

@@ -315,7 +315,7 @@ const Dashboard = () => {
               💡 Tip: Complete tasks to grow your pet and unlock new companions
             </p>
             <div className="flex items-center justify-center gap-6 text-xs text-muted-foreground/80">
-              <span>🐱 Task Pets</span>
+              <span>🐱 Pet Store Mode</span>
               <span>🏆 Trophy System</span>
               <span>💎 Focus Sessions</span>
             </div>

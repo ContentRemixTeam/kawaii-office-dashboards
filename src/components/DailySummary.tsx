@@ -53,14 +53,14 @@ export default function DailySummary({ className = "" }: DailySummaryProps) {
           </div>
         </div>
 
-        {/* Task Pets */}
+        {/* Pet Store Mode */}
         <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/30 dark:to-green-900/30 rounded-2xl p-4 text-center border border-green-200/50 dark:border-green-800/50">
           <div className="text-3xl mb-2">🐾</div>
           <div className="text-2xl font-bold text-green-600 dark:text-green-400 mb-1">
             {totalRounds}
           </div>
           <div className="text-sm text-green-700 dark:text-green-300 font-medium">
-            You earned {totalRounds} Task Pet{totalRounds !== 1 ? 's' : ''} today!
+            You earned {totalRounds} Pet Store reward{totalRounds !== 1 ? 's' : ''} today!
           </div>
         </div>
 

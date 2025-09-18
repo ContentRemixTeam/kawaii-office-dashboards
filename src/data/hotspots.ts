@@ -7,13 +7,13 @@ export const OFFICE_ALT = "Cozy kawaii office with desk, monitor, filing cabinet
 export const HOTSPOTS: Hotspot[] = [
   {
     id: "monitor",
-    label: "Daily Task Pets + Intention",
+    label: "Pet Store Mode - Daily Tasks & Pets",
     href: "/tools/tasks",
     top: 35,
     left: 35,
     width: 30,
     height: 25,
-    aria: "Open Daily Task Pets tool"
+    aria: "Open Pet Store Mode tool"
   },
   {
     id: "cabinet",

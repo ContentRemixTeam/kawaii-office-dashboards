@@ -90,7 +90,7 @@ export default function DailyProgressPanel() {
       progress: taskProgress,
       color: "bg-blue-500",
       description: `${Math.round(taskProgress)}% complete`,
-      tooltip: "Complete your 3 most important daily tasks to grow your task pet and build momentum"
+      tooltip: "Complete your 3 most important daily tasks to grow your pet store companions and build momentum"
     },
     {
       icon: CheckCircle,

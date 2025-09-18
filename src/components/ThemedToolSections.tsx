@@ -20,7 +20,7 @@ const TOOL_SECTIONS: ToolSection[] = [
     emoji: "🐾",
     visibilityKey: "homeTaskTools",
     tools: [
-      { href: "/tools/tasks", title: "Task Pets", emoji: "🐾", subtitle: "Gamified tasks" },
+      { href: "/tools/tasks", title: "Pet Store Mode", emoji: "🐾", subtitle: "Daily pets & tasks" },
       { href: "/tools/energy", title: "Energy Word", emoji: "✨", subtitle: "Daily power word" },
       { href: "/tools/affirmations", title: "Affirmations", emoji: "🃏", subtitle: "Positive mindset" },
     ]

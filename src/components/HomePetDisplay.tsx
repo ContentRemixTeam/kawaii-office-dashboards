@@ -243,10 +243,10 @@ export default function HomePetDisplay() {
       <div className="text-center p-6 bg-gradient-to-br from-background to-muted/30 rounded-2xl border-2 border-border/50 shadow-lg">
         <div className="text-4xl mb-3">🐾</div>
         <h3 className="text-lg font-semibold text-foreground mb-2">
-          Ready for Task Pets?
+          Ready for Pet Store Mode?
         </h3>
         <p className="text-sm text-muted-foreground">
-          Visit the Task Pets page to choose your companion and set up your daily goals!
+          Visit Pet Store Mode to choose your companion and set up your daily goals!
         </p>
       </div>
     );

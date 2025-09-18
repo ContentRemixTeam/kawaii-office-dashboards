@@ -114,7 +114,7 @@ const Index = () => {
           💡 Tip: Select YouTube ambient videos in Sounds to replace the office background
         </p>
         <div className="flex items-center justify-center gap-6 text-xs text-muted-foreground/80">
-          <span>🐱 Task Pets</span>
+          <span>🐱 Pet Store Mode</span>
           <span>📁 Positivity Cabinet</span>
           <span>🎨 Customize your theme in Settings</span>
           <span>🎯 Vision Board</span>
