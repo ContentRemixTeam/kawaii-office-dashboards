@@ -221,12 +221,13 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
 
   // Game actions
   const startGame = () => {
-    if (currentTokens < GAME_CONFIG.tokenCost) {
-      alert(`Not enough tokens! You need ${GAME_CONFIG.tokenCost} tokens.`);
-      return;
-    }
+    // TEMPORARY: Disable token cost for testing
+    // if (currentTokens < GAME_CONFIG.tokenCost) {
+    //   alert(`Not enough tokens! You need ${GAME_CONFIG.tokenCost} tokens.`);
+    //   return;
+    // }
 
-    onTokenSpent();
+    // onTokenSpent(); // Temporarily disabled
     setGameState(GAME_STATES.PLAYING);
     setSnake([
       { x: 10, y: 10 },
@@ -342,11 +343,11 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
                       <div className="text-center">
                         <h2 className="text-xl font-bold mb-4">Ready to Play?</h2>
                         <p className="text-muted-foreground mb-4">
-                          Cost: {GAME_CONFIG.tokenCost} tokens
+                          FREE TESTING MODE - No tokens required!
                         </p>
-                        <Button onClick={startGame} disabled={currentTokens < GAME_CONFIG.tokenCost}>
+                        <Button onClick={startGame}>
                           <Play className="w-4 h-4 mr-2" />
-                          Start Game
+                          Start Game (Free)
                         </Button>
                       </div>
                     </div>
@@ -373,9 +374,9 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
                           <Badge className="mb-4">New High Score! 🏆</Badge>
                         )}
                         <div className="flex gap-2 justify-center">
-                          <Button onClick={startGame} disabled={currentTokens < GAME_CONFIG.tokenCost}>
-                            <Coins className="w-4 h-4 mr-2" />
-                            Play Again ({GAME_CONFIG.tokenCost} tokens)
+                          <Button onClick={startGame}>
+                            <Play className="w-4 h-4 mr-2" />
+                            Play Again (Free)
                           </Button>
                           <Button onClick={resetGame} variant="outline">
                             <RotateCcw className="w-4 h-4 mr-2" />
