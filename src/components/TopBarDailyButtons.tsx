@@ -8,12 +8,14 @@ export default function TopBarDailyButtons(){
   const handleIntentionClick = () => {
     log.info("Intention button clicked, setting showIntention to true");
     console.log("Current flow state:", f);
+    console.log("Available functions:", Object.keys(f));
     f.setShowIntention(true);
   };
   
   const handleDebriefClick = () => {
     log.info("Debrief button clicked, setting showDebrief to true");
     console.log("Current flow state:", f);
+    console.log("Available functions:", Object.keys(f));
     f.setShowDebrief(true);
   };
   
