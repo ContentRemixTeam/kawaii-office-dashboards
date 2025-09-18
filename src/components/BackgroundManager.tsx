@@ -247,11 +247,14 @@ const BackgroundManager = memo(function BackgroundManager() {
   if (!isActive) {
     // Return default kawaii gradient
     log.debug("BackgroundManager: Rendering default gradient background");
+    console.log('🎨 BackgroundManager: Using default gradient with --gradient-background');
+    const currentGradientBg = getComputedStyle(document.documentElement).getPropertyValue('--gradient-background');
+    console.log('🎨 Current --gradient-background value:', currentGradientBg);
     return (
       <div 
         className="fixed inset-0"
         style={{ 
-          background: "linear-gradient(135deg, hsl(220, 30%, 92%) 0%, hsl(280, 20%, 88%) 100%)",
+          background: "var(--gradient-background)",
           zIndex: -100
         }}
       />

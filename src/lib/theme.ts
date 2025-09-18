@@ -64,6 +64,7 @@ const DEFAULT_THEME: ThemeData = {
 };
 
 export function initializeTheme() {
+  console.log('🚀 Initializing theme system');
   if (typeof window === 'undefined') return;
   
   // Reset to default kawaii theme and clear any theme data attributes
@@ -76,19 +77,32 @@ export function initializeTheme() {
   // Force apply the default theme immediately
   applyTheme(DEFAULT_THEME);
   
+  console.log('🎨 Theme initialized with values:', DEFAULT_THEME.vars);
+  
   // Also trigger a re-render by dispatching a custom event
   window.dispatchEvent(new CustomEvent('themeChanged'));
+  
+  // Force a background refresh since BackgroundManager might be overriding
+  setTimeout(() => {
+    console.log('🔄 Re-applying theme after 100ms to ensure it sticks');
+    applyTheme(DEFAULT_THEME);
+  }, 100);
 }
 
 export function applyTheme(theme: ThemeData) {
   if (typeof window === 'undefined') return;
   
+  console.log('🎨 Applying theme:', theme);
+  
   const root = document.documentElement;
   
   // Apply all theme variables
   Object.entries(theme.vars).forEach(([key, value]) => {
+    console.log(`Setting ${key}: ${value}`);
     root.style.setProperty(key, value);
   });
+
+  console.log('✅ Theme variables applied');
 
   // Also update the main CSS system variables to match theme with proper contrast
   root.style.setProperty('--primary', theme.vars['--brand']);

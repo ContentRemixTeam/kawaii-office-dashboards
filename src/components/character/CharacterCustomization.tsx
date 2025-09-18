@@ -60,6 +60,15 @@ export default function CharacterCustomization({ onBack }: CharacterCustomizatio
   const [selectedAccessory, setSelectedAccessory] = useState<EquippedAccessory | null>(null);
   const [allAssets, setAllAssets] = useState<CharacterAsset[]>([]);
 
+  // Debug theme colors
+  useEffect(() => {
+    const root = document.documentElement;
+    const bgStart = getComputedStyle(root).getPropertyValue('--bg-start');
+    const bgEnd = getComputedStyle(root).getPropertyValue('--bg-end');
+    const gradientBg = getComputedStyle(root).getPropertyValue('--gradient-background');
+    console.log('🎨 Current theme colors:', { bgStart, bgEnd, gradientBg });
+  }, []);
+
   // Load character from localStorage and refresh assets
   useEffect(() => {
     const saved = localStorage.getItem('png_character_v1');
@@ -211,7 +220,7 @@ export default function CharacterCustomization({ onBack }: CharacterCustomizatio
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/10 p-6">
+    <div className="min-h-screen p-6">{/* Use theme background, no overrides */}
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
