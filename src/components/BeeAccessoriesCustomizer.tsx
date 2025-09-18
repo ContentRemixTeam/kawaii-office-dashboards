@@ -154,10 +154,13 @@ export default function BeeAccessoriesCustomizer() {
         localStorage.setItem('character_assets', JSON.stringify(assets));
         refreshAssets();
         
+        // SYNC: Also update the Design Studio character with this setup
+        localStorage.setItem('png_character_v1', JSON.stringify(character));
+        
         // Show success feedback
         toast.success(`Position locked for ${asset.name}!`, {
-          description: "Customers will receive this accessory in this exact position.",
-          duration: 3000,
+          description: "Customers will receive this accessory in this exact position. Character synced to Design Studio!",
+          duration: 4000,
         });
       }
     }
