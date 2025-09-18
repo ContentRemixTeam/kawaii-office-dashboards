@@ -98,11 +98,10 @@ export default function Arcade() {
   const [currentGame, setCurrentGame] = useState<string | null>(null);
 
   const handlePlayGame = (game: typeof ARCADE_GAMES[0]) => {
-    if (tokens >= game.cost) {
-      setCurrentGame(game.id);
-    } else {
-      alert(`Not enough tokens! You need ${game.cost} tokens but only have ${tokens}.`);
-    }
+    console.log('handlePlayGame called with:', game.name);
+    // TEMPORARY: Skip token check for testing
+    setCurrentGame(game.id);
+    console.log('currentGame set to:', game.id);
   };
 
   const handleTokenSpent = () => {
@@ -193,7 +192,8 @@ export default function Arcade() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {ARCADE_GAMES.map((game) => {
-                const canAfford = tokens >= game.cost;
+                // TEMPORARY: Allow all games for testing
+                const canAfford = true; // was: tokens >= game.cost;
                 
                 return (
                   <Card 
