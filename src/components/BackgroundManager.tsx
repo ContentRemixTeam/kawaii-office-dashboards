@@ -21,13 +21,13 @@ const SOLID_COLORS = [
   { name: "Soft Pink", value: "hsl(340, 50%, 95%)" },
   { name: "Mint Green", value: "hsl(150, 40%, 95%)" },
   { name: "Lavender", value: "hsl(280, 40%, 95%)" },
-  { name: "Peach", value: "hsl(25, 60%, 95%)" },
+  { name: "Peach", value: "hsl(25, 20%, 96%)" },
   { name: "Sky Blue", value: "hsl(200, 50%, 95%)" },
 ];
 
 const GRADIENT_PRESETS = [
   { name: "Kawaii Dream", value: "linear-gradient(135deg, hsl(340, 75%, 90%) 0%, hsl(150, 60%, 90%) 100%)" },
-  { name: "Sunset Bliss", value: "linear-gradient(135deg, hsl(25, 85%, 90%) 0%, hsl(340, 70%, 90%) 100%)" },
+  { name: "Sunset Bliss", value: "linear-gradient(135deg, hsl(25, 25%, 93%) 0%, hsl(340, 30%, 93%) 100%)" },
   { name: "Ocean Breeze", value: "linear-gradient(135deg, hsl(200, 60%, 90%) 0%, hsl(280, 40%, 90%) 100%)" },
   { name: "Forest Mist", value: "linear-gradient(135deg, hsl(150, 50%, 90%) 0%, hsl(200, 45%, 90%) 100%)" },
 ];
