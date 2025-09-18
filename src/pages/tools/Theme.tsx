@@ -1046,9 +1046,17 @@ export default function Theme() {
             </div>
           </TabsContent>
           
-          <TabsContent value="effects" className="space-y-6">
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Animation Effects</h3>
+          <TabsContent value="effects" className="mt-6">
+            <Card className="card-standard">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-2 text-card-title">
+                  <span>✨</span>
+                  Animation Effects
+                </CardTitle>
+                <p className="text-muted-foreground text-sm">Configure celebration animations and visual effects</p>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
               
               <div className="flex items-center justify-between p-4 border border-border rounded-lg">
                 <div className="space-y-1">
@@ -1310,7 +1318,9 @@ export default function Theme() {
                   </Button>
                 </div>
               </div>
-            </div>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
 
