@@ -18,6 +18,8 @@ export default function AssetUploader({ onAssetAdded }: AssetUploaderProps) {
   const [dragActive, setDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>('');
+  const [selectedShopIcon, setSelectedShopIcon] = useState<File | null>(null);
+  const [shopIconPreview, setShopIconPreview] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
   
@@ -27,6 +29,8 @@ export default function AssetUploader({ onAssetAdded }: AssetUploaderProps) {
   const [price, setPrice] = useState(50);
   const [currency, setCurrency] = useState<CharacterAsset['currency']>('coins');
   const [rarity, setRarity] = useState<CharacterAsset['rarity']>('common');
+  const [description, setDescription] = useState('');
+  const [unlockCondition, setUnlockCondition] = useState('');
 
   const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -50,6 +54,12 @@ export default function AssetUploader({ onAssetAdded }: AssetUploaderProps) {
       const name = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
       setAssetName(name.charAt(0).toUpperCase() + name.slice(1));
     }
+  };
+
+  const handleShopIconSelect = (file: File) => {
+    setSelectedShopIcon(file);
+    const url = URL.createObjectURL(file);
+    setShopIconPreview(url);
   };
 
   const removeBackgroundFromImage = async () => {
@@ -94,7 +104,11 @@ export default function AssetUploader({ onAssetAdded }: AssetUploaderProps) {
       // Reset form
       setSelectedFile(null);
       setPreviewUrl('');
+      setSelectedShopIcon(null);
+      setShopIconPreview('');
       setAssetName('');
+      setDescription('');
+      setUnlockCondition('');
       setPrice(50);
       setCategory('glasses');
       setCurrency('coins');
@@ -112,13 +126,20 @@ export default function AssetUploader({ onAssetAdded }: AssetUploaderProps) {
     setPreviewUrl('');
   };
 
+  const clearShopIcon = () => {
+    if (shopIconPreview) URL.revokeObjectURL(shopIconPreview);
+    setSelectedShopIcon(null);
+    setShopIconPreview('');
+  };
+
   return (
     <Card className="w-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Upload className="w-5 h-5" />
-          Upload New Accessory
+          Store Management - Add New Accessory
         </CardTitle>
+        <p className="text-sm text-muted-foreground">Upload accessories and configure store details</p>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* File Upload Area */}
@@ -181,75 +202,151 @@ export default function AssetUploader({ onAssetAdded }: AssetUploaderProps) {
 
         {/* Asset Configuration */}
         {selectedFile && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="asset-name">Asset Name</Label>
-              <Input
-                id="asset-name"
-                value={assetName}
-                onChange={(e) => setAssetName(e.target.value)}
-                placeholder="Enter asset name"
-              />
+          <div className="space-y-6">
+            {/* Basic Information */}
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Basic Information</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="asset-name">Asset Name *</Label>
+                  <Input
+                    id="asset-name"
+                    value={assetName}
+                    onChange={(e) => setAssetName(e.target.value)}
+                    placeholder="Enter asset name"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="category">Category</Label>
+                  <Select value={category} onValueChange={(value) => setCategory(value as CharacterAsset['category'])}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="glasses">Glasses</SelectItem>
+                      <SelectItem value="hats">Hats</SelectItem>
+                      <SelectItem value="clothing">Clothing</SelectItem>
+                      <SelectItem value="pets">Pets</SelectItem>
+                      <SelectItem value="backgrounds">Backgrounds</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Input
+                    id="description"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Brief description of the accessory"
+                  />
+                </div>
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="category">Category</Label>
-              <Select value={category} onValueChange={(value) => setCategory(value as CharacterAsset['category'])}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="glasses">Glasses</SelectItem>
-                  <SelectItem value="hats">Hats</SelectItem>
-                  <SelectItem value="clothing">Clothing</SelectItem>
-                  <SelectItem value="pets">Pets</SelectItem>
-                  <SelectItem value="backgrounds">Backgrounds</SelectItem>
-                </SelectContent>
-              </Select>
+            {/* Shop Icon Upload */}
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Shop Display Icon</h3>
+              <div className="border-2 border-dashed border-border rounded-lg p-4">
+                {selectedShopIcon ? (
+                  <div className="flex items-center gap-4">
+                    <div className="relative">
+                      <img 
+                        src={shopIconPreview} 
+                        alt="Shop icon preview" 
+                        className="w-16 h-16 object-cover rounded-lg border"
+                      />
+                      <Button
+                        onClick={clearShopIcon}
+                        variant="destructive"
+                        size="sm"
+                        className="absolute -top-2 -right-2 rounded-full p-1 h-6 w-6"
+                      >
+                        <X className="w-3 h-3" />
+                      </Button>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium">{selectedShopIcon.name}</p>
+                      <p className="text-xs text-muted-foreground">Shop display icon</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center">
+                    <ImageIcon className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                    <p className="text-sm text-muted-foreground mb-2">Upload shop icon (optional)</p>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handleShopIconSelect(file);
+                      }}
+                      className="text-sm"
+                    />
+                  </div>
+                )}
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="price">Price</Label>
-              <Input
-                id="price"
-                type="number"
-                value={price}
-                onChange={(e) => setPrice(Number(e.target.value))}
-                min="0"
-              />
-            </div>
+            {/* Store Configuration */}
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Store Configuration</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="price">Price</Label>
+                  <Input
+                    id="price"
+                    type="number"
+                    value={price}
+                    onChange={(e) => setPrice(Number(e.target.value))}
+                    min="0"
+                  />
+                </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="currency">Currency</Label>
-              <Select value={currency} onValueChange={(value) => setCurrency(value as CharacterAsset['currency'])}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="coins">Coins</SelectItem>
-                  <SelectItem value="special">Special</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+                <div className="space-y-2">
+                  <Label htmlFor="currency">Currency</Label>
+                  <Select value={currency} onValueChange={(value) => setCurrency(value as CharacterAsset['currency'])}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="coins">Coins</SelectItem>
+                      <SelectItem value="special">Special</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="rarity">Rarity</Label>
-              <Select value={rarity} onValueChange={(value) => setRarity(value as CharacterAsset['rarity'])}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="common">Common</SelectItem>
-                  <SelectItem value="rare">Rare</SelectItem>
-                  <SelectItem value="legendary">Legendary</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+                <div className="space-y-2">
+                  <Label htmlFor="rarity">Rarity</Label>
+                  <Select value={rarity} onValueChange={(value) => setRarity(value as CharacterAsset['rarity'])}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="common">Common</SelectItem>
+                      <SelectItem value="rare">Rare</SelectItem>
+                      <SelectItem value="legendary">Legendary</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-            <div className="flex items-end">
-              <Badge className={getRarityColor(rarity)}>
-                {rarity.charAt(0).toUpperCase() + rarity.slice(1)}
-              </Badge>
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="unlock-condition">Unlock Condition (optional)</Label>
+                  <Input
+                    id="unlock-condition"
+                    value={unlockCondition}
+                    onChange={(e) => setUnlockCondition(e.target.value)}
+                    placeholder="e.g., Complete 10 tasks, Reach level 5"
+                  />
+                </div>
+
+                <div className="flex items-end">
+                  <Badge className={getRarityColor(rarity)}>
+                    {rarity.charAt(0).toUpperCase() + rarity.slice(1)}
+                  </Badge>
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -261,7 +358,7 @@ export default function AssetUploader({ onAssetAdded }: AssetUploaderProps) {
             disabled={!assetName.trim() || isProcessing}
             className="w-full"
           >
-            {isProcessing ? 'Uploading...' : 'Add to Collection'}
+            {isProcessing ? 'Adding to Store...' : 'Add to Store Catalog'}
           </Button>
         )}
       </CardContent>
