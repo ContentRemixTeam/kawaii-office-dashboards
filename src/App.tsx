@@ -28,7 +28,7 @@ import BreakRoom from "./pages/tools/BreakRoom";
 import Testing from "./pages/Testing";
 import Arcade from "./pages/Arcade";
 import QuestMode from "./pages/QuestMode";
-import BeeGlassesTest from "./components/BeeGlassesTest";
+import BeeAccessoriesCustomizer from "./components/BeeAccessoriesCustomizer";
 
 const queryClient = new QueryClient();
 
@@ -85,7 +85,7 @@ const App = () => {
                   <Route path="/tools/break-room" element={<BreakRoom />} />
                   <Route path="/arcade" element={<Arcade />} />
                   <Route path="/quest" element={<QuestMode />} />
-                  <Route path="/bee-test" element={<BeeGlassesTest />} />
+                  <Route path="/bee-test" element={<BeeAccessoriesCustomizer />} />
                   <Route path="/testing" element={<Testing />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
