@@ -10,6 +10,7 @@ import { Palette, RotateCcw, Save, Upload } from "lucide-react";
 import ToolShell from "@/components/ToolShell";
 import { safeGet, safeSet, getCelebrationsEnabled, setCelebrationsEnabled, getEncouragementsEnabled, setEncouragementsEnabled, getHomeTitle, setHomeTitle, getHomeSubtitle, setHomeSubtitle, getGiphyCelebrationsEnabled, setGiphyCelebrationsEnabled, getCelebrationSettings, setCelebrationSettings, CelebrationSettings } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
+import { EffectsTestPanel } from "@/components/EffectsTestPanel";
 import { loadHero, saveHero, OFFICE_IMAGES, HeroState } from "@/lib/heroStore";
 
 interface ThemeData {
@@ -1056,271 +1057,229 @@ export default function Theme() {
                 <p className="text-muted-foreground text-sm">Configure celebration animations and visual effects</p>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="space-y-4">
-              
-              <div className="flex items-center justify-between p-4 border border-border rounded-lg">
-                <div className="space-y-1">
-                  <Label htmlFor="celebrations-toggle" className="text-sm font-medium">
-                    Celebration GIFs
-                  </Label>
-                  <p className="text-xs text-muted-foreground">
-                    Enable confetti and celebration animations when completing tasks and earning trophies
-                  </p>
-                </div>
-                <Switch
-                  id="celebrations-toggle"
-                  checked={celebrationsEnabledState}
-                  onCheckedChange={(checked) => {
-                    setCelebrationsEnabledState(checked);
-                    setCelebrationsEnabled(checked);
-                  }}
-                />
-              </div>
-              
-              <div className="flex items-center justify-between p-4 border border-border rounded-lg">
-                <div className="space-y-1">
-                  <Label htmlFor="encouragements-toggle" className="text-sm font-medium">
-                    Encouragement Messages
-                  </Label>
-                  <p className="text-xs text-muted-foreground">
-                    Show random encouraging notes from yourself during celebrations
-                  </p>
-                </div>
-                <Switch
-                  id="encouragements-toggle"
-                  checked={encouragementsEnabledState}
-                  onCheckedChange={(checked) => {
-                    setEncouragementsEnabledState(checked);
-                    setEncouragementsEnabled(checked);
-                  }}
-                />
-              </div>
-              
-              {/* New Safe Celebration Settings */}
-              <div className="flex items-center justify-between p-4 border border-border rounded-lg">
-                <div className="space-y-1">
-                  <Label htmlFor="safe-celebrations-toggle" className="text-sm font-medium">
-                    🎉 Safe Celebration Popups
-                  </Label>
-                  <p className="text-xs text-muted-foreground">
-                    Show curated, local GIF celebrations when completing tasks and focus sessions
-                  </p>
-                </div>
-                <Switch
-                  id="safe-celebrations-toggle"
-                  checked={celebrationSettings.enabled}
-                  onCheckedChange={(checked) => {
-                    const updated = { ...celebrationSettings, enabled: checked };
-                    setCelebrationSettingsState(updated);
-                    setCelebrationSettings({ enabled: checked });
-                  }}
-                />
-              </div>
-              
-              <div className="flex items-center justify-between p-4 border border-border rounded-lg">
-                <div className="space-y-1">
-                  <Label htmlFor="celebration-sound-toggle" className="text-sm font-medium">
-                    🔊 Celebration Sounds
-                  </Label>
-                  <p className="text-xs text-muted-foreground">
-                    Play gentle chime sounds during celebrations
-                  </p>
-                </div>
-                <Switch
-                  id="celebration-sound-toggle"
-                  checked={celebrationSettings.soundEnabled}
-                  onCheckedChange={(checked) => {
-                    const updated = { ...celebrationSettings, soundEnabled: checked };
-                    setCelebrationSettingsState(updated);
-                    setCelebrationSettings({ soundEnabled: checked });
-                  }}
-                />
-              </div>
-              
-              <div className="flex items-center justify-between p-4 border border-border rounded-lg">
-                <div className="space-y-1">
-                  <Label htmlFor="minimal-mode-toggle" className="text-sm font-medium">
-                    🔇 Minimal Mode
-                  </Label>
-                  <p className="text-xs text-muted-foreground">
-                    Hide all celebration popups (still logs achievements)
-                  </p>
-                </div>
-                <Switch
-                  id="minimal-mode-toggle"
-                  checked={celebrationSettings.minimalMode}
-                  onCheckedChange={(checked) => {
-                    const updated = { ...celebrationSettings, minimalMode: checked };
-                    setCelebrationSettingsState(updated);
-                    setCelebrationSettings({ minimalMode: checked });
-                  }}
-                />
-              </div>
-
-              <div className="flex items-center justify-between p-4 border border-border rounded-lg">
-                <div className="space-y-1">
-                  <Label htmlFor="giphy-toggle" className="text-sm font-medium">
-                    🎉 Legacy GIPHY Popups (Deprecated)
-                  </Label>
-                  <p className="text-xs text-muted-foreground">
-                    Old GIPHY system - use Safe Celebrations instead
-                  </p>
-                </div>
-                <Switch
-                  id="giphy-toggle"
-                  checked={giphyCelebrationsEnabledState}
-                  onCheckedChange={(checked) => {
-                    setGiphyCelebrationsEnabledState(checked);
-                    setGiphyCelebrationsEnabled(checked);
-                  }}
-                />
-              </div>
-              
-              <div className="flex items-center justify-between p-4 border border-border rounded-lg">
-                <div className="space-y-1">
-                  <Label htmlFor="pet-theme-toggle" className="text-sm font-medium">
-                    🎨 Force Pet-Themed GIFs
-                  </Label>
-                  <p className="text-xs text-muted-foreground">
-                    Always prioritize your selected pet's GIFs over general celebrations
-                  </p>
-                </div>
-                <Switch
-                  id="pet-theme-toggle"
-                  checked={celebrationSettings.forcePetTheme}
-                  onCheckedChange={(checked) => {
-                    setCelebrationSettings({ ...celebrationSettings, forcePetTheme: checked });
-                  }}
-                />
-              </div>
-              
-              <div className="flex items-center justify-between p-4 border border-border rounded-lg">
-                <div className="space-y-1">
-                  <Label htmlFor="gifs-toggle" className="text-sm font-medium">
-                    🎬 Task Completion GIFs
-                  </Label>
-                  <p className="text-xs text-muted-foreground">
-                    Display task-specific animations in modals when completing Big Three tasks
-                  </p>
-                </div>
-                <Switch
-                  id="gifs-toggle"
-                  checked={safeGet('fm_settings_celebrations_v1', { showGifs: true, playSound: true }).showGifs}
-                  onCheckedChange={(checked) => {
-                    const current = safeGet('fm_settings_celebrations_v1', { showGifs: true, playSound: true });
-                    safeSet('fm_settings_celebrations_v1', { ...current, showGifs: checked });
-                  }}
-                />
-              </div>
-              
-              <div className="flex items-center justify-between p-4 border border-border rounded-lg">
-                <div className="space-y-1">
-                  <Label htmlFor="sounds-toggle" className="text-sm font-medium">
-                    🔊 Celebration Sounds
-                  </Label>
-                  <p className="text-xs text-muted-foreground">
-                    Play gentle chime sounds when tasks are completed
-                  </p>
-                </div>
-                <Switch
-                  id="sounds-toggle"
-                  checked={safeGet('fm_settings_celebrations_v1', { showGifs: true, playSound: true }).playSound}
-                  onCheckedChange={(checked) => {
-                    const current = safeGet('fm_settings_celebrations_v1', { showGifs: true, playSound: true });
-                    safeSet('fm_settings_celebrations_v1', { ...current, playSound: checked });
-                  }}
-                />
-              </div>
-              
-              <div className="flex items-center justify-between p-4 border border-border rounded-lg">
-                <div className="space-y-1">
-                  <Label htmlFor="celebration-modals-toggle" className="text-sm font-medium">
-                    Celebration Modals
-                  </Label>
-                  <p className="text-xs text-muted-foreground">
-                    Show celebration popup modals for completed tasks
-                  </p>
-                </div>
-                <Switch
-                  id="celebration-modals-toggle"
-                  checked={!tempTheme.hiddenFeatures?.celebrationModals}
-                  onCheckedChange={(checked) => {
-                    const newTheme = {
-                      ...tempTheme,
-                      hiddenFeatures: {
-                        ...tempTheme.hiddenFeatures,
-                        celebrationModals: !checked
-                      }
-                    };
-                    setTempTheme(newTheme);
-                  }}
-                />
-              </div>
-              
-              <div className="flex items-center justify-between p-4 border border-border rounded-lg">
-                <div className="space-y-1">
-                  <Label htmlFor="sounds-toggle" className="text-sm font-medium">
-                    🔊 Celebration Sounds
-                  </Label>
-                  <p className="text-xs text-muted-foreground">
-                    Play gentle chime sounds when tasks are completed
-                  </p>
-                </div>
-                <Switch
-                  id="sounds-toggle"
-                  checked={safeGet('fm_settings_celebrations_v1', { showGifs: true, playSound: true }).playSound}
-                  onCheckedChange={(checked) => {
-                    const current = safeGet('fm_settings_celebrations_v1', { showGifs: true, playSound: true });
-                    safeSet('fm_settings_celebrations_v1', { ...current, playSound: checked });
-                  }}
-                />
-              </div>
-              
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium">Home Page Text</h3>
                 
-                <div className="space-y-3 p-4 border border-border rounded-lg">
-                  <div>
-                    <Label htmlFor="home-title">Page Title</Label>
-                    <Input
-                      id="home-title"
-                      value={homeTitleState}
-                      onChange={(e) => setHomeTitleState(e.target.value)}
-                      placeholder="Desk Quest"
-                      className="mt-1"
+                {/* Section 1: Celebrations */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-card-title">🎉 Celebrations</h3>
+                  
+                  <div className="flex items-center justify-between p-4 border border-border rounded-lg bg-card">
+                    <div className="space-y-1">
+                      <Label htmlFor="show-confetti-toggle" className="text-sm font-medium">
+                        Show Confetti
+                      </Label>
+                      <p className="text-xs text-muted-foreground">
+                        Add colorful animations when you complete tasks
+                      </p>
+                    </div>
+                    <Switch
+                      id="show-confetti-toggle"
+                      checked={celebrationSettings.enabled && celebrationSettings.popupsEnabled}
+                      onCheckedChange={(checked) => {
+                        const updated = { 
+                          ...celebrationSettings, 
+                          enabled: checked,
+                          popupsEnabled: checked
+                        };
+                        setCelebrationSettingsState(updated);
+                        setCelebrationSettings(updated);
+                      }}
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="home-subtitle">Page Subtitle</Label>
-                    <Input
-                      id="home-subtitle"
-                      value={homeSubtitleState}
-                      onChange={(e) => setHomeSubtitleState(e.target.value)}
-                      placeholder="Welcome to your cozy digital workspace! ✨"
-                      className="mt-1"
+                  
+                  <div className="flex items-center justify-between p-4 border border-border rounded-lg bg-card">
+                    <div className="space-y-1">
+                      <Label htmlFor="play-sounds-toggle" className="text-sm font-medium">
+                        Play Sounds
+                      </Label>
+                      <p className="text-xs text-muted-foreground">
+                        Hear satisfying chimes when you finish something
+                      </p>
+                    </div>
+                    <Switch
+                      id="play-sounds-toggle"
+                      checked={celebrationSettings.soundEnabled}
+                      onCheckedChange={(checked) => {
+                        const updated = { ...celebrationSettings, soundEnabled: checked };
+                        setCelebrationSettingsState(updated);
+                        setCelebrationSettings({ soundEnabled: checked });
+                      }}
                     />
                   </div>
+                  
+                  <div className="flex items-center justify-between p-4 border border-border rounded-lg bg-card">
+                    <div className="space-y-1">
+                      <Label htmlFor="show-popups-toggle" className="text-sm font-medium">
+                        Show Popups
+                      </Label>
+                      <p className="text-xs text-muted-foreground">
+                        Get celebration messages for completed tasks
+                      </p>
+                    </div>
+                    <Switch
+                      id="show-popups-toggle"
+                      checked={celebrationSettings.enabled}
+                      onCheckedChange={(checked) => {
+                        const updated = { ...celebrationSettings, enabled: checked };
+                        setCelebrationSettingsState(updated);
+                        setCelebrationSettings({ enabled: checked });
+                      }}
+                    />
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-4 border border-border rounded-lg bg-card">
+                    <div className="space-y-1">
+                      <Label htmlFor="motivational-notes-toggle" className="text-sm font-medium">
+                        Motivational Notes
+                      </Label>
+                      <p className="text-xs text-muted-foreground">
+                        See encouraging messages during celebrations
+                      </p>
+                    </div>
+                    <Switch
+                      id="motivational-notes-toggle"
+                      checked={encouragementsEnabledState}
+                      onCheckedChange={(checked) => {
+                        setEncouragementsEnabledState(checked);
+                        setEncouragementsEnabled(checked);
+                      }}
+                    />
+                  </div>
+                </div>
+                
+                {/* Section 2: Personalization */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-card-title">🎨 Personalization</h3>
+                  
+                  <div className="flex items-center justify-between p-4 border border-border rounded-lg bg-card">
+                    <div className="space-y-1">
+                      <Label htmlFor="pet-animations-toggle" className="text-sm font-medium">
+                        Use Pet Animations
+                      </Label>
+                      <p className="text-xs text-muted-foreground">
+                        Show celebrations that match your chosen pet
+                      </p>
+                    </div>
+                    <Switch
+                      id="pet-animations-toggle"
+                      checked={celebrationSettings.forcePetTheme}
+                      onCheckedChange={(checked) => {
+                        const updated = { ...celebrationSettings, forcePetTheme: checked };
+                        setCelebrationSettingsState(updated);
+                        setCelebrationSettings({ forcePetTheme: checked });
+                      }}
+                    />
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-4 border border-border rounded-lg bg-card">
+                    <div className="space-y-1">
+                      <Label htmlFor="quiet-mode-toggle" className="text-sm font-medium">
+                        Quiet Mode
+                      </Label>
+                      <p className="text-xs text-muted-foreground">
+                        Turn off popups but keep tracking your progress
+                      </p>
+                    </div>
+                    <Switch
+                      id="quiet-mode-toggle"
+                      checked={celebrationSettings.minimalMode}
+                      onCheckedChange={(checked) => {
+                        const updated = { 
+                          ...celebrationSettings, 
+                          minimalMode: checked,
+                          popupsEnabled: !checked // Quiet mode disables popups
+                        };
+                        setCelebrationSettingsState(updated);
+                        setCelebrationSettings(updated);
+                      }}
+                    />
+                  </div>
+                </div>
+                
+                {/* Quick Actions */}
+                <div className="flex gap-2 pt-4 border-t border-border">
                   <Button
+                    variant="outline"
+                    size="sm"
                     onClick={() => {
-                      setHomeTitle(homeTitleState);
-                      setHomeSubtitle(homeSubtitleState);
+                      const newSettings = {
+                        enabled: true,
+                        soundEnabled: true,
+                        popupsEnabled: true,
+                        throttleSeconds: 5,
+                        minimalMode: false,
+                        forcePetTheme: true
+                      };
+                      setCelebrationSettingsState(newSettings);
+                      setCelebrationSettings(newSettings);
+                      setEncouragementsEnabledState(true);
+                      setEncouragementsEnabled(true);
                       toast({
-                        title: "✨ Home page updated",
-                        description: "Your custom text has been saved!"
+                        title: "✨ All effects enabled",
+                        description: "Full celebration experience activated!"
                       });
-                      // Trigger a page refresh or state update if needed
-                      window.dispatchEvent(new Event('storage'));
                     }}
-                    className="w-full"
                   >
-                    <Save className="w-4 h-4 mr-2" />
-                    Save Home Page Text
+                    Enable All
+                  </Button>
+                  
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      const newSettings = {
+                        enabled: true,
+                        soundEnabled: false,
+                        popupsEnabled: false,
+                        throttleSeconds: 10,
+                        minimalMode: true,
+                        forcePetTheme: true
+                      };
+                      setCelebrationSettingsState(newSettings);
+                      setCelebrationSettings(newSettings);
+                      setEncouragementsEnabledState(false);
+                      setEncouragementsEnabled(false);
+                      toast({
+                        title: "🔇 Quiet mode enabled",
+                        description: "Tracking continues without distractions"
+                      });
+                    }}
+                  >
+                    Quiet Mode
+                  </Button>
+                  
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      const newSettings = {
+                        enabled: false,
+                        soundEnabled: false,
+                        popupsEnabled: false,
+                        throttleSeconds: 10,
+                        minimalMode: true,
+                        forcePetTheme: false
+                      };
+                      setCelebrationSettingsState(newSettings);
+                      setCelebrationSettings(newSettings);
+                      setEncouragementsEnabledState(false);
+                      setEncouragementsEnabled(false);
+                      toast({
+                        title: "🚫 All effects disabled",
+                        description: "Clean, minimal experience"
+                      });
+                    }}
+                  >
+                    Disable All
                   </Button>
                 </div>
-              </div>
-                </div>
+                
               </CardContent>
             </Card>
+            
+            {/* Testing Panel for Effects */}
+            <div className="mt-6">
+              <EffectsTestPanel />
+            </div>
           </TabsContent>
         </Tabs>
 
