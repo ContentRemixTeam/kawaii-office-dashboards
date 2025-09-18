@@ -71,7 +71,7 @@ export default function InspirationCorner() {
         </div>
       ) : (
         <div 
-          className="w-full max-h-[420px] rounded-lg bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-dashed border-purple-200 flex items-center justify-center cursor-pointer hover:scale-105 transition-transform p-8"
+          className="w-full max-h-[420px] rounded-lg bg-white border-2 border-dashed border-gray-200 flex items-center justify-center cursor-pointer hover:scale-105 transition-transform p-8 shadow-sm"
           onClick={() => navigate('/tools/vision')}
         >
           <div className="text-center text-purple-400">

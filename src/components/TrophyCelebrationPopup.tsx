@@ -109,8 +109,7 @@ export function TrophyCelebrationPopup({
       
       {/* Main Popup */}
       <div 
-        className={`relative bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 dark:from-yellow-900/20 dark:via-orange-900/20 dark:to-pink-900/20 
-          rounded-3xl shadow-2xl border-4 border-yellow-400/50 max-w-md w-full mx-4 overflow-hidden
+        className={`relative bg-white border-4 border-yellow-400 rounded-3xl shadow-2xl max-w-md w-full mx-4 overflow-hidden
           ${animate ? 'animate-scale-in' : 'animate-scale-out'}
           ${prefersReducedMotion ? '' : 'animate-bounce-in'}
         `}
@@ -172,7 +171,7 @@ export function TrophyCelebrationPopup({
 
           {/* Celebration GIF */}
           {!imageError && (
-            <div className="relative rounded-xl overflow-hidden bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 border-2 border-pink-200/50">
+            <div className="relative rounded-xl overflow-hidden bg-white border-2 border-gray-200 shadow-sm">
               <img 
                 src={currentGif}
                 alt="Celebration animation"
@@ -202,8 +201,8 @@ export function TrophyCelebrationPopup({
         </div>
 
         {/* Decorative Elements */}
-        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-yellow-400 via-orange-400 via-pink-400 to-purple-400" />
-        <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-purple-400 via-pink-400 via-orange-400 to-yellow-400" />
+        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-yellow-400 to-orange-400" />
+        <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-orange-400 to-yellow-400" />
         
         {!prefersReducedMotion && (
           <>

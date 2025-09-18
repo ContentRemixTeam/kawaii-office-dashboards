@@ -147,7 +147,7 @@ export default function GameStats({
       </Card>
 
       {/* Gaming Streak */}
-      <Card className="border-0 bg-gradient-to-br from-orange-500/10 via-red-500/10 to-pink-500/10 backdrop-blur-sm">
+      <Card className="border-0 bg-white border border-orange-200 shadow-sm">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
             <Zap className="w-5 h-5 text-orange-500" />

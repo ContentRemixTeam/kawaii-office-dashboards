@@ -138,7 +138,7 @@ export default function ProductivityRewards({ onCoinsEarned, onSpecialCurrencyEa
       )}
 
       {/* Daily Rewards Summary */}
-      <Card className="bg-gradient-to-br from-pink-50 to-purple-50 border-pink-200">
+      <Card className="bg-white border border-pink-200 shadow-sm">
         <CardHeader>
           <CardTitle className="text-pink-700 flex items-center gap-2">
             <Gift className="w-5 h-5" />

@@ -676,3 +676,32 @@
   background-size: 20px 20px;
   background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
 }
+
+/* EMERGENCY PINK BACKGROUND OVERRIDE - Forces clean white backgrounds */
+[class*="pink"]:not(.border):not(.text):not([class*="border-pink"]):not([class*="text-pink"]) {
+  background-color: white !important;
+  background: white !important;
+}
+
+/* Override specific pink gradient patterns */
+.bg-gradient-to-br.from-pink-50,
+.bg-gradient-to-br.to-pink-50,
+.bg-gradient-to-r.from-pink-100,
+.bg-gradient-to-r.to-pink-100,
+.bg-gradient-to-r.from-pink-500,
+.bg-gradient-to-r.to-pink-500 {
+  background: white !important;
+}
+
+/* Force white backgrounds for common pink patterns */
+.bg-pink-50, .bg-pink-100, .bg-pink-200, .bg-pink-400, .bg-pink-500 {
+  background-color: white !important;
+}
+
+/* Override gradient combinations with pink */
+[class*="from-purple"][class*="to-pink"],
+[class*="from-pink"][class*="to-purple"],
+[class*="from-orange"][class*="to-pink"],
+[class*="from-pink"][class*="to-rose"] {
+  background: linear-gradient(135deg, white, rgba(128, 128, 128, 0.05)) !important;
+}

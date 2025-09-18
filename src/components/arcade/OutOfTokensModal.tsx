@@ -43,7 +43,7 @@ export default function OutOfTokensModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader className="text-center">
-          <div className="mx-auto mb-4 w-16 h-16 bg-gradient-to-r from-orange-500 to-pink-500 rounded-full flex items-center justify-center">
+          <div className="mx-auto mb-4 w-16 h-16 bg-white border-2 border-orange-400 rounded-full flex items-center justify-center shadow-sm">
             <Coins className="w-8 h-8 text-white" />
           </div>
           <DialogTitle className="text-xl font-bold text-foreground">

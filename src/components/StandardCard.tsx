@@ -61,9 +61,9 @@ interface StandardCardProps {
 const GRADIENTS = {
   green: "bg-gradient-to-br from-green-50/50 to-emerald-50/50 border-green-200/50",
   blue: "bg-gradient-to-br from-blue-50/50 to-cyan-50/50 border-blue-200/50",
-  purple: "bg-gradient-to-br from-purple-50/50 to-pink-50/50 border-purple-200/50",
-  orange: "bg-gradient-to-br from-orange-50/50 to-yellow-50/50 border-orange-200/50",
-  pink: "bg-gradient-to-br from-pink-50/50 to-rose-50/50 border-pink-200/50",
+  purple: "bg-white border-purple-200",
+  orange: "bg-white border-orange-200",
+  pink: "bg-white border-pink-200",
   none: "bg-gradient-to-br from-background to-muted/20 border-border/50"
 };
 

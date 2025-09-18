@@ -55,7 +55,7 @@ export const BREAK_CATEGORIES: BreakCategory[] = [
     key: 'pep_talk',
     title: 'Pep Talk',
     emoji: '💬',
-    color: 'bg-gradient-to-br from-pink-100 to-pink-200 dark:from-pink-900/20 dark:to-pink-800/20',
+    color: 'bg-white border border-pink-200',
     description: 'Quick motivational boosts',
     presets: BREAKROOM_PRESETS.pepTalk.map((preset, index) => ({
       key: `pep_talk_${index}`,
