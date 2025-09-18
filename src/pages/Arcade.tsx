@@ -113,12 +113,13 @@ export default function Arcade() {
   const handlePlayGame = (game: typeof ARCADE_GAMES[0]) => {
     console.log('handlePlayGame called with:', game.name);
     
+    // TEMPORARILY DISABLED FOR TESTING
     // Check if user has enough tokens
-    if (tokens < game.cost) {
-      setSelectedGame(game);
-      setShowOutOfTokensModal(true);
-      return;
-    }
+    // if (tokens < game.cost) {
+    //   setSelectedGame(game);
+    //   setShowOutOfTokensModal(true);
+    //   return;
+    // }
     
     // User has enough tokens, start the game
     setCurrentGame(game.id);
