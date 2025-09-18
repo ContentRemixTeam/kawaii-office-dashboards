@@ -186,6 +186,11 @@ export default {
 				'gradient-mint': 'var(--gradient-mint)',
 				'gradient-peach': 'var(--gradient-peach)'
 			},
+			fontFamily: {
+				sans: ["var(--font-sans)", ...require("tailwindcss/defaultTheme").fontFamily.sans],
+				'cinzel': ['Cinzel', 'serif'],
+				'medieval': ['MedievalSharp', 'cursive'],
+			},
 			boxShadow: {
 				'soft': 'var(--shadow-soft)',
 				'glow': 'var(--shadow-glow)',
