@@ -103,10 +103,11 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
   const startGame = useCallback(() => {
     console.log('🎮 startGame called', { currentTokens, tokenSpent, canPlay });
     
-    if (currentTokens < 15 && !tokenSpent) {
-      console.log('❌ Not enough tokens');
-      return; // Not enough tokens
-    }
+    // TEMPORARILY DISABLED FOR TESTING
+    // if (currentTokens < 15 && !tokenSpent) {
+    //   console.log('❌ Not enough tokens');
+    //   return; // Not enough tokens
+    // }
     
     if (!tokenSpent) {
       console.log('💰 Spending token');
