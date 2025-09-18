@@ -43,6 +43,11 @@ export default function BeeGlassesTest() {
               src="/characters/customization/accessories/glasses-round.png" 
               alt="Glasses" 
               className="absolute w-16 h-16 object-contain z-20 transform translate-y-[-2px]"
+              onError={(e) => {
+                console.error('Failed to load glasses image in overlay:', e);
+                e.currentTarget.style.border = '2px solid red';
+              }}
+              onLoad={() => console.log('Glasses overlay image loaded successfully')}
             />
           </div>
         </div>
