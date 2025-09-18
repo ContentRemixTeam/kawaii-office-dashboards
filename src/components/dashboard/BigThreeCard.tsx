@@ -1,4 +1,4 @@
-import { Calendar, CheckCircle, Trophy } from "lucide-react";
+import { Calendar, CheckCircle, Coins } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -7,10 +7,9 @@ import { safeStorage } from "@/lib/safeStorage";
 import { useState, useEffect } from "react";
 import { onChanged } from "@/lib/bus";
 import { getBigThreeTasks, setBigThreeTasks, updateBigThreeTask, getBigThreeStats } from "@/lib/bigThreeTasks";
-import { awardTaskTrophy } from "@/lib/trophySystem";
+import { awardActivityCurrency, EARNING_RATES } from "@/lib/unifiedCurrency";
 import { toast } from "@/hooks/use-toast";
 import useDailyFlow from "@/hooks/useDailyFlow";
-import { TrophyCelebrationPopup } from "../TrophyCelebrationPopup";
 import { saveDailyWin } from "@/lib/dailyWins";
 import { addEarnedAnimal } from "@/lib/topbarState";
 
@@ -23,8 +22,6 @@ interface DashboardData {
 export function BigThreeCard() {
   const [streakData, setStreakData] = useState<DashboardData>({ streak: 0, lastCompletedDate: "" });
   const [bigThreeTasks, setBigThreeTasksState] = useState<[any, any, any]>([null, null, null]);
-  const [showCelebration, setShowCelebration] = useState(false);
-  const [celebratedTask, setCelebratedTask] = useState({ title: '', index: 0 });
   const { setShowIntention } = useDailyFlow();
 
   useEffect(() => {
@@ -69,9 +66,10 @@ export function BigThreeCard() {
     
     updateBigThreeTask(task.id, { completed: nowCompleted });
     
-    // Award trophy and show celebration when completing a Big Three task (not when uncompleting)
+    // Award bonus coins when completing a Big Three task (not when uncompleting)
     if (nowCompleted && !wasCompleted) {
-      const { trophy, message } = awardTaskTrophy(10); // 10 minute equivalent for priority task
+      // Award Big Three bonus coins
+      const currencyData = awardActivityCurrency('BIG_THREE_BONUS', `bigThree-${task.title}`);
       
       // Save as daily win with task details
       saveDailyWin({
@@ -81,15 +79,15 @@ export function BigThreeCard() {
         completedAt: new Date().toISOString()
       });
       
-      // Show trophy celebration popup
-      setCelebratedTask({ title: task.title, index });
-      setShowCelebration(true);
-      
-      // Also show toast for trophy
+      // Show celebration toast with coin reward
       toast({
-        title: "🏆 Trophy Earned!",
-        description: `${message} You completed a Big Three priority!`
+        title: "🎉 Big Three Complete!",
+        description: `+${EARNING_RATES.BIG_THREE_BONUS.coins} bonus coins earned! 🪙`,
+        duration: 4000,
       });
+    
+      // Add a random earned animal on Big Three completion
+      addEarnedAnimal('bigthree-reward', '🌟');
     }
   };
 
@@ -112,7 +110,7 @@ export function BigThreeCard() {
           </div>
         </div>
         <p className="text-sm text-muted-foreground">
-          Your top 3 must-dos to make today awesome! Check one off = instant trophy! 🏆
+          Your top 3 must-dos to make today awesome! Check one off = +{EARNING_RATES.BIG_THREE_BONUS.coins} bonus coins! 🪙
         </p>
       </div>
 
@@ -160,8 +158,8 @@ export function BigThreeCard() {
               />
               {task?.completed && (
                 <div className="flex items-center gap-2 text-primary animate-bounce">
-                  <Trophy className="w-5 h-5" />
-                  <span className="text-xl">✨</span>
+                  <Coins className="w-5 h-5" />
+                  <span className="text-sm font-semibold">+{EARNING_RATES.BIG_THREE_BONUS.coins}</span>
                 </div>
               )}
             </div>
@@ -197,14 +195,6 @@ export function BigThreeCard() {
           Update Daily Intention
         </Button>
       )}
-
-      {/* Trophy Celebration Popup */}
-      <TrophyCelebrationPopup
-        isVisible={showCelebration}
-        onClose={() => setShowCelebration(false)}
-        taskTitle={celebratedTask.title}
-        taskIndex={celebratedTask.index}
-      />
     </div>
   );
 }
