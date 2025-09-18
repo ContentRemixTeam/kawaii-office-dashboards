@@ -8,9 +8,9 @@ interface ToolShellProps {
 
 export default function ToolShell({ title, children }: ToolShellProps) {
   return (
-    <main className="min-h-screen bg-gradient-background py-10 px-4">
+    <main className="min-h-screen bg-background py-10 px-4">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-gradient-card rounded-3xl shadow-cute p-8 border border-border/20">
+        <div className="bg-card border border-border rounded-3xl shadow-lg p-8">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3">
               <Sparkles className="w-6 h-6 text-primary" />

@@ -1116,7 +1116,7 @@ export default function PositivityCabinet() {
 
             {/* Categories */}
             <Tabs defaultValue="kind-words" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-4 bg-background border border-border rounded-lg p-1">
                 {categories.map(cat => (
                   <TabsTrigger key={cat.value} value={cat.value}>
                     {cat.icon} {cat.label}
