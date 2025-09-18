@@ -225,23 +225,20 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
 
   // Game actions
   const startGame = () => {
-    // Reset everything
+    // Reset everything with logging
     const newSnake = [
       { x: 10, y: 10 },
       { x: 9, y: 10 },
       { x: 8, y: 10 }
     ];
     
+    // Update all state immediately
     setSnake(newSnake);
     setDirection(DIRECTIONS.RIGHT);
     setScore(0);
     setFood({ x: 15, y: 15 });
     setGameSpeed(GAME_CONFIG.initialSpeed);
-    
-    // Start game after state is set
-    setTimeout(() => {
-      setGameState(GAME_STATES.PLAYING);
-    }, 100);
+    setGameState(GAME_STATES.PLAYING);
   };
 
   const togglePause = () => {
@@ -320,6 +317,25 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
+          {/* Debug Info */}
+          <div className="lg:col-span-3 mb-4">
+            <Card className="bg-yellow-50 border-yellow-200">
+              <CardContent className="p-4">
+                <h3 className="font-semibold mb-2">Debug Info:</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                  <div>Game State: <span className="font-mono">{gameState}</span></div>
+                  <div>Snake Length: <span className="font-mono">{snake.length}</span></div>
+                  <div>Direction: <span className="font-mono">{direction === DIRECTIONS.UP ? 'UP' : direction === DIRECTIONS.DOWN ? 'DOWN' : direction === DIRECTIONS.LEFT ? 'LEFT' : 'RIGHT'}</span></div>
+                  <div>Score: <span className="font-mono">{score}</span></div>
+                  <div>Snake Head: <span className="font-mono">{snake[0] ? `${snake[0].x}, ${snake[0].y}` : 'None'}</span></div>
+                  <div>Food: <span className="font-mono">{food.x}, {food.y}</span></div>
+                  <div>Speed: <span className="font-mono">{gameSpeed}ms</span></div>
+                  <div>Loop Active: <span className="font-mono">{gameLoopRef.current ? 'Yes' : 'No'}</span></div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          
           {/* Game Area */}
           <div className="lg:col-span-2">
             <Card>
@@ -349,6 +365,14 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
                           <Play className="w-4 h-4 mr-2" />
                           Start Game (Free)
                         </Button>
+                        <Button onClick={() => setGameState(GAME_STATES.PLAYING)} variant="outline" className="mt-2">
+                          Force Start (Debug)
+                        </Button>
+                        <div className="mt-4 text-xs text-left">
+                          <p>Current State: {gameState}</p>
+                          <p>Snake: {snake.length} segments</p>
+                          <p>Direction: {direction === DIRECTIONS.RIGHT ? 'RIGHT' : 'OTHER'}</p>
+                        </div>
                       </div>
                     </div>
                   )}
