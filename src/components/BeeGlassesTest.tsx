@@ -14,6 +14,11 @@ export default function BeeGlassesTest() {
               src="/characters/bases/bee/bee-base.png" 
               alt="Bee base" 
               className="w-24 h-24 object-contain"
+              onError={(e) => {
+                console.error('Failed to load bee image:', e);
+                e.currentTarget.style.border = '2px solid red';
+              }}
+              onLoad={() => console.log('Bee image loaded successfully')}
             />
           </div>
         </div>
@@ -27,6 +32,11 @@ export default function BeeGlassesTest() {
               src="/characters/bases/bee/bee-base.png" 
               alt="Bee base" 
               className="absolute w-24 h-24 object-contain z-10"
+              onError={(e) => {
+                console.error('Failed to load bee image in overlay:', e);
+                e.currentTarget.style.border = '2px solid red';
+              }}
+              onLoad={() => console.log('Bee overlay image loaded successfully')}
             />
             {/* Glasses overlay */}
             <img 
@@ -70,6 +80,10 @@ export default function BeeGlassesTest() {
                   src="/characters/bases/bee/bee-base.png" 
                   alt="Bee base" 
                   className="absolute w-20 h-20 object-contain z-10"
+                  onError={(e) => {
+                    console.error(`Failed to load bee image in ${label}:`, e);
+                    e.currentTarget.style.border = '1px solid red';
+                  }}
                 />
                 <img 
                   src="/characters/customization/accessories/glasses-round.png" 
