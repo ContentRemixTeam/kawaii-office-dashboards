@@ -69,7 +69,7 @@ export default function CharacterCustomizationContent({
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold text-pink-700 mb-3">Character Base</h3>
+            <h3 className="text-lg font-semibold text-slate-800 mb-3">Character Base</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {getAssetsByType('base').map((asset) => (
                 <button
@@ -78,20 +78,20 @@ export default function CharacterCustomizationContent({
                   disabled={!isUnlocked(asset.id)}
                   className={`p-4 rounded-xl border-2 transition-all ${
                     character.baseAsset === asset.id
-                      ? 'border-pink-400 bg-pink-100'
+                      ? 'border-purple-400 bg-purple-100'
                       : isUnlocked(asset.id)
-                      ? 'border-pink-200 bg-white hover:border-pink-300'
+                      ? 'border-purple-200 bg-white hover:border-purple-300'
                       : 'border-gray-200 bg-gray-50 opacity-50 cursor-not-allowed'
                   }`}
                 >
-                  <div className="w-16 h-16 mx-auto mb-2 relative">
+                  <div className="w-20 h-20 mx-auto mb-2 relative">
                     <img 
                       src={asset.filepath.startsWith('data:') ? asset.filepath : `${asset.filepath}?v=${Date.now()}`}
                       alt={asset.name}
                       className="w-full h-full object-contain"
                     />
                   </div>
-                  <div className="text-sm font-medium text-pink-700">{asset.name}</div>
+                  <div className="text-sm font-medium text-slate-800">{asset.name}</div>
                   {!isUnlocked(asset.id) && (
                     <div className="text-xs text-gray-500 mt-1">
                       {asset.price} {asset.currency}
@@ -107,7 +107,7 @@ export default function CharacterCustomizationContent({
       {/* Accessories Tab */}
       <TabsContent value="accessories" className="p-6 space-y-6">
         <div>
-          <h3 className="text-lg font-semibold text-pink-700 mb-3">Available Accessories</h3>
+          <h3 className="text-lg font-semibold text-slate-800 mb-3">Available Accessories</h3>
           
           {/* Categories */}
           {['glasses', 'hats', 'clothing', 'pets'].map((category) => {
@@ -119,7 +119,7 @@ export default function CharacterCustomizationContent({
 
             return (
               <div key={category} className="space-y-3">
-                <h4 className="text-md font-medium text-pink-600 capitalize">{category}</h4>
+                <h4 className="text-md font-medium text-purple-700 capitalize">{category}</h4>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {categoryAssets.map((asset) => (
                     <div key={asset.id} className="relative">
@@ -133,18 +133,18 @@ export default function CharacterCustomizationContent({
                         }}
                         className={`w-full p-4 rounded-xl border-2 transition-all ${
                           isAccessoryEquipped(asset.id)
-                            ? 'border-green-400 bg-green-100'
-                            : 'border-pink-200 bg-white hover:border-pink-300'
+                            ? 'border-purple-400 bg-purple-100'
+                            : 'border-slate-200 bg-white hover:border-purple-300'
                         }`}
                       >
-                        <div className="w-16 h-16 mx-auto mb-2 relative">
+                        <div className="w-24 h-24 mx-auto mb-2 relative">
                           <img 
                             src={asset.filepath.startsWith('data:') ? asset.filepath : `${asset.filepath}?v=${Date.now()}`}
                             alt={asset.name}
                             className="w-full h-full object-contain"
                           />
                         </div>
-                        <div className="text-sm font-medium text-pink-700">{asset.name}</div>
+                        <div className="text-sm font-medium text-slate-800">{asset.name}</div>
                         <Badge className={`mt-1 ${getRarityColor(asset.rarity)}`}>
                           {asset.rarity}
                         </Badge>
@@ -212,7 +212,7 @@ export default function CharacterCustomizationContent({
       {/* Shop Tab */}
       <TabsContent value="shop" className="p-6 space-y-6">
         <div>
-          <h3 className="text-lg font-semibold text-pink-700 mb-3">Asset Shop</h3>
+          <h3 className="text-lg font-semibold text-slate-800 mb-3">Asset Shop</h3>
           
           {/* Locked Assets */}
           {['base', 'accessory'].map((type) => {
@@ -224,12 +224,12 @@ export default function CharacterCustomizationContent({
 
             return (
               <div key={type} className="space-y-3">
-                <h4 className="text-md font-medium text-pink-600 capitalize">{type}s</h4>
+                <h4 className="text-md font-medium text-purple-700 capitalize">{type}s</h4>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {lockedAssets.map((asset) => (
                     <div key={asset.id} className="relative">
                       <div className={`p-4 rounded-xl border-2 ${getRarityColor(asset.rarity)}`}>
-                        <div className="w-16 h-16 mx-auto mb-2 relative">
+                        <div className="w-24 h-24 mx-auto mb-2 relative">
                           <img 
                             src={asset.filepath.startsWith('data:') ? asset.filepath : `${asset.filepath}?v=${Date.now()}`}
                             alt={asset.name}
