@@ -29,7 +29,7 @@ import ProductivityRewards from './ProductivityRewards';
 import CharacterPreview from './CharacterPreview';
 import CharacterCustomizationContent from './CharacterCustomizationContent';
 import { PNGCharacter, CharacterAsset, EquippedAccessory, AccessoryPosition } from '@/types/character';
-import { getAllAssets, getAssetsByType, getAssetsByCategory, getAssetById, getRarityColor } from '@/lib/assetManager';
+import { getAllAssets, getAssetsByType, getAssetsByCategory, getAssetById, getRarityColor, DEFAULT_POSITIONS } from '@/lib/assetManager';
 
 // Legacy character interface kept for migration
 interface LegacyCharacter {
@@ -166,9 +166,19 @@ export default function CharacterCustomization({ onBack }: CharacterCustomizatio
     if (!asset || asset.type !== 'accessory') return;
 
     const updatedCharacter = { ...character };
+    
+    // Use asset's default position, or category default, or fallback
+    let defaultPosition = asset.defaultPosition;
+    if (!defaultPosition && asset.category) {
+      defaultPosition = DEFAULT_POSITIONS[asset.category];
+    }
+    if (!defaultPosition) {
+      defaultPosition = { x: 0, y: 0, scale: 1, rotation: 0, opacity: 1 };
+    }
+    
     const newAccessory: EquippedAccessory = {
       assetId,
-      position: asset.defaultPosition || { x: 0, y: 0, scale: 1, rotation: 0, opacity: 1 }
+      position: defaultPosition
     };
 
     updatedCharacter.equippedAccessories.push(newAccessory);
