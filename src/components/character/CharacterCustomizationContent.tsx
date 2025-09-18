@@ -138,23 +138,25 @@ export default function CharacterCustomizationContent({
                             equipAccessory(asset.id);
                           }
                         }}
-                        className={`w-full h-40 p-4 rounded-xl border-2 shadow-md transition-all duration-300 ${
+                        className={`w-full h-40 p-1 rounded-2xl transition-all duration-300 ${
                           isAccessoryEquipped(asset.id)
-                            ? 'border-purple-400 bg-white shadow-lg scale-105'
-                            : 'border-gray-200 bg-white hover:border-purple-300 hover:shadow-lg hover:scale-102'
+                            ? 'bg-gradient-to-br from-blue-200 to-blue-300 shadow-lg scale-105'
+                            : 'bg-gradient-to-br from-blue-100 to-blue-200 hover:from-blue-200 hover:to-blue-300 hover:shadow-lg hover:scale-102'
                         }`}
                       >
-                        <div className="w-16 h-16 mx-auto mb-2 relative">
-                          <img 
-                            src={asset.filepath.startsWith('data:') ? asset.filepath : `${asset.filepath}?v=${Date.now()}`}
-                            alt={asset.name}
-                            className="w-full h-full object-contain"
-                          />
+                        <div className="w-full h-full bg-white rounded-xl p-3 flex flex-col items-center justify-center border border-blue-200/50">
+                          <div className="w-16 h-16 mx-auto mb-2 relative">
+                            <img 
+                              src={asset.filepath.startsWith('data:') ? asset.filepath : `${asset.filepath}?v=${Date.now()}`}
+                              alt={asset.name}
+                              className="w-full h-full object-contain"
+                            />
+                          </div>
+                          <div className="text-sm font-bold text-gray-800 mb-1 truncate">{asset.name}</div>
+                          <Badge className={`text-xs ${getRarityColor(asset.rarity)}`}>
+                            {asset.rarity}
+                          </Badge>
                         </div>
-                        <div className="text-sm font-bold text-gray-800 mb-1 truncate">{asset.name}</div>
-                        <Badge className={`text-xs ${getRarityColor(asset.rarity)}`}>
-                          {asset.rarity}
-                        </Badge>
                       </button>
                       
                       {isAccessoryEquipped(asset.id) && (
