@@ -163,6 +163,14 @@ const Dashboard = () => {
                       <Button
                         variant="ghost"
                         size="sm"
+                        onClick={() => navigate('/quest')}
+                        className="h-8 px-3 text-xs"
+                      >
+                        🗡️ Quest
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={() => navigate('/tools/break-room')}
                         className="h-8 px-3 text-xs"
                       >
