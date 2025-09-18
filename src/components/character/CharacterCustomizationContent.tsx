@@ -108,7 +108,7 @@ export default function CharacterCustomizationContent({
       {/* Accessories Tab */}
       <TabsContent value="accessories" className="p-8 space-y-8 bg-card rounded-2xl border-2 border-border shadow-sm">
         <div>
-          <h3 className="text-xl font-bold text-gray-800 mb-4">Available Accessories</h3>
+          <h3 className="text-xl font-bold text-gray-800 mb-4">My Closet</h3>
           
           {/* Categories */}
           {['glasses', 'hats', 'clothing', 'pets'].map((category) => {
@@ -127,7 +127,7 @@ export default function CharacterCustomizationContent({
                   {category === 'pets' && '🐾'} 
                   {category}
                 </h4>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {categoryAssets.map((asset) => (
                     <div key={asset.id} className="relative group">
                       <button
@@ -138,21 +138,21 @@ export default function CharacterCustomizationContent({
                             equipAccessory(asset.id);
                           }
                         }}
-                        className={`w-full p-6 rounded-2xl border-2 transition-all duration-300 ${
+                        className={`w-full h-40 p-4 rounded-xl border-2 shadow-md transition-all duration-300 ${
                           isAccessoryEquipped(asset.id)
-                            ? 'border-purple-400 bg-white shadow-md scale-105'
-                            : 'border-purple-200 bg-white hover:border-purple-300 hover:shadow-sm hover:scale-102'
+                            ? 'border-purple-400 bg-white shadow-lg scale-105'
+                            : 'border-gray-200 bg-white hover:border-purple-300 hover:shadow-lg hover:scale-102'
                         }`}
                       >
-                        <div className="w-24 h-24 mx-auto mb-2 relative">
+                        <div className="w-16 h-16 mx-auto mb-2 relative">
                           <img 
                             src={asset.filepath.startsWith('data:') ? asset.filepath : `${asset.filepath}?v=${Date.now()}`}
                             alt={asset.name}
                             className="w-full h-full object-contain"
                           />
                         </div>
-                        <div className="text-base font-bold text-gray-800">{asset.name}</div>
-                        <Badge className={`mt-1 ${getRarityColor(asset.rarity)}`}>
+                        <div className="text-sm font-bold text-gray-800 mb-1 truncate">{asset.name}</div>
+                        <Badge className={`text-xs ${getRarityColor(asset.rarity)}`}>
                           {asset.rarity}
                         </Badge>
                       </button>
