@@ -26,6 +26,8 @@ const SHOP_CARD_GRAPHICS: Record<string, string> = {
 export function ShopItemCard({ asset, onPurchase, canAfford }: ShopItemCardProps) {
   const shopCardGraphic = SHOP_CARD_GRAPHICS[asset.name];
   
+  // Debug logging
+  console.log('ShopItemCard:', { assetName: asset.name, shopCardGraphic, hasGraphic: !!shopCardGraphic });
   // If we have a custom shop card graphic, use it
   if (shopCardGraphic) {
     return (
