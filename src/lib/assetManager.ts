@@ -5,7 +5,7 @@ export const DEFAULT_ASSETS: CharacterAsset[] = [
   // Character Bases
   {
     id: 'bee-base',
-    name: 'Cute Bee',
+    name: 'Busy the Bee',
     type: 'base',
     filepath: '/characters/bases/bee/bee-base.png',
     price: 0,
