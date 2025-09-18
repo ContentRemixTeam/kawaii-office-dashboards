@@ -8,7 +8,6 @@ import {
   Pause, 
   RotateCcw, 
   Trophy,
-  Coins,
   ChevronUp,
   ChevronDown,
   ChevronLeft,
@@ -51,13 +50,16 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const gameLoopRef = useRef<NodeJS.Timeout>();
   
-  // Game state
-  const [gameState, setGameState] = useState(GAME_STATES.MENU);
-  const [snake, setSnake] = useState([
+  // Initial game state
+  const initialSnake = [
     { x: 10, y: 10 },
     { x: 9, y: 10 },
     { x: 8, y: 10 }
-  ]);
+  ];
+  
+  // Game state
+  const [gameState, setGameState] = useState(GAME_STATES.MENU);
+  const [snake, setSnake] = useState(initialSnake);
   const [food, setFood] = useState({ x: 15, y: 15 });
   const [direction, setDirection] = useState(DIRECTIONS.RIGHT);
   const [score, setScore] = useState(0);
@@ -135,28 +137,23 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
     if (gameState !== GAME_STATES.PLAYING) return;
 
     setSnake(currentSnake => {
+      if (currentSnake.length === 0) return currentSnake;
+      
       const newSnake = [...currentSnake];
       const head = { ...newSnake[0] };
-      
-      console.log('Game loop - current direction:', direction);
-      console.log('Game loop - current head position:', head);
       
       head.x += direction.x;
       head.y += direction.y;
 
-      console.log('Game loop - new head position:', head);
-
       // Check wall collision
       if (head.x < 0 || head.x >= GAME_CONFIG.gridSize || 
           head.y < 0 || head.y >= GAME_CONFIG.gridSize) {
-        console.log('Wall collision detected');
         setGameState(GAME_STATES.GAME_OVER);
         return currentSnake;
       }
 
-      // Check self collision (skip the head itself)
+      // Check self collision
       if (newSnake.some(segment => segment.x === head.x && segment.y === head.y)) {
-        console.log('Self collision detected');
         setGameState(GAME_STATES.GAME_OVER);
         return currentSnake;
       }
@@ -165,7 +162,6 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
 
       // Check food collision
       if (head.x === food.x && head.y === food.y) {
-        console.log('Food eaten!');
         const newScore = score + GAME_CONFIG.pointsPerFood;
         setScore(newScore);
         setFood(generateFood(newSnake));
@@ -229,31 +225,23 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
 
   // Game actions
   const startGame = () => {
-    // TEMPORARY: Disable token cost for testing
-    // if (currentTokens < GAME_CONFIG.tokenCost) {
-    //   alert(`Not enough tokens! You need ${GAME_CONFIG.tokenCost} tokens.`);
-    //   return;
-    // }
-
-    // onTokenSpent(); // Temporarily disabled
-    console.log('Starting game...');
-    console.log('Initial snake:', [
+    // Reset everything
+    const newSnake = [
       { x: 10, y: 10 },
       { x: 9, y: 10 },
       { x: 8, y: 10 }
-    ]);
-    console.log('Initial direction:', DIRECTIONS.RIGHT);
+    ];
     
-    setGameState(GAME_STATES.PLAYING);
-    setSnake([
-      { x: 10, y: 10 },
-      { x: 9, y: 10 },
-      { x: 8, y: 10 }
-    ]);
+    setSnake(newSnake);
     setDirection(DIRECTIONS.RIGHT);
     setScore(0);
-    setFood(generateFood([{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }]));
+    setFood({ x: 15, y: 15 });
     setGameSpeed(GAME_CONFIG.initialSpeed);
+    
+    // Start game after state is set
+    setTimeout(() => {
+      setGameState(GAME_STATES.PLAYING);
+    }, 100);
   };
 
   const togglePause = () => {
@@ -264,11 +252,7 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
 
   const resetGame = () => {
     setGameState(GAME_STATES.MENU);
-    setSnake([
-      { x: 10, y: 10 },
-      { x: 9, y: 10 },
-      { x: 8, y: 10 }
-    ]);
+    setSnake(initialSnake);
     setDirection(DIRECTIONS.RIGHT);
     setScore(0);
     setFood({ x: 15, y: 15 });
@@ -282,12 +266,9 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
   }, [handleKeyPress]);
 
   useEffect(() => {
-    console.log('Game state changed to:', gameState);
     if (gameState === GAME_STATES.PLAYING) {
-      console.log('Starting game loop with speed:', gameSpeed);
       gameLoopRef.current = setInterval(gameLoop, gameSpeed);
     } else {
-      console.log('Stopping game loop');
       if (gameLoopRef.current) {
         clearInterval(gameLoopRef.current);
       }
@@ -327,7 +308,7 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
             <div>
               <h1 className="text-2xl font-bold text-foreground">Snake Game</h1>
               <p className="text-sm text-muted-foreground">
-                Cost: {GAME_CONFIG.tokenCost} tokens • High Score: {highScore}
+                FREE TESTING MODE • High Score: {highScore}
               </p>
             </div>
           </div>
@@ -433,10 +414,6 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
                 <div className="flex justify-between">
                   <span>Length:</span>
                   <span className="font-bold">{snake.length}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Tokens:</span>
-                  <span className="font-bold">{currentTokens}</span>
                 </div>
               </CardContent>
             </Card>
