@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   ScrollText,
   CheckCircle2,
@@ -16,9 +17,11 @@ import {
   Sword,
   Shield,
   Heart,
-  Timer
+  Timer,
+  Map
 } from 'lucide-react';
 import { Quest } from './CharacterCreation';
+import QuestMap from './QuestMap';
 
 interface QuestSystemProps {
   character: any;
@@ -167,7 +170,8 @@ const generateEpicQuests = (): Quest[] => {
 export default function QuestSystem({ character, onQuestComplete }: QuestSystemProps) {
   const [activeQuests, setActiveQuests] = useState<Quest[]>([]);
   const [completedQuests, setCompletedQuests] = useState<Quest[]>([]);
-  const [selectedTab, setSelectedTab] = useState<'active' | 'completed'>('active');
+  const [selectedTab, setSelectedTab] = useState<'map' | 'active' | 'completed'>('map');
+  const [selectedRegion, setSelectedRegion] = useState<string>('starting-village');
 
   useEffect(() => {
     // Load or generate quests - completely separate from arcade system
@@ -273,42 +277,77 @@ export default function QuestSystem({ character, onQuestComplete }: QuestSystemP
 
   const Crown = ({ className }: { className: string }) => <Crown className={className} />;
 
+  const handleRegionSelect = (regionId: string) => {
+    setSelectedRegion(regionId);
+    setSelectedTab('active'); // Switch to quests when region selected
+  };
+
   return (
     <div className="space-y-6">
-      {/* Quest Header */}
+      {/* Adventure Map Header */}
       <Card className="bg-gradient-to-r from-purple-900/20 to-blue-900/20 border-purple-500/30 backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-3 text-2xl">
-            <ScrollText className="w-6 h-6 text-purple-400" />
-            Quest Log
+            <Map className="w-6 h-6 text-purple-400" />
+            Adventure Map
             <Badge className="bg-purple-600/30 text-purple-200">
-              {activeQuests.length} Active
+              Your Epic Journey
             </Badge>
           </CardTitle>
+          <p className="text-blue-200">Explore the world and discover new challenges as you level up!</p>
         </CardHeader>
       </Card>
 
       {/* Tab Navigation */}
-      <div className="flex gap-2">
-        <Button
-          onClick={() => setSelectedTab('active')}
-          variant={selectedTab === 'active' ? 'default' : 'outline'}
-          className={selectedTab === 'active' ? 'bg-purple-600' : 'bg-black/20 border-purple-500/30 text-white'}
-        >
-          <ScrollText className="w-4 h-4 mr-2" />
-          Active Quests ({activeQuests.length})
-        </Button>
-        <Button
-          onClick={() => setSelectedTab('completed')}
-          variant={selectedTab === 'completed' ? 'default' : 'outline'}
-          className={selectedTab === 'completed' ? 'bg-green-600' : 'bg-black/20 border-green-500/30 text-white'}
-        >
-          <CheckCircle2 className="w-4 h-4 mr-2" />
-          Completed ({completedQuests.length})
-        </Button>
-      </div>
+      <Tabs value={selectedTab} onValueChange={(value) => setSelectedTab(value as typeof selectedTab)}>
+        <TabsList className="grid w-full grid-cols-3 bg-black/20">
+          <TabsTrigger value="map" className="text-white data-[state=active]:bg-purple-600">
+            <Map className="w-4 h-4 mr-2" />
+            Adventure Map
+          </TabsTrigger>
+          <TabsTrigger value="active" className="text-white data-[state=active]:bg-purple-600">
+            <ScrollText className="w-4 h-4 mr-2" />
+            Active Quests ({activeQuests.length})
+          </TabsTrigger>
+          <TabsTrigger value="completed" className="text-white data-[state=active]:bg-green-600">
+            <CheckCircle2 className="w-4 h-4 mr-2" />
+            Completed ({completedQuests.length})
+          </TabsTrigger>
+        </TabsList>
 
-      {/* Quest List */}
+        {/* Adventure Map Tab */}
+        <TabsContent value="map" className="space-y-4">
+          <QuestMap 
+            character={character}
+            onRegionSelect={handleRegionSelect}
+            selectedRegion={selectedRegion}
+          />
+          
+          {/* Quick Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card className="bg-black/20 border-green-500/30">
+              <CardContent className="p-4 text-center">
+                <div className="text-2xl font-bold text-green-400">{character.level}</div>
+                <div className="text-white text-sm">Current Level</div>
+              </CardContent>
+            </Card>
+            <Card className="bg-black/20 border-blue-500/30">
+              <CardContent className="p-4 text-center">
+                <div className="text-2xl font-bold text-blue-400">{activeQuests.length}</div>
+                <div className="text-white text-sm">Active Quests</div>
+              </CardContent>
+            </Card>
+            <Card className="bg-black/20 border-purple-500/30">
+              <CardContent className="p-4 text-center">
+                <div className="text-2xl font-bold text-purple-400">{completedQuests.length}</div>
+                <div className="text-white text-sm">Completed Quests</div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* Active Quests Tab */}
+        <TabsContent value="active" className="space-y-4">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {(selectedTab === 'active' ? activeQuests : completedQuests).map((quest) => (
           <Card key={quest.id} className={`bg-black/20 backdrop-blur-sm transition-all duration-300 hover:scale-105 ${
@@ -397,8 +436,74 @@ export default function QuestSystem({ character, onQuestComplete }: QuestSystemP
           </Card>
         ))}
       </div>
+    </TabsContent>
 
-      {/* Empty State */}
+    {/* Completed Quests Tab */}
+    <TabsContent value="completed" className="space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {completedQuests.map((quest) => (
+          <Card key={quest.id} className="bg-black/20 backdrop-blur-sm border-green-500/50 bg-green-900/10">
+            <CardHeader className="pb-4">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-2">
+                  {getTypeIcon(quest.type)}
+                  <div>
+                    <CardTitle className="text-white text-lg">{quest.title}</CardTitle>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Badge className={getDifficultyColor(quest.difficulty)}>
+                        {quest.difficulty}
+                      </Badge>
+                      <Badge className="bg-gray-700/50 text-gray-300">
+                        {getCategoryIcon(quest.category)}
+                        <span className="ml-1 capitalize">{quest.category}</span>
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+                <CheckCircle2 className="w-6 h-6 text-green-400" />
+              </div>
+            </CardHeader>
+            
+            <CardContent className="space-y-4">
+              <p className="text-gray-300 text-sm">{quest.description}</p>
+              
+              {/* Completed Progress Bar */}
+              <div>
+                <div className="flex justify-between text-sm text-white mb-2">
+                  <span>Progress</span>
+                  <span>Complete!</span>
+                </div>
+                <Progress value={100} className="h-3 bg-gray-700">
+                  <div className="h-full rounded-full bg-gradient-to-r from-green-500 to-emerald-500 transition-all duration-500 w-full" />
+                </Progress>
+              </div>
+
+              {/* Rewards */}
+              <div className="flex items-center justify-between pt-2 border-t border-gray-600">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-1 text-blue-400">
+                    <Star className="w-4 h-4" />
+                    <span className="text-sm">{quest.experienceReward} XP</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-yellow-400">
+                    <Coins className="w-4 h-4" />
+                    <span className="text-sm">{quest.goldReward} Gold</span>
+                  </div>
+                </div>
+                
+                <Badge className="bg-green-600/20 text-green-200">
+                  <Trophy className="w-3 h-3 mr-1" />
+                  Completed
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </TabsContent>
+  </Tabs>
+
+      {/* Empty States */}
       {selectedTab === 'active' && activeQuests.length === 0 && (
         <div className="text-center py-12">
           <ScrollText className="w-16 h-16 mx-auto text-gray-500 mb-4" />
