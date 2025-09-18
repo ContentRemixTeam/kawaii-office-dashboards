@@ -407,204 +407,229 @@ export default function Theme() {
 
   return (
     <ToolShell title="Theme Settings">
-      <div className="space-y-8">
-        {/* Live Preview */}
-        <Card className="border-2 border-dashed border-primary/30">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Palette className="w-5 h-5" />
+      <div className="max-w-5xl mx-auto space-y-6">
+        {/* Live Preview Section */}
+        <Card className="card-standard border-2 border-dashed border-primary/20">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-2 text-card-title">
+              <Palette className="w-5 h-5 text-primary" />
               Live Preview
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="p-4 rounded-xl card-surface border" style={{ 
+          <CardContent className="space-y-4">
+            <div className="p-6 rounded-xl border-2 border-border/50" style={{ 
               background: `linear-gradient(135deg, hsl(${tempTheme.vars["--bg-start"]}) 0%, hsl(${tempTheme.vars["--bg-end"]}) 100%)` 
             }}>
-              <div className="card-surface rounded-lg p-4 shadow-sm">
-                <h3 className="text-lg font-semibold text-main mb-2">Sample Card</h3>
-                <p className="text-main/80 mb-3">This is how your theme will look across the app.</p>
-                <div className="flex gap-2">
-                  <Button>Primary Button</Button>
-                  <Button variant="secondary">Secondary</Button>
+              <div className="bg-card rounded-lg p-6 shadow-sm border">
+                <h3 className="text-lg font-semibold text-foreground mb-2">Sample Card</h3>
+                <p className="text-muted-foreground mb-4">This is how your theme will look across the app.</p>
+                <div className="flex gap-3">
+                  <Button className="bg-primary text-primary-foreground hover:bg-primary/90">Primary Button</Button>
+                  <Button variant="secondary" className="bg-secondary text-secondary-foreground hover:bg-secondary/80">Secondary</Button>
                 </div>
               </div>
             </div>
-            <div className="mt-3 flex items-center gap-2">
-              <Badge variant={contrastGood ? "default" : "destructive"}>
+            <div className="flex items-center gap-2">
+              <Badge variant={contrastGood ? "default" : "destructive"} className="px-3 py-1">
                 Contrast: {contrast.toFixed(1)}:1 {contrastGood ? "✓ Good" : "⚠ Low"}
               </Badge>
             </div>
           </CardContent>
         </Card>
 
-        <Tabs defaultValue="presets" className="w-full">
-          <TabsList className="grid w-full grid-cols-6">
-            <TabsTrigger value="presets">Presets</TabsTrigger>
-            <TabsTrigger value="colors">Custom Colors</TabsTrigger>
-            <TabsTrigger value="background">Background</TabsTrigger>
-            <TabsTrigger value="hero">Hero</TabsTrigger>
-            <TabsTrigger value="features">Features</TabsTrigger>
-            <TabsTrigger value="effects">Effects</TabsTrigger>
-          </TabsList>
+        {/* Theme Customization Tabs */}
+        <div className="space-y-4">
+          <Tabs defaultValue="presets" className="w-full">
+            <TabsList className="grid w-full grid-cols-6 h-12 bg-muted/50 rounded-lg p-1">
+              <TabsTrigger value="presets" className="text-sm font-medium">Presets</TabsTrigger>
+              <TabsTrigger value="colors" className="text-sm font-medium">Colors</TabsTrigger>
+              <TabsTrigger value="background" className="text-sm font-medium">Background</TabsTrigger>
+              <TabsTrigger value="hero" className="text-sm font-medium">Hero</TabsTrigger>
+              <TabsTrigger value="features" className="text-sm font-medium">Features</TabsTrigger>
+              <TabsTrigger value="effects" className="text-sm font-medium">Effects</TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="presets" className="space-y-4">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {THEME_PRESETS.map((preset) => (
-                <Card 
-                  key={preset.name}
-                  className="cursor-pointer hover:shadow-lg transition-all duration-200"
-                  onClick={() => applyPreset(preset)}
-                >
-                  <CardContent className="p-4">
-                    <div 
-                      className="h-16 rounded-lg mb-3"
-                      style={{ 
-                        background: `linear-gradient(135deg, hsl(${preset.vars["--bg-start"]}) 0%, hsl(${preset.vars["--bg-end"]}) 100%)` 
+            <TabsContent value="presets" className="mt-6">
+              <Card className="card-standard">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-card-title">Theme Presets</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {THEME_PRESETS.map((preset) => (
+                      <Card 
+                        key={preset.name}
+                        className="cursor-pointer hover:shadow-lg hover:scale-[1.02] transition-all duration-200 border-2 hover:border-primary/30"
+                        onClick={() => applyPreset(preset)}
+                      >
+                        <CardContent className="p-4">
+                          <div 
+                            className="h-16 rounded-lg mb-3 border shadow-sm"
+                            style={{ 
+                              background: `linear-gradient(135deg, hsl(${preset.vars["--bg-start"]}) 0%, hsl(${preset.vars["--bg-end"]}) 100%)` 
+                            }}
+                          />
+                          <div className="text-center">
+                            <div className="text-xl mb-1">{preset.emoji}</div>
+                            <div className="font-medium text-sm text-foreground">{preset.name}</div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="colors" className="mt-6">
+              <Card className="card-standard">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-card-title">Custom Colors</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="bg-start" className="text-sm font-medium">Background Start</Label>
+                        <Input
+                          id="bg-start"
+                          type="color"
+                          value={hslToHex(tempTheme.vars["--bg-start"])}
+                          onChange={(e) => updateTempVar("--bg-start", e.target.value)}
+                          className="h-12 w-full cursor-pointer"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="bg-end" className="text-sm font-medium">Background End</Label>
+                        <Input
+                          id="bg-end"
+                          type="color"
+                          value={hslToHex(tempTheme.vars["--bg-end"])}
+                          onChange={(e) => updateTempVar("--bg-end", e.target.value)}
+                          className="h-12 w-full cursor-pointer"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="brand" className="text-sm font-medium">Brand Color</Label>
+                        <Input
+                          id="brand"
+                          type="color"
+                          value={hslToHex(tempTheme.vars["--brand"])}
+                          onChange={(e) => updateTempVar("--brand", e.target.value)}
+                          className="h-12 w-full cursor-pointer"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="accent" className="text-sm font-medium">Accent Color</Label>
+                        <Input
+                          id="accent"
+                          type="color"
+                          value={hslToHex(tempTheme.vars["--accent"])}
+                          onChange={(e) => updateTempVar("--accent", e.target.value)}
+                          className="h-12 w-full cursor-pointer"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="card" className="text-sm font-medium">Card Background</Label>
+                        <Input
+                          id="card"
+                          type="color"
+                          value={hslToHex(tempTheme.vars["--card"])}
+                          onChange={(e) => updateTempVar("--card", e.target.value)}
+                          className="h-12 w-full cursor-pointer"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="text" className="text-sm font-medium">Text Color</Label>
+                        <Input
+                          id="text"
+                          type="color"
+                          value={hslToHex(tempTheme.vars["--text"])}
+                          onChange={(e) => updateTempVar("--text", e.target.value)}
+                          className="h-12 w-full cursor-pointer"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="muted" className="text-sm font-medium">Secondary Text</Label>
+                        <Input
+                          id="muted"
+                          type="color"
+                          value={hslToHex(tempTheme.vars["--muted"])}
+                          onChange={(e) => updateTempVar("--muted", e.target.value)}
+                          className="h-12 w-full cursor-pointer"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="ring" className="text-sm font-medium">Focus Ring</Label>
+                        <Input
+                          id="ring"
+                          type="color"
+                          value={hslToHex(tempTheme.vars["--ring"])}
+                          onChange={(e) => updateTempVar("--ring", e.target.value)}
+                          className="h-12 w-full cursor-pointer"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="background" className="mt-6">
+              <Card className="card-standard">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-card-title">Background Settings</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="flex items-center space-x-3">
+                    <Switch
+                      id="use-image"
+                      checked={tempTheme.useImage || false}
+                      onCheckedChange={(checked) => {
+                        const newTheme = { ...tempTheme, useImage: checked };
+                        setTempTheme(newTheme);
+                        applyTheme(newTheme);
                       }}
                     />
-                    <div className="text-center">
-                      <div className="text-lg mb-1">{preset.emoji}</div>
-                      <div className="font-medium text-sm">{preset.name}</div>
+                    <Label htmlFor="use-image" className="text-sm font-medium">Use background image</Label>
+                  </div>
+
+                  {tempTheme.useImage && (
+                    <div className="space-y-2">
+                      <Label htmlFor="bg-image" className="text-sm font-medium">Background Image URL</Label>
+                      <Input
+                        id="bg-image"
+                        type="url"
+                        placeholder="https://example.com/image.jpg"
+                        value={tempTheme.backgroundImage || ""}
+                        onChange={(e) => {
+                          const newTheme = { ...tempTheme, backgroundImage: e.target.value };
+                          setTempTheme(newTheme);
+                          applyTheme(newTheme);
+                        }}
+                        className="w-full"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Tip: Use high-quality images for best results
+                      </p>
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
 
-          <TabsContent value="colors" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="bg-start">Background Start</Label>
-                  <Input
-                    id="bg-start"
-                    type="color"
-                    value={hslToHex(tempTheme.vars["--bg-start"])}
-                    onChange={(e) => updateTempVar("--bg-start", e.target.value)}
-                    className="h-12"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="bg-end">Background End</Label>
-                  <Input
-                    id="bg-end"
-                    type="color"
-                    value={hslToHex(tempTheme.vars["--bg-end"])}
-                    onChange={(e) => updateTempVar("--bg-end", e.target.value)}
-                    className="h-12"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="brand">Brand Color</Label>
-                  <Input
-                    id="brand"
-                    type="color"
-                    value={hslToHex(tempTheme.vars["--brand"])}
-                    onChange={(e) => updateTempVar("--brand", e.target.value)}
-                    className="h-12"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="accent">Accent Color</Label>
-                  <Input
-                    id="accent"
-                    type="color"
-                    value={hslToHex(tempTheme.vars["--accent"])}
-                    onChange={(e) => updateTempVar("--accent", e.target.value)}
-                    className="h-12"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="muted">Secondary Text</Label>
-                  <Input
-                    id="muted"
-                    type="color"
-                    value={hslToHex(tempTheme.vars["--muted"])}
-                    onChange={(e) => updateTempVar("--muted", e.target.value)}
-                    className="h-12"
-                  />
-                </div>
-              </div>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="card">Card Background</Label>
-                  <Input
-                    id="card"
-                    type="color"
-                    value={hslToHex(tempTheme.vars["--card"])}
-                    onChange={(e) => updateTempVar("--card", e.target.value)}
-                    className="h-12"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="text">Text Color</Label>
-                  <Input
-                    id="text"
-                    type="color"
-                    value={hslToHex(tempTheme.vars["--text"])}
-                    onChange={(e) => updateTempVar("--text", e.target.value)}
-                    className="h-12"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="ring">Focus Ring</Label>
-                  <Input
-                    id="ring"
-                    type="color"
-                    value={hslToHex(tempTheme.vars["--ring"])}
-                    onChange={(e) => updateTempVar("--ring", e.target.value)}
-                    className="h-12"
-                  />
-                </div>
-              </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="background" className="space-y-6">
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="use-image"
-                  checked={tempTheme.useImage || false}
-                  onCheckedChange={(checked) => {
-                    const newTheme = { ...tempTheme, useImage: checked };
-                    setTempTheme(newTheme);
-                    applyTheme(newTheme);
-                  }}
-                />
-                <Label htmlFor="use-image">Use background image</Label>
-              </div>
-
-              {tempTheme.useImage && (
-                <div>
-                  <Label htmlFor="bg-image">Background Image URL</Label>
-                  <Input
-                    id="bg-image"
-                    type="url"
-                    placeholder="https://example.com/image.jpg"
-                    value={tempTheme.backgroundImage || ""}
-                    onChange={(e) => {
-                      const newTheme = { ...tempTheme, backgroundImage: e.target.value };
-                      setTempTheme(newTheme);
-                      applyTheme(newTheme);
-                    }}
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Tip: Use high-quality images for best results
-                  </p>
-                </div>
-              )}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="hero" className="space-y-6">
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-semibold text-main mb-4">🖼️ Hero Display</h3>
-                <p className="text-muted mb-4">Choose what appears as the main hero image on your office page.</p>
-                
-                <div className="space-y-4">
+            <TabsContent value="hero" className="mt-6">
+              <Card className="card-standard">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-2 text-card-title">
+                    <span>🖼️</span>
+                    Hero Display
+                  </CardTitle>
+                  <p className="text-muted-foreground text-sm">Choose what appears as the main hero image on your office page.</p>
+                </CardHeader>
+                <CardContent className="space-y-6">
                   {/* Hero Type Selection */}
                   <div className="flex gap-4">
                     <button
@@ -710,7 +735,6 @@ export default function Theme() {
                             }
                           }}
                           disabled={!youtubeUrl || !youtubeUrl.includes("youtu")}
-                          className="btn btn-primary"
                         >
                           Save
                         </Button>
@@ -720,10 +744,9 @@ export default function Theme() {
                       </p>
                     </div>
                   )}
-                </div>
-              </div>
-            </div>
-          </TabsContent>
+                </CardContent>
+              </Card>
+            </TabsContent>
 
           <TabsContent value="features" className="space-y-6">
             <div className="space-y-6">
@@ -1292,19 +1315,23 @@ export default function Theme() {
         </Tabs>
 
         {/* Action Buttons */}
-        <div className="flex gap-3">
-          <Button onClick={saveTheme} className="flex-1">
-            <Save className="w-4 h-4 mr-2" />
-            Save Theme
-          </Button>
-          <Button variant="outline" onClick={resetTheme}>
-            <RotateCcw className="w-4 h-4 mr-2" />
-            Reset
-          </Button>
-        </div>
-
-        <div className="text-center text-sm text-muted-foreground">
-          🎨 Your theme changes are applied instantly and saved across all tabs
+        <Card className="card-standard">
+          <CardContent className="pt-6">
+            <div className="flex gap-3">
+              <Button onClick={saveTheme} className="flex-1">
+                <Save className="w-4 h-4 mr-2" />
+                Save Theme
+              </Button>
+              <Button variant="outline" onClick={resetTheme}>
+                <RotateCcw className="w-4 h-4 mr-2" />
+                Reset
+              </Button>
+            </div>
+            <div className="text-center text-sm text-muted-foreground mt-4">
+              🎨 Your theme changes are applied instantly and saved across all tabs
+            </div>
+          </CardContent>
+        </Card>
         </div>
       </div>
     </ToolShell>
