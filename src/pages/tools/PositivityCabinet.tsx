@@ -660,23 +660,37 @@ export default function PositivityCabinet() {
           <TabsContent value="affirmations" className="space-y-6">
             <div className="flex flex-col items-center space-y-6">
               {!hasDrawnToday ? (
-                <div className="text-center space-y-4">
-                  <div className="w-72 h-96 mx-auto perspective-1000">
+                <div className="text-center space-y-6">
+                  <div className="w-80 h-[420px] mx-auto perspective-1000">
                     <div 
                       className={`relative w-full h-full transition-transform duration-1000 transform-style-preserve-3d ${
                         isFlipping ? 'rotate-y-180' : ''
                       }`}
                     >
-                      <Card className="absolute inset-0 w-full h-full backface-hidden bg-white/95 border-4 border-white/80 shadow-[0_8px_30px_rgba(0,0,0,0.12)] backdrop-blur-sm">
-                        <CardContent className="flex items-center justify-center h-full p-6">
+                      <Card className="absolute inset-0 w-full h-full backface-hidden bg-gradient-to-br from-pink-100 via-purple-50 to-blue-100 border-3 border-white/60 shadow-[0_12px_40px_rgba(0,0,0,0.15)] backdrop-blur-sm rounded-3xl overflow-hidden">
+                        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMiIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjMpIi8+CjxjaXJjbGUgY3g9IjEwIiBjeT0iMTAiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4yKSIvPgo8Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIxLjUiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4yNSkiLz4KPC9zdmc+')] opacity-40"></div>
+                        <CardContent className="relative flex items-center justify-center h-full p-8">
                           <div className="text-center">
-                            <Sparkles className="w-16 h-16 text-primary mx-auto mb-4" />
-                            <h3 className="text-xl font-semibold text-foreground mb-2">
+                            <div className="relative mb-6">
+                              <Sparkles className="w-20 h-20 text-purple-400 mx-auto animate-pulse" />
+                              <div className="absolute -top-2 -right-2 w-6 h-6 bg-pink-200 rounded-full flex items-center justify-center">
+                                <span className="text-xs">✨</span>
+                              </div>
+                              <div className="absolute -bottom-1 -left-1 w-4 h-4 bg-blue-200 rounded-full flex items-center justify-center">
+                                <span className="text-xs">💫</span>
+                              </div>
+                            </div>
+                            <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-3">
                               Your Daily Affirmation
                             </h3>
-                            <p className="text-muted-foreground text-sm">
-                              Click to reveal today's inspiration
+                            <p className="text-gray-600 text-sm leading-relaxed">
+                              Ready to discover today's magical inspiration?
                             </p>
+                            <div className="flex justify-center space-x-2 mt-4">
+                              <span className="w-2 h-2 bg-pink-300 rounded-full animate-bounce"></span>
+                              <span className="w-2 h-2 bg-purple-300 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></span>
+                              <span className="w-2 h-2 bg-blue-300 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></span>
+                            </div>
                           </div>
                         </CardContent>
                       </Card>
@@ -687,42 +701,59 @@ export default function PositivityCabinet() {
                     onClick={drawDailyCard}
                     disabled={isFlipping}
                     size="lg"
-                    className="bg-primary hover:bg-primary/90 text-primary-foreground border-2 border-white/40 shadow-lg backdrop-blur-sm"
+                    className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 rounded-2xl px-8 py-4 text-lg font-semibold"
                   >
                     {isFlipping ? (
                       <>
-                        <RotateCw className="w-4 h-4 mr-2 animate-spin" />
-                        Drawing Card...
+                        <RotateCw className="w-5 h-5 mr-3 animate-spin" />
+                        ✨ Drawing Your Magic Card...
                       </>
                     ) : (
                       <>
-                        <Sparkles className="w-4 h-4 mr-2" />
-                        Draw Daily Card
+                        <Sparkles className="w-5 h-5 mr-3" />
+                        🎴 Draw Daily Card
                       </>
                     )}
                   </Button>
                 </div>
               ) : (
                 todaysCard && (
-                  <div className="text-center space-y-4">
-                    <Badge variant="secondary" className="mb-4">
-                      <Calendar className="w-3 h-3 mr-1" />
-                      Today's Card
+                  <div className="text-center space-y-6">
+                    <Badge variant="secondary" className="mb-4 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 border-purple-200 px-4 py-2 rounded-full">
+                      <Calendar className="w-4 h-4 mr-2" />
+                      Today's Magical Card ✨
                     </Badge>
                     
-                    <Card className="w-72 h-96 mx-auto bg-white/95 border-4 border-white/80 shadow-[0_8px_30px_rgba(0,0,0,0.12)] backdrop-blur-sm">
-                      <CardContent className="flex items-center justify-center h-full p-6">
+                    <Card className="w-80 h-[420px] mx-auto bg-gradient-to-br from-yellow-100 via-orange-50 to-pink-100 border-3 border-white/60 shadow-[0_12px_40px_rgba(0,0,0,0.15)] backdrop-blur-sm rounded-3xl overflow-hidden transform hover:scale-[1.02] transition-all duration-300">
+                      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMiIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjMpIi8+CjxjaXJjbGUgY3g9IjEwIiBjeT0iMTAiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4yKSIvPgo8Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIxLjUiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4yNSkiLz4KPC9zdmc+')] opacity-40"></div>
+                      <CardContent className="relative flex items-center justify-center h-full p-8">
                         <div className="text-center">
-                          <Heart className="w-12 h-12 text-primary mx-auto mb-6" />
-                          <blockquote className="text-lg font-medium text-foreground leading-relaxed">
+                          <div className="relative mb-8">
+                            <Heart className="w-16 h-16 text-orange-400 mx-auto animate-pulse" />
+                            <div className="absolute -top-1 -right-1 w-5 h-5 bg-pink-200 rounded-full flex items-center justify-center">
+                              <span className="text-xs">💝</span>
+                            </div>
+                            <div className="absolute -bottom-1 -left-1 w-4 h-4 bg-yellow-200 rounded-full flex items-center justify-center">
+                              <span className="text-xs">⭐</span>
+                            </div>
+                            <div className="absolute top-2 left-2 w-3 h-3 bg-orange-200 rounded-full flex items-center justify-center">
+                              <span className="text-xs">✨</span>
+                            </div>
+                          </div>
+                          <blockquote className="text-xl font-semibold text-gray-700 leading-relaxed px-4">
                             "{todaysCard.text}"
                           </blockquote>
+                          <div className="flex justify-center space-x-1 mt-6">
+                            <span className="w-1.5 h-1.5 bg-orange-300 rounded-full"></span>
+                            <span className="w-1.5 h-1.5 bg-pink-300 rounded-full"></span>
+                            <span className="w-1.5 h-1.5 bg-yellow-300 rounded-full"></span>
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
                     
-                    <p className="text-muted-foreground text-sm">
-                      Come back tomorrow for a new affirmation
+                    <p className="text-muted-foreground text-sm bg-gradient-to-r from-purple-100 to-pink-100 px-4 py-2 rounded-full inline-block">
+                      🌸 Come back tomorrow for new inspiration 🌸
                     </p>
                   </div>
                 )
