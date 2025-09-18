@@ -33,21 +33,50 @@ interface Position {
   y: number;
 }
 
+interface Food extends Position {
+  type: 'red' | 'yellow' | 'green';
+  points: number;
+}
+
 interface SnakeGameProps {
   onExit: () => void;
   onTokenSpent: () => void;
   currentTokens: number;
 }
 
+// Food types with different colors and points
+const FOOD_TYPES = [
+  { type: 'red' as const, points: 10, color: '#ef4444', probability: 0.6 },
+  { type: 'yellow' as const, points: 15, color: '#eab308', probability: 0.3 },
+  { type: 'green' as const, points: 20, color: '#22c55e', probability: 0.1 }
+];
+
 // Generate random food position avoiding snake body
-const generateFood = (snake: Position[]): Position => {
-  let food: Position;
+const generateFood = (snake: Position[]): Food => {
+  let food: Food;
+  
+  // Select food type based on probability
+  const rand = Math.random();
+  let foodType = FOOD_TYPES[0]; // default to red
+  let cumulative = 0;
+  
+  for (const type of FOOD_TYPES) {
+    cumulative += type.probability;
+    if (rand <= cumulative) {
+      foodType = type;
+      break;
+    }
+  }
+  
   do {
     food = {
       x: Math.floor(Math.random() * GRID_SIZE),
-      y: Math.floor(Math.random() * GRID_SIZE)
+      y: Math.floor(Math.random() * GRID_SIZE),
+      type: foodType.type,
+      points: foodType.points
     };
   } while (snake.some(segment => segment.x === food.x && segment.y === food.y));
+  
   return food;
 };
 
@@ -73,12 +102,15 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
   // Game state
   const [gameState, setGameState] = useState<'waiting' | 'playing' | 'paused' | 'gameOver'>('waiting');
   const [snake, setSnake] = useState<Position[]>([{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }]);
-  const [food, setFood] = useState<Position>(() => generateFood([{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }]));
+  const [food, setFood] = useState<Food>(() => generateFood([{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }]));
   const [direction, setDirection] = useState<Direction>(DIRECTIONS.RIGHT);
   const [nextDirection, setNextDirection] = useState<Direction>(DIRECTIONS.RIGHT);
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState(loadHighScore);
   const [tokenSpent, setTokenSpent] = useState(false);
+  const [gameSpeed, setGameSpeed] = useState(GAME_SPEED);
+  const [flashEffect, setFlashEffect] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(true);
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const gameLoopRef = useRef<NodeJS.Timeout>();
@@ -93,6 +125,8 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
     setDirection(DIRECTIONS.RIGHT);
     setNextDirection(DIRECTIONS.RIGHT);
     setScore(0);
+    setGameSpeed(GAME_SPEED);
+    setFlashEffect(false);
     if (gameLoopRef.current) {
       clearInterval(gameLoopRef.current);
     }
@@ -186,8 +220,30 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
       
       // Check food collision
       if (head.x === food.x && head.y === food.y) {
-        console.log('🍎 Food eaten!');
-        setScore(prev => prev + 10);
+        console.log('🍎 Food eaten!', food.type, 'Points:', food.points);
+        
+        // Flash effect
+        setFlashEffect(true);
+        setTimeout(() => setFlashEffect(false), 200);
+        
+        // Play eating sound
+        if (soundEnabled) {
+          playEatingSound();
+        }
+        
+        // Update score and check for speed increase
+        setScore(prev => {
+          const newScore = prev + food.points;
+          
+          // Increase speed every 50 points (every 5 red foods approximately)
+          if (Math.floor(newScore / 50) > Math.floor(prev / 50)) {
+            setGameSpeed(currentSpeed => Math.max(100, currentSpeed - 20));
+            console.log('🚀 Speed increased! New speed:', Math.max(100, gameSpeed - 20));
+          }
+          
+          return newScore;
+        });
+        
         setFood(generateFood(newSnake));
       } else {
         // Remove tail if no food eaten
@@ -197,7 +253,30 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
       console.log('✅ Snake updated, new length:', newSnake.length);
       return newSnake;
     });
-  }, [nextDirection, food]);
+  }, [nextDirection, food, soundEnabled, gameSpeed]);
+
+  // Simple eating sound function
+  const playEatingSound = useCallback(() => {
+    try {
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
+      
+      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.1);
+    } catch (error) {
+      console.log('Audio not supported:', error);
+    }
+  }, []);
 
   // Draw game on canvas
   const draw = useCallback(() => {
@@ -212,11 +291,16 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
     const bgColor = computedStyle.getPropertyValue('--background').trim();
     const borderColor = computedStyle.getPropertyValue('--border').trim();
     const primaryColor = computedStyle.getPropertyValue('--primary').trim();
-    const destructiveColor = computedStyle.getPropertyValue('--destructive').trim();
     
     // Clear canvas with proper background
     ctx.fillStyle = bgColor ? `hsl(${bgColor})` : '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Flash effect
+    if (flashEffect) {
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
     
     // Draw grid
     ctx.strokeStyle = borderColor ? `hsl(${borderColor})` : '#e0e0e0';
@@ -233,12 +317,14 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
       ctx.stroke();
     }
     
-    // Draw snake
+    // Draw snake with different head color
     snake.forEach((segment, index) => {
       if (index === 0) {
+        // Snake head - slightly brighter
         ctx.fillStyle = primaryColor ? `hsl(${primaryColor})` : '#22c55e';
       } else {
-        ctx.fillStyle = primaryColor ? `hsl(${primaryColor} / 0.8)` : '#16a34a';
+        // Snake body - slightly darker
+        ctx.fillStyle = primaryColor ? `hsl(${primaryColor} / 0.7)` : '#16a34a';
       }
       ctx.fillRect(
         segment.x * CELL_SIZE + 1,
@@ -248,15 +334,16 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
       );
     });
     
-    // Draw food
-    ctx.fillStyle = destructiveColor ? `hsl(${destructiveColor})` : '#ef4444';
+    // Draw food with appropriate color
+    const foodTypeConfig = FOOD_TYPES.find(type => type.type === food.type);
+    ctx.fillStyle = foodTypeConfig?.color || '#ef4444';
     ctx.fillRect(
       food.x * CELL_SIZE + 1,
       food.y * CELL_SIZE + 1,
       CELL_SIZE - 2,
       CELL_SIZE - 2
     );
-  }, [snake, food]);
+  }, [snake, food, flashEffect]);
 
   // Keyboard controls
   useEffect(() => {
@@ -301,10 +388,10 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
 
   // Game loop effect
   useEffect(() => {
-    console.log('🔄 Game loop effect triggered', { gameState });
+    console.log('🔄 Game loop effect triggered', { gameState, gameSpeed });
     if (gameState === 'playing') {
-      console.log('▶️ Starting game loop interval');
-      gameLoopRef.current = setInterval(moveSnake, GAME_SPEED);
+      console.log('▶️ Starting game loop interval at speed:', gameSpeed);
+      gameLoopRef.current = setInterval(moveSnake, gameSpeed);
     } else {
       console.log('⏹️ Stopping game loop interval');
       if (gameLoopRef.current) {
@@ -317,7 +404,7 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
         clearInterval(gameLoopRef.current);
       }
     };
-  }, [gameState, moveSnake]);
+  }, [gameState, moveSnake, gameSpeed]);
 
   // Drawing effect
   useEffect(() => {
@@ -467,8 +554,22 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
                   <span className="font-bold">{snake.length}</span>
                 </div>
                 <div className="flex justify-between">
+                  <span className="text-muted-foreground">Speed:</span>
+                  <span className="font-bold">{Math.round((GAME_SPEED / gameSpeed) * 100)}%</span>
+                </div>
+                <div className="flex justify-between">
                   <span className="text-muted-foreground">Tokens:</span>
                   <span className="font-bold">{currentTokens}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Sound:</span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSoundEnabled(!soundEnabled)}
+                  >
+                    {soundEnabled ? '🔊' : '🔇'}
+                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -534,9 +635,12 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
               </CardHeader>
               <CardContent className="text-sm space-y-2 text-muted-foreground">
                 <p>• Arrow keys or WASD to move</p>
-                <p>• Eat red food to grow and score</p>
-                <p>• Avoid walls and your tail</p>
                 <p>• Spacebar to pause/start</p>
+                <p>• Eat food to grow and score:</p>
+                <p className="ml-4">🔴 Red = 10 points</p>
+                <p className="ml-4">🟡 Yellow = 15 points</p>
+                <p className="ml-4">🟢 Green = 20 points</p>
+                <p>• Speed increases every 50 points</p>
                 <p>• Touch buttons for mobile</p>
                 <p>• Costs 15 tokens per game</p>
               </CardContent>
