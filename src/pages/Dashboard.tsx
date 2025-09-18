@@ -14,6 +14,7 @@ import { readPetStage, readEarnedAnimals } from "@/lib/topbarState";
 import { readTodayIntention } from "@/lib/dailyFlow";
 import { onChanged } from "@/lib/bus";
 import { FeatureErrorBoundary } from "@/components/ErrorBoundary";
+import { TodaysRewards } from "@/components/TodaysRewards";
 import { Sparkles, Heart, Calendar } from "lucide-react";
 import useDailyFlow from "@/hooks/useDailyFlow";
 import { BigThreeCard } from "@/components/dashboard/BigThreeCard";
@@ -298,6 +299,13 @@ const Dashboard = () => {
             <div className="dashboard-card">
               <CelebrationNotesCard />
             </div>
+          </FeatureErrorBoundary>
+        </section>
+
+        {/* Today's Rewards */}
+        <section className="dashboard-section">
+          <FeatureErrorBoundary featureName="Today's Rewards">
+            <TodaysRewards />
           </FeatureErrorBoundary>
         </section>
 
