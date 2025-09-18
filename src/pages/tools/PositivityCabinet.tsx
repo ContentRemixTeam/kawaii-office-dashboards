@@ -445,14 +445,14 @@ export default function PositivityCabinet() {
 
         {/* Tabs with Enhanced Readability */}
         <Tabs defaultValue={defaultTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-7 bg-secondary">
-            <TabsTrigger value="wins" className="text-primary font-medium">🏆 Micro Wins</TabsTrigger>
-            <TabsTrigger value="gratitude" className="text-primary font-medium">🙏 Gratitude</TabsTrigger>
-            <TabsTrigger value="affirmations" className="text-primary font-medium">🃏 Affirmations</TabsTrigger>
-            <TabsTrigger value="energy" className="text-primary font-medium">⚡ Energy Word</TabsTrigger>
-            <TabsTrigger value="future" className="text-primary font-medium">💌 Future Notes</TabsTrigger>
-            <TabsTrigger value="cabinet" className="text-primary font-medium">📦 Encouragements</TabsTrigger>
-            <TabsTrigger value="vision" className="text-primary font-medium">🎯 Vision</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-7 bg-secondary ensure-contrast">
+            <TabsTrigger value="wins" className="ensure-contrast data-[state=active]:text-brand-readable data-[state=active]:bg-primary font-medium">🏆 Micro Wins</TabsTrigger>
+            <TabsTrigger value="gratitude" className="ensure-contrast data-[state=active]:text-brand-readable data-[state=active]:bg-primary font-medium">🙏 Gratitude</TabsTrigger>
+            <TabsTrigger value="affirmations" className="ensure-contrast data-[state=active]:text-brand-readable data-[state=active]:bg-primary font-medium">🃏 Affirmations</TabsTrigger>
+            <TabsTrigger value="energy" className="ensure-contrast data-[state=active]:text-brand-readable data-[state=active]:bg-primary font-medium">⚡ Energy Word</TabsTrigger>
+            <TabsTrigger value="future" className="ensure-contrast data-[state=active]:text-brand-readable data-[state=active]:bg-primary font-medium">💌 Future Notes</TabsTrigger>
+            <TabsTrigger value="cabinet" className="ensure-contrast data-[state=active]:text-brand-readable data-[state=active]:bg-primary font-medium">📦 Encouragements</TabsTrigger>
+            <TabsTrigger value="vision" className="ensure-contrast data-[state=active]:text-brand-readable data-[state=active]:bg-primary font-medium">🎯 Vision</TabsTrigger>
           </TabsList>
 
           {/* Micro Wins Tab */}

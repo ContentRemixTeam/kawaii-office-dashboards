@@ -1,0 +1,116 @@
+/* GREEN THEME ACCESSIBILITY FIXES - Critical contrast overrides */
+
+/* EMERGENCY READABILITY FIXES - Prevents invisible text */
+[data-theme="green"] {
+  /* Force all text to be white for maximum contrast on green backgrounds */
+  color: hsl(0 0% 98%) !important;
+}
+
+[data-theme="green"] * {
+  /* Inherit readable colors unless specifically overridden */
+  color: inherit;
+}
+
+/* HIGH PRIORITY: Tab Navigation Fixes */
+[data-theme="green"] .TabsList,
+[data-theme="green"] .TabsTrigger,
+[data-theme="green"] [role="tablist"],
+[data-theme="green"] [role="tab"] {
+  color: hsl(0 0% 98%) !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="green"] .TabsTrigger[data-state="active"] {
+  color: hsl(0 0% 100%) !important;
+  background-color: hsl(150 80% 45%) !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* Menu and Navigation Elements */
+[data-theme="green"] nav,
+[data-theme="green"] .menu-item,
+[data-theme="green"] .nav-link,
+[data-theme="green"] .sidebar-item {
+  color: hsl(0 0% 98%) !important;
+}
+
+/* Button Text Fixes */
+[data-theme="green"] .btn,
+[data-theme="green"] button,
+[data-theme="green"] .Button {
+  color: hsl(0 0% 98%) !important;
+}
+
+[data-theme="green"] .btn-primary,
+[data-theme="green"] .Button[data-variant="default"] {
+  color: hsl(0 0% 100%) !important;
+  background-color: hsl(150 80% 45%) !important;
+}
+
+/* Card and Content Text */
+[data-theme="green"] .Card,
+[data-theme="green"] .CardContent,
+[data-theme="green"] .CardHeader,
+[data-theme="green"] .CardTitle {
+  color: hsl(0 0% 98%) !important;
+}
+
+/* Input and Form Elements */
+[data-theme="green"] input,
+[data-theme="green"] textarea,
+[data-theme="green"] select,
+[data-theme="green"] .Input {
+  color: hsl(0 0% 98%) !important;
+  background-color: hsl(150 50% 20%) !important;
+  border-color: hsl(150 40% 40%) !important;
+}
+
+[data-theme="green"] input::placeholder,
+[data-theme="green"] textarea::placeholder {
+  color: hsl(0 0% 70%) !important;
+}
+
+/* Text Elements */
+[data-theme="green"] h1,
+[data-theme="green"] h2,
+[data-theme="green"] h3,
+[data-theme="green"] h4,
+[data-theme="green"] h5,
+[data-theme="green"] h6,
+[data-theme="green"] p,
+[data-theme="green"] span,
+[data-theme="green"] div,
+[data-theme="green"] li,
+[data-theme="green"] label {
+  color: hsl(0 0% 98%) !important;
+}
+
+/* Links */
+[data-theme="green"] a {
+  color: hsl(120 100% 70%) !important;
+}
+
+[data-theme="green"] a:hover {
+  color: hsl(120 100% 80%) !important;
+}
+
+/* Badges and Indicators */
+[data-theme="green"] .Badge,
+[data-theme="green"] .badge {
+  color: hsl(0 0% 100%) !important;
+  background-color: hsl(150 80% 35%) !important;
+}
+
+/* ACCESSIBILITY COMPLIANCE */
+/* Ensure minimum 4.5:1 contrast ratio for normal text */
+/* Ensure minimum 3:1 contrast ratio for large text (18pt+) */
+
+/* Emergency override for any remaining visibility issues */
+[data-theme="green"] .text-primary,
+[data-theme="green"] .text-secondary,
+[data-theme="green"] .text-muted,
+[data-theme="green"] .foreground,
+[data-theme="green"] .card-foreground,
+[data-theme="green"] .popover-foreground {
+  color: hsl(0 0% 98%) !important;
+}

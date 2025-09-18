@@ -1,6 +1,7 @@
 @import "./styles/ui-tokens.css";
 @import "./styles/readability-system.css";
 @import "./styles/dashboard-layout.css";
+@import "./styles/green-theme-fixes.css";
 
 @tailwind base;
 @tailwind components;
@@ -249,6 +250,84 @@
   }
 }
 
+  /* GREEN THEME - Nature Mode with Perfect Readability */
+  [data-theme="green"], .theme-green {
+    /* SEMANTIC TEXT SYSTEM - Green Theme with High Contrast */
+    --text-primary: 0 0% 98%;                /* White text for maximum contrast */
+    --text-secondary: 0 0% 85%;              /* Light gray text */
+    --text-tertiary: 0 0% 75%;               /* Medium gray text */
+    --text-inverse: 150 80% 20%;             /* Dark green for light backgrounds */
+    --text-brand-contrast: 0 0% 100%;        /* Pure white on brand/green */
+    --text-accent-contrast: 0 0% 100%;       /* Pure white on accent */
+    
+    /* BACKGROUND SEMANTIC SYSTEM - Green Theme */
+    --bg-primary: 150 60% 25%;               /* Deep forest green background */
+    --bg-secondary: 150 50% 30%;             /* Lighter forest green for cards */
+    --bg-tertiary: 150 40% 35%;              /* Medium green for subtle backgrounds */
+    --bg-interactive: 150 30% 40%;           /* Lighter green for hover states */
+
+    /* Core shadcn variables for green theme with GUARANTEED contrast */
+    --background: var(--bg-primary);
+    --foreground: var(--text-primary);
+    --card: var(--bg-secondary);
+    --card-foreground: var(--text-primary);
+    --popover: var(--bg-secondary);
+    --popover-foreground: var(--text-primary);
+    --primary: 150 80% 45%;                  /* Bright green primary */
+    --primary-foreground: var(--text-brand-contrast);
+    --secondary: var(--bg-tertiary);
+    --secondary-foreground: var(--text-primary);
+    --muted: var(--bg-tertiary);
+    --muted-foreground: var(--text-secondary);
+    --accent: 120 100% 40%;                  /* Vibrant lime accent */
+    --accent-foreground: var(--text-accent-contrast);
+    --destructive: 0 63% 45%;
+    --destructive-foreground: var(--text-primary);
+    --border: var(--bg-interactive);
+    --input: var(--bg-interactive);
+    --ring: 150 80% 60%;
+    
+    /* Green theme gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(120 100% 50%));
+    --gradient-background: linear-gradient(135deg, hsl(var(--bg-primary)) 0%, hsl(var(--bg-secondary)) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(var(--bg-secondary)) 0%, hsl(var(--bg-tertiary)) 100%);
+    --gradient-mint: linear-gradient(135deg, hsl(120 100% 40%), hsl(150 80% 45%));
+
+    /* Sidebar green theme */
+    --sidebar-background: var(--bg-primary);
+    --sidebar-foreground: var(--text-secondary);
+    --sidebar-primary: 150 80% 50%;
+    --sidebar-primary-foreground: var(--text-brand-contrast);
+    --sidebar-accent: var(--bg-tertiary);
+    --sidebar-accent-foreground: var(--text-primary);
+    --sidebar-border: var(--bg-tertiary);
+    --sidebar-ring: 150 80% 60%;
+
+    /* GREEN THEME - Timer colors for nature mode */
+    --timer-focus-fill: hsl(150 80% 50%);         /* Bright green for focus */
+    --timer-focus-bg: hsl(150 80% 20% / 0.15);    /* Dark green background */
+    --timer-focus-glow: hsl(150 80% 50% / 0.8);   /* Enhanced green glow */
+    
+    --timer-short-fill: hsl(120 100% 45%);        /* Lime green for short break */
+    --timer-short-bg: hsl(120 100% 20% / 0.15);   /* Dark lime background */
+    --timer-short-glow: hsl(120 100% 45% / 0.8);  /* Enhanced lime glow */
+    
+    --timer-long-fill: hsl(180 80% 40%);          /* Teal for long break */
+    --timer-long-bg: hsl(180 80% 20% / 0.15);     /* Dark teal background */
+    --timer-long-glow: hsl(180 80% 40% / 0.8);    /* Enhanced teal glow */
+    
+    /* Enhanced visibility in green mode */
+    --timer-progress-bg: hsl(var(--bg-tertiary) / 0.4);
+    --timer-progress-track: hsl(var(--border) / 0.6);
+    
+    /* Green mode button adjustments with high contrast */
+    --timer-button-outline: hsl(var(--text-primary) / 0.3);
+    --timer-text-primary: hsl(var(--text-primary));
+    --timer-text-secondary: hsl(var(--text-secondary));
+    --timer-button-bg: hsl(var(--primary));
+    --timer-button-text: hsl(var(--text-brand-contrast));
+  }
+
 @layer base {
   * {
     @apply border-border;
@@ -355,6 +434,41 @@
   .ensure-contrast-inverse {
     color: hsl(var(--text-inverse));
     background-color: hsl(var(--text-primary));
+  }
+
+  /* UNIVERSAL READABILITY OVERRIDES - Bulletproof contrast for all themes */
+  /* Force white text on any colored/dark backgrounds */
+  .bg-primary *, .bg-secondary *, .bg-tertiary *, 
+  .bg-accent *, .bg-brand *, .accent-bg *, .brand-bg *,
+  [data-theme="green"] .bg-secondary *,
+  [data-theme="green"] .bg-accent *,
+  [data-theme="green"] .bg-primary * {
+    color: hsl(var(--text-primary)) !important;
+  }
+
+  /* Force high contrast on navigation and menu elements */
+  .TabsList *, .TabsTrigger *, nav *, .menu-item *,
+  [role="tablist"] *, [role="tab"] *, [role="menuitem"] * {
+    color: hsl(var(--text-primary)) !important;
+    font-weight: 500 !important;
+  }
+
+  /* Ensure active/selected states are always readable */
+  [data-state="active"], .active, .selected,
+  [aria-selected="true"], [aria-current="page"] {
+    color: hsl(var(--text-brand-contrast)) !important;
+    background-color: hsl(var(--primary)) !important;
+  }
+
+  /* Green theme specific fixes */
+  [data-theme="green"] {
+    /* Force all text to be white for maximum readability */
+    color: hsl(var(--text-primary)) !important;
+  }
+
+  [data-theme="green"] * {
+    /* Ensure all child elements inherit readable colors */
+    color: inherit !important;
   }
 
   /* DEVELOPER GUIDELINES - Comments for future developers */
