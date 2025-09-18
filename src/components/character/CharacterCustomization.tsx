@@ -333,7 +333,7 @@ export default function CharacterCustomization({ onBack }: CharacterCustomizatio
                     </TabsTrigger>
                     <TabsTrigger value="accessories" className="data-[state=active]:bg-white data-[state=active]:text-purple-700 data-[state=active]:border data-[state=active]:border-purple-200 text-gray-700 font-semibold rounded-xl transition-all duration-300">
                       <Shirt className="w-4 h-4 mr-2" />
-                      Accessories
+                      My Closet
                     </TabsTrigger>
                     <TabsTrigger value="positioning" className="data-[state=active]:bg-white data-[state=active]:text-purple-700 data-[state=active]:border data-[state=active]:border-purple-200 text-gray-700 font-semibold rounded-xl transition-all duration-300">
                       <Settings className="w-4 h-4 mr-2" />
