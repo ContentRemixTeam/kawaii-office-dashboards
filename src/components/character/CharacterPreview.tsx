@@ -55,9 +55,14 @@ export default function CharacterPreview({
         const accessory = getAssetById(equipped.assetId);
         if (!accessory) return null;
 
-        const scale = showBackground ? 0.8 * equipped.position.scale : equipped.position.scale;
-        const x = showBackground ? equipped.position.x * 0.8 : equipped.position.x;
-        const y = showBackground ? equipped.position.y * 0.8 : equipped.position.y;
+        // Improved positioning to match bee test page
+        const containerScale = showBackground ? 0.8 : 1.0;
+        const baseScale = equipped.position.scale * containerScale;
+        
+        // Better position scaling that maintains proportions
+        const sizeMultiplier = dimensions.width / 200; // Base size is 200px
+        const adjustedX = equipped.position.x * sizeMultiplier * containerScale;
+        const adjustedY = equipped.position.y * sizeMultiplier * containerScale;
 
         return (
           <img
@@ -66,7 +71,7 @@ export default function CharacterPreview({
             alt={accessory.name}
             className="absolute inset-0 w-full h-full object-contain pointer-events-none z-20"
             style={{
-              transform: `translate(${x}px, ${y}px) scale(${scale}) rotate(${equipped.position.rotation || 0}deg)`,
+              transform: `translate(${adjustedX}px, ${adjustedY}px) scale(${baseScale}) rotate(${equipped.position.rotation || 0}deg)`,
               opacity: equipped.position.opacity || 1
             }}
           />

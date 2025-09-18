@@ -36,14 +36,14 @@ export const DEFAULT_ASSETS: CharacterAsset[] = [
     price: 100,
     currency: 'coins',
     rarity: 'common',
-    defaultPosition: { x: 0, y: -40, scale: 1.0, rotation: 0, opacity: 1 }
+    defaultPosition: { x: 0, y: -30, scale: 1.0, rotation: 0, opacity: 1 }
   }
 ];
 
 // Default accessory positions for different categories
 export const DEFAULT_POSITIONS: Record<string, AccessoryPosition> = {
   glasses: { x: 0, y: -5, scale: 0.85, rotation: 0, opacity: 1 },
-  hats: { x: 0, y: -40, scale: 1.0, rotation: 0, opacity: 1 },
+  hats: { x: 0, y: -30, scale: 1.0, rotation: 0, opacity: 1 },
   clothing: { x: 0, y: 10, scale: 1.0, rotation: 0, opacity: 1 },
   pets: { x: 30, y: 20, scale: 0.6, rotation: 0, opacity: 1 }
 };
