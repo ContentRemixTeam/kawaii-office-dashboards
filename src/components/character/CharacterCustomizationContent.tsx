@@ -142,17 +142,13 @@ export default function CharacterCustomizationContent({
                         }`}
                       >
                         <div className="w-full h-full bg-white/90 rounded-xl p-4 flex flex-col items-center justify-center border border-blue-200/50">
-                          <div className="w-28 h-28 mx-auto mb-3 relative">{/* Even bigger for glasses */}
+                          <div className="w-full h-full flex items-center justify-center">{/* Fill the entire card */}
                             <img 
                               src={asset.filepath.startsWith('data:') ? asset.filepath : `${asset.filepath}?v=${Date.now()}`}
                               alt={asset.name}
-                              className="w-full h-full object-contain"
+                              className="w-3/4 h-3/4 object-contain"
                             />
                           </div>
-                          <div className="text-sm font-bold text-gray-800 mb-1 truncate">{asset.name}</div>
-                          <Badge className={`text-xs ${getRarityColor(asset.rarity)}`}>
-                            {asset.rarity}
-                          </Badge>
                         </div>
                       </button>
                       
