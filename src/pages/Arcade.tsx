@@ -151,22 +151,15 @@ export default function Arcade() {
       <div className="relative z-10 px-4 py-8 max-w-7xl mx-auto">
         {/* Premium Hero Section */}
         <div className="text-center mb-12 relative">
-          {/* Back button and Quest Mode link */}
-          <div className="absolute left-0 top-0 flex gap-3">
+          {/* Back button */}
+          <div className="absolute left-0 top-0">
             <Button 
               onClick={() => navigate('/dashboard')} 
               variant="outline"
               className="backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all duration-300"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Dashboard
-            </Button>
-            <Button 
-              onClick={() => navigate('/quest')} 
-              variant="outline"
-              className="backdrop-blur-sm border-purple-500/30 hover:border-purple-400/50 text-purple-200 hover:text-purple-100 transition-all duration-300"
-            >
-              🗡️ Quest Mode
+              Back to Dashboard
             </Button>
           </div>
 

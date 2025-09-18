@@ -170,14 +170,14 @@ export default function QuestSystem({ character, onQuestComplete }: QuestSystemP
   const [selectedTab, setSelectedTab] = useState<'active' | 'completed'>('active');
 
   useEffect(() => {
-    // Load or generate quests
+    // Load or generate quests - completely separate from arcade system
     const savedQuests = localStorage.getItem('quest_active_quests');
     const savedCompleted = localStorage.getItem('quest_completed_quests');
     
     if (savedQuests) {
       setActiveQuests(JSON.parse(savedQuests));
     } else {
-      // Generate initial quest set
+      // Generate initial quest set - independent RPG progression
       const dailyQuests = generateDailyQuests();
       const weeklyQuests = generateWeeklyQuests();
       const epicQuests = generateEpicQuests();

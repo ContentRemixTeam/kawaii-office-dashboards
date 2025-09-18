@@ -7,6 +7,7 @@ import CharacterDisplay from '@/components/quest/CharacterDisplay';
 import QuestSystem from '@/components/quest/QuestSystem';
 
 const QUEST_CHARACTER_KEY = 'quest_character_v1';
+const QUEST_STORAGE_PREFIX = 'quest_mode_';
 
 export default function QuestMode() {
   const navigate = useNavigate();
@@ -69,9 +70,12 @@ export default function QuestMode() {
   };
 
   const handleResetCharacter = () => {
+    // Clear all quest mode data - completely separate from arcade
     localStorage.removeItem(QUEST_CHARACTER_KEY);
     localStorage.removeItem('quest_active_quests');
     localStorage.removeItem('quest_completed_quests');
+    localStorage.removeItem('quest_daily_progress');
+    localStorage.removeItem('quest_weekly_progress');
     setCharacter(null);
   };
 
