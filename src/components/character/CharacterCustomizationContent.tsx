@@ -55,7 +55,7 @@ export default function CharacterCustomizationContent({
   return (
     <>
       {/* Character Tab */}
-      <TabsContent value="character" className="p-8 space-y-8 bg-white/20 backdrop-blur-md rounded-2xl border border-white/30 shadow-sm">
+      <TabsContent value="character" className="p-8 space-y-8 bg-white rounded-2xl border-2 border-purple-200 shadow-sm">
         <div className="space-y-6">
           <div>
             <Label htmlFor="character-name" className="text-gray-800 font-semibold">Character Name</Label>
@@ -64,7 +64,7 @@ export default function CharacterCustomizationContent({
               value={character.name}
               onChange={(e) => updateCharacterName(e.target.value)}
               placeholder="Enter character name"
-              className="max-w-md bg-white/20 backdrop-blur-sm border-white/30 rounded-xl text-gray-800 font-medium"
+              className="max-w-md bg-white border-2 border-purple-200 rounded-xl text-gray-800 font-medium"
             />
           </div>
 
@@ -78,10 +78,10 @@ export default function CharacterCustomizationContent({
                   disabled={!isUnlocked(asset.id)}
                   className={`p-6 rounded-2xl border-2 transition-all duration-300 ${
                     character.baseAsset === asset.id
-                      ? 'border-purple-200/30 bg-gradient-to-br from-purple-50/20 to-pink-50/20 shadow-sm scale-105'
+                      ? 'border-purple-400 bg-white shadow-md scale-105'
                       : isUnlocked(asset.id)
-                      ? 'border-white/20 bg-white/15 hover:border-purple-100/30 hover:shadow-sm hover:scale-102'
-                      : 'border-gray-200/20 bg-gray-50/15 opacity-50 cursor-not-allowed'
+                      ? 'border-purple-200 bg-white hover:border-purple-300 hover:shadow-sm hover:scale-102'
+                      : 'border-gray-200 bg-gray-50 opacity-50 cursor-not-allowed'
                   }`}
                 >
                   <div className="w-20 h-20 mx-auto mb-2 relative">
@@ -105,7 +105,7 @@ export default function CharacterCustomizationContent({
       </TabsContent>
 
       {/* Accessories Tab */}
-      <TabsContent value="accessories" className="p-8 space-y-8 bg-white/20 backdrop-blur-md rounded-2xl border border-white/30 shadow-sm">
+      <TabsContent value="accessories" className="p-8 space-y-8 bg-white rounded-2xl border-2 border-purple-200 shadow-sm">
         <div>
           <h3 className="text-xl font-bold text-gray-800 mb-4">Available Accessories</h3>
           
@@ -139,8 +139,8 @@ export default function CharacterCustomizationContent({
                         }}
                         className={`w-full p-6 rounded-2xl border-2 transition-all duration-300 ${
                           isAccessoryEquipped(asset.id)
-                            ? 'border-purple-200/30 bg-gradient-to-br from-purple-50/20 to-pink-50/20 shadow-sm scale-105'
-                            : 'border-white/20 bg-white/15 hover:border-purple-100/30 hover:shadow-sm hover:scale-102 group-hover:shadow-sm'
+                            ? 'border-purple-400 bg-white shadow-md scale-105'
+                            : 'border-purple-200 bg-white hover:border-purple-300 hover:shadow-sm hover:scale-102'
                         }`}
                       >
                         <div className="w-24 h-24 mx-auto mb-2 relative">
@@ -182,7 +182,7 @@ export default function CharacterCustomizationContent({
       </TabsContent>
 
       {/* Positioning Tab */}
-      <TabsContent value="positioning" className="p-8 space-y-8 bg-white/20 backdrop-blur-md rounded-2xl border border-white/30 shadow-sm">
+      <TabsContent value="positioning" className="p-8 space-y-8 bg-white rounded-2xl border-2 border-purple-200 shadow-sm">
         {selectedAccessory ? (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div>
@@ -203,7 +203,7 @@ export default function CharacterCustomizationContent({
             </div>
           </div>
         ) : (
-          <div className="text-center py-12 bg-gradient-to-br from-purple-50/30 to-pink-50/30 rounded-2xl backdrop-blur-sm border border-white/20">
+          <div className="text-center py-12 bg-white rounded-2xl border-2 border-purple-200">
             <p className="text-gray-700 mb-4 font-medium">Select an equipped accessory from the Accessories tab to position it</p>
             <Button 
               onClick={() => onAccessorySelect(character.equippedAccessories[0] || null)}
@@ -216,7 +216,7 @@ export default function CharacterCustomizationContent({
       </TabsContent>
 
       {/* Shop Tab */}
-      <TabsContent value="shop" className="p-8 space-y-8 bg-white/20 backdrop-blur-md rounded-2xl border border-white/30 shadow-sm">
+      <TabsContent value="shop" className="p-8 space-y-8 bg-white rounded-2xl border-2 border-purple-200 shadow-sm">
         <div>
           <h3 className="text-xl font-bold text-gray-800 mb-4">Asset Shop</h3>
           
@@ -267,12 +267,12 @@ export default function CharacterCustomizationContent({
       </TabsContent>
 
       {/* Upload Tab */}
-      <TabsContent value="upload" className="p-8 bg-white/20 backdrop-blur-md rounded-2xl border border-white/30 shadow-sm">
+      <TabsContent value="upload" className="p-8 bg-white rounded-2xl border-2 border-purple-200 shadow-sm">
         <AssetUploader onAssetAdded={onAssetsRefresh} />
       </TabsContent>
 
       {/* Rewards Tab */}
-      <TabsContent value="rewards" className="p-8 bg-white/20 backdrop-blur-md rounded-2xl border border-white/30 shadow-sm">
+      <TabsContent value="rewards" className="p-8 bg-white rounded-2xl border-2 border-purple-200 shadow-sm">
         <ProductivityRewards 
           onCoinsEarned={onCoinsEarned}
           onSpecialCurrencyEarned={onSpecialCurrencyEarned}
