@@ -21,7 +21,10 @@ import {
   Gift,
   MessageCircle,
   Trophy,
-  Target
+  Target,
+  Upload,
+  Link2,
+  X
 } from "lucide-react";
 import ToolShell from "@/components/ToolShell";
 import OfficeHero from "@/components/OfficeHero";
@@ -33,6 +36,8 @@ import { getDailyData, setDailyData } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 import { emitChanged } from "@/lib/bus";
 import { K_AFFIRM, K_ENERGY } from "@/lib/topbar.readers";
+import { useState, useEffect, useRef } from "react";
+import VisionBoardSection from "@/components/VisionBoardSection";
 
 // Affirmations data
 const AFFIRMATIONS = [
@@ -989,75 +994,9 @@ export default function PositivityCabinet() {
                 </TabsContent>
               ))}
           
-          <TabsContent value="vision" className="space-y-6">
-            <FeatureErrorBoundary featureName="Vision Board">
-              <Card className="p-6 bg-gradient-to-br from-card to-card/50 border-primary/20">
-                <CardHeader className="text-center pb-4">
-                  <CardTitle className="flex items-center justify-center gap-2 text-primary">
-                    <Target className="w-6 h-6" />
-                    🎯 Hold the Vision
-                  </CardTitle>
-                  <CardDescription>
-                    Your vision board for manifesting your dreams
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="relative aspect-video rounded-xl overflow-hidden bg-muted/20 mb-4">
-                    <OfficeHero
-                      hotspots={HOTSPOTS}
-                      fallbackSrc={OFFICE_IMAGE_SRC}
-                      alt={OFFICE_ALT}
-                      aspectRatio={16/9}
-                    />
-                    <VisionPreviewOverlay boardBox={boardHotspot} />
-                  </div>
-                  <Button
-                    onClick={() => navigate('/tools/vision')}
-                    className="w-full"
-                    variant="outline"
-                  >
-                    Open Full Vision Board
-                  </Button>
-                </CardContent>
-              </Card>
-            </FeatureErrorBoundary>
-          </TabsContent>
-        </Tabs>
-          </TabsContent>
-          
           {/* Vision Board Tab */}
           <TabsContent value="vision" className="space-y-6">
-            <FeatureErrorBoundary featureName="Vision Board">
-              <Card className="p-6 bg-gradient-to-br from-card to-card/50 border-primary/20">
-                <CardHeader className="text-center pb-4">
-                  <CardTitle className="flex items-center justify-center gap-2 text-primary">
-                    <Target className="w-6 h-6" />
-                    🎯 Hold the Vision
-                  </CardTitle>
-                  <CardDescription>
-                    Your vision board for manifesting your dreams
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="relative aspect-video rounded-xl overflow-hidden bg-muted/20 mb-4">
-                    <OfficeHero
-                      hotspots={HOTSPOTS}
-                      fallbackSrc={OFFICE_IMAGE_SRC}
-                      alt={OFFICE_ALT}
-                      aspectRatio={16/9}
-                    />
-                    <VisionPreviewOverlay boardBox={boardHotspot} />
-                  </div>
-                  <Button
-                    onClick={() => navigate('/tools/vision')}
-                    className="w-full"
-                    variant="outline"
-                  >
-                    Open Full Vision Board
-                  </Button>
-                </CardContent>
-              </Card>
-            </FeatureErrorBoundary>
+            <VisionBoardSection />
           </TabsContent>
         </Tabs>
       </div>
