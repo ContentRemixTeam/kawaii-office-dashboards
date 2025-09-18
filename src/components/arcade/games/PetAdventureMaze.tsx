@@ -18,8 +18,8 @@ import {
 
 // Game configuration
 const MAZE_SIZE = 15;
-const CELL_SIZE = 28; // Increased for better visibility
-const GAME_SPEED = 300; // Slower for better control
+const CELL_SIZE = 32; // Even bigger for better visibility
+const GAME_SPEED = 300;
 
 // Directions
 const DIRECTIONS = {
@@ -283,10 +283,12 @@ export default function PetAdventureMaze({ onExit, onTokenSpent, currentTokens }
         });
       });
       
-      // Check collisions with treats
+      // Check collisions with treats - fix the visual bug
+      let treatCollected = false;
       setTreats(currentTreats => {
         return currentTreats.map(treat => {
           if (!treat.collected && treat.x === playerPos.x && treat.y === playerPos.y) {
+            treatCollected = true;
             if (treat.type === 'power') {
               setScore(prev => prev + 50);
               setInvulnerable(true);
@@ -421,31 +423,43 @@ export default function PetAdventureMaze({ onExit, onTokenSpent, currentTokens }
         }
       }
       
-      // Draw treats
-      ctx.font = `${CELL_SIZE - 4}px Arial`;
+      // Draw treats - ensure proper rendering
+      ctx.font = `${Math.floor(CELL_SIZE * 0.7)}px Arial`;
       ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      
       treats.forEach(treat => {
         if (!treat.collected) {
+          // Clear the cell first to prevent ghosting
+          ctx.fillStyle = '#f0f9ff';
+          ctx.fillRect(treat.x * CELL_SIZE, treat.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+          
+          // Draw the treat
           ctx.fillText(
             treat.type === 'power' ? petConfig.powerTreat : petConfig.treat,
             treat.x * CELL_SIZE + CELL_SIZE / 2,
-            treat.y * CELL_SIZE + CELL_SIZE - 4
+            treat.y * CELL_SIZE + CELL_SIZE / 2
           );
+        } else {
+          // Clear collected treat area completely
+          ctx.fillStyle = '#f0f9ff';
+          ctx.fillRect(treat.x * CELL_SIZE, treat.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
         }
       });
       
-      // Draw enemies
+      // Draw enemies with better positioning
       enemies.forEach(enemy => {
         ctx.fillText(
           '👻',
           enemy.x * CELL_SIZE + CELL_SIZE / 2,
-          enemy.y * CELL_SIZE + CELL_SIZE - 4
+          enemy.y * CELL_SIZE + CELL_SIZE / 2
         );
       });
       
-      // Draw player
-      ctx.fillStyle = invulnerable ? 'rgba(255, 255, 255, 0.7)' : 'white';
+      // Draw player with better positioning and effects
       if (invulnerable) {
+        // Invulnerability flash effect
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
         ctx.fillRect(
           playerPos.x * CELL_SIZE + 2,
           playerPos.y * CELL_SIZE + 2,
@@ -453,10 +467,11 @@ export default function PetAdventureMaze({ onExit, onTokenSpent, currentTokens }
           CELL_SIZE - 4
         );
       }
+      
       ctx.fillText(
         petConfig.emoji,
         playerPos.x * CELL_SIZE + CELL_SIZE / 2,
-        playerPos.y * CELL_SIZE + CELL_SIZE - 4
+        playerPos.y * CELL_SIZE + CELL_SIZE / 2
       );
     } catch (error) {
       console.error('Draw error:', error);
