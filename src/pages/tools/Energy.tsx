@@ -31,7 +31,7 @@ const WordBadge = ({ word, isSelected }: { word: string; isSelected: boolean }) 
     px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer
     ${isSelected 
       ? 'bg-primary text-primary-foreground scale-105 shadow-glow' 
-      : 'bg-muted text-card-foreground hover:bg-accent hover:text-accent-foreground hover:scale-105'
+      : 'bg-primary/80 text-white hover:bg-primary hover:scale-105 shadow-md'
     }
   `}>
     {word}
@@ -146,23 +146,6 @@ export default function Energy() {
               </p>
             </div>
 
-            <div className="bg-card rounded-xl p-6 border border-border/20">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="pin-toggle" className="text-sm font-medium">
-                    📌 Pin today's word to screen
-                  </Label>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Show a floating badge on all pages
-                  </p>
-                </div>
-                <Switch
-                  id="pin-toggle"
-                  checked={isPinned}
-                  onCheckedChange={togglePin}
-                />
-              </div>
-            </div>
           </>
         ) : (
           <>
