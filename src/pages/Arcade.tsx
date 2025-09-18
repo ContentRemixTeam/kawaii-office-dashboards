@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import SnakeGame from '@/components/arcade/games/SnakeGame';
+import OutOfTokensModal from '@/components/arcade/OutOfTokensModal';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -79,9 +80,9 @@ const ARCADE_GAMES = [
 function getArcadeTokens(): number {
   try {
     const stored = localStorage.getItem(ARCADE_STORAGE_KEY);
-    return stored ? parseInt(stored, 10) : 50; // Default 50 tokens for testing
+    return stored ? parseInt(stored, 10) : 5; // Start with low tokens to test the modal
   } catch {
-    return 50;
+    return 5;
   }
 }
 
@@ -96,10 +97,20 @@ function setArcadeTokens(tokens: number): void {
 export default function Arcade() {
   const [tokens, setTokens] = useState(getArcadeTokens);
   const [currentGame, setCurrentGame] = useState<string | null>(null);
+  const [showOutOfTokensModal, setShowOutOfTokensModal] = useState(false);
+  const [selectedGame, setSelectedGame] = useState<typeof ARCADE_GAMES[0] | null>(null);
 
   const handlePlayGame = (game: typeof ARCADE_GAMES[0]) => {
     console.log('handlePlayGame called with:', game.name);
-    // TEMPORARY: Skip token check for testing
+    
+    // Check if user has enough tokens
+    if (tokens < game.cost) {
+      setSelectedGame(game);
+      setShowOutOfTokensModal(true);
+      return;
+    }
+    
+    // User has enough tokens, start the game
     setCurrentGame(game.id);
     console.log('currentGame set to:', game.id);
   };
@@ -228,11 +239,9 @@ export default function Arcade() {
                         {game.description}
                       </CardDescription>
                       
-                      <Button 
+                       <Button 
                         onClick={() => handlePlayGame(game)}
-                        disabled={!canAfford}
-                        className={`w-full ${canAfford ? 'bg-primary hover:bg-primary/90' : ''}`}
-                        variant={canAfford ? "default" : "secondary"}
+                        className="w-full bg-primary hover:bg-primary/90"
                       >
                         {canAfford ? (
                           <>
@@ -276,6 +285,20 @@ export default function Arcade() {
 
         </div>
       </div>
+      
+      {/* Out of Tokens Modal */}
+      {showOutOfTokensModal && selectedGame && (
+        <OutOfTokensModal
+          isOpen={showOutOfTokensModal}
+          onClose={() => {
+            setShowOutOfTokensModal(false);
+            setSelectedGame(null);
+          }}
+          currentTokens={tokens}
+          tokensNeeded={selectedGame.cost}
+          gameName={selectedGame.name}
+        />
+      )}
     </main>
   );
 }
