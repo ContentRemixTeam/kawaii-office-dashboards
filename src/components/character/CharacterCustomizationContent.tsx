@@ -55,8 +55,8 @@ export default function CharacterCustomizationContent({
   return (
     <>
       {/* Character Tab */}
-      <TabsContent value="character" className="p-6 space-y-6">
-        <div className="space-y-4">
+      <TabsContent value="character" className="p-8 space-y-8">
+        <div className="space-y-6">
           <div>
             <Label htmlFor="character-name">Character Name</Label>
             <Input
@@ -64,7 +64,7 @@ export default function CharacterCustomizationContent({
               value={character.name}
               onChange={(e) => updateCharacterName(e.target.value)}
               placeholder="Enter character name"
-              className="max-w-md"
+              className="max-w-md bg-white border-purple-200 rounded-xl"
             />
           </div>
 
@@ -76,11 +76,11 @@ export default function CharacterCustomizationContent({
                   key={asset.id}
                   onClick={() => changeCharacterBase(asset.id)}
                   disabled={!isUnlocked(asset.id)}
-                  className={`p-4 rounded-xl border-2 transition-all ${
+                  className={`p-6 rounded-2xl border-2 transition-all duration-300 ${
                     character.baseAsset === asset.id
-                      ? 'border-purple-400 bg-purple-100'
+                      ? 'border-purple-400 bg-gradient-to-br from-purple-100 to-pink-100 shadow-lg scale-105'
                       : isUnlocked(asset.id)
-                      ? 'border-purple-200 bg-white hover:border-purple-300'
+                      ? 'border-purple-200 bg-white hover:border-purple-300 hover:shadow-md hover:scale-102'
                       : 'border-gray-200 bg-gray-50 opacity-50 cursor-not-allowed'
                   }`}
                 >
@@ -91,7 +91,7 @@ export default function CharacterCustomizationContent({
                       className="w-full h-full object-contain"
                     />
                   </div>
-                  <div className="text-sm font-medium text-slate-800">{asset.name}</div>
+                  <div className="text-base font-bold text-gray-800">{asset.name}</div>
                   {!isUnlocked(asset.id) && (
                     <div className="text-xs text-gray-500 mt-1">
                       {asset.price} {asset.currency}
@@ -105,7 +105,7 @@ export default function CharacterCustomizationContent({
       </TabsContent>
 
       {/* Accessories Tab */}
-      <TabsContent value="accessories" className="p-6 space-y-6">
+      <TabsContent value="accessories" className="p-8 space-y-8">
         <div>
           <h3 className="text-lg font-semibold text-slate-800 mb-3">Available Accessories</h3>
           
@@ -118,11 +118,17 @@ export default function CharacterCustomizationContent({
             if (categoryAssets.length === 0) return null;
 
             return (
-              <div key={category} className="space-y-3">
-                <h4 className="text-md font-medium text-purple-700 capitalize">{category}</h4>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div key={category} className="space-y-4">
+                <h4 className="text-lg font-bold text-gray-800 capitalize flex items-center gap-2">
+                  {category === 'glasses' && '👓'} 
+                  {category === 'hats' && '👒'} 
+                  {category === 'clothing' && '👕'} 
+                  {category === 'pets' && '🐾'} 
+                  {category}
+                </h4>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {categoryAssets.map((asset) => (
-                    <div key={asset.id} className="relative">
+                    <div key={asset.id} className="relative group">
                       <button
                         onClick={() => {
                           if (isAccessoryEquipped(asset.id)) {
@@ -131,10 +137,10 @@ export default function CharacterCustomizationContent({
                             equipAccessory(asset.id);
                           }
                         }}
-                        className={`w-full p-4 rounded-xl border-2 transition-all ${
+                        className={`w-full p-6 rounded-2xl border-2 transition-all duration-300 ${
                           isAccessoryEquipped(asset.id)
-                            ? 'border-purple-400 bg-purple-100'
-                            : 'border-slate-200 bg-white hover:border-purple-300'
+                            ? 'border-purple-400 bg-gradient-to-br from-purple-100 to-pink-100 shadow-lg scale-105'
+                            : 'border-gray-200 bg-white hover:border-purple-300 hover:shadow-md hover:scale-102 group-hover:shadow-lg'
                         }`}
                       >
                         <div className="w-24 h-24 mx-auto mb-2 relative">
@@ -144,7 +150,7 @@ export default function CharacterCustomizationContent({
                             className="w-full h-full object-contain"
                           />
                         </div>
-                        <div className="text-sm font-medium text-slate-800">{asset.name}</div>
+                        <div className="text-base font-bold text-gray-800">{asset.name}</div>
                         <Badge className={`mt-1 ${getRarityColor(asset.rarity)}`}>
                           {asset.rarity}
                         </Badge>
@@ -176,7 +182,7 @@ export default function CharacterCustomizationContent({
       </TabsContent>
 
       {/* Positioning Tab */}
-      <TabsContent value="positioning" className="p-6 space-y-6">
+      <TabsContent value="positioning" className="p-8 space-y-8">
         {selectedAccessory ? (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div>
@@ -210,7 +216,7 @@ export default function CharacterCustomizationContent({
       </TabsContent>
 
       {/* Shop Tab */}
-      <TabsContent value="shop" className="p-6 space-y-6">
+      <TabsContent value="shop" className="p-8 space-y-8">
         <div>
           <h3 className="text-lg font-semibold text-slate-800 mb-3">Asset Shop</h3>
           
@@ -261,12 +267,12 @@ export default function CharacterCustomizationContent({
       </TabsContent>
 
       {/* Upload Tab */}
-      <TabsContent value="upload" className="p-6">
+      <TabsContent value="upload" className="p-8">
         <AssetUploader onAssetAdded={onAssetsRefresh} />
       </TabsContent>
 
       {/* Rewards Tab */}
-      <TabsContent value="rewards" className="p-6">
+      <TabsContent value="rewards" className="p-8">
         <ProductivityRewards 
           onCoinsEarned={onCoinsEarned}
           onSpecialCurrencyEarned={onSpecialCurrencyEarned}
