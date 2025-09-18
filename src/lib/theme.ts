@@ -36,15 +36,15 @@ interface ThemeData {
 const DEFAULT_THEME: ThemeData = {
   vars: {
     "--bg-start": "0 0% 100%",       // pure white
-    "--bg-end": "0 0% 98%",          // off white
-    "--brand": "220 13% 60%",        // neutral gray
-    "--brand-fg": "0 0% 100%",       // white text on brand - proper contrast
-    "--accent": "220 13% 70%",       // light neutral gray
-    "--accent-fg": "220 13% 25%",    // dark text on accent - proper contrast
+    "--bg-end": "210 100% 98%",      // very light blue
+    "--brand": "220 30% 85%",        // light pastel blue
+    "--brand-fg": "220 15% 25%",     // dark text on brand - proper contrast
+    "--accent": "200 25% 88%",       // very light pastel blue-gray
+    "--accent-fg": "200 15% 30%",    // dark text on accent - proper contrast
     "--card": "0 0% 100%",           // white
     "--text": "220 13% 18%",         // dark gray - high contrast
-    "--muted": "220 9% 46%",         // medium gray - good contrast
-    "--ring": "220 13% 75%"          // neutral focus ring
+    "--muted": "220 9% 55%",         // medium gray - good contrast
+    "--ring": "220 25% 80%"          // light pastel focus ring
   },
   hiddenFeatures: {
     topBarEnergyWord: false,
