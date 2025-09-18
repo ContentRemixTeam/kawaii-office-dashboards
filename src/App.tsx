@@ -84,7 +84,7 @@ const App = () => {
                   
                   <Route path="/tools/break-room" element={<BreakRoom />} />
                   <Route path="/arcade" element={<Arcade />} />
-                  <Route path="/quest" element={<QuestMode />} />
+                  <Route path="/design" element={<QuestMode />} />
                   <Route path="/bee-test" element={<BeeAccessoriesCustomizer />} />
                   <Route path="/testing" element={<Testing />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
