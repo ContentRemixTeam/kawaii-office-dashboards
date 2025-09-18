@@ -720,7 +720,7 @@ export default function PetAdventureMaze({ onExit, onTokenSpent, currentTokens }
               <CardHeader>
                 <CardTitle>How to Play</CardTitle>
               </CardHeader>
-              <CardContent className="text-sm space-y-2 text-muted-foreground">
+              <CardContent className="text-base space-y-3 text-muted-foreground">
                 <p>• Move with arrow keys or WASD</p>
                 <p>• Collect all {petConfig.treat} treats to win</p>
                 <p>• Avoid the {petConfig.enemy} obstacles</p>
