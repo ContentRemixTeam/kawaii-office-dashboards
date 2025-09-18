@@ -118,14 +118,14 @@ const PET_CONFIG = {
   }
 };
 
-// Level data with progressive difficulty
+// Level data with progressive difficulty and themed backgrounds
 const LEVELS: Level[] = [
   {
     id: 1,
-    name: "Twilight Meadows",
-    background: "🌸",
+    name: "Enchanted Forest",
+    background: "🌲",
     goalX: 750,
-    // Level 1: Very Easy - Low platforms, close spacing, minimal obstacles
+    // Level 1: Very Easy - Forest theme
     platforms: [
       { x: 0, y: 350, width: 200, height: 50, type: 'desk' },
       { x: 180, y: 320, width: 120, height: 20, type: 'book' },
@@ -142,17 +142,16 @@ const LEVELS: Level[] = [
       { x: 700, y: 290, type: 'star', points: 10, collected: false, emoji: '⭐' }
     ],
     obstacles: [
-      // Only 2 easy obstacles, not blocking main path
       { x: 250, y: 360, width: 25, height: 25, type: 'storm', emoji: '☁️' },
       { x: 600, y: 270, width: 25, height: 25, type: 'void', emoji: '🌑' }
     ]
   },
   {
     id: 2,
-    name: "Crystal Caverns",
-    background: "💜",
+    name: "Underwater Depths",
+    background: "🌊",
     goalX: 750,
-    // Level 2: Medium - Higher platforms, wider gaps, more obstacles
+    // Level 2: Medium - Underwater theme
     platforms: [
       { x: 0, y: 350, width: 120, height: 50, type: 'desk' },
       { x: 150, y: 290, width: 90, height: 20, type: 'book' },
@@ -178,10 +177,10 @@ const LEVELS: Level[] = [
   },
   {
     id: 3,
-    name: "Starlight Summit",
-    background: "🌟",
+    name: "Cosmic Void",
+    background: "🌌",
     goalX: 750,
-    // Level 3: Hard - High platforms, big gaps, many obstacles
+    // Level 3: Hard - Space theme
     platforms: [
       { x: 0, y: 350, width: 80, height: 50, type: 'desk' },
       { x: 120, y: 280, width: 60, height: 20, type: 'book' },
@@ -493,53 +492,147 @@ export default function PetProductivityQuest({ onExit, onTokenSpent, currentToke
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     
-    // Clear canvas with kawaii gradient background
-    const gradient = ctx.createLinearGradient(0, 0, 0, CANVAS_HEIGHT);
-    gradient.addColorStop(0, '#fef3ff'); // Soft pink top
-    gradient.addColorStop(0.5, '#ede9fe'); // Lavender middle  
-    gradient.addColorStop(1, '#ecfdf5'); // Mint bottom
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-    
-    // Add kawaii clouds
-    ctx.fillStyle = '#ffffff';
-    ctx.shadowColor = 'rgba(147, 51, 234, 0.1)';
-    ctx.shadowBlur = 10;
-    for (let i = 0; i < 3; i++) {
-      const cloudX = (i * 300) + 100 - (camera.x * 0.3);
-      const cloudY = 50 + (i * 20);
-      // Cloud shape
-      ctx.beginPath();
-      ctx.arc(cloudX, cloudY, 20, 0, Math.PI * 2);
-      ctx.arc(cloudX + 25, cloudY, 25, 0, Math.PI * 2);
-      ctx.arc(cloudX + 50, cloudY, 20, 0, Math.PI * 2);
-      ctx.fill();
+    // Different themed backgrounds based on level
+    if (currentLevel === 0) {
+      // Level 1: Enchanted Forest Theme
+      const forestGradient = ctx.createLinearGradient(0, 0, 0, CANVAS_HEIGHT);
+      forestGradient.addColorStop(0, '#87ceeb'); // Sky blue
+      forestGradient.addColorStop(0.6, '#98fb98'); // Pale green
+      forestGradient.addColorStop(1, '#228b22'); // Forest green
+      ctx.fillStyle = forestGradient;
+      ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+      
+      // Forest elements
+      ctx.font = '40px Arial';
+      for (let i = 0; i < 5; i++) {
+        const treeX = (i * 180) + 50 - (camera.x * 0.2);
+        ctx.fillText('🌲', treeX, CANVAS_HEIGHT - 80);
+        if (i % 2 === 0) ctx.fillText('🌳', treeX + 90, CANVAS_HEIGHT - 60);
+      }
+      
+      // Floating leaves
+      ctx.font = '20px Arial';
+      for (let i = 0; i < 8; i++) {
+        const leafX = (i * 100) + 30 - (camera.x * 0.4);
+        const leafY = 60 + Math.sin(Date.now() * 0.001 + i) * 10;
+        ctx.fillText(['🍃', '🍂'][i % 2], leafX, leafY);
+      }
+      
+    } else if (currentLevel === 1) {
+      // Level 2: Underwater Theme
+      const underwaterGradient = ctx.createLinearGradient(0, 0, 0, CANVAS_HEIGHT);
+      underwaterGradient.addColorStop(0, '#4682b4'); // Steel blue
+      underwaterGradient.addColorStop(0.3, '#5f9ea0'); // Cadet blue
+      underwaterGradient.addColorStop(0.7, '#008b8b'); // Dark cyan
+      underwaterGradient.addColorStop(1, '#006400'); // Dark green
+      ctx.fillStyle = underwaterGradient;
+      ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+      
+      // Bubbles
+      ctx.fillStyle = 'rgba(173, 216, 230, 0.6)';
+      for (let i = 0; i < 15; i++) {
+        const bubbleX = (i * 60) + 20 - (camera.x * 0.1);
+        const bubbleY = 50 + Math.sin(Date.now() * 0.002 + i) * 50;
+        const size = 5 + (i % 3) * 3;
+        ctx.beginPath();
+        ctx.arc(bubbleX, bubbleY, size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      
+      // Sea life
+      ctx.font = '30px Arial';
+      for (let i = 0; i < 4; i++) {
+        const fishX = (i * 200) + 60 - (camera.x * 0.3);
+        const fishY = 100 + (i * 50);
+        ctx.fillText(['🐠', '🐟', '🦈', '🐙'][i % 4], fishX, fishY);
+      }
+      
+      // Seaweed
+      ctx.font = '50px Arial';
+      for (let i = 0; i < 6; i++) {
+        const seaweedX = (i * 140) + 20 - (camera.x * 0.1);
+        ctx.fillText('🌿', seaweedX, CANVAS_HEIGHT - 30);
+      }
+      
+    } else {
+      // Level 3: Cosmic Space Theme
+      const spaceGradient = ctx.createLinearGradient(0, 0, 0, CANVAS_HEIGHT);
+      spaceGradient.addColorStop(0, '#000428'); // Deep space blue
+      spaceGradient.addColorStop(0.5, '#004e92'); // Space blue
+      spaceGradient.addColorStop(1, '#191970'); // Midnight blue
+      ctx.fillStyle = spaceGradient;
+      ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+      
+      // Stars
+      ctx.fillStyle = '#ffffff';
+      for (let i = 0; i < 50; i++) {
+        const starX = (i * 16) + 10 - (camera.x * 0.05);
+        const starY = 20 + (i * 7) % (CANVAS_HEIGHT - 100);
+        const twinkle = Math.sin(Date.now() * 0.003 + i) * 0.5 + 0.5;
+        ctx.globalAlpha = twinkle;
+        ctx.fillRect(starX, starY, 2, 2);
+      }
+      ctx.globalAlpha = 1;
+      
+      // Planets and space objects
+      ctx.font = '40px Arial';
+      for (let i = 0; i < 3; i++) {
+        const planetX = (i * 300) + 100 - (camera.x * 0.1);
+        const planetY = 80 + (i * 60);
+        ctx.fillText(['🪐', '🌍', '🌙'][i], planetX, planetY);
+      }
+      
+      // Floating space debris
+      ctx.font = '25px Arial';
+      for (let i = 0; i < 6; i++) {
+        const debrisX = (i * 120) + 50 - (camera.x * 0.2);
+        const debrisY = 120 + Math.sin(Date.now() * 0.001 + i) * 15;
+        ctx.fillText(['☄️', '🛸', '💫'][i % 3], debrisX, debrisY);
+      }
     }
-    ctx.shadowBlur = 0;
     
     // Save context for camera
     ctx.save();
     ctx.translate(-camera.x, -camera.y);
     
-    // Draw platforms with kawaii rounded corners and gradients
+    // Draw platforms with theme-appropriate colors
     level.platforms.forEach(platform => {
       const platformGradient = ctx.createLinearGradient(platform.x, platform.y, platform.x, platform.y + platform.height);
-      if (platform.type === 'desk') {
-        platformGradient.addColorStop(0, '#fbbf24'); // Warm yellow
-        platformGradient.addColorStop(1, '#f59e0b'); // Deeper yellow
-      } else if (platform.type === 'book') {
-        platformGradient.addColorStop(0, '#a78bfa'); // Soft purple
-        platformGradient.addColorStop(1, '#8b5cf6'); // Deeper purple
+      
+      if (currentLevel === 0) {
+        // Forest theme - Wood and natural colors
+        if (platform.type === 'desk') {
+          platformGradient.addColorStop(0, '#deb887'); // Burlywood
+          platformGradient.addColorStop(1, '#8b7355'); // Dark khaki
+        } else {
+          platformGradient.addColorStop(0, '#90ee90'); // Light green
+          platformGradient.addColorStop(1, '#228b22'); // Forest green
+        }
+      } else if (currentLevel === 1) {
+        // Underwater theme - Coral and sea colors
+        if (platform.type === 'desk') {
+          platformGradient.addColorStop(0, '#ff7f50'); // Coral
+          platformGradient.addColorStop(1, '#cd5c5c'); // Indian red
+        } else {
+          platformGradient.addColorStop(0, '#40e0d0'); // Turquoise
+          platformGradient.addColorStop(1, '#008b8b'); // Dark cyan
+        }
       } else {
-        platformGradient.addColorStop(0, '#6ee7b7'); // Mint green
-        platformGradient.addColorStop(1, '#10b981'); // Deeper mint
+        // Space theme - Metallic and cosmic colors
+        if (platform.type === 'desk') {
+          platformGradient.addColorStop(0, '#c0c0c0'); // Silver
+          platformGradient.addColorStop(1, '#708090'); // Slate gray
+        } else {
+          platformGradient.addColorStop(0, '#9370db'); // Medium purple
+          platformGradient.addColorStop(1, '#4b0082'); // Indigo
+        }
       }
+      
       ctx.fillStyle = platformGradient;
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
       ctx.shadowBlur = 8;
       ctx.shadowOffsetY = 4;
       
-      // Rounded rectangle
       const radius = 8;
       ctx.beginPath();
       ctx.roundRect(platform.x, platform.y, platform.width, platform.height, radius);
@@ -548,30 +641,38 @@ export default function PetProductivityQuest({ onExit, onTokenSpent, currentToke
       ctx.shadowOffsetY = 0;
     });
     
-    // Draw collectibles with kawaii glow effect
+    // Draw collectibles with themed glow
     ctx.font = '24px Arial';
     ctx.textAlign = 'center';
     level.collectibles.forEach(item => {
       if (!item.collected) {
-        // Glow effect
-        ctx.shadowColor = '#fbbf24';
+        // Theme-specific glow colors
+        if (currentLevel === 0) ctx.shadowColor = '#32cd32'; // Lime green
+        else if (currentLevel === 1) ctx.shadowColor = '#00ced1'; // Dark turquoise
+        else ctx.shadowColor = '#9370db'; // Medium purple
+        
         ctx.shadowBlur = 15;
         ctx.fillText(item.emoji, item.x + 10, item.y + 15);
         ctx.shadowBlur = 0;
       }
     });
     
-    // Draw obstacles with soft bounce animation
+    // Draw obstacles with themed bounce
     const time = Date.now() * 0.003;
     level.obstacles.forEach((obstacle, index) => {
       const bounce = Math.sin(time + index) * 2;
-      ctx.shadowColor = '#ef4444';
+      
+      // Theme-specific danger colors
+      if (currentLevel === 0) ctx.shadowColor = '#8b0000'; // Dark red
+      else if (currentLevel === 1) ctx.shadowColor = '#000080'; // Navy
+      else ctx.shadowColor = '#800080'; // Purple
+      
       ctx.shadowBlur = 10;
       ctx.fillText(obstacle.emoji, obstacle.x + obstacle.width/2, obstacle.y + obstacle.height/2 + 5 + bounce);
       ctx.shadowBlur = 0;
     });
     
-    // Draw goal with kawaii rainbow effect
+    // Draw goal with rainbow effect
     const goalGradient = ctx.createLinearGradient(level.goalX, CANVAS_HEIGHT - 100, level.goalX + 50, CANVAS_HEIGHT);
     goalGradient.addColorStop(0, '#f472b6'); // Pink
     goalGradient.addColorStop(0.5, '#a78bfa'); // Purple
@@ -607,18 +708,32 @@ export default function PetProductivityQuest({ onExit, onTokenSpent, currentToke
       ctx.fillText('✨', player.x + 20, player.y - 8);
     }
     
-    // Draw ground with kawaii grass pattern
+    // Draw themed ground
     const groundGradient = ctx.createLinearGradient(0, CANVAS_HEIGHT - 50, 0, CANVAS_HEIGHT);
-    groundGradient.addColorStop(0, '#86efac'); // Light green
-    groundGradient.addColorStop(1, '#22c55e'); // Deeper green
+    if (currentLevel === 0) {
+      groundGradient.addColorStop(0, '#9acd32'); // Yellow green
+      groundGradient.addColorStop(1, '#556b2f'); // Dark olive green
+    } else if (currentLevel === 1) {
+      groundGradient.addColorStop(0, '#f4a460'); // Sandy brown
+      groundGradient.addColorStop(1, '#8b4513'); // Saddle brown
+    } else {
+      groundGradient.addColorStop(0, '#696969'); // Dim gray
+      groundGradient.addColorStop(1, '#2f4f4f'); // Dark slate gray
+    }
     ctx.fillStyle = groundGradient;
     ctx.fillRect(0, CANVAS_HEIGHT - 50, 1000, 50);
     
-    // Add cute grass details
+    // Add themed ground details
     ctx.font = '16px Arial';
     for (let i = 0; i < 20; i++) {
-      const grassX = i * 50 + (camera.x * 0.1) % 50;
-      ctx.fillText('🌱', grassX, CANVAS_HEIGHT - 20);
+      const detailX = i * 50 + (camera.x * 0.1) % 50;
+      if (currentLevel === 0) {
+        ctx.fillText(['🌱', '🌿', '🍄'][i % 3], detailX, CANVAS_HEIGHT - 20);
+      } else if (currentLevel === 1) {
+        ctx.fillText(['🐚', '⭐', '🪨'][i % 3], detailX, CANVAS_HEIGHT - 20);
+      } else {
+        ctx.fillText(['🌟', '💫', '🛸'][i % 3], detailX, CANVAS_HEIGHT - 20);
+      }
     }
     
     ctx.restore();
