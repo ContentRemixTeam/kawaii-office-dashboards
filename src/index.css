@@ -706,11 +706,12 @@
   background: linear-gradient(135deg, white, rgba(128, 128, 128, 0.05)) !important;
 }
 
-/* Emergency pink background fix */
-* {
+/* Target only pink backgrounds specifically */
+.bg-pink-500, .bg-pink-400, .bg-pink-300, .bg-pink-200, .bg-pink-100, .bg-pink-50 {
   background-color: white !important;
 }
 
-.bg-pink-500, .bg-pink-400, .bg-pink-300, .bg-pink-200, .bg-pink-100, .bg-pink-50 {
-  background-color: white !important;
+/* Allow other necessary backgrounds to work normally */
+.bg-gray-50, .bg-gray-100, .bg-blue-50, .bg-green-50 {
+  background-color: initial !important;
 }
