@@ -18,33 +18,33 @@ export interface BreakCategory {
 // Real, verified YouTube videos perfect for office break room wellness
 export const BREAKROOM_PRESETS = {
   pepTalk: [
-    { title: "10 Minutes to Start Your Day Right", videoId: "iuCJ6JVnrt0" },
-    { title: "A Pep Talk from Kid President to You", videoId: "l-gQLqv9f4o" },
-    { title: "STOP WASTING TIME - Part 1", videoId: "z3FA2kALScU" }
+    { title: "10-Minute Morning Motivation", videoId: "iuCJ6JVnrt0" },
+    { title: "Pep Talk from Kid President", videoId: "l-gQLqv9f4o" },
+    { title: "Stop Wasting Time - Part 1", videoId: "z3FA2kALScU" }
   ],
   meditation: [
-    { title: "5 minute meditation for focus", videoId: "zSkFFW--Ma0" },
-    { title: "5 Minute Meditation for Focus & Clarity", videoId: "suGx3T1QtLc" },
-    { title: "5 Minute Guided Morning Meditation", videoId: "j734gLbQFbU" }
+    { title: "5-Minute Focus Meditation", videoId: "zSkFFW--Ma0" },
+    { title: "5-Minute Clarity Meditation", videoId: "suGx3T1QtLc" },
+    { title: "5-Minute Morning Meditation", videoId: "j734gLbQFbU" }
   ],
   stretch: [
-    { title: "5 min YOGA STRETCH AT YOUR DESK", videoId: "DOY30-u2Eas" },
-    { title: "5-Minute Break - Office Yoga", videoId: "6fnLKyRJsrs" },
-    { title: "5 Minute Office Break Yoga", videoId: "wlrr5jJ75Hk" }
+    { title: "5-Minute Desk Yoga Stretch", videoId: "DOY30-u2Eas" },
+    { title: "5-Minute Office Yoga Break", videoId: "6fnLKyRJsrs" },
+    { title: "5-Minute Office Yoga Session", videoId: "wlrr5jJ75Hk" }
   ],
   shortWorkout: [
-    { title: "5 Minute Desk Workout", videoId: "hLXQXbXsZdI" },
-    { title: "5 minute Recharge", videoId: "57g7ZBvfWJQ" },
-    { title: "5 Minute Ab Express Workout", videoId: "yv4sbu1nda8" }
+    { title: "5-Minute Desk Workout", videoId: "hLXQXbXsZdI" },
+    { title: "5-Minute Energy Recharge", videoId: "57g7ZBvfWJQ" },
+    { title: "5-Minute Ab Express Workout", videoId: "yv4sbu1nda8" }
   ],
   eftTapping: [
-    { title: "Self-Love in About Five Minutes", videoId: "tLWTzQWa2hg" },
-    { title: "Getting Out of the Way of Miracles", videoId: "0E53XCe3_4c" },
-    { title: "Take the Next Step - Clear the Blocks", videoId: "FuChV7VY4Mk" }
+    { title: "5-Minute Self-Love Session", videoId: "tLWTzQWa2hg" },
+    { title: "Getting Out of Your Own Way", videoId: "0E53XCe3_4c" },
+    { title: "Clear Blocks to Success", videoId: "FuChV7VY4Mk" }
   ],
   danceParty: [
     { title: "Dance Your Stress Away", videoId: "61USIp1iRig" },
-    { title: "Pharrell Williams - Happy", videoId: "ZbZSe6N_BXs" },
+    { title: "Happy Dance Break", videoId: "ZbZSe6N_BXs" },
     { title: "Scream & Shout Dance Workout", videoId: "q3qYZXpHEuE" }
   ]
 };
