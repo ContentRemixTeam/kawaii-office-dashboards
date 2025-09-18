@@ -19,8 +19,8 @@ import {
 // Game configuration
 const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 400;
-const GRAVITY = 0.5;
-const JUMP_FORCE = -12;
+const GRAVITY = 0.4;
+const JUMP_FORCE = -15;
 const MOVE_SPEED = 4;
 
 interface Position {
@@ -85,35 +85,35 @@ const PET_CONFIG = {
     emoji: '🐱', 
     name: 'Kitty',
     ability: 'Extra Jump Height',
-    jumpForce: -14,
+    jumpForce: -17,
     specialAbility: 'safe-landing'
   },
   dog: { 
     emoji: '🐕', 
     name: 'Puppy',
     ability: 'Dig Under Obstacles',
-    jumpForce: -12,
+    jumpForce: -15,
     specialAbility: 'dig'
   },
   dragon: { 
     emoji: '🐉', 
     name: 'Dragon',
     ability: 'Hover Glide',
-    jumpForce: -12,
+    jumpForce: -15,
     specialAbility: 'hover'
   },
   unicorn: { 
     emoji: '🦄', 
     name: 'Unicorn',
     ability: 'Double Jump',
-    jumpForce: -12,
+    jumpForce: -15,
     specialAbility: 'double-jump'
   },
   bunny: { 
     emoji: '🐰', 
     name: 'Bunny',
     ability: 'Super Jump',
-    jumpForce: -15,
+    jumpForce: -18,
     specialAbility: 'super-jump'
   }
 };
