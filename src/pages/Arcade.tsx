@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import SnakeGame from '@/components/arcade/games/SnakeGame';
 import PetAdventureMaze from '@/components/arcade/games/PetAdventureMaze';
+import PetProductivityQuest from '@/components/arcade/games/PetProductivityQuest';
 import OutOfTokensModal from '@/components/arcade/OutOfTokensModal';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,6 +23,15 @@ const ARCADE_STORAGE_KEY = 'arcade_tokens_standalone_v1';
 
 // Mock games data
 const ARCADE_GAMES = [
+  {
+    id: 'productivity-quest',
+    name: "Pet's Productivity Quest",
+    description: 'Side-scrolling adventure through productivity challenges',
+    cost: 30,
+    icon: '🏃‍♂️',
+    difficulty: 'Medium',
+    color: 'from-blue-500 to-indigo-600'
+  },
   {
     id: 'pet-maze',
     name: 'Pet Adventure',
@@ -162,6 +172,16 @@ export default function Arcade() {
   if (currentGame === 'pet-maze') {
     return (
       <PetAdventureMaze 
+        onExit={handleExitGame}
+        onTokenSpent={handleTokenSpent}
+        currentTokens={tokens}
+      />
+    );
+  }
+  
+  if (currentGame === 'productivity-quest') {
+    return (
+      <PetProductivityQuest 
         onExit={handleExitGame}
         onTokenSpent={handleTokenSpent}
         currentTokens={tokens}
