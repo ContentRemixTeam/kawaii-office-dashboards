@@ -207,12 +207,12 @@ const getUserSelectedPet = (): keyof typeof PET_CONFIG => {
     const petData = localStorage.getItem('fm_pet_v1:2025-09-18');
     if (petData) {
       const parsed = JSON.parse(petData);
-      return parsed.animal in PET_CONFIG ? parsed.animal : 'cat';
+      return parsed.animal in PET_CONFIG ? parsed.animal : 'unicorn';
     }
   } catch {
-    // Fall back to cat
+    // Fall back to unicorn
   }
-  return 'cat';
+  return 'unicorn';
 };
 
 export default function PetProductivityQuest({ onExit, onTokenSpent, currentTokens }: PetProductivityQuestProps) {
@@ -483,45 +483,133 @@ export default function PetProductivityQuest({ onExit, onTokenSpent, currentToke
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     
-    // Clear canvas
-    ctx.fillStyle = '#e0f2fe';
+    // Clear canvas with kawaii gradient background
+    const gradient = ctx.createLinearGradient(0, 0, 0, CANVAS_HEIGHT);
+    gradient.addColorStop(0, '#fef3ff'); // Soft pink top
+    gradient.addColorStop(0.5, '#ede9fe'); // Lavender middle  
+    gradient.addColorStop(1, '#ecfdf5'); // Mint bottom
+    ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    
+    // Add kawaii clouds
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowColor = 'rgba(147, 51, 234, 0.1)';
+    ctx.shadowBlur = 10;
+    for (let i = 0; i < 3; i++) {
+      const cloudX = (i * 300) + 100 - (camera.x * 0.3);
+      const cloudY = 50 + (i * 20);
+      // Cloud shape
+      ctx.beginPath();
+      ctx.arc(cloudX, cloudY, 20, 0, Math.PI * 2);
+      ctx.arc(cloudX + 25, cloudY, 25, 0, Math.PI * 2);
+      ctx.arc(cloudX + 50, cloudY, 20, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.shadowBlur = 0;
     
     // Save context for camera
     ctx.save();
     ctx.translate(-camera.x, -camera.y);
     
-    // Draw platforms
+    // Draw platforms with kawaii rounded corners and gradients
     level.platforms.forEach(platform => {
-      ctx.fillStyle = platform.type === 'desk' ? '#8b4513' : platform.type === 'book' ? '#4f46e5' : '#059669';
-      ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+      const platformGradient = ctx.createLinearGradient(platform.x, platform.y, platform.x, platform.y + platform.height);
+      if (platform.type === 'desk') {
+        platformGradient.addColorStop(0, '#fbbf24'); // Warm yellow
+        platformGradient.addColorStop(1, '#f59e0b'); // Deeper yellow
+      } else if (platform.type === 'book') {
+        platformGradient.addColorStop(0, '#a78bfa'); // Soft purple
+        platformGradient.addColorStop(1, '#8b5cf6'); // Deeper purple
+      } else {
+        platformGradient.addColorStop(0, '#6ee7b7'); // Mint green
+        platformGradient.addColorStop(1, '#10b981'); // Deeper mint
+      }
+      ctx.fillStyle = platformGradient;
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
+      ctx.shadowBlur = 8;
+      ctx.shadowOffsetY = 4;
+      
+      // Rounded rectangle
+      const radius = 8;
+      ctx.beginPath();
+      ctx.roundRect(platform.x, platform.y, platform.width, platform.height, radius);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.shadowOffsetY = 0;
     });
     
-    // Draw collectibles
-    ctx.font = '20px Arial';
+    // Draw collectibles with kawaii glow effect
+    ctx.font = '24px Arial';
     ctx.textAlign = 'center';
     level.collectibles.forEach(item => {
       if (!item.collected) {
+        // Glow effect
+        ctx.shadowColor = '#fbbf24';
+        ctx.shadowBlur = 15;
         ctx.fillText(item.emoji, item.x + 10, item.y + 15);
+        ctx.shadowBlur = 0;
       }
     });
     
-    // Draw obstacles
-    level.obstacles.forEach(obstacle => {
-      ctx.fillText(obstacle.emoji, obstacle.x + obstacle.width/2, obstacle.y + obstacle.height/2 + 5);
+    // Draw obstacles with soft bounce animation
+    const time = Date.now() * 0.003;
+    level.obstacles.forEach((obstacle, index) => {
+      const bounce = Math.sin(time + index) * 2;
+      ctx.shadowColor = '#ef4444';
+      ctx.shadowBlur = 10;
+      ctx.fillText(obstacle.emoji, obstacle.x + obstacle.width/2, obstacle.y + obstacle.height/2 + 5 + bounce);
+      ctx.shadowBlur = 0;
     });
     
-    // Draw goal
-    ctx.fillStyle = '#22c55e';
-    ctx.fillRect(level.goalX, CANVAS_HEIGHT - 100, 50, 100);
+    // Draw goal with kawaii rainbow effect
+    const goalGradient = ctx.createLinearGradient(level.goalX, CANVAS_HEIGHT - 100, level.goalX + 50, CANVAS_HEIGHT);
+    goalGradient.addColorStop(0, '#f472b6'); // Pink
+    goalGradient.addColorStop(0.5, '#a78bfa'); // Purple
+    goalGradient.addColorStop(1, '#60a5fa'); // Blue
+    ctx.fillStyle = goalGradient;
+    ctx.shadowColor = 'rgba(244, 114, 182, 0.5)';
+    ctx.shadowBlur = 20;
+    const radius = 25;
+    ctx.beginPath();
+    ctx.roundRect(level.goalX, CANVAS_HEIGHT - 100, 50, 100, radius);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    
+    // Goal flag with sparkles
+    ctx.font = '32px Arial';
     ctx.fillText('🏁', level.goalX + 25, CANVAS_HEIGHT - 50);
+    ctx.font = '16px Arial';
+    ctx.fillText('✨', level.goalX + 10, CANVAS_HEIGHT - 70);
+    ctx.fillText('✨', level.goalX + 40, CANVAS_HEIGHT - 65);
     
-    // Draw player
-    ctx.fillText(petConfig.emoji, player.x + player.width/2, player.y + player.height/2 + 5);
+    // Draw player with kawaii bounce
+    const playerBounce = player.grounded ? 0 : Math.sin(time * 2) * 1;
+    ctx.font = '32px Arial';
+    ctx.shadowColor = '#fbbf24';
+    ctx.shadowBlur = 15;
+    ctx.fillText(petConfig.emoji, player.x + player.width/2, player.y + player.height/2 + 5 + playerBounce);
+    ctx.shadowBlur = 0;
     
-    // Draw ground
-    ctx.fillStyle = '#16a34a';
+    // Special ability effects
+    if (hovering && selectedPet === 'dragon') {
+      ctx.font = '16px Arial';
+      ctx.fillText('✨', player.x + 5, player.y - 5);
+      ctx.fillText('✨', player.x + 20, player.y - 8);
+    }
+    
+    // Draw ground with kawaii grass pattern
+    const groundGradient = ctx.createLinearGradient(0, CANVAS_HEIGHT - 50, 0, CANVAS_HEIGHT);
+    groundGradient.addColorStop(0, '#86efac'); // Light green
+    groundGradient.addColorStop(1, '#22c55e'); // Deeper green
+    ctx.fillStyle = groundGradient;
     ctx.fillRect(0, CANVAS_HEIGHT - 50, 1000, 50);
+    
+    // Add cute grass details
+    ctx.font = '16px Arial';
+    for (let i = 0; i < 20; i++) {
+      const grassX = i * 50 + (camera.x * 0.1) % 50;
+      ctx.fillText('🌱', grassX, CANVAS_HEIGHT - 20);
+    }
     
     ctx.restore();
   }, [camera, level, player, petConfig]);
