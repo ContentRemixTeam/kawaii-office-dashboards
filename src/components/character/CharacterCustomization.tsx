@@ -29,7 +29,7 @@ import ProductivityRewards from './ProductivityRewards';
 import CharacterPreview from './CharacterPreview';
 import CharacterCustomizationContent from './CharacterCustomizationContent';
 import { PNGCharacter, CharacterAsset, EquippedAccessory, AccessoryPosition } from '@/types/character';
-import { getAllAssets, getAssetsByType, getAssetsByCategory, getAssetById, getRarityColor, DEFAULT_POSITIONS } from '@/lib/assetManager';
+import { getAllAssets, getAssetsByType, getAssetsByCategory, getAssetById, getRarityColor, DEFAULT_POSITIONS, removeAssetsByPattern } from '@/lib/assetManager';
 
 // Legacy character interface kept for migration
 interface LegacyCharacter {
@@ -96,11 +96,26 @@ export default function CharacterCustomization({ onBack }: CharacterCustomizatio
     if (saved) {
       try {
         const loadedCharacter = JSON.parse(saved);
-        setCharacter(loadedCharacter);
+        
+        // Clean up removed assets (Baseball Cap and any Bee Cap variants)
+        const cleanedCharacter = {
+          ...loadedCharacter,
+          unlockedAssets: loadedCharacter.unlockedAssets?.filter((assetId: string) => 
+            assetId !== 'baseball-cap' && !assetId.toLowerCase().includes('bee') || assetId === 'bee-base'
+          ) || [],
+          equippedAccessories: loadedCharacter.equippedAccessories?.filter((equipped: any) => 
+            equipped.assetId !== 'baseball-cap' && !equipped.assetId.toLowerCase().includes('bee') || equipped.assetId === 'bee-base'
+          ) || []
+        };
+        
+        setCharacter(cleanedCharacter);
+        saveCharacter(cleanedCharacter); // Save the cleaned version
       } catch (error) {
         console.error('Failed to load character:', error);
       }
     }
+    // Clean up specific removed assets
+    removeAssetsByPattern(/bee.*cap|baseball.*cap/i);
     
     // Load all available assets
     setAllAssets(getAllAssets());

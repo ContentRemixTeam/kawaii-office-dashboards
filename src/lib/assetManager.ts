@@ -24,19 +24,6 @@ export const DEFAULT_ASSETS: CharacterAsset[] = [
     currency: 'coins',
     rarity: 'common',
     defaultPosition: { x: 0, y: -15, scale: 0.85, rotation: 0, opacity: 1 }
-  },
-  
-  // Baseball Cap
-  {
-    id: 'baseball-cap',
-    name: 'Baseball Cap',
-    type: 'accessory', 
-    category: 'hats',
-    filepath: '/characters/customization/accessories/baseball-cap.png',
-    price: 100,
-    currency: 'coins',
-    rarity: 'common',
-    defaultPosition: { x: 0, y: -30, scale: 1.0, rotation: 0, opacity: 1 }
   }
 ];
 
@@ -153,6 +140,15 @@ function fileToBase64(file: File): Promise<string> {
     reader.onerror = reject;
     reader.readAsDataURL(file);
   });
+}
+
+/**
+ * Remove specific assets by name pattern (for cleanup)
+ */
+export function removeAssetsByPattern(namePattern: RegExp): void {
+  const uploadedAssets = getUploadedAssets();
+  const filteredAssets = uploadedAssets.filter(asset => !namePattern.test(asset.name.toLowerCase()));
+  saveUploadedAssets(filteredAssets);
 }
 
 /**
