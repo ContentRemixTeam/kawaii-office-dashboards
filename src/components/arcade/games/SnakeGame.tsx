@@ -14,25 +14,15 @@ import {
   ChevronRight
 } from 'lucide-react';
 
-// Game configuration
+// Keep the EXACT same configuration as the working debug version
 const GRID_SIZE = 20;
 const CELL_SIZE = 20;
-const INITIAL_SPEED = 200;
-const SPEED_INCREASE = 10;
-const POINTS_PER_FOOD = 10;
 
 const DIRECTIONS = {
   UP: { x: 0, y: -1 },
   DOWN: { x: 0, y: 1 },
   LEFT: { x: -1, y: 0 },
   RIGHT: { x: 1, y: 0 }
-};
-
-const GAME_STATES = {
-  MENU: 'menu',
-  PLAYING: 'playing',
-  PAUSED: 'paused',
-  GAME_OVER: 'gameOver'
 };
 
 interface SnakeGameProps {
@@ -42,13 +32,13 @@ interface SnakeGameProps {
 }
 
 export default function SnakeGame({ onExit }: SnakeGameProps) {
-  // Game state
-  const [gameState, setGameState] = useState(GAME_STATES.MENU);
+  // Keep EXACT same state as working debug version
+  const [gameStarted, setGameStarted] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
   const [snake, setSnake] = useState([{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }]);
   const [food, setFood] = useState({ x: 15, y: 15 });
   const [direction, setDirection] = useState(DIRECTIONS.RIGHT);
   const [score, setScore] = useState(0);
-  const [gameSpeed, setGameSpeed] = useState(INITIAL_SPEED);
   const [highScore, setHighScore] = useState(() => {
     try {
       return parseInt(localStorage.getItem('snake_high_score') || '0');
@@ -60,19 +50,7 @@ export default function SnakeGame({ onExit }: SnakeGameProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const intervalRef = useRef<NodeJS.Timeout>();
 
-  // Generate random food position
-  const generateFood = useCallback((currentSnake = snake) => {
-    let newFood;
-    do {
-      newFood = {
-        x: Math.floor(Math.random() * GRID_SIZE),
-        y: Math.floor(Math.random() * GRID_SIZE)
-      };
-    } while (currentSnake.some(segment => segment.x === newFood.x && segment.y === newFood.y));
-    return newFood;
-  }, [snake]);
-
-  // Draw function
+  // Keep EXACT same draw function
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -80,12 +58,12 @@ export default function SnakeGame({ onExit }: SnakeGameProps) {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Clear canvas
-    ctx.fillStyle = 'hsl(var(--background))';
+    // Clear canvas with white background (same as debug version)
+    ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw grid
-    ctx.strokeStyle = 'hsl(var(--border))';
+    // Draw grid (same as debug version)
+    ctx.strokeStyle = '#e0e0e0';
     ctx.lineWidth = 1;
     for (let i = 0; i <= GRID_SIZE; i++) {
       // Vertical lines
@@ -101,9 +79,9 @@ export default function SnakeGame({ onExit }: SnakeGameProps) {
       ctx.stroke();
     }
 
-    // Draw snake
+    // Draw snake (same colors as debug version)
     snake.forEach((segment, index) => {
-      ctx.fillStyle = index === 0 ? 'hsl(var(--primary))' : 'hsl(var(--primary) / 0.8)';
+      ctx.fillStyle = index === 0 ? '#22c55e' : '#16a34a'; // Same green colors
       ctx.fillRect(
         segment.x * CELL_SIZE + 1,
         segment.y * CELL_SIZE + 1,
@@ -112,8 +90,8 @@ export default function SnakeGame({ onExit }: SnakeGameProps) {
       );
     });
 
-    // Draw food
-    ctx.fillStyle = 'hsl(var(--destructive))';
+    // Draw food (same color as debug version)
+    ctx.fillStyle = '#ef4444'; // Same red color
     ctx.fillRect(
       food.x * CELL_SIZE + 1,
       food.y * CELL_SIZE + 1,
@@ -122,12 +100,15 @@ export default function SnakeGame({ onExit }: SnakeGameProps) {
     );
   }, [snake, food]);
 
-  // Game loop
+  // Keep EXACT same game loop as working debug version
   const gameLoop = useCallback(() => {
-    if (gameState !== GAME_STATES.PLAYING) return;
+    if (!gameStarted || gameOver) return;
 
     setSnake(currentSnake => {
-      if (currentSnake.length === 0) return currentSnake;
+      if (currentSnake.length === 0) {
+        setGameOver(true);
+        return currentSnake;
+      }
 
       const newSnake = [...currentSnake];
       const head = { ...newSnake[0] };
@@ -138,39 +119,40 @@ export default function SnakeGame({ onExit }: SnakeGameProps) {
 
       // Check wall collision
       if (head.x < 0 || head.x >= GRID_SIZE || head.y < 0 || head.y >= GRID_SIZE) {
-        setGameState(GAME_STATES.GAME_OVER);
+        setGameOver(true);
         return currentSnake;
       }
 
       // Check self collision
-      if (newSnake.some(segment => segment.x === head.x && segment.y === head.y)) {
-        setGameState(GAME_STATES.GAME_OVER);
+      const selfCollision = newSnake.some(segment => segment.x === head.x && segment.y === head.y);
+      if (selfCollision) {
+        setGameOver(true);
         return currentSnake;
       }
 
       // Add new head
       newSnake.unshift(head);
 
-      // Check food collision
+      // Check food
       if (head.x === food.x && head.y === food.y) {
-        const newScore = score + POINTS_PER_FOOD;
-        setScore(newScore);
-        setFood(generateFood(newSnake));
-        
-        // Increase speed slightly
-        setGameSpeed(prevSpeed => Math.max(50, prevSpeed - SPEED_INCREASE));
+        setScore(prev => prev + 10);
+        // Generate new food
+        setFood({
+          x: Math.floor(Math.random() * GRID_SIZE),
+          y: Math.floor(Math.random() * GRID_SIZE)
+        });
       } else {
-        // Remove tail if no food eaten
+        // Remove tail
         newSnake.pop();
       }
 
       return newSnake;
     });
-  }, [gameState, direction, food, score, generateFood]);
+  }, [gameStarted, gameOver, snake, direction, food]);
 
   // Touch controls
   const handleDirectionChange = (newDirection: typeof DIRECTIONS.UP) => {
-    if (gameState !== GAME_STATES.PLAYING) return;
+    if (!gameStarted || gameOver) return;
     
     if (newDirection === DIRECTIONS.UP && direction !== DIRECTIONS.DOWN) setDirection(DIRECTIONS.UP);
     if (newDirection === DIRECTIONS.DOWN && direction !== DIRECTIONS.UP) setDirection(DIRECTIONS.DOWN);
@@ -178,83 +160,79 @@ export default function SnakeGame({ onExit }: SnakeGameProps) {
     if (newDirection === DIRECTIONS.RIGHT && direction !== DIRECTIONS.LEFT) setDirection(DIRECTIONS.RIGHT);
   };
 
-  // Game actions
+  // Keep EXACT same start game function as working debug version
   const startGame = () => {
-    // Reset to initial state
+    setGameStarted(false); // Stop any existing game
+    setGameOver(false);
+    setScore(0);
+    
+    // Reset to safe initial state
     const initialSnake = [{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }];
     setSnake(initialSnake);
     setDirection(DIRECTIONS.RIGHT);
-    setScore(0);
     setFood({ x: 15, y: 15 });
-    setGameSpeed(INITIAL_SPEED);
     
-    // Start game after a brief delay
+    // Wait a moment then start (same as debug version)
     setTimeout(() => {
-      setGameState(GAME_STATES.PLAYING);
-    }, 500);
+      setGameStarted(true);
+    }, 1000);
   };
 
   const togglePause = () => {
-    setGameState(prevState => 
-      prevState === GAME_STATES.PLAYING ? GAME_STATES.PAUSED : GAME_STATES.PLAYING
-    );
+    setGameStarted(prev => !prev);
   };
 
+  // Reset game
   const resetGame = () => {
-    setGameState(GAME_STATES.MENU);
+    setGameStarted(false);
+    setGameOver(false);
+    setScore(0);
     setSnake([{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }]);
     setDirection(DIRECTIONS.RIGHT);
-    setScore(0);
     setFood({ x: 15, y: 15 });
-    setGameSpeed(INITIAL_SPEED);
   };
 
-  // Keyboard controls
+  // Keep EXACT same keyboard controls as debug version
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
-      if (gameState === GAME_STATES.MENU && (e.code === 'Space' || e.code === 'Enter')) {
-        startGame();
-        return;
-      }
-
-      if (gameState === GAME_STATES.PLAYING) {
-        switch (e.code) {
-          case 'ArrowUp':
-          case 'KeyW':
-            if (direction !== DIRECTIONS.DOWN) setDirection(DIRECTIONS.UP);
-            break;
-          case 'ArrowDown':
-          case 'KeyS':
-            if (direction !== DIRECTIONS.UP) setDirection(DIRECTIONS.DOWN);
-            break;
-          case 'ArrowLeft':
-          case 'KeyA':
-            if (direction !== DIRECTIONS.RIGHT) setDirection(DIRECTIONS.LEFT);
-            break;
-          case 'ArrowRight':
-          case 'KeyD':
-            if (direction !== DIRECTIONS.LEFT) setDirection(DIRECTIONS.RIGHT);
-            break;
-          case 'Space':
-            e.preventDefault();
-            togglePause();
-            break;
-        }
-      }
-
-      if (gameState === GAME_STATES.PAUSED && e.code === 'Space') {
-        togglePause();
+      if (!gameStarted || gameOver) return;
+      
+      switch (e.code) {
+        case 'ArrowUp':
+          if (direction !== DIRECTIONS.DOWN) {
+            setDirection(DIRECTIONS.UP);
+          }
+          break;
+        case 'ArrowDown':
+          if (direction !== DIRECTIONS.UP) {
+            setDirection(DIRECTIONS.DOWN);
+          }
+          break;
+        case 'ArrowLeft':
+          if (direction !== DIRECTIONS.RIGHT) {
+            setDirection(DIRECTIONS.LEFT);
+          }
+          break;
+        case 'ArrowRight':
+          if (direction !== DIRECTIONS.LEFT) {
+            setDirection(DIRECTIONS.RIGHT);
+          }
+          break;
+        case 'Space':
+          e.preventDefault();
+          togglePause();
+          break;
       }
     };
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [gameState, direction]);
+  }, [gameStarted, gameOver, direction]);
 
-  // Game loop effect
+  // Keep EXACT same game loop effect as debug version
   useEffect(() => {
-    if (gameState === GAME_STATES.PLAYING) {
-      intervalRef.current = setInterval(gameLoop, gameSpeed);
+    if (gameStarted && !gameOver) {
+      intervalRef.current = setInterval(gameLoop, 300); // Same slow speed as debug
     } else {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
@@ -266,16 +244,16 @@ export default function SnakeGame({ onExit }: SnakeGameProps) {
         clearInterval(intervalRef.current);
       }
     };
-  }, [gameState, gameLoop, gameSpeed]);
+  }, [gameStarted, gameOver, gameLoop]);
 
-  // Draw effect
+  // Draw effect (same as debug version)
   useEffect(() => {
     draw();
   }, [draw]);
 
   // Update high score
   useEffect(() => {
-    if (gameState === GAME_STATES.GAME_OVER && score > highScore) {
+    if (gameOver && score > highScore) {
       setHighScore(score);
       try {
         localStorage.setItem('snake_high_score', score.toString());
@@ -283,7 +261,11 @@ export default function SnakeGame({ onExit }: SnakeGameProps) {
         // Fail silently
       }
     }
-  }, [gameState, score, highScore]);
+  }, [gameOver, score, highScore]);
+
+  // Calculate game status for display
+  const gameStatus = gameStarted ? (gameOver ? 'Game Over' : 'Playing') : 'Ready';
+  const isPaused = !gameStarted && !gameOver && score > 0;
 
   return (
     <div className="min-h-screen bg-background py-8 px-4">
@@ -296,20 +278,20 @@ export default function SnakeGame({ onExit }: SnakeGameProps) {
             <div>
               <h1 className="text-2xl font-bold text-foreground">Snake Game</h1>
               <p className="text-sm text-muted-foreground">
-                FREE TESTING MODE • High Score: {highScore}
+                Score: {score} | Status: {gameStatus} | High Score: {highScore}
               </p>
             </div>
           </div>
-          <Button onClick={onExit} variant="outline" className="flex items-center gap-2">
-            <ArrowLeft className="w-4 h-4" />
+          <Button onClick={onExit} variant="outline">
+            <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Arcade
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           
-          {/* Game Area */}
-          <div className="lg:col-span-2">
+          {/* Game Canvas */}
+          <div>
             <Card>
               <CardContent className="p-6">
                 <div className="relative">
@@ -317,54 +299,22 @@ export default function SnakeGame({ onExit }: SnakeGameProps) {
                     ref={canvasRef}
                     width={GRID_SIZE * CELL_SIZE}
                     height={GRID_SIZE * CELL_SIZE}
-                    className="border border-border rounded-lg mx-auto block"
-                    style={{ 
-                      maxWidth: '100%',
-                      height: 'auto',
-                      aspectRatio: '1'
-                    }}
+                    className="border-2 border-gray-400 mx-auto block"
                   />
-
-                  {/* Game State Overlays */}
-                  {gameState === GAME_STATES.MENU && (
-                    <div className="absolute inset-0 bg-background/90 flex items-center justify-center rounded-lg">
-                      <div className="text-center">
-                        <h2 className="text-xl font-bold mb-4">Ready to Play?</h2>
-                        <p className="text-muted-foreground mb-4">
-                          FREE TESTING MODE - No tokens required!
-                        </p>
-                        <Button onClick={startGame}>
-                          <Play className="w-4 h-4 mr-2" />
-                          Start Game (Free)
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-
-                  {gameState === GAME_STATES.PAUSED && (
-                    <div className="absolute inset-0 bg-background/90 flex items-center justify-center rounded-lg">
-                      <div className="text-center">
-                        <h2 className="text-xl font-bold mb-4">Paused</h2>
-                        <Button onClick={togglePause}>
-                          <Play className="w-4 h-4 mr-2" />
-                          Resume
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-
-                  {gameState === GAME_STATES.GAME_OVER && (
-                    <div className="absolute inset-0 bg-background/90 flex items-center justify-center rounded-lg">
-                      <div className="text-center">
-                        <h2 className="text-xl font-bold mb-2">Game Over!</h2>
-                        <p className="text-lg mb-2">Score: {score}</p>
+                  
+                  {/* Game Over Overlay */}
+                  {gameOver && (
+                    <div className="absolute inset-0 bg-red-500/80 flex items-center justify-center rounded-lg">
+                      <div className="text-center text-white">
+                        <h2 className="text-xl font-bold mb-4">Game Over!</h2>
+                        <p className="mb-4">Score: {score}</p>
                         {score === highScore && score > 0 && (
-                          <Badge className="mb-4">New High Score! 🏆</Badge>
+                          <Badge className="mb-4 bg-yellow-500 text-black">New High Score! 🏆</Badge>
                         )}
                         <div className="flex gap-2 justify-center">
-                          <Button onClick={startGame}>
+                          <Button onClick={startGame} variant="secondary">
                             <Play className="w-4 h-4 mr-2" />
-                            Play Again (Free)
+                            Play Again
                           </Button>
                           <Button onClick={resetGame} variant="outline">
                             <RotateCcw className="w-4 h-4 mr-2" />
@@ -374,15 +324,42 @@ export default function SnakeGame({ onExit }: SnakeGameProps) {
                       </div>
                     </div>
                   )}
+                  
+                  {/* Start Screen */}
+                  {!gameStarted && !gameOver && (
+                    <div className="absolute inset-0 bg-blue-500/80 flex items-center justify-center rounded-lg">
+                      <div className="text-center text-white">
+                        <h2 className="text-xl font-bold mb-4">Ready to Play?</h2>
+                        <p className="mb-4">FREE TESTING MODE</p>
+                        <Button onClick={startGame} variant="secondary">
+                          <Play className="w-4 h-4 mr-2" />
+                          Start Game
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Pause Screen */}
+                  {isPaused && (
+                    <div className="absolute inset-0 bg-yellow-500/80 flex items-center justify-center rounded-lg">
+                      <div className="text-center text-white">
+                        <h2 className="text-xl font-bold mb-4">Paused</h2>
+                        <Button onClick={() => setGameStarted(true)} variant="secondary">
+                          <Play className="w-4 h-4 mr-2" />
+                          Resume
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Game Info & Controls */}
+          {/* Controls & Info */}
           <div className="space-y-6">
             
-            {/* Score & Status */}
+            {/* Game Stats */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -392,7 +369,7 @@ export default function SnakeGame({ onExit }: SnakeGameProps) {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex justify-between">
-                  <span>Score:</span>
+                  <span>Current Score:</span>
                   <span className="font-bold">{score}</span>
                 </div>
                 <div className="flex justify-between">
@@ -400,91 +377,81 @@ export default function SnakeGame({ onExit }: SnakeGameProps) {
                   <span className="font-bold text-primary">{highScore}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Length:</span>
+                  <span>Snake Length:</span>
                   <span className="font-bold">{snake.length}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Speed:</span>
-                  <span className="font-bold">{Math.round((300 - gameSpeed) / 10)}/10</span>
+                  <span>Status:</span>
+                  <span className="font-bold">{gameStatus}</span>
                 </div>
               </CardContent>
             </Card>
 
             {/* Game Controls */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Controls</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {gameState === GAME_STATES.PLAYING && (
-                  <Button onClick={togglePause} className="w-full">
+            {gameStarted && !gameOver && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Game Controls</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Button onClick={togglePause} className="w-full mb-4">
                     <Pause className="w-4 h-4 mr-2" />
                     Pause Game
                   </Button>
-                )}
-                
-                {/* Touch Controls */}
-                <div className="grid grid-cols-3 gap-2 mt-4">
-                  <div></div>
-                  <Button 
-                    variant="outline" 
-                    className="aspect-square"
-                    onClick={() => handleDirectionChange(DIRECTIONS.UP)}
-                    disabled={gameState !== GAME_STATES.PLAYING}
-                  >
-                    <ChevronUp className="w-4 h-4" />
-                  </Button>
-                  <div></div>
                   
-                  <Button 
-                    variant="outline" 
-                    className="aspect-square"
-                    onClick={() => handleDirectionChange(DIRECTIONS.LEFT)}
-                    disabled={gameState !== GAME_STATES.PLAYING}
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                  </Button>
-                  <div></div>
-                  <Button 
-                    variant="outline" 
-                    className="aspect-square"
-                    onClick={() => handleDirectionChange(DIRECTIONS.RIGHT)}
-                    disabled={gameState !== GAME_STATES.PLAYING}
-                  >
-                    <ChevronRight className="w-4 h-4" />
-                  </Button>
-                  
-                  <div></div>
-                  <Button 
-                    variant="outline" 
-                    className="aspect-square"
-                    onClick={() => handleDirectionChange(DIRECTIONS.DOWN)}
-                    disabled={gameState !== GAME_STATES.PLAYING}
-                  >
-                    <ChevronDown className="w-4 h-4" />
-                  </Button>
-                  <div></div>
-                </div>
-
-                <div className="text-xs text-muted-foreground space-y-1">
-                  <p>• Arrow Keys or WASD to move</p>
-                  <p>• Spacebar to pause/resume</p>
-                  <p>• Touch buttons above for mobile</p>
-                </div>
-              </CardContent>
-            </Card>
+                  {/* Touch Controls */}
+                  <div className="grid grid-cols-3 gap-2">
+                    <div></div>
+                    <Button 
+                      variant="outline" 
+                      className="aspect-square"
+                      onClick={() => handleDirectionChange(DIRECTIONS.UP)}
+                    >
+                      <ChevronUp className="w-4 h-4" />
+                    </Button>
+                    <div></div>
+                    
+                    <Button 
+                      variant="outline" 
+                      className="aspect-square"
+                      onClick={() => handleDirectionChange(DIRECTIONS.LEFT)}
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </Button>
+                    <div></div>
+                    <Button 
+                      variant="outline" 
+                      className="aspect-square"
+                      onClick={() => handleDirectionChange(DIRECTIONS.RIGHT)}
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </Button>
+                    
+                    <div></div>
+                    <Button 
+                      variant="outline" 
+                      className="aspect-square"
+                      onClick={() => handleDirectionChange(DIRECTIONS.DOWN)}
+                    >
+                      <ChevronDown className="w-4 h-4" />
+                    </Button>
+                    <div></div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Instructions */}
             <Card>
               <CardHeader>
                 <CardTitle>How to Play</CardTitle>
               </CardHeader>
-              <CardContent className="text-sm text-muted-foreground space-y-2">
-                <p>• Control the snake to eat red food squares</p>
-                <p>• Each food gives you {POINTS_PER_FOOD} points</p>
-                <p>• Snake grows longer with each food eaten</p>
+              <CardContent className="text-sm space-y-2">
+                <p>• Use arrow keys to control the snake</p>
+                <p>• Eat red food to grow and score points</p>
                 <p>• Don't hit walls or your own tail!</p>
-                <p>• Game speeds up as you score more points</p>
+                <p>• Press Spacebar to pause/resume</p>
+                <p>• Use touch buttons on mobile</p>
               </CardContent>
             </Card>
           </div>
