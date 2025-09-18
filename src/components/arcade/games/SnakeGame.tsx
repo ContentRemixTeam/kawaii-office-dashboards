@@ -138,18 +138,25 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
       const newSnake = [...currentSnake];
       const head = { ...newSnake[0] };
       
+      console.log('Game loop - current direction:', direction);
+      console.log('Game loop - current head position:', head);
+      
       head.x += direction.x;
       head.y += direction.y;
+
+      console.log('Game loop - new head position:', head);
 
       // Check wall collision
       if (head.x < 0 || head.x >= GAME_CONFIG.gridSize || 
           head.y < 0 || head.y >= GAME_CONFIG.gridSize) {
+        console.log('Wall collision detected');
         setGameState(GAME_STATES.GAME_OVER);
         return currentSnake;
       }
 
-      // Check self collision
+      // Check self collision (skip the head itself)
       if (newSnake.some(segment => segment.x === head.x && segment.y === head.y)) {
+        console.log('Self collision detected');
         setGameState(GAME_STATES.GAME_OVER);
         return currentSnake;
       }
@@ -158,6 +165,7 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
 
       // Check food collision
       if (head.x === food.x && head.y === food.y) {
+        console.log('Food eaten!');
         const newScore = score + GAME_CONFIG.pointsPerFood;
         setScore(newScore);
         setFood(generateFood(newSnake));
@@ -228,6 +236,14 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
     // }
 
     // onTokenSpent(); // Temporarily disabled
+    console.log('Starting game...');
+    console.log('Initial snake:', [
+      { x: 10, y: 10 },
+      { x: 9, y: 10 },
+      { x: 8, y: 10 }
+    ]);
+    console.log('Initial direction:', DIRECTIONS.RIGHT);
+    
     setGameState(GAME_STATES.PLAYING);
     setSnake([
       { x: 10, y: 10 },
@@ -266,9 +282,12 @@ export default function SnakeGame({ onExit, onTokenSpent, currentTokens }: Snake
   }, [handleKeyPress]);
 
   useEffect(() => {
+    console.log('Game state changed to:', gameState);
     if (gameState === GAME_STATES.PLAYING) {
+      console.log('Starting game loop with speed:', gameSpeed);
       gameLoopRef.current = setInterval(gameLoop, gameSpeed);
     } else {
+      console.log('Stopping game loop');
       if (gameLoopRef.current) {
         clearInterval(gameLoopRef.current);
       }
