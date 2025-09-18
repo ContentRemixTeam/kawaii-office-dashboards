@@ -249,14 +249,8 @@ export default function PetProductivityQuest({ onExit, onTokenSpent, currentToke
 
   // Start game
   const startGame = useCallback(() => {
-    if (currentTokens < 30 && !tokenSpent) {
-      return;
-    }
-    
-    if (!tokenSpent) {
-      // onTokenSpent(); // Temporarily disabled for testing
-      setTokenSpent(true);
-    }
+    // Token system temporarily disabled for testing
+    setTokenSpent(true);
     
     setGameState('playing');
     setCurrentLevel(0);
