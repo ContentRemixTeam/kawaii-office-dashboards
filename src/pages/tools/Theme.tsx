@@ -441,7 +441,7 @@ export default function Theme() {
         {/* Theme Customization Tabs */}
         <div className="space-y-4">
           <Tabs defaultValue="presets" className="w-full">
-            <TabsList className="grid w-full grid-cols-6 h-12 bg-muted/50 rounded-lg p-1">
+            <TabsList className="grid w-full grid-cols-6 h-12 bg-background border border-border rounded-lg p-1">
               <TabsTrigger value="presets" className="text-sm font-medium">Presets</TabsTrigger>
               <TabsTrigger value="colors" className="text-sm font-medium">Colors</TabsTrigger>
               <TabsTrigger value="background" className="text-sm font-medium">Background</TabsTrigger>
