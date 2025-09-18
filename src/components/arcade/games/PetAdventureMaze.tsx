@@ -18,8 +18,8 @@ import {
 
 // Game configuration
 const MAZE_SIZE = 15;
-const CELL_SIZE = 24;
-const GAME_SPEED = 200;
+const CELL_SIZE = 28; // Increased for better visibility
+const GAME_SPEED = 300; // Slower for better control
 
 // Directions
 const DIRECTIONS = {
@@ -258,71 +258,76 @@ export default function PetAdventureMaze({ onExit, onTokenSpent, currentTokens }
   const gameLoop = useCallback(() => {
     if (gameState !== 'playing') return;
     
-    // Move enemies
-    setEnemies(currentEnemies => {
-      return currentEnemies.map(enemy => {
-        const newPos = {
-          x: enemy.x + enemy.direction.x,
-          y: enemy.y + enemy.direction.y
-        };
-        
-        // Check if enemy hits wall or bounds
-        if (newPos.x < 0 || newPos.x >= MAZE_SIZE || 
-            newPos.y < 0 || newPos.y >= MAZE_SIZE || 
-            maze[newPos.y][newPos.x]) {
-          // Change direction randomly
-          const directions = Object.values(DIRECTIONS);
-          return {
-            ...enemy,
-            direction: directions[Math.floor(Math.random() * directions.length)]
+    try {
+      // Move enemies
+      setEnemies(currentEnemies => {
+        return currentEnemies.map(enemy => {
+          const newPos = {
+            x: enemy.x + enemy.direction.x,
+            y: enemy.y + enemy.direction.y
           };
-        }
-        
-        return { ...enemy, ...newPos };
-      });
-    });
-    
-    // Check collisions with treats
-    setTreats(currentTreats => {
-      return currentTreats.map(treat => {
-        if (!treat.collected && treat.x === playerPos.x && treat.y === playerPos.y) {
-          if (treat.type === 'power') {
-            setScore(prev => prev + 50);
-            setInvulnerable(true);
-            setTimeout(() => setInvulnerable(false), 3000);
-          } else {
-            setScore(prev => prev + 10);
+          
+          // Check if enemy hits wall or bounds
+          if (newPos.x < 0 || newPos.x >= MAZE_SIZE || 
+              newPos.y < 0 || newPos.y >= MAZE_SIZE || 
+              maze[newPos.y][newPos.x]) {
+            // Change direction randomly
+            const directions = Object.values(DIRECTIONS);
+            return {
+              ...enemy,
+              direction: directions[Math.floor(Math.random() * directions.length)]
+            };
           }
-          return { ...treat, collected: true };
-        }
-        return treat;
-      });
-    });
-    
-    // Check collision with enemies
-    if (!invulnerable) {
-      const hitEnemy = enemies.some(enemy => 
-        enemy.x === playerPos.x && enemy.y === playerPos.y
-      );
-      
-      if (hitEnemy) {
-        setLives(current => {
-          const newLives = current - 1;
-          if (newLives <= 0) {
-            setGameState('gameOver');
-          } else {
-            setInvulnerable(true);
-            setTimeout(() => setInvulnerable(false), 2000);
-          }
-          return newLives;
+          
+          return { ...enemy, ...newPos };
         });
+      });
+      
+      // Check collisions with treats
+      setTreats(currentTreats => {
+        return currentTreats.map(treat => {
+          if (!treat.collected && treat.x === playerPos.x && treat.y === playerPos.y) {
+            if (treat.type === 'power') {
+              setScore(prev => prev + 50);
+              setInvulnerable(true);
+              setTimeout(() => setInvulnerable(false), 3000);
+            } else {
+              setScore(prev => prev + 10);
+            }
+            return { ...treat, collected: true };
+          }
+          return treat;
+        });
+      });
+      
+      // Check collision with enemies
+      if (!invulnerable) {
+        const hitEnemy = enemies.some(enemy => 
+          enemy.x === playerPos.x && enemy.y === playerPos.y
+        );
+        
+        if (hitEnemy) {
+          setLives(current => {
+            const newLives = current - 1;
+            if (newLives <= 0) {
+              setGameState('gameOver');
+            } else {
+              setInvulnerable(true);
+              setTimeout(() => setInvulnerable(false), 2000);
+            }
+            return newLives;
+          });
+        }
       }
-    }
-    
-    // Check victory condition
-    const allTreatsCollected = treats.every(treat => treat.collected);
-    if (allTreatsCollected && treats.length > 0) {
-      setGameState('victory');
+      
+      // Check victory condition
+      const allTreatsCollected = treats.every(treat => treat.collected);
+      if (allTreatsCollected && treats.length > 0) {
+        setGameState('victory');
+      }
+    } catch (error) {
+      console.error('Game loop error:', error);
+      setGameState('gameOver');
     }
   }, [gameState, maze, playerPos, enemies, treats, invulnerable]);
 
@@ -395,63 +400,67 @@ export default function PetAdventureMaze({ onExit, onTokenSpent, currentTokens }
 
   // Draw game
   const draw = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    
-    // Clear canvas
-    ctx.fillStyle = '#f0f9ff';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Draw maze
-    for (let y = 0; y < MAZE_SIZE; y++) {
-      for (let x = 0; x < MAZE_SIZE; x++) {
-        if (maze[y][x]) {
-          ctx.fillStyle = '#3b82f6';
-          ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+    try {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      
+      // Clear canvas
+      ctx.fillStyle = '#f0f9ff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw maze
+      for (let y = 0; y < MAZE_SIZE; y++) {
+        for (let x = 0; x < MAZE_SIZE; x++) {
+          if (maze[y][x]) {
+            ctx.fillStyle = '#3b82f6';
+            ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+          }
         }
       }
-    }
-    
-    // Draw treats
-    ctx.font = `${CELL_SIZE - 4}px Arial`;
-    ctx.textAlign = 'center';
-    treats.forEach(treat => {
-      if (!treat.collected) {
+      
+      // Draw treats
+      ctx.font = `${CELL_SIZE - 4}px Arial`;
+      ctx.textAlign = 'center';
+      treats.forEach(treat => {
+        if (!treat.collected) {
+          ctx.fillText(
+            treat.type === 'power' ? petConfig.powerTreat : petConfig.treat,
+            treat.x * CELL_SIZE + CELL_SIZE / 2,
+            treat.y * CELL_SIZE + CELL_SIZE - 4
+          );
+        }
+      });
+      
+      // Draw enemies
+      enemies.forEach(enemy => {
         ctx.fillText(
-          treat.type === 'power' ? petConfig.powerTreat : petConfig.treat,
-          treat.x * CELL_SIZE + CELL_SIZE / 2,
-          treat.y * CELL_SIZE + CELL_SIZE - 4
+          '👻',
+          enemy.x * CELL_SIZE + CELL_SIZE / 2,
+          enemy.y * CELL_SIZE + CELL_SIZE - 4
+        );
+      });
+      
+      // Draw player
+      ctx.fillStyle = invulnerable ? 'rgba(255, 255, 255, 0.7)' : 'white';
+      if (invulnerable) {
+        ctx.fillRect(
+          playerPos.x * CELL_SIZE + 2,
+          playerPos.y * CELL_SIZE + 2,
+          CELL_SIZE - 4,
+          CELL_SIZE - 4
         );
       }
-    });
-    
-    // Draw enemies
-    enemies.forEach(enemy => {
       ctx.fillText(
-        '👻',
-        enemy.x * CELL_SIZE + CELL_SIZE / 2,
-        enemy.y * CELL_SIZE + CELL_SIZE - 4
+        petConfig.emoji,
+        playerPos.x * CELL_SIZE + CELL_SIZE / 2,
+        playerPos.y * CELL_SIZE + CELL_SIZE - 4
       );
-    });
-    
-    // Draw player
-    ctx.fillStyle = invulnerable ? 'rgba(255, 255, 255, 0.7)' : 'white';
-    if (invulnerable) {
-      ctx.fillRect(
-        playerPos.x * CELL_SIZE + 2,
-        playerPos.y * CELL_SIZE + 2,
-        CELL_SIZE - 4,
-        CELL_SIZE - 4
-      );
+    } catch (error) {
+      console.error('Draw error:', error);
     }
-    ctx.fillText(
-      petConfig.emoji,
-      playerPos.x * CELL_SIZE + CELL_SIZE / 2,
-      playerPos.y * CELL_SIZE + CELL_SIZE - 4
-    );
   }, [maze, treats, enemies, playerPos, invulnerable, petConfig]);
 
   // Draw effect
@@ -488,13 +497,14 @@ export default function PetAdventureMaze({ onExit, onTokenSpent, currentTokens }
           {/* Game Canvas */}
           <div className="lg:col-span-2">
             <Card>
-              <CardContent className="p-6">
-                <div className="relative mx-auto w-fit">
+              <CardContent className="p-4">
+                <div className="relative mx-auto w-fit bg-white rounded-lg p-2">
                   <canvas
                     ref={canvasRef}
                     width={MAZE_SIZE * CELL_SIZE}
                     height={MAZE_SIZE * CELL_SIZE}
-                    className="border-2 border-border rounded-lg"
+                    className="border-2 border-border rounded-lg block"
+                    style={{ maxWidth: '100%', height: 'auto' }}
                   />
                   
                   {/* Game State Overlays */}
