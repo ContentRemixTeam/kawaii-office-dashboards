@@ -64,7 +64,7 @@ export default function CharacterCustomizationContent({
               value={character.name}
               onChange={(e) => updateCharacterName(e.target.value)}
               placeholder="Enter character name"
-              className="max-w-md bg-white/30 backdrop-blur-sm border-white/40 rounded-xl text-gray-800 font-medium"
+              className="max-w-md bg-white/20 backdrop-blur-sm border-white/30 rounded-xl text-gray-800 font-medium"
             />
           </div>
 
@@ -78,10 +78,10 @@ export default function CharacterCustomizationContent({
                   disabled={!isUnlocked(asset.id)}
                   className={`p-6 rounded-2xl border-2 transition-all duration-300 ${
                     character.baseAsset === asset.id
-                      ? 'border-purple-300/50 bg-gradient-to-br from-purple-100/40 to-pink-100/40 shadow-sm scale-105'
+                      ? 'border-purple-200/30 bg-gradient-to-br from-purple-50/20 to-pink-50/20 shadow-sm scale-105'
                       : isUnlocked(asset.id)
-                      ? 'border-white/30 bg-white/20 hover:border-purple-200/50 hover:shadow-sm hover:scale-102'
-                      : 'border-gray-200/30 bg-gray-50/20 opacity-50 cursor-not-allowed'
+                      ? 'border-white/20 bg-white/15 hover:border-purple-100/30 hover:shadow-sm hover:scale-102'
+                      : 'border-gray-200/20 bg-gray-50/15 opacity-50 cursor-not-allowed'
                   }`}
                 >
                   <div className="w-20 h-20 mx-auto mb-2 relative">
@@ -139,8 +139,8 @@ export default function CharacterCustomizationContent({
                         }}
                         className={`w-full p-6 rounded-2xl border-2 transition-all duration-300 ${
                           isAccessoryEquipped(asset.id)
-                            ? 'border-purple-300/50 bg-gradient-to-br from-purple-100/40 to-pink-100/40 shadow-sm scale-105'
-                            : 'border-white/30 bg-white/20 hover:border-purple-200/50 hover:shadow-sm hover:scale-102 group-hover:shadow-sm'
+                            ? 'border-purple-200/30 bg-gradient-to-br from-purple-50/20 to-pink-50/20 shadow-sm scale-105'
+                            : 'border-white/20 bg-white/15 hover:border-purple-100/30 hover:shadow-sm hover:scale-102 group-hover:shadow-sm'
                         }`}
                       >
                         <div className="w-24 h-24 mx-auto mb-2 relative">
