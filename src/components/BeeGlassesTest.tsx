@@ -23,48 +23,137 @@ export default function BeeGlassesTest() {
           </div>
         </div>
 
-        {/* Bee with glasses overlay */}
+        {/* Bee with glasses overlay - PROPERLY CENTERED */}
         <div className="text-center">
-          <h3 className="text-lg font-semibold mb-4 text-foreground">Bee + Glasses</h3>
+          <h3 className="text-lg font-semibold mb-4 text-foreground">Bee + Glasses (Centered)</h3>
           <div className="relative w-64 h-64 border-2 border-dashed border-muted-foreground rounded-lg bg-gradient-to-br from-blue-50 to-yellow-50 overflow-visible">
             {/* Debug info */}
-            <div className="absolute top-0 left-0 text-xs text-red-600 z-50">
-              Debug: Container 256x256px
+            <div className="absolute top-0 left-0 text-xs text-red-600 z-50 bg-white/80 px-1">
+              Container: 256×256px | Bee: centered | Glasses: -10px up
             </div>
-            {/* Bee base - positioned and visible */}
+            
+            {/* Bee base - CENTERED */}
             <img 
               src="/characters/bases/bee/bee-base.png" 
               alt="Bee base" 
-              className="absolute w-48 h-48 object-contain border-2 border-red-500"
+              className="absolute object-contain border-2 border-red-500"
               style={{ 
-                top: '8px', 
-                left: '8px', 
+                width: '180px',
+                height: '180px',
+                top: '50%', 
+                left: '50%', 
+                transform: 'translate(-50%, -50%)',
                 zIndex: 1 
               }}
               onError={(e) => {
-                console.error('OVERLAY BEE FAILED TO LOAD:', e);
+                console.error('CENTERED BEE FAILED TO LOAD:', e);
                 e.currentTarget.style.backgroundColor = 'red';
               }}
               onLoad={() => {
-                console.log('OVERLAY BEE LOADED SUCCESSFULLY - should be visible now!');
+                console.log('CENTERED BEE LOADED - Position: center');
               }}
             />
-            {/* Glasses overlay - positioned on bee's face */}
+            
+            {/* Glasses overlay - CENTERED then offset upward to sit on bee's eyes */}
             <img 
               src="/characters/customization/accessories/glasses-round.png" 
               alt="Glasses" 
-              className="absolute w-24 h-24 object-contain border-2 border-blue-500"
+              className="absolute object-contain border-2 border-blue-500"
               style={{ 
-                top: '60px', 
-                left: '80px', 
+                width: '110px',
+                height: 'auto',
+                top: '50%', 
+                left: '50%', 
+                transform: 'translate(-50%, -60%)', // -60% moves glasses up to sit on bee's eyes
                 zIndex: 2
               }}
               onError={(e) => {
-                console.error('OVERLAY GLASSES FAILED TO LOAD:', e);
+                console.error('CENTERED GLASSES FAILED TO LOAD:', e);
                 e.currentTarget.style.backgroundColor = 'blue';
               }}
               onLoad={() => {
-                console.log('OVERLAY GLASSES LOADED SUCCESSFULLY');
+                console.log('CENTERED GLASSES LOADED - Position: center + up offset');
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Multiple positioning tests */}
+        <div className="text-center">
+          <h3 className="text-lg font-semibold mb-4 text-foreground">Position Variations</h3>
+          <div className="grid grid-cols-3 gap-4">
+            {[
+              { label: 'Glasses Higher', transform: 'translate(-50%, -70%)' },
+              { label: 'Perfect Position', transform: 'translate(-50%, -60%)' },
+              { label: 'Glasses Lower', transform: 'translate(-50%, -50%)' },
+            ].map(({ label, transform }) => (
+              <div key={label} className="text-center">
+                <p className="text-xs font-medium mb-2 text-foreground">{label}</p>
+                <div className="relative w-32 h-32 border border-muted rounded-lg bg-gradient-to-br from-blue-50 to-yellow-50 mx-auto">
+                  {/* Bee base */}
+                  <img 
+                    src="/characters/bases/bee/bee-base.png" 
+                    alt="Bee base" 
+                    className="absolute object-contain"
+                    style={{ 
+                      width: '120px',
+                      height: '120px',
+                      top: '50%', 
+                      left: '50%', 
+                      transform: 'translate(-50%, -50%)',
+                      zIndex: 1 
+                    }}
+                  />
+                  {/* Glasses with different positions */}
+                  <img 
+                    src="/characters/customization/accessories/glasses-round.png" 
+                    alt="Glasses" 
+                    className="absolute object-contain"
+                    style={{ 
+                      width: '72px',
+                      height: 'auto',
+                      top: '50%', 
+                      left: '50%', 
+                      transform: transform,
+                      zIndex: 2
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Clean version without debug borders */}
+        <div className="text-center">
+          <h3 className="text-lg font-semibold mb-4 text-foreground">Final Clean Version</h3>
+          <div className="relative w-64 h-64 border-2 border-dashed border-muted-foreground rounded-lg bg-gradient-to-br from-blue-50 to-yellow-50">
+            {/* Bee base - clean */}
+            <img 
+              src="/characters/bases/bee/bee-base.png" 
+              alt="Bee base" 
+              className="absolute object-contain"
+              style={{ 
+                width: '180px',
+                height: '180px',
+                top: '50%', 
+                left: '50%', 
+                transform: 'translate(-50%, -50%)',
+                zIndex: 1 
+              }}
+            />
+            {/* Glasses overlay - clean */}
+            <img 
+              src="/characters/customization/accessories/glasses-round.png" 
+              alt="Glasses" 
+              className="absolute object-contain"
+              style={{ 
+                width: '110px',
+                height: 'auto',
+                top: '50%', 
+                left: '50%', 
+                transform: 'translate(-50%, -60%)',
+                zIndex: 2
               }}
             />
           </div>
