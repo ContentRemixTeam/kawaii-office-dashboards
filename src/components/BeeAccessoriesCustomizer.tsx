@@ -15,8 +15,10 @@ import {
   Eye,
   Move,
   Zap,
-  Trash2
+  Trash2,
+  Lock
 } from 'lucide-react';
+import { toast } from 'sonner';
 import AssetUploader from '@/components/character/AssetUploader';
 import { 
   getAllAssets, 
@@ -151,6 +153,12 @@ export default function BeeAccessoriesCustomizer() {
         assets[assetIndex] = updatedAsset;
         localStorage.setItem('character_assets', JSON.stringify(assets));
         refreshAssets();
+        
+        // Show success feedback
+        toast.success(`Position locked for ${asset.name}!`, {
+          description: "Customers will receive this accessory in this exact position.",
+          duration: 3000,
+        });
       }
     }
   };
@@ -520,8 +528,10 @@ export default function BeeAccessoriesCustomizer() {
                           onClick={() => lockAccessoryPosition(selectedAccessory!)}
                           className="w-full"
                           size="sm"
+                          variant="default"
                         >
-                          🔒 Lock Position for Store
+                          <Star className="w-4 h-4 mr-2" />
+                          Lock Position for Store
                         </Button>
                         <p className="text-xs text-muted-foreground mt-1 text-center">
                           Customers will get this accessory in this exact position
