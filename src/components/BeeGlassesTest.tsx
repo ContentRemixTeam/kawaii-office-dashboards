@@ -1,0 +1,86 @@
+import React from 'react';
+
+export default function BeeGlassesTest() {
+  return (
+    <div className="flex flex-col items-center gap-6 p-8 bg-background">
+      <h2 className="text-2xl font-bold text-foreground">Bee + Glasses Alignment Test</h2>
+      
+      <div className="flex gap-8">
+        {/* Bee only */}
+        <div className="text-center">
+          <h3 className="text-lg font-semibold mb-4 text-foreground">Bee Base Only</h3>
+          <div className="relative w-32 h-32 border-2 border-dashed border-muted-foreground rounded-lg flex items-center justify-center">
+            <img 
+              src="/characters/bases/bee/bee-base.png" 
+              alt="Bee base" 
+              className="w-24 h-24 object-contain"
+            />
+          </div>
+        </div>
+
+        {/* Bee with glasses overlay */}
+        <div className="text-center">
+          <h3 className="text-lg font-semibold mb-4 text-foreground">Bee + Glasses</h3>
+          <div className="relative w-32 h-32 border-2 border-dashed border-muted-foreground rounded-lg flex items-center justify-center">
+            {/* Bee base */}
+            <img 
+              src="/characters/bases/bee/bee-base.png" 
+              alt="Bee base" 
+              className="absolute w-24 h-24 object-contain z-10"
+            />
+            {/* Glasses overlay */}
+            <img 
+              src="/characters/customization/accessories/glasses-round.png" 
+              alt="Glasses" 
+              className="absolute w-16 h-16 object-contain z-20 transform translate-y-[-2px]"
+            />
+          </div>
+        </div>
+
+        {/* Glasses only for reference */}
+        <div className="text-center">
+          <h3 className="text-lg font-semibold mb-4 text-foreground">Glasses Only</h3>
+          <div className="relative w-32 h-32 border-2 border-dashed border-muted-foreground rounded-lg flex items-center justify-center">
+            <img 
+              src="/characters/customization/accessories/glasses-round.png" 
+              alt="Glasses" 
+              className="w-16 h-16 object-contain"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Interactive positioning test */}
+      <div className="mt-8">
+        <h3 className="text-lg font-semibold mb-4 text-foreground">Interactive Position Test</h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          Hover to see different positioning options
+        </p>
+        
+        <div className="grid grid-cols-3 gap-4">
+          {[
+            { label: 'Default', transform: 'translate-y-[-2px]' },
+            { label: 'Higher', transform: 'translate-y-[-6px]' },
+            { label: 'Lower', transform: 'translate-y-[2px]' },
+          ].map(({ label, transform }) => (
+            <div key={label} className="text-center">
+              <p className="text-sm font-medium mb-2 text-foreground">{label}</p>
+              <div className="relative w-24 h-24 border border-muted rounded-lg flex items-center justify-center mx-auto hover:border-primary transition-colors">
+                <img 
+                  src="/characters/bases/bee/bee-base.png" 
+                  alt="Bee base" 
+                  className="absolute w-20 h-20 object-contain z-10"
+                />
+                <img 
+                  src="/characters/customization/accessories/glasses-round.png" 
+                  alt="Glasses" 
+                  className={`absolute w-14 h-14 object-contain z-20 transform ${transform}`}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
