@@ -1,9 +1,12 @@
 import React from 'react';
+import { GlassesBackgroundRemover } from './GlassesBackgroundRemover';
 
 export default function BeeGlassesTest() {
   return (
     <div className="flex flex-col items-center gap-6 p-8 bg-background">
       <h2 className="text-2xl font-bold text-foreground">Bee + Glasses Alignment Test</h2>
+      
+      <GlassesBackgroundRemover />
       
       <div className="flex gap-8">
         {/* Bee only */}
