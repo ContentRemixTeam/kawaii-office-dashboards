@@ -251,7 +251,7 @@ const BackgroundManager = memo(function BackgroundManager() {
       <div 
         className="fixed inset-0"
         style={{ 
-          background: "var(--gradient-background)",
+          background: "linear-gradient(135deg, hsl(220, 30%, 92%) 0%, hsl(280, 20%, 88%) 100%)",
           zIndex: -100
         }}
       />
