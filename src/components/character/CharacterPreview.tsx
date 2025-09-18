@@ -10,9 +10,9 @@ interface CharacterPreviewProps {
 }
 
 const sizeMap = {
-  small: { width: 120, height: 120 },
-  medium: { width: 200, height: 200 },
-  large: { width: 300, height: 300 }
+  small: { width: 120, height: 120, padding: 16 },   // inset-4 = 16px
+  medium: { width: 200, height: 200, padding: 16 },  // inset-4 = 16px  
+  large: { width: 300, height: 300, padding: 32 }    // inset-8 = 32px
 };
 
 export default function CharacterPreview({ 
@@ -21,74 +21,61 @@ export default function CharacterPreview({
   showBackground = true,
   className = '' 
 }: CharacterPreviewProps) {
-  const dimensions = sizeMap[size];
+  const config = sizeMap[size];
   const baseAsset = getAssetById(character.baseAsset);
   
   if (!baseAsset) {
     return (
       <div 
         className={`flex items-center justify-center bg-muted rounded-lg ${className}`}
-        style={dimensions}
+        style={{ width: config.width, height: config.height }}
       >
         <span className="text-muted-foreground">No character</span>
       </div>
     );
   }
 
+  // Calculate scaling factor relative to the BeeAccessoriesCustomizer's 400px container
+  const baseContainerSize = 400; // BeeAccessoriesCustomizer uses 400px
+  const scaleFactor = config.width / baseContainerSize;
+
   return (
     <div 
-      className={`relative overflow-hidden ${showBackground ? 'bg-gradient-to-br from-primary/5 to-accent/5 rounded-lg p-4' : ''} ${className}`}
-      style={dimensions}
+      className={`relative overflow-hidden ${showBackground ? 'bg-gradient-to-br from-primary/5 to-accent/5 rounded-lg' : ''} ${className}`}
+      style={{ width: config.width, height: config.height }}
     >
-      {/* Base Character */}
+      {/* Base Character - using exact same logic as BeeAccessoriesCustomizer */}
       <img
         src={baseAsset.filepath.startsWith('data:') ? baseAsset.filepath : `${baseAsset.filepath}?v=${Date.now()}`}
         alt={baseAsset.name}
-        className="absolute inset-0 w-full h-full object-contain z-10"
+        className={`absolute w-auto h-auto object-contain z-10`}
         style={{ 
-          transform: showBackground ? 'scale(0.8)' : 'scale(1)' 
+          inset: `${config.padding}px`,
+          width: `calc(100% - ${config.padding * 2}px)`,
+          height: `calc(100% - ${config.padding * 2}px)`
         }}
       />
 
-      {/* Equipped Accessories */}
+      {/* Equipped Accessories - using exact same logic as BeeAccessoriesCustomizer */}
       {character.equippedAccessories.map((equipped, index) => {
         const accessory = getAssetById(equipped.assetId);
         if (!accessory) return null;
 
-        // Debug logging
-        console.log('CharacterPreview rendering accessory:', {
-          assetId: equipped.assetId,
-          assetName: accessory.name,
-          position: equipped.position,
-          containerSize: dimensions,
-          showBackground
-        });
-
-        // Improved positioning to match bee test page
-        const containerScale = showBackground ? 0.8 : 1.0;
-        const baseScale = equipped.position.scale * containerScale;
-        
-        // Better position scaling that maintains proportions
-        const sizeMultiplier = dimensions.width / 200; // Base size is 200px
-        const adjustedX = equipped.position.x * sizeMultiplier * containerScale;
-        const adjustedY = equipped.position.y * sizeMultiplier * containerScale;
-
-        console.log('CharacterPreview calculated transform:', {
-          baseScale,
-          sizeMultiplier,
-          adjustedX,
-          adjustedY,
-          transform: `translate(${adjustedX}px, ${adjustedY}px) scale(${baseScale}) rotate(${equipped.position.rotation || 0}deg)`
-        });
+        // Scale positions proportionally based on container size
+        const scaledX = equipped.position.x * scaleFactor;
+        const scaledY = equipped.position.y * scaleFactor;
 
         return (
           <img
             key={equipped.assetId + index}
             src={accessory.filepath.startsWith('data:') ? accessory.filepath : `${accessory.filepath}?v=${Date.now()}`}
             alt={accessory.name}
-            className="absolute inset-0 w-full h-full object-contain pointer-events-none z-20"
+            className={`absolute w-auto h-auto object-contain pointer-events-none z-20`}
             style={{
-              transform: `translate(${adjustedX}px, ${adjustedY}px) scale(${baseScale}) rotate(${equipped.position.rotation || 0}deg)`,
+              inset: `${config.padding}px`,
+              width: `calc(100% - ${config.padding * 2}px)`,
+              height: `calc(100% - ${config.padding * 2}px)`,
+              transform: `translate(${scaledX}px, ${scaledY}px) scale(${equipped.position.scale}) rotate(${equipped.position.rotation || 0}deg)`,
               opacity: equipped.position.opacity || 1
             }}
           />
