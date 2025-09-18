@@ -86,7 +86,7 @@ interface CharacterCustomizationProps {
 export default function CharacterCustomization({ onBack }: CharacterCustomizationProps) {
   const navigate = useNavigate();
   const [character, setCharacter] = useState<PNGCharacter>(DEFAULT_PNG_CHARACTER);
-  const [selectedTab, setSelectedTab] = useState<'character' | 'accessories' | 'positioning' | 'shop' | 'upload' | 'rewards'>('character');
+  const [selectedTab, setSelectedTab] = useState<'character' | 'accessories' | 'positioning' | 'shop' | 'rewards'>('character');
   const [selectedAccessory, setSelectedAccessory] = useState<EquippedAccessory | null>(null);
   const [allAssets, setAllAssets] = useState<CharacterAsset[]>([]);
 
@@ -326,7 +326,7 @@ export default function CharacterCustomization({ onBack }: CharacterCustomizatio
             <Card className="bg-white border border-gray-200 shadow-lg rounded-3xl overflow-hidden">
               <CardContent className="p-0">
                 <Tabs value={selectedTab} onValueChange={(value) => setSelectedTab(value as typeof selectedTab)}>
-                  <TabsList className="grid w-full grid-cols-6 bg-gray-50 p-2 rounded-2xl border-b border-gray-200">
+                  <TabsList className="grid w-full grid-cols-5 bg-gray-50 p-2 rounded-2xl border-b border-gray-200">
                     <TabsTrigger value="character" className="data-[state=active]:bg-white data-[state=active]:text-purple-700 data-[state=active]:border data-[state=active]:border-purple-200 text-gray-700 font-semibold rounded-xl transition-all duration-300">
                       <User className="w-4 h-4 mr-2" />
                       Character
@@ -342,10 +342,6 @@ export default function CharacterCustomization({ onBack }: CharacterCustomizatio
                     <TabsTrigger value="shop" className="data-[state=active]:bg-white data-[state=active]:text-purple-700 data-[state=active]:border data-[state=active]:border-purple-200 text-gray-700 font-semibold rounded-xl transition-all duration-300">
                       <ShoppingBag className="w-4 h-4 mr-2" />
                       Shop
-                    </TabsTrigger>
-                    <TabsTrigger value="upload" className="data-[state=active]:bg-white data-[state=active]:text-purple-700 data-[state=active]:border data-[state=active]:border-purple-200 text-gray-700 font-semibold rounded-xl transition-all duration-300">
-                      <Upload className="w-4 h-4 mr-2" />
-                      Upload
                     </TabsTrigger>
                     <TabsTrigger value="rewards" className="data-[state=active]:bg-white data-[state=active]:text-purple-700 data-[state=active]:border data-[state=active]:border-purple-200 text-gray-700 font-semibold rounded-xl transition-all duration-300">
                       <Gift className="w-4 h-4 mr-2" />
