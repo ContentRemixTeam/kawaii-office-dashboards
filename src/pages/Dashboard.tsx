@@ -82,16 +82,16 @@ const Dashboard = () => {
         {/* Header Section */}
         <section className="dashboard-header">
           <div className="text-center space-y-4">
-            <div className="flex items-center justify-center gap-3 mb-6">
-              <Sparkles className="w-8 h-8 text-primary animate-pulse-soft" />
-              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-kawaii bg-clip-text text-transparent">
-                Your Daily Dashboard
-              </h1>
-              <Heart className="w-8 h-8 text-primary animate-bounce-cute" />
+            <div className="flex flex-col items-center justify-center space-y-4">
+              {/* Daily Dashboard Graphic Header */}
+              <div className="w-full max-w-lg mx-auto">
+                <img 
+                  src="/assets/daily-dashboard-header.png" 
+                  alt="Daily Dashboard - Complete your tasks to grow your daily companion!" 
+                  className="w-full h-auto object-contain"
+                />
+              </div>
             </div>
-            <p className="text-lg text-muted max-w-2xl mx-auto leading-relaxed">
-              Complete your tasks to grow your daily companion!
-            </p>
             {!todayIntention && (
               <div className="mt-6">
                 <Button
