@@ -58,7 +58,7 @@ export default function UnifiedModeAwareDashboard() {
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto">
+    <div className="w-full">
       {/* Hero Section Background */}
       <Card className="bg-gradient-to-br from-primary/5 via-background to-primary/10 border-primary/10 shadow-lg">
         <CardContent className="p-6 space-y-6">

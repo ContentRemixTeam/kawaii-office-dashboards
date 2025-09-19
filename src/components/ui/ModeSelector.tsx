@@ -33,7 +33,7 @@ const MODES = [
 
 export default function ModeSelector({ selectedMode, onModeChange }: ModeSelectorProps) {
   return (
-    <div className="w-full max-w-2xl mx-auto mb-6">
+    <div className="w-full mb-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {MODES.map((mode) => {
           const isSelected = selectedMode === mode.id;
