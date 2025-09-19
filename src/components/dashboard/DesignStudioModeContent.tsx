@@ -28,15 +28,10 @@ const DEFAULT_CHARACTER: PNGCharacter = {
   id: crypto.randomUUID(),
   name: 'My Character',
   baseAsset: 'bee-base',
-  equippedAccessories: [
-    {
-      assetId: 'glasses-round',
-      position: { x: 0, y: -15, scale: 0.85, rotation: 0, opacity: 1 }
-    }
-  ],
+  equippedAccessories: [],
   coins: 150,
   specialCurrency: 1,
-  unlockedAssets: ['bee-base', 'glasses-round'],
+  unlockedAssets: ['bee-base'],
   room: {
     background: 'default',
     decorations: []
@@ -81,9 +76,11 @@ export default function DesignStudioModeContent({ coins, gems }: DesignStudioMod
             {/* Character preview */}
             <div className="text-center">
               <div className="w-32 h-32 mx-auto bg-gradient-to-br from-pink-100 to-rose-100 rounded-full flex items-center justify-center border-4 border-pink-200 mb-4">
-                <div className="scale-110">
-                  <CharacterPreview character={character} />
-                </div>
+                <CharacterPreview 
+                  character={character} 
+                  size="small" 
+                  showBackground={false}
+                />
               </div>
               <h3 className="text-lg font-semibold text-pink-700 mb-2">
                 {character.name}
