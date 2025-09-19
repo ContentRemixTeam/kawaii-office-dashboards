@@ -113,7 +113,7 @@ const Dashboard = () => {
           </FeatureErrorBoundary>
         </section>
 
-        {/* Three Main Cards - Big Three, Ambient Player, Focus Timer */}
+        {/* Two Column Layout - Big Three | Stacked Ambient Player + Focus Timer */}
         <section className="dashboard-primary-grid">
           <FeatureErrorBoundary featureName="Big Three Tasks">
             <div className="dashboard-card big-three-card">
@@ -171,17 +171,20 @@ const Dashboard = () => {
             </div>
           </FeatureErrorBoundary>
           
-          <FeatureErrorBoundary featureName="Ambient Player">
-            <div className="dashboard-card">
-              <AmbientPlayerCard />
-            </div>
-          </FeatureErrorBoundary>
+          {/* Stacked Column - Ambient Player and Focus Timer */}
+          <div className="dashboard-stacked-column">
+            <FeatureErrorBoundary featureName="Ambient Player">
+              <div className="dashboard-card">
+                <AmbientPlayerCard />
+              </div>
+            </FeatureErrorBoundary>
 
-          <FeatureErrorBoundary featureName="Focus Timer">
-            <div className="dashboard-card">
-              <FocusTimerCard />
-            </div>
-          </FeatureErrorBoundary>
+            <FeatureErrorBoundary featureName="Focus Timer">
+              <div className="dashboard-card">
+                <FocusTimerCard />
+              </div>
+            </FeatureErrorBoundary>
+          </div>
         </section>
 
         {/* Dynamic Content Sections - Only show if content exists */}

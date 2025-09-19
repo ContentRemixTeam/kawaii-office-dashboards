@@ -25,7 +25,7 @@
   width: 100%;
 }
 
-/* Primary Grid - Big Three, Ambient Player, and Focus Timer */
+/* Primary Grid - Big Three | Stacked Ambient Player + Focus Timer */
 .dashboard-primary-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -35,10 +35,18 @@
   margin: 0 auto; /* Center the grid */
 }
 
-/* Three-column layout on tablet and up */
+/* Stacked Column for Ambient Player and Focus Timer */
+.dashboard-stacked-column {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 2vw, 1.5rem);
+  min-height: 0;
+}
+
+/* Two-column layout on tablet and up */
 @media (min-width: 768px) {
   .dashboard-primary-grid {
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     max-width: 100%;
   }
 }
