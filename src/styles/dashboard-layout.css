@@ -48,6 +48,7 @@
   .dashboard-primary-grid {
     grid-template-columns: 1fr 1fr;
     max-width: 100%;
+    width: 100%;
   }
 }
 
