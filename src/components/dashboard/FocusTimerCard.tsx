@@ -64,14 +64,16 @@ export function FocusTimerCard() {
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="space-y-3">
         <img 
           src={focusTimerHeader} 
-          alt="Focus Timer" 
-          className="h-10 max-w-sm object-contain"
+          alt="Pomodoro Timer" 
+          className="h-20 w-full object-contain"
         />
-        <div className="status-indicator status-success ml-4">
-          🏆 {trophyCount}
+        <div className="text-center">
+          <div className="status-indicator status-success">
+            🏆 {trophyCount}
+          </div>
         </div>
       </div>
       
