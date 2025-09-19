@@ -178,13 +178,8 @@ const Dashboard = () => {
           </FeatureErrorBoundary>
         </section>
 
-        {/* Secondary Tools Grid - Responsive Layout */}
+        {/* Focus Timer - Full Width */}
         <section className="dashboard-tools-grid">
-          <FeatureErrorBoundary featureName="Work Session Plan">
-            <div className="dashboard-card">
-              <WorkSessionCard />
-            </div>
-          </FeatureErrorBoundary>
           <FeatureErrorBoundary featureName="Focus Timer">
             <div className="dashboard-card">
               <FocusTimerCard />

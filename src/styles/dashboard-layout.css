@@ -43,7 +43,7 @@
   }
 }
 
-/* Secondary Tools Grid */
+/* Secondary Tools Grid - Full Width for Focus Timer */
 .dashboard-tools-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -117,17 +117,11 @@
 
 /* Tablet Portrait and Up */
 @media (min-width: 640px) {
-  .dashboard-tools-grid {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  }
 }
 
 /* Tablet Landscape and Up */
 @media (min-width: 768px) {
   
-  .dashboard-tools-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
 
   .dashboard-dynamic-content {
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
