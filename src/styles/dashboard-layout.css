@@ -114,6 +114,7 @@
 /* Enhanced Big Three Card */
 .big-three-card {
   position: relative;
+  width: 100%;
 }
 
 .big-three-extension {
