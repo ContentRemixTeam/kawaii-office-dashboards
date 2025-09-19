@@ -31,7 +31,7 @@ const MODES = [
 export default function ModeSelector({ selectedMode, onModeChange }: ModeSelectorProps) {
   return (
     <div className="w-full mb-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
         {MODES.map((mode) => {
           const isSelected = selectedMode === mode.id;
           
@@ -47,10 +47,10 @@ export default function ModeSelector({ selectedMode, onModeChange }: ModeSelecto
               `}
               onClick={() => onModeChange(mode.id)}
             >
-              {/* Full graphic button */}
+              {/* Rectangular button graphic */}
               <div className={`
-                transition-all duration-300 rounded-xl overflow-hidden
-                ${isSelected ? 'ring-2 ring-primary/50 shadow-lg shadow-primary/20' : ''}
+                transition-all duration-300 rounded-2xl overflow-hidden
+                ${isSelected ? 'ring-3 ring-primary/60 shadow-lg shadow-primary/25' : ''}
               `}>
                 <img 
                   src={mode.image} 
@@ -62,7 +62,7 @@ export default function ModeSelector({ selectedMode, onModeChange }: ModeSelecto
               {/* Selected indicator overlay */}
               {isSelected && (
                 <div className="absolute -top-2 -right-2">
-                  <Badge variant="default" className="bg-primary text-primary-foreground shadow-lg">
+                  <Badge variant="default" className="bg-primary text-primary-foreground shadow-lg text-xs px-2 py-1">
                     Active
                   </Badge>
                 </div>
