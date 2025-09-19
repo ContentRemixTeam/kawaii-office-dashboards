@@ -31,53 +31,43 @@ const MODES = [
 export default function ModeSelector({ selectedMode, onModeChange }: ModeSelectorProps) {
   return (
     <div className="w-full mb-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {MODES.map((mode) => {
           const isSelected = selectedMode === mode.id;
           
           return (
-            <Card
+            <div
               key={mode.id}
               className={`
-                cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg
+                relative cursor-pointer transition-all duration-300 hover:scale-105
                 ${isSelected 
-                  ? 'ring-2 ring-primary shadow-xl scale-105' 
-                  : 'hover:shadow-md opacity-80 hover:opacity-100'
+                  ? 'scale-105 drop-shadow-xl' 
+                  : 'hover:drop-shadow-lg opacity-90 hover:opacity-100'
                 }
               `}
               onClick={() => onModeChange(mode.id)}
             >
-              <CardContent className="p-2">
-                <div className="text-center space-y-3">
-                  {/* Mode graphic image */}
-                  <div className={`
-                    w-24 h-24 mx-auto rounded-xl overflow-hidden transition-all duration-300
-                    ${isSelected ? 'ring-3 ring-primary shadow-xl scale-105' : 'hover:scale-105'}
-                  `}>
-                    <img 
-                      src={mode.image} 
-                      alt={mode.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  
-                  {/* Mode name */}
-                  <h3 className={`
-                    font-semibold text-sm transition-colors
-                    ${isSelected ? 'text-primary' : 'text-foreground'}
-                  `}>
-                    {mode.name}
-                  </h3>
-                  
-                  {/* Selected indicator */}
-                  {isSelected && (
-                    <Badge variant="default" className="bg-primary/10 text-primary border-primary/20 text-xs">
-                      Active
-                    </Badge>
-                  )}
+              {/* Full graphic button */}
+              <div className={`
+                transition-all duration-300 rounded-xl overflow-hidden
+                ${isSelected ? 'ring-2 ring-primary/50 shadow-lg shadow-primary/20' : ''}
+              `}>
+                <img 
+                  src={mode.image} 
+                  alt={mode.description}
+                  className="w-full h-auto object-contain hover:brightness-110 transition-all duration-300"
+                />
+              </div>
+              
+              {/* Selected indicator overlay */}
+              {isSelected && (
+                <div className="absolute -top-2 -right-2">
+                  <Badge variant="default" className="bg-primary text-primary-foreground shadow-lg">
+                    Active
+                  </Badge>
                 </div>
-              </CardContent>
-            </Card>
+              )}
+            </div>
           );
         })}
       </div>
