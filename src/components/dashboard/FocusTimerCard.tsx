@@ -68,7 +68,7 @@ export function FocusTimerCard() {
         <img 
           src={focusTimerHeader} 
           alt="Focus Timer" 
-          className="h-8 w-auto flex-1"
+          className="h-10 max-w-sm object-contain"
         />
         <div className="status-indicator status-success ml-4">
           🏆 {trophyCount}
