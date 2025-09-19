@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Play, Pause, Timer } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import focusTimerHeader from "@/assets/focus-timer-header.png";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -66,9 +67,12 @@ export function FocusTimerCard() {
       <div className={`bg-gradient-to-r ${getPhaseColor()} rounded-xl p-6 border border-muted/20`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Timer className="w-5 h-5 text-primary" />
             <span className="text-2xl">{getPhaseIcon()}</span>
-            <h2 className="text-card-title">Focus Timer</h2>
+            <img 
+              src={focusTimerHeader} 
+              alt="Focus Timer" 
+              className="h-8 w-auto"
+            />
           </div>
           <div className="status-indicator status-success">
             🏆 {trophyCount}
