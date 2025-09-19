@@ -170,6 +170,12 @@ const Dashboard = () => {
               </div>
             </div>
           </FeatureErrorBoundary>
+          
+          <FeatureErrorBoundary featureName="Ambient Player">
+            <div className="dashboard-card">
+              <AmbientPlayerCard />
+            </div>
+          </FeatureErrorBoundary>
         </section>
 
         {/* Secondary Tools Grid - Responsive Layout */}
@@ -177,11 +183,6 @@ const Dashboard = () => {
           <FeatureErrorBoundary featureName="Work Session Plan">
             <div className="dashboard-card">
               <WorkSessionCard />
-            </div>
-          </FeatureErrorBoundary>
-          <FeatureErrorBoundary featureName="Ambient Player">
-            <div className="dashboard-card">
-              <AmbientPlayerCard />
             </div>
           </FeatureErrorBoundary>
           <FeatureErrorBoundary featureName="Focus Timer">
