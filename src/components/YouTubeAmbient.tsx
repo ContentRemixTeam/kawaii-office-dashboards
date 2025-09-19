@@ -297,9 +297,35 @@ export default function YouTubeAmbient({
       return;
     }
 
+    console.log('YouTubeAmbient: Effect triggered', { 
+      videoId, 
+      youtubeAPIState: youtubeAPI.state, 
+      isReady: youtubeAPI.isReady,
+      isConnected: youtubeAPI.isConnected 
+    });
+
     if (!youtubeAPI.isReady) {
-      console.log('YouTubeAmbient: Waiting for YouTube API to be ready');
+      console.log('YouTubeAmbient: YouTube API not ready, attempting to load...');
       setLoadingState('loading');
+      
+      // Try to load the API with a timeout
+      const loadTimeout = setTimeout(() => {
+        console.error('YouTubeAmbient: API load timeout after 10 seconds');
+        setLoadingState('error');
+        setCurrentError({ code: -1, message: 'YouTube API load timeout', retryable: true });
+      }, 10000);
+
+      youtubeAPI.loadAPI()
+        .then(() => {
+          clearTimeout(loadTimeout);
+          console.log('YouTubeAmbient: API loaded successfully, proceeding with player init');
+        })
+        .catch(error => {
+          clearTimeout(loadTimeout);
+          console.error('YouTubeAmbient: Failed to load YouTube API:', error);
+          setLoadingState('error');
+          setCurrentError({ code: -1, message: 'Failed to load YouTube API', retryable: true });
+        });
       return;
     }
 

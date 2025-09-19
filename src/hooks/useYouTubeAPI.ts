@@ -46,6 +46,21 @@ export function useYouTubeAPI(): UseYouTubeAPIResult {
   const [isConnected, setIsConnected] = useState(connectionStatus);
   const listenerRef = useRef<() => void>();
 
+  // Auto-load API when hook is first used
+  useEffect(() => {
+    const tryLoadAPI = async () => {
+      if (globalAPIState === 'idle') {
+        console.log('useYouTubeAPI: Auto-loading API on first mount');
+        try {
+          await loadAPI();
+        } catch (err) {
+          console.error('useYouTubeAPI: Auto-load failed:', err);
+        }
+      }
+    };
+    tryLoadAPI();
+  }, []);
+
   useEffect(() => {
     // Create listener function
     const listener = () => {

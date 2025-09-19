@@ -20,15 +20,27 @@ export function AmbientPlayerCard() {
   };
 
   const getCurrentVideoId = () => {
-    if (!ambientState.activeId) return "jfKfPfyJRdk"; // Default lofi video
+    console.log('AmbientPlayerCard: Getting current video ID', { 
+      activeId: ambientState.activeId, 
+      customUrl: ambientState.customUrl 
+    });
+    
+    if (!ambientState.activeId) {
+      console.log('AmbientPlayerCard: Using default video (no activeId)');
+      return "jfKfPfyJRdk"; // Default lofi video
+    }
     
     if (ambientState.activeId === "custom" && ambientState.customUrl) {
       const match = ambientState.customUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/);
-      return match ? match[1] : "jfKfPfyJRdk";
+      const videoId = match ? match[1] : "jfKfPfyJRdk";
+      console.log('AmbientPlayerCard: Using custom video', { customUrl: ambientState.customUrl, videoId });
+      return videoId;
     }
     
     const preset = getPresetById(ambientState.activeId);
-    return preset ? preset.id : "jfKfPfyJRdk";
+    const videoId = preset ? preset.id : "jfKfPfyJRdk";
+    console.log('AmbientPlayerCard: Using preset video', { activeId: ambientState.activeId, preset, videoId });
+    return videoId;
   };
 
   return (
@@ -52,9 +64,12 @@ export function AmbientPlayerCard() {
       <div className="w-full rounded-xl overflow-hidden border border-muted/20 bg-muted/5">
         <div className="aspect-video">
           <YouTubeAmbient 
+            key={`ambient-${getCurrentVideoId()}`} // Force remount on video change
             videoId={getCurrentVideoId()}
             startMuted={ambientState.muted || true}
             className="w-full h-full"
+            maxRetries={5}
+            retryDelay={1000}
           />
         </div>
       </div>
