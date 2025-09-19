@@ -113,35 +113,8 @@ const Dashboard = () => {
           </FeatureErrorBoundary>
         </section>
 
-        {/* Primary Dashboard Grid - Trophy Case & Big Three */}
+        {/* Primary Dashboard Grid - Big Three */}
         <section className="dashboard-primary-grid">
-          {/* Trophy Case with Enhanced Content */}
-          <FeatureErrorBoundary featureName="Trophy Case">
-            <div className="dashboard-card trophy-case-card">
-              <DashboardTrophyCase />
-              
-              {/* Quick Stats Below Trophy Case */}
-              <div className="trophy-stats-extension">
-                <div className="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-border/20">
-                  <div className="text-center p-2 bg-background/50 rounded-lg">
-                    <div className="text-sm text-muted-foreground">Daily Goal</div>
-                    <div className="font-semibold text-primary">3 Sessions</div>
-                  </div>
-                  <div className="text-center p-2 bg-background/50 rounded-lg">
-                    <div className="text-sm text-muted-foreground">Best Streak</div>
-                    <div className="font-semibold text-accent">7 Days</div>
-                  </div>
-                </div>
-                
-                <div className="mt-3 p-3 bg-gradient-to-r from-primary/5 to-accent/5 rounded-lg border border-primary/20">
-                  <div className="text-xs text-muted-foreground text-center">
-                    💡 Complete focus sessions to earn more trophies
-                  </div>
-                </div>
-              </div>
-            </div>
-          </FeatureErrorBoundary>
-          
           {/* Big Three Tasks with Enhanced Content */}
           <FeatureErrorBoundary featureName="Big Three Tasks">
             <div className="dashboard-card big-three-card">
