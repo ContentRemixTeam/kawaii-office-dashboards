@@ -73,10 +73,13 @@ export function getAllAssets(): CharacterAsset[] {
   const uploadedAssets = getUploadedAssets();
   const lockedPositions = getLockedPositions();
   
+  console.log('🔍 DEBUG - Locked positions:', lockedPositions);
+  
   // Apply locked positions to default assets
   const assetsWithLockedPositions = DEFAULT_ASSETS.map(asset => {
     const lockedPosition = lockedPositions[asset.id];
     if (lockedPosition) {
+      console.log(`🔍 DEBUG - Applying locked position to ${asset.name}:`, lockedPosition);
       return { ...asset, defaultPosition: lockedPosition };
     }
     return asset;

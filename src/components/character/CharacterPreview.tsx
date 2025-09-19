@@ -40,45 +40,56 @@ export default function CharacterPreview({
   // Medium/Small sizes (200px/120px) use 0.5 multiplier (like mini preview)
   const useRawPositions = size === 'large';
   const POSITION_MULTIPLIER = useRawPositions ? 1.0 : 0.5;
+  
+  console.log(`🔍 DEBUG CharacterPreview - Size: ${size}, useRawPositions: ${useRawPositions}, multiplier: ${POSITION_MULTIPLIER}`);
 
   return (
     <div 
       className={`relative overflow-hidden ${showBackground ? 'bg-gradient-to-br from-primary/5 to-accent/5 rounded-lg' : ''} ${className}`}
       style={{ width: config.width, height: config.height }}
     >
-      {/* Base Character - using exact same logic as BeeAccessoriesCustomizer */}
+      {/* Base Character - use exact same structure as BeeAccessoriesCustomizer */}
       <img
         src={baseAsset.filepath.startsWith('data:') ? baseAsset.filepath : `${baseAsset.filepath}?v=${Date.now()}`}
         alt={baseAsset.name}
-        className={`absolute w-auto h-auto object-contain z-10`}
+        className="absolute w-auto h-auto object-contain"
         style={{ 
+          // For large size (400px): inset: 32px (matches BeeAccessoriesCustomizer large preview exactly)
+          // For medium size (200px): inset: 16px (matches BeeAccessoriesCustomizer mini preview exactly)  
+          // For small size (120px): inset: 16px
           inset: `${config.padding}px`,
           width: `calc(100% - ${config.padding * 2}px)`,
           height: `calc(100% - ${config.padding * 2}px)`
         }}
       />
 
-      {/* Equipped Accessories - using exact same logic as BeeAccessoriesCustomizer */}
+      {/* Equipped Accessories - use exact same structure as BeeAccessoriesCustomizer */}
       {character.equippedAccessories.map((equipped, index) => {
         const accessory = getAssetById(equipped.assetId);
         if (!accessory) return null;
 
-        // Use the same position logic as BeeAccessoriesCustomizer
+        // Use exact same position logic as BeeAccessoriesCustomizer:
+        // - Large preview (400px): use raw positions (no multiplier)
+        // - Mini preview (200px): use 0.5 multiplier
         const scaledX = equipped.position.x * POSITION_MULTIPLIER;
         const scaledY = equipped.position.y * POSITION_MULTIPLIER;
+        
+        console.log(`🔍 DEBUG CharacterPreview - ${accessory.name}: original(${equipped.position.x}, ${equipped.position.y}) -> scaled(${scaledX}, ${scaledY})`);
 
         return (
           <img
             key={equipped.assetId + index}
             src={accessory.filepath.startsWith('data:') ? accessory.filepath : `${accessory.filepath}?v=${Date.now()}`}
             alt={accessory.name}
-            className={`absolute w-auto h-auto object-contain pointer-events-none z-20`}
+            className="absolute w-auto h-auto object-contain pointer-events-none"
             style={{
+              // Use exact same inset and dimensions as BeeAccessoriesCustomizer
               inset: `${config.padding}px`,
               width: `calc(100% - ${config.padding * 2}px)`,
               height: `calc(100% - ${config.padding * 2}px)`,
               transform: `translate(${scaledX}px, ${scaledY}px) scale(${equipped.position.scale}) rotate(${equipped.position.rotation || 0}deg)`,
-              opacity: equipped.position.opacity || 1
+              opacity: equipped.position.opacity || 1,
+              zIndex: 20
             }}
           />
         );

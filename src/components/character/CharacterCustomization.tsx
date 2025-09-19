@@ -173,11 +173,14 @@ export default function CharacterCustomization({ onBack }: CharacterCustomizatio
     
     // Use asset's locked default position (from test page), or category default, or fallback
     let defaultPosition = asset.defaultPosition;
+    console.log(`🔍 DEBUG - Equipping ${asset.name}, locked position:`, defaultPosition);
     if (!defaultPosition && asset.category) {
       defaultPosition = DEFAULT_POSITIONS[asset.category];
+      console.log(`🔍 DEBUG - Using category default:`, defaultPosition);
     }
     if (!defaultPosition) {
       defaultPosition = { x: 0, y: 0, scale: 1, rotation: 0, opacity: 1 };
+      console.log(`🔍 DEBUG - Using fallback position:`, defaultPosition);
     }
     
     const newAccessory: EquippedAccessory = {

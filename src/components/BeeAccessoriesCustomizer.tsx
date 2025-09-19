@@ -146,6 +146,7 @@ export default function BeeAccessoriesCustomizer() {
 
     // Save the current position as the locked default for this asset
     const asset = getAssetById(assetId);
+    console.log('🔍 DEBUG - Locking position for', asset?.name, 'position:', equippedAccessory.position);
     if (asset) {
       // Save the locked position using the new system
       saveLockPosition(assetId, equippedAccessory.position);
