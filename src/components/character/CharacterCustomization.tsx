@@ -163,7 +163,15 @@ export default function CharacterCustomization({ onBack }: CharacterCustomizatio
 
     const updatedCharacter = { ...character };
     
-    // Use asset's default position, or category default, or fallback
+    // Remove any existing accessory of the same category first
+    if (asset.category) {
+      updatedCharacter.equippedAccessories = updatedCharacter.equippedAccessories.filter(eq => {
+        const existingAsset = getAssetById(eq.assetId);
+        return existingAsset?.category !== asset.category;
+      });
+    }
+    
+    // Use asset's locked default position (from test page), or category default, or fallback
     let defaultPosition = asset.defaultPosition;
     if (!defaultPosition && asset.category) {
       defaultPosition = DEFAULT_POSITIONS[asset.category];

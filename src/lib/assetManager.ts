@@ -38,13 +38,51 @@ export const DEFAULT_POSITIONS: Record<string, AccessoryPosition> = {
 // Storage keys
 const ASSETS_STORAGE_KEY = 'character_assets_v1';
 const UPLOADED_ASSETS_KEY = 'uploaded_assets_v1';
+const LOCKED_POSITIONS_KEY = 'locked_asset_positions_v1';
 
 /**
- * Get all available assets (default + uploaded)
+ * Get locked positions from localStorage
+ */
+function getLockedPositions(): Record<string, AccessoryPosition> {
+  try {
+    const stored = localStorage.getItem(LOCKED_POSITIONS_KEY);
+    return stored ? JSON.parse(stored) : {};
+  } catch (error) {
+    console.error('Error loading locked positions:', error);
+    return {};
+  }
+}
+
+/**
+ * Save locked position for an asset
+ */
+export function saveLockPosition(assetId: string, position: AccessoryPosition): void {
+  try {
+    const lockedPositions = getLockedPositions();
+    lockedPositions[assetId] = position;
+    localStorage.setItem(LOCKED_POSITIONS_KEY, JSON.stringify(lockedPositions));
+  } catch (error) {
+    console.error('Error saving locked position:', error);
+  }
+}
+
+/**
+ * Get all available assets (default + uploaded) with locked positions applied
  */
 export function getAllAssets(): CharacterAsset[] {
   const uploadedAssets = getUploadedAssets();
-  return [...DEFAULT_ASSETS, ...uploadedAssets];
+  const lockedPositions = getLockedPositions();
+  
+  // Apply locked positions to default assets
+  const assetsWithLockedPositions = DEFAULT_ASSETS.map(asset => {
+    const lockedPosition = lockedPositions[asset.id];
+    if (lockedPosition) {
+      return { ...asset, defaultPosition: lockedPosition };
+    }
+    return asset;
+  });
+  
+  return [...assetsWithLockedPositions, ...uploadedAssets];
 }
 
 /**

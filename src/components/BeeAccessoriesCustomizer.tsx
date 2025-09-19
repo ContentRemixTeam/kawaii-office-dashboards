@@ -24,7 +24,8 @@ import {
   getAllAssets, 
   getAssetsByCategory, 
   getAssetById, 
-  getRarityColor 
+  getRarityColor,
+  saveLockPosition
 } from '@/lib/assetManager';
 import { CharacterAsset, PNGCharacter, AccessoryPosition, EquippedAccessory } from '@/types/character';
 
@@ -143,26 +144,21 @@ export default function BeeAccessoriesCustomizer() {
     const equippedAccessory = getEquippedAccessory(assetId);
     if (!equippedAccessory) return;
 
-    // Save the current position as the default for store customers
+    // Save the current position as the locked default for this asset
     const asset = getAssetById(assetId);
     if (asset) {
-      const updatedAsset = { ...asset, defaultPosition: equippedAccessory.position };
-      const assets = getAllAssets();
-      const assetIndex = assets.findIndex(a => a.id === assetId);
-      if (assetIndex !== -1) {
-        assets[assetIndex] = updatedAsset;
-        localStorage.setItem('character_assets', JSON.stringify(assets));
-        refreshAssets();
-        
-        // SYNC: Also update the Design Studio character with this setup
-        localStorage.setItem('png_character_v1', JSON.stringify(character));
-        
-        // Show success feedback
-        toast.success(`Position locked for ${asset.name}!`, {
-          description: "Customers will receive this accessory in this exact position. Character synced to Design Studio!",
-          duration: 4000,
-        });
-      }
+      // Save the locked position using the new system
+      saveLockPosition(assetId, equippedAccessory.position);
+      refreshAssets();
+      
+      // SYNC: Also update the Design Studio character with this setup
+      localStorage.setItem('png_character_v1', JSON.stringify(character));
+      
+      // Show success feedback
+      toast.success(`Position locked for ${asset.name}!`, {
+        description: "Customers will now receive this accessory in this exact position. Character synced to Design Studio!",
+        duration: 4000,
+      });
     }
   };
 
