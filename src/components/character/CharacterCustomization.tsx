@@ -275,10 +275,8 @@ export default function CharacterCustomization({ onBack }: CharacterCustomizatio
               </h2>
               
               {/* Large Character Preview */}
-              <div className="aspect-square bg-gradient-to-br from-primary/10 to-secondary/10 rounded-2xl p-8 flex items-center justify-center mb-6">
-                <div className="scale-150">
-                  <CharacterPreview character={character} />
-                </div>
+              <div className="aspect-square bg-gradient-to-br from-primary/10 to-secondary/10 rounded-2xl p-4 flex items-center justify-center mb-6">
+                <CharacterPreview character={character} size="large" />
               </div>
               
               {/* Character Info */}
