@@ -11,23 +11,20 @@ const MODES = [
   {
     id: 'pet-store' as const,
     name: 'Pet Store',
-    icon: '🐾',
-    description: 'Grow your pets',
-    gradient: 'from-green-400 to-emerald-500'
+    image: '/assets/mode-buttons/pet-store.png',
+    description: 'Grow your pets'
   },
   {
     id: 'design-studio' as const,
     name: 'Design Studio',
-    icon: '💖',
-    description: 'Customize your character',
-    gradient: 'from-pink-400 to-rose-500'
+    image: '/assets/mode-buttons/design-studio.png',
+    description: 'Customize your character'
   },
   {
     id: 'task-arcade' as const,
     name: 'Task Arcade',
-    icon: '🎮',
-    description: 'Play productivity games',
-    gradient: 'from-purple-400 to-violet-500'
+    image: '/assets/mode-buttons/task-arcade.png',
+    description: 'Play productivity games'
   }
 ];
 
@@ -50,34 +47,32 @@ export default function ModeSelector({ selectedMode, onModeChange }: ModeSelecto
               `}
               onClick={() => onModeChange(mode.id)}
             >
-              <CardContent className="p-4">
-                <div className="text-center space-y-2">
-                  {/* Mode icon with gradient background */}
+              <CardContent className="p-2">
+                <div className="text-center space-y-3">
+                  {/* Mode graphic image */}
                   <div className={`
-                    w-16 h-16 mx-auto rounded-full bg-gradient-to-br ${mode.gradient}
-                    flex items-center justify-center text-2xl shadow-lg
-                    ${isSelected ? 'animate-pulse' : ''}
+                    w-24 h-24 mx-auto rounded-xl overflow-hidden transition-all duration-300
+                    ${isSelected ? 'ring-3 ring-primary shadow-xl scale-105' : 'hover:scale-105'}
                   `}>
-                    {mode.icon}
+                    <img 
+                      src={mode.image} 
+                      alt={mode.name}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   
                   {/* Mode name */}
                   <h3 className={`
-                    font-semibold text-lg transition-colors
+                    font-semibold text-sm transition-colors
                     ${isSelected ? 'text-primary' : 'text-foreground'}
                   `}>
                     {mode.name}
                   </h3>
                   
-                  {/* Mode description */}
-                  <p className="text-sm text-muted-foreground">
-                    {mode.description}
-                  </p>
-                  
                   {/* Selected indicator */}
                   {isSelected && (
-                    <Badge variant="default" className="bg-primary/10 text-primary border-primary/20">
-                      Active Mode
+                    <Badge variant="default" className="bg-primary/10 text-primary border-primary/20 text-xs">
+                      Active
                     </Badge>
                   )}
                 </div>
