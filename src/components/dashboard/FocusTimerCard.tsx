@@ -63,59 +63,59 @@ export function FocusTimerCard() {
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="space-y-3">
-        <img 
-          src={focusTimerHeader} 
-          alt="Pomodoro Timer" 
-          className="h-24 w-full object-contain"
-        />
-        <div className="text-center">
+    <div className="space-y-4">
+      <img 
+        src={focusTimerHeader} 
+        alt="Pomodoro Timer" 
+        className="h-40 w-full object-contain mb-2"
+      />
+      <div className="px-6">
+        <div className="text-center mb-4">
           <div className="status-indicator status-success">
             🏆 {trophyCount}
           </div>
         </div>
-      </div>
-      
-      <div className="space-y-6">
-        <div className="text-center space-y-4">
-          <div className="text-5xl font-mono font-bold text-primary">
-            {formatTime(timerState.msLeft)}
-          </div>
-          <Progress 
-            value={timerState.progress * 100} 
-            className="h-3 max-w-xs mx-auto"
-          />
-        </div>
         
-        <div className="flex items-center justify-center gap-3">
-          {!timerState.isRunning ? (
+        <div className="space-y-4">
+          <div className="text-center space-y-4">
+            <div className="text-5xl font-mono font-bold text-primary">
+              {formatTime(timerState.msLeft)}
+            </div>
+            <Progress 
+              value={timerState.progress * 100} 
+              className="h-3 max-w-xs mx-auto"
+            />
+          </div>
+          
+          <div className="flex items-center justify-center gap-3">
+            {!timerState.isRunning ? (
+              <Button
+                onClick={() => focusTimer.start(timerState.phase === "idle" ? "focus" : timerState.phase)}
+                size="sm"
+                className="gap-2"
+              >
+                <Play className="w-4 h-4" />
+                Start
+              </Button>
+            ) : (
+              <Button
+                onClick={() => focusTimer.pause()}
+                variant="outline"
+                size="sm"
+                className="gap-2"
+              >
+                <Pause className="w-4 h-4" />
+                Pause
+              </Button>
+            )}
             <Button
-              onClick={() => focusTimer.start(timerState.phase === "idle" ? "focus" : timerState.phase)}
-              size="sm"
-              className="gap-2"
-            >
-              <Play className="w-4 h-4" />
-              Start
-            </Button>
-          ) : (
-            <Button
-              onClick={() => focusTimer.pause()}
+              onClick={() => navigate('/tools/focus')}
               variant="outline"
               size="sm"
-              className="gap-2"
             >
-              <Pause className="w-4 h-4" />
-              Pause
+              Full Timer
             </Button>
-          )}
-          <Button
-            onClick={() => navigate('/tools/focus')}
-            variant="outline"
-            size="sm"
-          >
-            Full Timer
-          </Button>
+          </div>
         </div>
       </div>
     </div>

@@ -199,8 +199,6 @@ export const BulletproofDashboard: React.FC = () => {
           {/* LEFT STACK: Focus Timer → Daily Wins → Hold the Vision */}
           <div className="layout-spacing-md">
             <BulletproofCard
-              title="Focus Timer"
-              icon={undefined}
               variant="elevated"
               className="mb-6"
               retryable={true}
