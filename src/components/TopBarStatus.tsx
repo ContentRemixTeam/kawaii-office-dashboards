@@ -1,45 +1,35 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { onChanged } from "@/lib/bus";
-import { readPowerWord, readAffirmation, readPet, readTrophies,
-         K_ENERGY, K_AFFIRM, K_TASKS, K_TROPHIES } from "@/lib/topbar.readers";
-import { readEarnedAnimals } from "@/lib/topbarState";
+import { readPowerWord, readAffirmation } from "@/lib/topbar.readers";
+import { getCurrencyData, formatCurrency, type CurrencyData } from "@/lib/unifiedCurrency";
+import { Coins } from "lucide-react";
 
 export default function TopBarStatus(){
   const navigate = useNavigate();
   const [word, setWord] = React.useState("");
   const [affirm, setAffirm] = React.useState("");
-  const [pet, setPet] = React.useState<{animal:string;stage:number}>({animal:"",stage:0});
-  const [trophies, setTrophies] = React.useState(0);
-  const [earnedAnimals, setEarnedAnimals] = React.useState<Array<{ id: string; emoji: string }>>([]);
+  const [currencyData, setCurrencyData] = React.useState<CurrencyData>(getCurrencyData());
 
   const refresh = React.useCallback(()=>{
     console.log('TopBarStatus refreshing data...');
-    console.log('TopBarStatus - localStorage keys with "affirm":', Object.keys(localStorage).filter(k => k.includes('affirm')));
-    console.log('TopBarStatus - localStorage keys with "trophy":', Object.keys(localStorage).filter(k => k.includes('trophy')));
     
     const word = readPowerWord();
     const affirmation = readAffirmation();
-    const pet = readPet();
-    const trophies = readTrophies();
-    const earned = readEarnedAnimals();
+    const currency = getCurrencyData();
     
-    console.log('TopBarStatus data:', { word, affirmation, pet, trophies, earned });
-    console.log('TopBarStatus - raw localStorage affirmations:', localStorage.getItem('fm_affirmations_v1'));
-    console.log('TopBarStatus - raw localStorage trophies:', localStorage.getItem('fm_trophy_stats_v1'));
+    console.log('TopBarStatus data:', { word, affirmation, currency });
     
     setWord(word);
     setAffirm(affirmation);
-    setPet(pet);
-    setTrophies(trophies);
-    setEarnedAnimals(earned);
+    setCurrencyData(currency);
   },[]);
 
   React.useEffect(()=>{
     refresh();
     return onChanged(keys=>{
       console.log('TopBarStatus received change events for keys:', keys);
-      if (keys.some(k => [K_ENERGY,K_AFFIRM,K_TASKS,K_TROPHIES].includes(k)) || keys.includes("fm_earned_animals_v1")) {
+      if (keys.includes('fm_energy_v1') || keys.includes('fm_affirmations_v1') || keys.includes('fm_unified_currency_v1')) {
         console.log('TopBarStatus triggering refresh for matching keys');
         refresh();
       }
@@ -47,41 +37,17 @@ export default function TopBarStatus(){
   },[refresh]);
 
   // Context-aware display values
-  const stageLabel = pet.stage>=3?"Max":String(pet.stage);
   const wordDisplay = word || "Choose Word";
   const affirmDisplay = affirm || "Draw Card";
-  
-  // Get pet emoji map for display
-  const petEmojiMap: { [key: string]: string } = { 
-    unicorn: "🦄", dragon: "🐉", cat: "🐱", dog: "🐶", 
-    bunny: "🐰", fox: "🦊", panda: "🐼", penguin: "🐧", 
-    owl: "🦉", hamster: "🐹" 
-  };
-  
-  // Display earned pets if any, otherwise show current pet
-  const petDisplay = earnedAnimals.length > 0 
-    ? `${earnedAnimals.length} pets earned!`
-    : pet.animal ? `${pet.animal} · S${stageLabel}` : "No pet";
-  const petEmoji = earnedAnimals.length > 0 
-    ? earnedAnimals.map(a => a.emoji).join("")
-    : pet.animal ? petEmojiMap[pet.animal.toLowerCase()] || "🐾" : "🐾";
 
   return (
     <div className="flex items-center gap-2 overflow-x-auto max-w-full">
       <Pill 
-        icon="🏆" 
-        label="Trophies" 
-        value={String(trophies)} 
-        title="Go to Wins" 
-        onClick={() => navigate('/tools/positivity-cabinet')}
-      />
-      <Pill 
-        icon={petEmoji} 
-        label="Pet Store" 
-        value={petDisplay} 
-        title="Go to Pet Store Mode" 
+        icon={<Coins className="w-4 h-4 text-yellow-500" />}
+        label="Coins" 
+        value={formatCurrency(currencyData.coins)} 
+        title="Your earned coins" 
         onClick={() => navigate('/tools/tasks')}
-        isEmpty={!pet.animal}
       />
       <Pill 
         icon="⚡" 
@@ -107,7 +73,7 @@ export default function TopBarStatus(){
 }
 
 function Pill({icon,label,value,title,clamp=false,wide=false,onClick,isEmpty=false}:{
-  icon:string;
+  icon:string | React.ReactElement;
   label:string;
   value:string;
   title?:string;
@@ -125,7 +91,7 @@ function Pill({icon,label,value,title,clamp=false,wide=false,onClick,isEmpty=fal
                    flex items-center gap-2 ${maxWidthClass} cursor-pointer`} 
       title={title}
     >
-      <span className="text-base">{icon}</span>
+      <span className="text-base">{typeof icon === 'string' ? icon : icon}</span>
       <span className="text-xs text-muted-foreground/70">{label}</span>
       <span className={`text-sm font-medium ${isEmpty ? 'text-muted-foreground/60' : 'text-foreground'} ${clamp?'truncate':''}`}>
         {value}
