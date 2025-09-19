@@ -25,21 +25,21 @@
   width: 100%;
 }
 
-/* Primary Grid - Big Three and Ambient Player */
+/* Primary Grid - Big Three, Ambient Player, and Focus Timer */
 .dashboard-primary-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: clamp(1rem, 2vw, 1.5rem);
   min-height: 0; /* Prevents grid from forcing minimum height */
-  max-width: 1200px; /* Increased width to accommodate two cards */
+  max-width: 100%;
   margin: 0 auto; /* Center the grid */
 }
 
-/* Two-column layout on tablet and up */
+/* Three-column layout on tablet and up */
 @media (min-width: 768px) {
   .dashboard-primary-grid {
-    grid-template-columns: 1fr 1fr;
-    max-width: 1200px;
+    grid-template-columns: 1fr 1fr 1fr;
+    max-width: 100%;
   }
 }
 

@@ -113,7 +113,7 @@ const Dashboard = () => {
           </FeatureErrorBoundary>
         </section>
 
-        {/* Big Three Tasks - Centered Single Card */}
+        {/* Three Main Cards - Big Three, Ambient Player, Focus Timer */}
         <section className="dashboard-primary-grid">
           <FeatureErrorBoundary featureName="Big Three Tasks">
             <div className="dashboard-card big-three-card">
@@ -176,10 +176,7 @@ const Dashboard = () => {
               <AmbientPlayerCard />
             </div>
           </FeatureErrorBoundary>
-        </section>
 
-        {/* Focus Timer - Full Width */}
-        <section className="dashboard-tools-grid">
           <FeatureErrorBoundary featureName="Focus Timer">
             <div className="dashboard-card">
               <FocusTimerCard />
