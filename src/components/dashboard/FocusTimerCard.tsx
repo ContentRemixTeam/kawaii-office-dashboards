@@ -68,7 +68,7 @@ export function FocusTimerCard() {
         <img 
           src={focusTimerHeader} 
           alt="Pomodoro Timer" 
-          className="h-20 w-full object-cover"
+          className="h-16 w-full object-contain rounded-lg"
         />
         <div className="text-center">
           <div className="status-indicator status-success">
