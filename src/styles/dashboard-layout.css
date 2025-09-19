@@ -25,12 +25,14 @@
   width: 100%;
 }
 
-/* Primary Grid - Trophy Case & Big Three */
+/* Primary Grid - Big Three Only */
 .dashboard-primary-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: clamp(1rem, 2vw, 1.5rem);
   min-height: 0; /* Prevents grid from forcing minimum height */
+  max-width: 800px; /* Constrain width for better visual balance */
+  margin: 0 auto; /* Center the single column */
 }
 
 /* Secondary Tools Grid */
@@ -115,8 +117,7 @@
 /* Tablet Landscape and Up */
 @media (min-width: 768px) {
   .dashboard-primary-grid {
-    grid-template-columns: 1fr 1fr;
-    align-items: start;
+    max-width: 900px; /* Slightly wider on larger screens */
   }
   
   .dashboard-tools-grid {

@@ -113,14 +113,13 @@ const Dashboard = () => {
           </FeatureErrorBoundary>
         </section>
 
-        {/* Primary Dashboard Grid - Big Three */}
+        {/* Big Three Tasks - Centered Single Card */}
         <section className="dashboard-primary-grid">
-          {/* Big Three Tasks with Enhanced Content */}
           <FeatureErrorBoundary featureName="Big Three Tasks">
             <div className="dashboard-card big-three-card">
               <BigThreeCard />
               
-              {/* Next Actions Below Big Three */}
+              {/* Quick Actions Below Big Three */}
               <div className="big-three-extension">
                 <div className="mt-4 pt-4 border-t border-border/20 space-y-3">
                   <div className="flex items-center justify-between">
