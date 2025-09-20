@@ -93,24 +93,28 @@ export default function DailyIntentionModal({ open, onClose }:{
     }
   }, [open, onClose]);
 
+  console.log('DailyIntentionModal render state:', { open });
+  
   if (!open) return null;
   return (
     <div 
-      className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/50 flex items-center justify-center p-4"
+      style={{ zIndex: 99999 }}
       onClick={handleBackdropClick}
     >
       <div 
-        className="w-full max-w-2xl rounded-2xl bg-card shadow-xl border"
+        className="w-full max-w-2xl rounded-2xl bg-white shadow-xl border border-gray-200"
+        style={{ zIndex: 100000 }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="p-5 border-b border-border flex items-center justify-between">
+        <div className="p-5 border-b border-gray-200 flex items-center justify-between bg-white">
           <div>
-            <h2 className="text-lg font-semibold text-card-foreground">✨ Set today's intention</h2>
-            <p className="text-sm text-muted-foreground">Two minutes to align your day.</p>
+            <h2 className="text-lg font-semibold text-gray-900">✨ Set today's intention</h2>
+            <p className="text-sm text-gray-600">Two minutes to align your day.</p>
           </div>
           <button 
             onClick={onClose}
-            className="text-muted-foreground hover:text-foreground transition-colors"
+            className="text-gray-500 hover:text-gray-700 transition-colors text-xl font-bold"
           >
             ✕
           </button>
