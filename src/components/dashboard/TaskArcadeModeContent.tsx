@@ -143,19 +143,46 @@ export default function TaskArcadeModeContent({ tokens, todayEarned, totalEarned
                 className={`
                   relative overflow-hidden rounded-2xl border-2 transition-all duration-300 hover:scale-105
                   ${game.isUnlocked 
-                    ? 'bg-gradient-to-r from-purple-50 via-pink-50 to-blue-50 border-purple-200 hover:shadow-xl hover:border-purple-300' 
-                    : 'bg-gray-50 border-gray-200 opacity-60'
+                    ? 'border-purple-300 hover:shadow-xl hover:border-purple-400' 
+                    : 'border-gray-200 opacity-60'
                   }
                 `}
+                style={{
+                  background: game.isUnlocked 
+                    ? `linear-gradient(135deg, 
+                        hsl(250 50% 15%) 0%, 
+                        hsl(260 40% 25%) 25%, 
+                        hsl(270 35% 35%) 50%, 
+                        hsl(280 30% 30%) 75%, 
+                        hsl(250 45% 20%) 100%),
+                       radial-gradient(circle at 20% 20%, hsl(300 60% 40% / 0.3) 0%, transparent 50%),
+                       radial-gradient(circle at 80% 80%, hsl(240 60% 40% / 0.3) 0%, transparent 50%)`
+                    : 'linear-gradient(135deg, hsl(0 0% 90%), hsl(0 0% 85%))'
+                }}
               >
-                {/* Game Image Background */}
-                <div className="absolute inset-0">
-                  <img 
-                    src={game.image}
-                    alt={game.title}
-                    className="w-full h-full object-cover opacity-20"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/80 to-white/60" />
+                {/* Arcade Controller Pattern Overlay */}
+                <div className="absolute inset-0 opacity-30">
+                  {/* D-Pad Pattern */}
+                  <div className="absolute top-4 left-4 w-8 h-8">
+                    <div className="absolute top-2 left-3 w-2 h-4 bg-white/20 rounded-sm"></div>
+                    <div className="absolute top-3 left-2 w-4 h-2 bg-white/20 rounded-sm"></div>
+                  </div>
+                  
+                  {/* Action Buttons Pattern */}
+                  <div className="absolute top-4 right-4 grid grid-cols-2 gap-1">
+                    <div className="w-3 h-3 bg-red-400/30 rounded-full border border-white/20"></div>
+                    <div className="w-3 h-3 bg-blue-400/30 rounded-full border border-white/20"></div>
+                    <div className="w-3 h-3 bg-green-400/30 rounded-full border border-white/20"></div>
+                    <div className="w-3 h-3 bg-yellow-400/30 rounded-full border border-white/20"></div>
+                  </div>
+                  
+                  {/* Circuit Board Lines */}
+                  <svg className="absolute inset-0 w-full h-full" viewBox="0 0 200 100">
+                    <path d="M20 20 L60 20 L60 40 L120 40 L120 60 L180 60" 
+                          stroke="rgba(255,255,255,0.1)" strokeWidth="1" fill="none"/>
+                    <path d="M40 80 L80 80 L80 30 L140 30 L140 50 L160 50" 
+                          stroke="rgba(255,255,255,0.1)" strokeWidth="1" fill="none"/>
+                  </svg>
                 </div>
                 
                 <div className="relative z-10 p-6 flex items-center gap-4">
@@ -176,8 +203,12 @@ export default function TaskArcadeModeContent({ tokens, todayEarned, totalEarned
                   
                   {/* Game Info */}
                   <div className="flex-1">
-                    <h4 className="font-bold text-lg text-purple-700 mb-1">{game.title}</h4>
-                    <p className="text-sm text-purple-600 mb-3">{game.description}</p>
+                    <h4 className={`font-bold text-lg mb-1 ${game.isUnlocked ? 'text-white' : 'text-gray-700'}`}>
+                      {game.title}
+                    </h4>
+                    <p className={`text-sm mb-3 ${game.isUnlocked ? 'text-white/90' : 'text-gray-600'}`}>
+                      {game.description}
+                    </p>
                     <div className="flex items-center gap-3 flex-wrap">
                       <Badge 
                         variant="secondary" 
@@ -185,13 +216,17 @@ export default function TaskArcadeModeContent({ tokens, todayEarned, totalEarned
                       >
                         {game.difficulty}
                       </Badge>
-                      <span className="text-sm text-purple-700 flex items-center gap-1 font-medium">
-                        <Coins className="w-4 h-4 text-yellow-500" />
+                      <span className={`text-sm flex items-center gap-1 font-medium ${
+                        game.isUnlocked ? 'text-yellow-300' : 'text-gray-600'
+                      }`}>
+                        <Coins className="w-4 h-4 text-yellow-400" />
                         {game.tokenCost} tokens
                       </span>
                       {game.bestScore > 0 && (
-                        <span className="text-sm text-yellow-700 flex items-center gap-1 font-medium">
-                          <Trophy className="w-4 h-4 text-yellow-500" />
+                        <span className={`text-sm flex items-center gap-1 font-medium ${
+                          game.isUnlocked ? 'text-yellow-200' : 'text-gray-600'
+                        }`}>
+                          <Trophy className="w-4 h-4 text-yellow-400" />
                           Best: {game.bestScore}
                         </span>
                       )}
@@ -264,15 +299,39 @@ export default function TaskArcadeModeContent({ tokens, todayEarned, totalEarned
         </CardContent>
       </Card>
 
-      {/* Arcade Navigation with Kawaii Style */}
-      <Card className="bg-gradient-to-r from-purple-400/20 via-pink-400/20 to-blue-400/20 border-2 border-purple-300/50 shadow-lg">
-        <CardContent className="p-6">
+      {/* Arcade Navigation with Controller Theme */}
+      <Card 
+        className="border-2 border-purple-300/50 shadow-lg overflow-hidden"
+        style={{
+          background: `linear-gradient(135deg, 
+            hsl(250 60% 20%) 0%, 
+            hsl(260 50% 30%) 25%, 
+            hsl(270 45% 40%) 50%, 
+            hsl(280 40% 35%) 75%, 
+            hsl(250 55% 25%) 100%),
+           radial-gradient(circle at 30% 30%, hsl(300 70% 50% / 0.4) 0%, transparent 60%),
+           radial-gradient(circle at 70% 70%, hsl(240 70% 50% / 0.4) 0%, transparent 60%)`
+        }}
+      >
+        {/* Controller Pattern Overlay */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-6 left-6 flex gap-2">
+            <div className="w-4 h-4 bg-white/30 rounded-full"></div>
+            <div className="w-4 h-4 bg-white/30 rounded-full"></div>
+          </div>
+          <div className="absolute bottom-6 right-6 flex gap-1">
+            <div className="w-6 h-2 bg-white/20 rounded-full"></div>
+            <div className="w-6 h-2 bg-white/20 rounded-full"></div>
+          </div>
+        </div>
+        
+        <CardContent className="relative p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-bold text-xl text-purple-700 flex items-center gap-2">
+              <h3 className="font-bold text-xl text-white flex items-center gap-2">
                 🎪 Full Task Arcade Experience 🎪
               </h3>
-              <p className="text-sm text-purple-600 mt-1">
+              <p className="text-white/90 mt-1 font-medium">
                 Access all games, leaderboards, achievements, and premium kawaii gaming experience! ✨
               </p>
             </div>
