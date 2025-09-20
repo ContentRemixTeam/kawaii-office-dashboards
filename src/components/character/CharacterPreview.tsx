@@ -10,9 +10,9 @@ interface CharacterPreviewProps {
 }
 
 const sizeMap = {
-  small: { width: 120, height: 120, padding: 16 },   // inset-4 = 16px
-  medium: { width: 200, height: 200, padding: 16 },  // inset-4 = 16px - matches BeeAccessoriesCustomizer mini preview
-  large: { width: 400, height: 400, padding: 32 }    // inset-8 = 32px - matches BeeAccessoriesCustomizer positioning view
+  small: { width: 120, height: 120, className: 'inset-4' },   // inset-4 = 16px
+  medium: { width: 200, height: 200, className: 'inset-4' },  // inset-4 = 16px - matches BeeAccessoriesCustomizer mini preview exactly
+  large: { width: 400, height: 400, className: 'inset-8' }    // inset-8 = 32px - matches BeeAccessoriesCustomizer positioning view exactly
 };
 
 export default function CharacterPreview({ 
@@ -35,58 +35,62 @@ export default function CharacterPreview({
     );
   }
 
-  // Use different positioning logic based on size to match BeeAccessoriesCustomizer
-  // Large size (400px) uses raw positions (like positioning view)
-  // Medium/Small sizes (200px/120px) use 0.5 multiplier (like mini preview)
-  const useRawPositions = size === 'large';
-  const POSITION_MULTIPLIER = useRawPositions ? 1.0 : 0.5;
+  // CRITICAL FIX: Use exact same positioning logic as BeeAccessoriesCustomizer
+  // Large size (400px): use raw positions (1.0 multiplier) - matches positioning view exactly
+  // Medium size (200px): use 0.5 multiplier - matches mini preview exactly  
+  // Small size (120px): use 0.5 multiplier for consistency
+  const POSITION_MULTIPLIER = size === 'large' ? 1.0 : 0.5;
   
-  console.log(`🔍 DEBUG CharacterPreview - Size: ${size}, useRawPositions: ${useRawPositions}, multiplier: ${POSITION_MULTIPLIER}`);
+  console.log(`🔍 POSITION DEBUG - Size: ${size}, multiplier: ${POSITION_MULTIPLIER}, container: ${config.className}`);
 
   return (
     <div 
       className={`relative overflow-hidden ${showBackground ? 'bg-gradient-to-br from-primary/5 to-accent/5 rounded-lg' : ''} ${className}`}
       style={{ width: config.width, height: config.height }}
     >
-      {/* Base Character - use exact same structure as BeeAccessoriesCustomizer */}
+      {/* Base Character - EXACT same structure as BeeAccessoriesCustomizer */}
       <img
         src={baseAsset.filepath.startsWith('data:') ? baseAsset.filepath : `${baseAsset.filepath}?v=${Date.now()}`}
         alt={baseAsset.name}
-        className="absolute w-auto h-auto object-contain"
+        className={`absolute ${config.className} w-auto h-auto object-contain`}
         style={{ 
-          // For large size (400px): inset: 32px (matches BeeAccessoriesCustomizer large preview exactly)
-          // For medium size (200px): inset: 16px (matches BeeAccessoriesCustomizer mini preview exactly)  
-          // For small size (120px): inset: 16px
-          inset: `${config.padding}px`,
-          width: `calc(100% - ${config.padding * 2}px)`,
-          height: `calc(100% - ${config.padding * 2}px)`
+          // Use exact same CSS structure as BeeAccessoriesCustomizer:
+          // Large: inset-8 class = 32px inset
+          // Medium/Small: inset-4 class = 16px inset
+          width: size === 'large' ? 'calc(100% - 64px)' : 'calc(100% - 32px)',
+          height: size === 'large' ? 'calc(100% - 64px)' : 'calc(100% - 32px)'
         }}
       />
 
-      {/* Equipped Accessories - use exact same structure as BeeAccessoriesCustomizer */}
+      {/* Equipped Accessories - EXACT same structure as BeeAccessoriesCustomizer */}
       {character.equippedAccessories.map((equipped, index) => {
         const accessory = getAssetById(equipped.assetId);
         if (!accessory) return null;
 
-        // Use exact same position logic as BeeAccessoriesCustomizer:
-        // - Large preview (400px): use raw positions (no multiplier)
-        // - Mini preview (200px): use 0.5 multiplier
+        // CRITICAL FIX: Use EXACT same position logic as BeeAccessoriesCustomizer
+        // Large preview (400px): raw positions (1.0 multiplier) - matches positioning view
+        // Medium/Small preview: 0.5 multiplier - matches mini preview
         const scaledX = equipped.position.x * POSITION_MULTIPLIER;
         const scaledY = equipped.position.y * POSITION_MULTIPLIER;
         
-        console.log(`🔍 DEBUG CharacterPreview - ${accessory.name}: original(${equipped.position.x}, ${equipped.position.y}) -> scaled(${scaledX}, ${scaledY})`);
+        console.log(`🔍 ACCESSORY POSITION DEBUG - ${accessory.name}:`, {
+          original: { x: equipped.position.x, y: equipped.position.y },
+          scaled: { x: scaledX, y: scaledY },
+          multiplier: POSITION_MULTIPLIER,
+          size: size,
+          container: config.className
+        });
 
         return (
           <img
             key={equipped.assetId + index}
             src={accessory.filepath.startsWith('data:') ? accessory.filepath : `${accessory.filepath}?v=${Date.now()}`}
             alt={accessory.name}
-            className="absolute w-auto h-auto object-contain pointer-events-none"
+            className={`absolute ${config.className} w-auto h-auto object-contain pointer-events-none`}
             style={{
-              // Use exact same inset and dimensions as BeeAccessoriesCustomizer
-              inset: `${config.padding}px`,
-              width: `calc(100% - ${config.padding * 2}px)`,
-              height: `calc(100% - ${config.padding * 2}px)`,
+              // EXACT same CSS structure as BeeAccessoriesCustomizer
+              width: size === 'large' ? 'calc(100% - 64px)' : 'calc(100% - 32px)',
+              height: size === 'large' ? 'calc(100% - 64px)' : 'calc(100% - 32px)',
               transform: `translate(${scaledX}px, ${scaledY}px) scale(${equipped.position.scale}) rotate(${equipped.position.rotation || 0}deg)`,
               opacity: equipped.position.opacity || 1,
               zIndex: 20
