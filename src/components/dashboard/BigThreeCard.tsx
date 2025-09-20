@@ -248,7 +248,7 @@ export function BigThreeCard() {
       <div className="grid grid-cols-3 gap-3">
         <Button
           onClick={() => {
-            console.log('[BUTTON CLICK] Focus button clicked');
+            console.log('[BIGTHREE BUTTON] Focus button clicked - navigating to /tools/focus');
             navigate('/tools/focus');
           }}
           className="flex items-center justify-center gap-2 font-bold text-white rounded-lg transition-all duration-200"
@@ -273,7 +273,7 @@ export function BigThreeCard() {
 
         <Button
           onClick={() => {
-            console.log('[BUTTON CLICK] Arcade button clicked');
+            console.log('[BIGTHREE BUTTON] Arcade button clicked - navigating to /arcade');
             navigate('/arcade');
           }}
           className="flex items-center justify-center gap-2 font-bold text-white rounded-lg transition-all duration-200"
@@ -298,7 +298,7 @@ export function BigThreeCard() {
 
         <Button
           onClick={() => {
-            console.log('[BUTTON CLICK] Break button clicked');
+            console.log('[BIGTHREE BUTTON] Break button clicked - navigating to /tools/breaks');
             navigate('/tools/breaks');
           }}
           className="flex items-center justify-center gap-2 font-bold text-white rounded-lg transition-all duration-200"

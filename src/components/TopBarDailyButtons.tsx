@@ -8,9 +8,15 @@ export default function TopBarDailyButtons(){
   const handleIntentionClick = () => {
     console.log('[BUTTON CLICK] TopBar Intention button clicked at', new Date().toISOString());
     log.info("Intention button clicked, setting showIntention to true");
-    console.log("Current flow state:", f);
-    console.log("Available functions:", Object.keys(f));
+    console.log("Current flow state BEFORE:", f);
+    console.log("showIntention BEFORE:", f.showIntention);
     f.setShowIntention(true);
+    console.log("showIntention AFTER call:", f.showIntention);
+    
+    // Force state verification after a delay
+    setTimeout(() => {
+      console.log("showIntention state after timeout:", f.showIntention);
+    }, 100);
   };
   
   const handleDebriefClick = () => {

@@ -43,6 +43,10 @@ const Dashboard = () => {
   const [todayIntention, setTodayIntention] = useState(null);
   const [earnedAnimals, setEarnedAnimals] = useState<Array<{ id: string; emoji: string }>>([]);
 
+  // Add debug logging for flow state
+  console.log('[DASHBOARD] Current flow state:', flow);
+  console.log('[DASHBOARD] showIntention value:', flow.showIntention);
+
   // Load initial data
   useEffect(() => {
     // Subscribe to event bus for focus session completions

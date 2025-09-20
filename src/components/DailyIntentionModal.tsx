@@ -94,8 +94,14 @@ export default function DailyIntentionModal({ open, onClose }:{
   }, [open, onClose]);
 
   console.log('DailyIntentionModal render state:', { open });
+  console.log('DailyIntentionModal will render:', open ? 'YES - MODAL VISIBLE' : 'NO - MODAL HIDDEN');
   
-  if (!open) return null;
+  if (!open) {
+    console.log('Modal NOT rendering - open is false');
+    return null;
+  }
+  
+  console.log('Modal IS rendering - open is true, creating modal elements');
   return (
     <div 
       className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
