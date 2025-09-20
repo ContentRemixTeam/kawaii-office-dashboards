@@ -22,6 +22,10 @@ const buttonVariants = cva(
         "theme-primary": "theme-button-primary theme-hover-glow",
         "theme-secondary": "theme-button-secondary theme-transition",
         "theme-outline": "theme-button-outline theme-transition",
+        // High contrast variants for better readability
+        "gradient-primary": "bg-gradient-primary text-text-brand-contrast font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300",
+        "gradient-secondary": "bg-gradient-to-r from-secondary to-accent text-text-brand-contrast font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300",
+        "solid-contrast": "bg-primary text-primary-foreground font-semibold hover:bg-primary/90 hover:shadow-lg transition-all duration-300",
       },
       size: {
         default: "h-10 px-4 py-2",

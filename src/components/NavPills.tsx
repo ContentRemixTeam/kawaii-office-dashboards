@@ -21,8 +21,8 @@ export default function NavPills() {
                   hover:scale-110 hover:shadow-xl transform
                   min-h-[44px]
                   ${active
-                    ? "bg-gradient-primary border-primary text-white shadow-primary/30 scale-105"
-                    : "bg-white/90 hover:bg-white border-border/40 text-main hover:text-primary hover:border-primary/50 hover:bg-primary/5"
+                    ? "bg-gradient-primary border-primary text-text-brand-contrast shadow-primary/30 scale-105 font-bold"
+                    : "bg-white/90 hover:bg-white border-border/40 text-text-primary hover:text-primary hover:border-primary/50 hover:bg-primary/5"
                   }
                 `.trim()}
               >

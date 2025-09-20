@@ -193,10 +193,11 @@ export function TrophyCelebrationPopup({
           {/* Action Button */}
           <Button
             onClick={onClose}
-            className="bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 border-0"
+            variant="gradient-primary"
+            className="font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 border-0"
           >
             <Trophy className="w-5 h-5 mr-2" />
-            Awesome! 🎉
+            <span className="font-bold">Awesome! 🎉</span>
           </Button>
         </div>
 

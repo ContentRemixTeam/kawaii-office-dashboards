@@ -960,13 +960,13 @@ export default function QuestMap({ character, onRegionSelect, selectedRegion }: 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <div 
-                        className={`w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg bg-gradient-to-br ${region.bgGradient} border-2 border-white/30`}
+                        className={`w-12 h-12 rounded-full flex items-center justify-center text-text-brand-contrast shadow-lg bg-gradient-to-br ${region.bgGradient} border-2 border-white/30`}
                       >
                         {isUnlocked ? region.icon : <Lock className="w-6 h-6" />}
                       </div>
                       <div>
-                        <h4 className="text-white font-bold text-xl font-cinzel tracking-wide">{region.name}</h4>
-                        <p className="text-gray-300 text-sm">{region.description}</p>
+                        <h4 className="text-text-brand-contrast font-bold text-xl font-cinzel tracking-wide">{region.name}</h4>
+                        <p className="text-text-brand-contrast/80 text-sm font-medium">{region.description}</p>
                       </div>
                     </div>
                     

@@ -315,10 +315,11 @@ export function CharacterCreation({ onCharacterCreated }: CharacterCreationProps
               <Button 
                 onClick={handleCreateCharacter}
                 disabled={!characterName.trim()}
-                className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold py-3 px-8 text-lg"
+                variant="gradient-primary"
+                className="font-bold py-3 px-8 text-lg"
               >
                 <Crown className="w-5 h-5 mr-2" />
-                Begin Your Adventure!
+                <span className="font-bold">Begin Your Adventure!</span>
               </Button>
               <p className="text-gray-400 text-sm">
                 Ready to transform your productivity into an epic quest?

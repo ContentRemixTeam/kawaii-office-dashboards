@@ -142,9 +142,9 @@ export default function Focus() {
     <ToolShell title="Focus Timer">
       <div className="space-y-6">
         {/* Header */}
-        <div className="bg-gradient-primary rounded-2xl p-6 text-white">
+        <div className="bg-gradient-primary rounded-2xl p-6 text-text-brand-contrast">
           <h2 className="text-2xl font-bold mb-2">🎯 Focus Timer</h2>
-          <p className="text-white/90">
+          <p className="text-text-brand-contrast/90 font-medium">
             Complete Pomodoro sessions to earn trophies and build your focus streak
           </p>
         </div>

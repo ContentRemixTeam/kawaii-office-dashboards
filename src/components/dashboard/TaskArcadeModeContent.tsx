@@ -201,18 +201,21 @@ export default function TaskArcadeModeContent({ tokens, todayEarned, totalEarned
                   {/* Play Button */}
                   <Button
                     size="lg"
+                    variant={game.isUnlocked ? "gradient-primary" : "secondary"}
                     disabled={!game.isUnlocked}
                     onClick={() => navigate('/arcade')}
                     className={`
-                      relative px-8 py-3 font-bold text-white shadow-lg transition-all duration-300
+                      relative px-8 py-3 font-bold shadow-lg transition-all duration-300
                       ${game.isUnlocked 
-                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 hover:scale-110 hover:shadow-xl' 
-                        : 'bg-gray-400'
+                        ? 'hover:scale-110 hover:shadow-xl' 
+                        : 'opacity-60'
                       }
                     `}
                   >
                     <Play className="w-5 h-5 mr-2" />
-                    {game.isUnlocked ? 'Play' : `Need ${game.tokenCost - tokens} more`}
+                    <span className="font-bold">
+                      {game.isUnlocked ? 'Play' : `Need ${game.tokenCost - tokens} more`}
+                    </span>
                     {game.isUnlocked && (
                       <div className="absolute inset-0 bg-white/20 rounded opacity-0 hover:opacity-100 transition-opacity duration-300" />
                     )}
@@ -275,10 +278,11 @@ export default function TaskArcadeModeContent({ tokens, todayEarned, totalEarned
             </div>
             <Button 
               onClick={() => navigate('/arcade')}
-              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 font-bold px-8 py-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
+              variant="gradient-primary"
               size="lg"
+              className="px-8 py-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
             >
-              Enter Arcade 🚀
+              <span className="font-bold">Enter Arcade 🚀</span>
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
           </div>

@@ -118,14 +118,14 @@ export default function TokenCounter({
               onClick={onEarnMore}
               className={`
                 inline-flex items-center gap-2 px-4 py-2 rounded-xl
-                bg-gradient-to-r from-primary/20 to-primary/30 
-                border border-primary/30 text-primary hover:from-primary/30 hover:to-primary/40
+                bg-gradient-to-r from-primary to-primary-glow 
+                border border-primary/30 text-text-brand-contrast hover:from-primary/90 hover:to-primary-glow/90
                 transition-all duration-300 hover:scale-105 hover:shadow-lg
-                font-medium
+                font-semibold shadow-md
               `}
             >
               <Zap className="w-4 h-4" />
-              Earn More Tokens
+              <span className="font-bold">Earn More Tokens</span>
             </button>
           </div>
 
