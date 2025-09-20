@@ -278,8 +278,8 @@ export function BigThreeCard() {
             e.currentTarget.style.transform = 'translateY(0)';
           }}
         >
-          <span className="text-lg">⚔️</span>
-          <span className="text-sm font-bold">Quest</span>
+          <span className="text-lg">🎮</span>
+          <span className="text-sm font-bold">Arcade</span>
         </Button>
 
         <Button
