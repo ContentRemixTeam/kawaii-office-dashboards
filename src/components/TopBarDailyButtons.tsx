@@ -31,10 +31,10 @@ export default function TopBarDailyButtons(){
         style={{ 
           pointerEvents: 'auto',
           position: 'relative',
-          zIndex: 1000,
-          backgroundColor: '#ffffff',
-          border: '1px solid #e5e7eb',
-          color: '#374151'
+          zIndex: 10,
+          backgroundColor: 'hsl(var(--background))',
+          border: '1px solid hsl(var(--border))',
+          color: 'hsl(var(--foreground))'
         }}
       >
         ✨ Intention
@@ -47,10 +47,10 @@ export default function TopBarDailyButtons(){
         style={{ 
           pointerEvents: 'auto',
           position: 'relative',
-          zIndex: 1000,
-          backgroundColor: '#ffffff',
-          border: '1px solid #e5e7eb',
-          color: '#374151'
+          zIndex: 10,
+          backgroundColor: 'hsl(var(--background))',
+          border: '1px solid hsl(var(--border))',
+          color: 'hsl(var(--foreground))'
         }}
       >
         🌙 Debrief

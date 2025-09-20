@@ -22,6 +22,8 @@ import DashboardTrophyCase from "@/components/DashboardTrophyCase";
 import { AmbientPlayerCard } from "@/components/dashboard/AmbientPlayerCard";
 import { FocusTimerCard } from "@/components/dashboard/FocusTimerCard";
 import { WorkSessionCard } from "@/components/dashboard/WorkSessionCard";
+import DailyIntentionModal from "@/components/DailyIntentionModal";
+import DebriefModal from "@/components/DebriefModal";
 
 interface TaskData {
   tasks: string[];
@@ -303,6 +305,23 @@ const Dashboard = () => {
       <GiphyCelebration
         payload={currentCelebration}
         onClose={clearCelebration}
+      />
+      
+      {/* Daily Flow Modals */}
+      <DailyIntentionModal 
+        open={flow.showIntention} 
+        onClose={() => {
+          console.log('[DASHBOARD] Closing DailyIntentionModal');
+          flow.setShowIntention(false);
+        }} 
+      />
+      <DebriefModal 
+        open={flow.showDebrief} 
+        onClose={() => {
+          console.log('[DASHBOARD] Closing DebriefModal');
+          flow.setShowDebrief(false);
+        }} 
+        selectedAnimal="bee"
       />
     </main>
   );
