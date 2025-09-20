@@ -311,8 +311,8 @@ const Dashboard = () => {
         onClose={clearCelebration}
       />
       
-      {/* NUCLEAR MODAL FIX - Direct rendering with inline styles */}
-      {flow.showIntention && (
+      {/* HYDRATION-SAFE MODAL FIX - Client-side only rendering */}
+      {typeof window !== 'undefined' && flow.showIntention && (
         <div 
           style={{
             position: 'fixed',
@@ -432,7 +432,7 @@ const Dashboard = () => {
         </div>
       )}
 
-      {flow.showDebrief && (
+      {typeof window !== 'undefined' && flow.showDebrief && (
         <div 
           style={{
             position: 'fixed',
