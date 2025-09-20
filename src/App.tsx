@@ -13,6 +13,20 @@ import { useTodayPet } from "./hooks/useTodayPet";
 import PomodoroWinModal from "./components/PomodoroWinModal";
 import focusTimer from "@/lib/focusTimer";
 import { initializeYouTubeAPI } from "@/lib/youtubeInit";
+
+// Add global error detection for debugging
+if (typeof window !== 'undefined') {
+  window.addEventListener('error', (e) => {
+    console.error('GLOBAL JAVASCRIPT ERROR:', e.error);
+    console.error('Error message:', e.message);
+    console.error('Error filename:', e.filename);
+    console.error('Error line:', e.lineno);
+  });
+
+  window.addEventListener('unhandledrejection', (e) => {
+    console.error('UNHANDLED PROMISE REJECTION:', e.reason);
+  });
+}
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import Tasks from "./pages/tools/Tasks";

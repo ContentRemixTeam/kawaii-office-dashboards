@@ -159,14 +159,15 @@ export function BigThreeCard() {
           >
             Set your Big Three to start the day!
           </p>
-          <Button
+          <button
             onClick={() => {
-              console.log('[BUTTON CLICK] Set Daily Intention clicked');
+              console.log('=== SET INTENTION CLICK START ===');
+              console.log('setShowIntention function exists:', typeof setShowIntention);
               setShowIntention(true);
+              console.log('=== SET INTENTION CLICK END ===');
             }}
             onMouseDown={() => console.log('SET INTENTION MOUSE DOWN')}
             onMouseUp={() => console.log('SET INTENTION MOUSE UP')}
-            className="font-bold text-white px-6 py-3 cursor-pointer"
             style={{ 
               backgroundColor: '#66D9A6',
               color: '#FFFFFF',
@@ -174,17 +175,15 @@ export function BigThreeCard() {
               border: 'none',
               pointerEvents: 'auto',
               position: 'relative',
-              zIndex: 100
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#5BC89A';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#66D9A6';
+              zIndex: 100,
+              padding: '12px 24px',
+              cursor: 'pointer',
+              fontSize: '16px',
+              fontWeight: 'bold'
             }}
           >
             Set Daily Intention
-          </Button>
+          </button>
         </Card>
       )}
 
@@ -246,80 +245,98 @@ export function BigThreeCard() {
 
       {/* Quick Actions Section */}
       <div className="grid grid-cols-3 gap-3">
-        <Button
+        <button
           onClick={() => {
-            console.log('[BIGTHREE BUTTON] Focus button clicked - navigating to /tools/focus');
+            console.log('=== FOCUS CLICK START ===');
+            console.log('navigate function exists:', typeof navigate);
             navigate('/tools/focus');
+            console.log('=== FOCUS CLICK END ===');
           }}
-          className="flex items-center justify-center gap-2 font-bold text-white rounded-lg transition-all duration-200"
-          style={{ 
-            backgroundColor: '#FF6B47',
-            color: '#FFFFFF',
-            height: '44px',
-            borderRadius: '8px'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#FF5A35';
-            e.currentTarget.style.transform = 'translateY(-1px)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = '#FF6B47';
-            e.currentTarget.style.transform = 'translateY(0)';
+          onMouseDown={() => console.log('FOCUS MOUSE DOWN')}
+          onMouseUp={() => console.log('FOCUS MOUSE UP')}
+          style={{
+            pointerEvents: 'auto',
+            zIndex: 1000,
+            position: 'relative',
+            backgroundColor: '#ef4444',
+            color: 'white',
+            border: 'none',
+            padding: '12px',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            fontSize: '14px',
+            fontWeight: '500',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            height: '44px'
           }}
         >
-          <span className="text-lg">🍅</span>
-          <span className="text-sm font-bold">Focus</span>
-        </Button>
-
-        <Button
+          🍅 Focus
+        </button>
+        
+        <button
           onClick={() => {
-            console.log('[BIGTHREE BUTTON] Arcade button clicked - navigating to /arcade');
+            console.log('=== ARCADE CLICK START ===');
+            console.log('navigate function exists:', typeof navigate);
             navigate('/arcade');
+            console.log('=== ARCADE CLICK END ===');
           }}
-          className="flex items-center justify-center gap-2 font-bold text-white rounded-lg transition-all duration-200"
-          style={{ 
-            backgroundColor: '#4F96FF',
-            color: '#FFFFFF',
-            height: '44px',
-            borderRadius: '8px'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#3D84FF';
-            e.currentTarget.style.transform = 'translateY(-1px)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = '#4F96FF';
-            e.currentTarget.style.transform = 'translateY(0)';
+          onMouseDown={() => console.log('ARCADE MOUSE DOWN')}
+          onMouseUp={() => console.log('ARCADE MOUSE UP')}
+          style={{
+            pointerEvents: 'auto',
+            zIndex: 1000,
+            position: 'relative',
+            backgroundColor: '#3b82f6',
+            color: 'white',
+            border: 'none',
+            padding: '12px',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            fontSize: '14px',
+            fontWeight: '500',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            height: '44px'
           }}
         >
-          <span className="text-lg">🎮</span>
-          <span className="text-sm font-bold">Arcade</span>
-        </Button>
-
-        <Button
+          🎮 Arcade
+        </button>
+        
+        <button
           onClick={() => {
-            console.log('[BIGTHREE BUTTON] Break button clicked - navigating to /tools/breaks');
+            console.log('=== BREAK CLICK START ===');
+            console.log('navigate function exists:', typeof navigate);
             navigate('/tools/breaks');
+            console.log('=== BREAK CLICK END ===');
           }}
-          className="flex items-center justify-center gap-2 font-bold text-white rounded-lg transition-all duration-200"
-          style={{ 
-            backgroundColor: '#8B5FBF',
-            color: '#FFFFFF',
-            height: '44px',
-            borderRadius: '8px'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#7A4FA8';
-            e.currentTarget.style.transform = 'translateY(-1px)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = '#8B5FBF';
-            e.currentTarget.style.transform = 'translateY(0)';
+          onMouseDown={() => console.log('BREAK MOUSE DOWN')}
+          onMouseUp={() => console.log('BREAK MOUSE UP')}
+          style={{
+            pointerEvents: 'auto',
+            zIndex: 1000,
+            position: 'relative',
+            backgroundColor: '#8b5cf6',
+            color: 'white',
+            border: 'none',
+            padding: '12px',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            fontSize: '14px',
+            fontWeight: '500',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            height: '44px'
           }}
         >
-          <span className="text-lg">☕</span>
-          <span className="text-sm font-bold">Break</span>
-        </Button>
+          ☕ Break
+        </button>
       </div>
 
       {/* Progress Statistics */}

@@ -311,22 +311,182 @@ const Dashboard = () => {
         onClose={clearCelebration}
       />
       
-      {/* Daily Flow Modals */}
-      <DailyIntentionModal 
-        open={flow.showIntention} 
-        onClose={() => {
-          console.log('[DASHBOARD] Closing DailyIntentionModal');
-          flow.setShowIntention(false);
-        }} 
-      />
-      <DebriefModal 
-        open={flow.showDebrief} 
-        onClose={() => {
-          console.log('[DASHBOARD] Closing DebriefModal');
-          flow.setShowDebrief(false);
-        }} 
-        selectedAnimal="bee"
-      />
+      {/* NUCLEAR MODAL FIX - Direct rendering with inline styles */}
+      {flow.showIntention && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px'
+          }}
+          onClick={() => {
+            console.log('MODAL BACKDROP CLICKED - closing modal');
+            flow.setShowIntention(false);
+          }}
+        >
+          <div 
+            style={{
+              backgroundColor: 'white',
+              padding: '24px',
+              borderRadius: '12px',
+              maxWidth: '500px',
+              width: '100%',
+              position: 'relative',
+              maxHeight: '80vh',
+              overflowY: 'auto'
+            }}
+            onClick={(e) => {
+              console.log('MODAL CONTENT CLICKED - preventing close');
+              e.stopPropagation();
+            }}
+          >
+            <button
+              onClick={() => {
+                console.log('MODAL CLOSE BUTTON CLICKED');
+                flow.setShowIntention(false);
+              }}
+              style={{
+                position: 'absolute',
+                top: '12px',
+                right: '12px',
+                backgroundColor: 'transparent',
+                border: 'none',
+                fontSize: '24px',
+                cursor: 'pointer',
+                color: '#666',
+                width: '30px',
+                height: '30px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              ×
+            </button>
+            <h2 style={{ margin: '0 0 16px 0', fontSize: '24px', fontWeight: 'bold' }}>
+              ✨ Daily Intention
+            </h2>
+            <p style={{ margin: '0 0 20px 0', color: '#666' }}>
+              Set your intention for the day to unlock your daily companion and earn rewards!
+            </p>
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
+                How are you feeling today?
+              </label>
+              <input 
+                type="text" 
+                placeholder="Energetic, focused, peaceful..."
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  border: '1px solid #ccc',
+                  borderRadius: '8px',
+                  fontSize: '16px'
+                }}
+              />
+            </div>
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
+                What will you focus on?
+              </label>
+              <input 
+                type="text" 
+                placeholder="Main theme or outcome for the day..."
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  border: '1px solid #ccc',
+                  borderRadius: '8px',
+                  fontSize: '16px'
+                }}
+              />
+            </div>
+            <button
+              onClick={() => {
+                console.log('SAVE INTENTION CLICKED');
+                flow.setShowIntention(false);
+              }}
+              style={{
+                backgroundColor: '#4CAF50',
+                color: 'white',
+                border: 'none',
+                padding: '12px 24px',
+                borderRadius: '8px',
+                fontSize: '16px',
+                fontWeight: '500',
+                cursor: 'pointer',
+                width: '100%'
+              }}
+            >
+              Save & Start Day
+            </button>
+          </div>
+        </div>
+      )}
+
+      {flow.showDebrief && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px'
+          }}
+          onClick={() => {
+            console.log('DEBRIEF BACKDROP CLICKED');
+            flow.setShowDebrief(false);
+          }}
+        >
+          <div 
+            style={{
+              backgroundColor: 'white',
+              padding: '24px',
+              borderRadius: '12px',
+              maxWidth: '400px',
+              width: '100%',
+              position: 'relative'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => {
+                console.log('DEBRIEF CLOSE CLICKED');
+                flow.setShowDebrief(false);
+              }}
+              style={{
+                position: 'absolute',
+                top: '12px',
+                right: '12px',
+                backgroundColor: 'transparent',
+                border: 'none',
+                fontSize: '24px',
+                cursor: 'pointer'
+              }}
+            >
+              ×
+            </button>
+            <h2 style={{ margin: '0 0 16px 0' }}>🌙 Daily Debrief</h2>
+            <p style={{ margin: '0 0 20px 0', color: '#666' }}>
+              Reflect on your day...
+            </p>
+          </div>
+        </div>
+      )}
     </main>
   );
 };
