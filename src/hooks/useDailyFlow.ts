@@ -23,7 +23,9 @@ export default function useDailyFlow(){
     const shouldShow = shouldShowIntention();
     log.info("Checking if should show intention modal:", shouldShow);
     
-    if (shouldShow) {
+    // Disable auto-showing intention modal to prevent blocking UI
+    // Users can manually open it via the "Set Daily Intention" button
+    if (false && shouldShow) {
       log.info("Auto-showing intention modal on startup");
       setShowIntention(true);
     }
