@@ -21,11 +21,13 @@ interface OutOfTokensModalProps {
 }
 
 const ENCOURAGING_MESSAGES = [
-  "Time to earn more gaming time! Complete a task to unlock more arcade fun.",
-  "Your productivity powers up your play time. Finish something from your Big Three to earn tokens.",
-  "Almost there! Check off a task and you'll be back to gaming in no time.",
-  "Productivity first, games second - that's the secret to guilt-free fun!",
-  "Your future self will thank you. Complete a task, then come back and play!"
+  "🎮 Time to power up! Complete tasks to unlock more gaming energy and continue your adventure.",
+  "⚡ Your productivity fuel is running low! Finish a task from your Big Three to recharge your gaming tokens.",
+  "🚀 Almost there! Check off any task and you'll be back to gaming in no time with more energy.",
+  "🎯 Productivity first, games second - that's the secret to guilt-free, unlimited fun!",
+  "✨ Your future self will thank you! Complete a task, then return for more epic gaming sessions.",
+  "🔋 Gaming energy depleted! Restore power by completing tasks - every task gives you more play time!",
+  "🌟 The more you accomplish, the more you can play! Complete tasks to unlock extended gaming sessions."
 ];
 
 export default function OutOfTokensModal({ 
@@ -47,7 +49,7 @@ export default function OutOfTokensModal({
             <Coins className="w-8 h-8 text-white" />
           </div>
           <DialogTitle className="text-xl font-bold text-foreground">
-            Almost Ready to Play!
+            ⚡ Need More Gaming Energy! ⚡
           </DialogTitle>
         </DialogHeader>
         
@@ -64,8 +66,8 @@ export default function OutOfTokensModal({
                 Need {tokensNeeded} for {gameName}
               </Badge>
             </div>
-            <p className="text-sm text-muted-foreground">
-              You need {tokensNeeded - currentTokens} more tokens to play
+            <p className="text-sm text-muted-foreground font-medium">
+              Complete {tokensNeeded - currentTokens} more tasks to unlock this game and get more gaming energy!
             </p>
           </div>
           
@@ -85,20 +87,24 @@ export default function OutOfTokensModal({
           <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 p-4 rounded-lg border">
             <h4 className="font-semibold text-sm text-foreground mb-3 flex items-center gap-2">
               <Target className="w-4 h-4 text-green-600" />
-              How to Earn Tokens:
+              How to Get More Gaming Energy:
             </h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                Complete daily tasks (+5 tokens each)
+                Complete any daily task (+5 gaming tokens each)
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                Finish Big Three goals (+10 tokens each)
+                Finish Big Three goals (+10 gaming tokens each)
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                Pomodoro sessions (+3 tokens each)
+                Complete Pomodoro sessions (+3 gaming tokens each)
+              </li>
+              <li className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                🎮 <strong>Bonus:</strong> Completing tasks gives you longer play sessions!
               </li>
             </ul>
           </div>
@@ -106,16 +112,16 @@ export default function OutOfTokensModal({
           {/* Action Buttons */}
           <div className="grid grid-cols-1 gap-3">
             <Link to="/dashboard" onClick={onClose}>
-              <Button className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">
+              <Button variant="gradient-primary" className="w-full">
                 <CheckSquare className="w-4 h-4 mr-2" />
-                View My Tasks
+                <span className="font-bold">Complete Tasks & Earn Energy</span>
               </Button>
             </Link>
             
             <Link to="/" onClick={onClose}>
               <Button variant="outline" className="w-full">
                 <Target className="w-4 h-4 mr-2" />
-                Check My Big Three
+                Check My Big Three Goals
               </Button>
             </Link>
             
@@ -128,7 +134,7 @@ export default function OutOfTokensModal({
           {/* Motivation Footer */}
           <div className="text-center pt-4 border-t">
             <p className="text-xs text-muted-foreground">
-              🎯 <strong>Remember:</strong> Every task completed is a step towards your goals!
+              🎯 <strong>Pro Tip:</strong> Complete tasks to unlock unlimited gaming time with bonus energy! ⚡
             </p>
           </div>
         </div>
