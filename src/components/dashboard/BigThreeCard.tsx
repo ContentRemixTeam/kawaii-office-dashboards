@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import bigThreeHeader from "@/assets/big-three-header.png";
 import { safeStorage } from "@/lib/safeStorage";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -98,28 +99,27 @@ export function BigThreeCard() {
 
   return (
     <div 
-      className="p-6 space-y-6 rounded-2xl"
+      className="relative p-6 space-y-6 rounded-2xl"
       style={{ 
         backgroundColor: '#FAFAFA',
         border: '1px solid #E5E7EB'
       }}
     >
       {/* Header Section */}
-      <div className="space-y-3">
+      <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="text-2xl" style={{ color: '#FFD700' }}>⭐</span>
-            <h2 
-              className="text-2xl font-bold"
-              style={{ color: '#2E2E2E' }}
-            >
-              The Big Three
-            </h2>
+          {/* Custom Header Graphic */}
+          <div className="flex-1 flex justify-center">
+            <img 
+              src={bigThreeHeader} 
+              alt="The Big 3" 
+              className="h-16 w-auto"
+            />
           </div>
           
           {/* Streak Counter with Flame */}
           <div 
-            className="flex items-center gap-2 px-3 py-2 rounded-full"
+            className="flex items-center gap-2 px-3 py-2 rounded-full absolute top-6 right-6"
             style={{ 
               backgroundColor: '#FFD700',
               color: '#2E2E2E'
@@ -134,7 +134,7 @@ export function BigThreeCard() {
         
         {/* Motivational Subtitle */}
         <p 
-          className="text-sm"
+          className="text-center text-sm"
           style={{ color: '#6B7280' }}
         >
           Focus on what matters most. Complete your Big Three to earn +{EARNING_RATES.BIG_THREE_BONUS.coins} bonus coins each! 🪙
@@ -181,113 +181,132 @@ export function BigThreeCard() {
       )}
 
       {/* Task Input Areas */}
-      {hasAnyTasks && (
-        <div className="space-y-4">
-          {[0, 1, 2].map((index) => {
-            const task = bigThreeTasks[index];
-            return (
-              <Card
-                key={index}
-                className={`p-4 transition-all duration-200 ${
-                  task?.completed ? 'opacity-75' : 'hover:shadow-md'
-                }`}
-                style={{ 
-                  backgroundColor: '#FFFFFF',
-                  borderRadius: '8px',
-                  border: '1px solid #E5E7EB',
-                  minHeight: '48px'
-                }}
-              >
-                <div className="flex items-center gap-4">
-                  <Checkbox
-                    checked={task?.completed || false}
-                    onCheckedChange={() => toggleTaskCompleted(index)}
-                    className="scale-125"
-                    disabled={!task?.title?.trim()}
-                  />
-                  <Input
-                    value={task?.title || ""}
-                    onChange={(e) => handleTaskChange(index, e.target.value)}
-                    placeholder={`Your priority task ${index + 1}`}
-                    className="border-none bg-transparent text-base font-medium shadow-none focus-visible:ring-0"
-                    style={{ 
-                      color: task?.completed ? '#6B7280' : '#2E2E2E'
-                    }}
-                  />
-                  {task?.completed && (
-                    <div className="flex items-center gap-2 text-green-600 animate-bounce">
-                      <Coins className="w-5 h-5" />
-                      <span className="text-sm font-bold">+{EARNING_RATES.BIG_THREE_BONUS.coins}</span>
-                    </div>
-                  )}
-                </div>
-              </Card>
-            );
-          })}
-        </div>
-      )}
+      <div className="space-y-3">
+        {[0, 1, 2].map((index) => {
+          const task = bigThreeTasks[index];
+          const placeholders = [
+            "What's your most important task today?",
+            "What's your second priority?", 
+            "What's your third key task?"
+          ];
+          
+          return (
+            <Card
+              key={index}
+              className={`p-4 transition-all duration-200 ${
+                task?.completed ? 'opacity-75' : 'hover:shadow-md'
+              }`}
+              style={{ 
+                backgroundColor: '#FFFFFF',
+                borderRadius: '8px',
+                border: '1px solid #E5E7EB',
+                minHeight: '56px',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+              }}
+            >
+              <div className="flex items-center gap-3">
+                <Checkbox
+                  checked={task?.completed || false}
+                  onCheckedChange={() => toggleTaskCompleted(index)}
+                  className="scale-125 rounded-full"
+                  style={{
+                    backgroundColor: task?.completed ? '#66D9A6' : 'transparent',
+                    borderColor: task?.completed ? '#66D9A6' : '#D1D5DB'
+                  }}
+                />
+                <Input
+                  value={task?.title || ""}
+                  onChange={(e) => handleTaskChange(index, e.target.value)}
+                  placeholder={placeholders[index]}
+                  className="border-none bg-transparent text-base font-medium shadow-none focus-visible:ring-0 focus-visible:border-b-2 focus-visible:border-b-[#66D9A6] focus-visible:rounded-none"
+                  style={{ 
+                    color: task?.completed ? '#6B7280' : '#2E2E2E',
+                    textDecoration: task?.completed ? 'line-through' : 'none'
+                  }}
+                />
+                {task?.completed && (
+                  <div className="flex items-center gap-2 text-green-600 animate-bounce">
+                    <Coins className="w-5 h-5" />
+                    <span className="text-sm font-bold">+{EARNING_RATES.BIG_THREE_BONUS.coins}</span>
+                  </div>
+                )}
+              </div>
+            </Card>
+          );
+        })}
+      </div>
 
       {/* Quick Actions Section */}
-      {hasAnyTasks && (
-        <div className="grid grid-cols-3 gap-3">
-          <Button
-            onClick={() => navigate('/tools/focus')}
-            className="flex items-center gap-2 p-3 font-bold text-white rounded-lg"
-            style={{ 
-              backgroundColor: '#FF6B47',
-              color: '#FFFFFF'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#FF5A35';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#FF6B47';
-            }}
-          >
-            <span className="text-lg">🍅</span>
-            <span className="text-sm">Focus</span>
-          </Button>
+      <div className="grid grid-cols-3 gap-3">
+        <Button
+          onClick={() => navigate('/tools/focus')}
+          className="flex items-center justify-center gap-2 font-bold text-white rounded-lg transition-all duration-200"
+          style={{ 
+            backgroundColor: '#FF6B47',
+            color: '#FFFFFF',
+            height: '44px',
+            borderRadius: '8px'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#FF5A35';
+            e.currentTarget.style.transform = 'translateY(-1px)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = '#FF6B47';
+            e.currentTarget.style.transform = 'translateY(0)';
+          }}
+        >
+          <span className="text-lg">🍅</span>
+          <span className="text-sm font-bold">Focus</span>
+        </Button>
 
-          <Button
-            onClick={() => navigate('/arcade')}
-            className="flex items-center gap-2 p-3 font-bold text-white rounded-lg"
-            style={{ 
-              backgroundColor: '#4F96FF',
-              color: '#FFFFFF'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#3D84FF';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#4F96FF';
-            }}
-          >
-            <span className="text-lg">⚔️</span>
-            <span className="text-sm">Quest</span>
-          </Button>
+        <Button
+          onClick={() => navigate('/arcade')}
+          className="flex items-center justify-center gap-2 font-bold text-white rounded-lg transition-all duration-200"
+          style={{ 
+            backgroundColor: '#4F96FF',
+            color: '#FFFFFF',
+            height: '44px',
+            borderRadius: '8px'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#3D84FF';
+            e.currentTarget.style.transform = 'translateY(-1px)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = '#4F96FF';
+            e.currentTarget.style.transform = 'translateY(0)';
+          }}
+        >
+          <span className="text-lg">⚔️</span>
+          <span className="text-sm font-bold">Quest</span>
+        </Button>
 
-          <Button
-            onClick={() => navigate('/tools/breaks')}
-            className="flex items-center gap-2 p-3 font-bold text-white rounded-lg"
-            style={{ 
-              backgroundColor: '#8B5FBF',
-              color: '#FFFFFF'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#7A4FA8';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#8B5FBF';
-            }}
-          >
-            <span className="text-lg">☕</span>
-            <span className="text-sm">Break</span>
-          </Button>
-        </div>
-      )}
+        <Button
+          onClick={() => navigate('/tools/breaks')}
+          className="flex items-center justify-center gap-2 font-bold text-white rounded-lg transition-all duration-200"
+          style={{ 
+            backgroundColor: '#8B5FBF',
+            color: '#FFFFFF',
+            height: '44px',
+            borderRadius: '8px'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#7A4FA8';
+            e.currentTarget.style.transform = 'translateY(-1px)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = '#8B5FBF';
+            e.currentTarget.style.transform = 'translateY(0)';
+          }}
+        >
+          <span className="text-lg">☕</span>
+          <span className="text-sm font-bold">Break</span>
+        </Button>
+      </div>
 
       {/* Progress Statistics */}
-      {hasAnyTasks && (
+      {(hasAnyTasks || true) && (
         <div className="grid grid-cols-3 gap-4">
           {/* Today's Progress */}
           <Card 
