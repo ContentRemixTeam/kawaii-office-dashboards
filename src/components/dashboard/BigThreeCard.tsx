@@ -1,10 +1,11 @@
-import { Calendar, CheckCircle, Coins } from "lucide-react";
+import { Calendar, CheckCircle, Coins, Coffee, Focus, Zap, Flame } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { safeStorage } from "@/lib/safeStorage";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { onChanged } from "@/lib/bus";
 import { getBigThreeTasks, setBigThreeTasks, updateBigThreeTask, getBigThreeStats } from "@/lib/bigThreeTasks";
 import { awardActivityCurrency, EARNING_RATES } from "@/lib/unifiedCurrency";
@@ -20,6 +21,7 @@ interface DashboardData {
 }
 
 export function BigThreeCard() {
+  const navigate = useNavigate();
   const [streakData, setStreakData] = useState<DashboardData>({ streak: 0, lastCompletedDate: "" });
   const [bigThreeTasks, setBigThreeTasksState] = useState<[any, any, any]>([null, null, null]);
   const { setShowIntention } = useDailyFlow();
@@ -95,102 +97,282 @@ export function BigThreeCard() {
   const hasAnyTasks = bigThreeTasks.some(task => task?.title?.trim());
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="space-y-2">
+    <div 
+      className="p-6 space-y-6 rounded-2xl"
+      style={{ 
+        backgroundColor: '#FAFAFA',
+        border: '1px solid #E5E7EB'
+      }}
+    >
+      {/* Header Section */}
+      <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-card-title flex items-center gap-3">
-            <span className="text-2xl">⭐</span>
-            The Big Three
-          </h2>
-          <div className="status-indicator status-success">
-            <Calendar className="w-4 h-4" />
-            <span>
+          <div className="flex items-center gap-3">
+            <span className="text-2xl" style={{ color: '#FFD700' }}>⭐</span>
+            <h2 
+              className="text-2xl font-bold"
+              style={{ color: '#2E2E2E' }}
+            >
+              The Big Three
+            </h2>
+          </div>
+          
+          {/* Streak Counter with Flame */}
+          <div 
+            className="flex items-center gap-2 px-3 py-2 rounded-full"
+            style={{ 
+              backgroundColor: '#FFD700',
+              color: '#2E2E2E'
+            }}
+          >
+            <Flame className="w-4 h-4" />
+            <span className="font-bold text-sm">
               {streakData.streak} day streak
             </span>
           </div>
         </div>
-        <p className="text-sm text-muted-foreground">
-          Your top 3 must-dos to make today awesome! Check one off = +{EARNING_RATES.BIG_THREE_BONUS.coins} bonus coins! 🪙
+        
+        {/* Motivational Subtitle */}
+        <p 
+          className="text-sm"
+          style={{ color: '#6B7280' }}
+        >
+          Focus on what matters most. Complete your Big Three to earn +{EARNING_RATES.BIG_THREE_BONUS.coins} bonus coins each! 🪙
         </p>
       </div>
 
-      {/* Show prompt if no tasks are set */}
+      {/* Daily Intention Card */}
       {!hasAnyTasks && (
-        <div className="text-center py-6 space-y-3 bg-muted/30 rounded-2xl border-2 border-dashed border-border">
-          <div className="text-4xl">✨</div>
-          <p className="text-muted-foreground">Set your Big Three to start the day!</p>
-          <Button
-            variant="outline"
-            onClick={() => setShowIntention(true)}
-            className="gap-2"
+        <Card 
+          className="p-6 text-center space-y-4"
+          style={{ 
+            backgroundColor: '#FEFEFE',
+            borderRadius: '12px',
+            border: '1px solid #E5E7EB',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)'
+          }}
+        >
+          <div className="text-3xl">✨</div>
+          <p 
+            className="text-base"
+            style={{ color: '#4B5563' }}
           >
-            ✨ Set Daily Intention
+            Set your Big Three to start the day!
+          </p>
+          <Button
+            onClick={() => setShowIntention(true)}
+            className="font-bold text-white px-6 py-3"
+            style={{ 
+              backgroundColor: '#66D9A6',
+              color: '#FFFFFF',
+              borderRadius: '8px',
+              border: 'none'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#5BC89A';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#66D9A6';
+            }}
+          >
+            Set Daily Intention
+          </Button>
+        </Card>
+      )}
+
+      {/* Task Input Areas */}
+      {hasAnyTasks && (
+        <div className="space-y-4">
+          {[0, 1, 2].map((index) => {
+            const task = bigThreeTasks[index];
+            return (
+              <Card
+                key={index}
+                className={`p-4 transition-all duration-200 ${
+                  task?.completed ? 'opacity-75' : 'hover:shadow-md'
+                }`}
+                style={{ 
+                  backgroundColor: '#FFFFFF',
+                  borderRadius: '8px',
+                  border: '1px solid #E5E7EB',
+                  minHeight: '48px'
+                }}
+              >
+                <div className="flex items-center gap-4">
+                  <Checkbox
+                    checked={task?.completed || false}
+                    onCheckedChange={() => toggleTaskCompleted(index)}
+                    className="scale-125"
+                    disabled={!task?.title?.trim()}
+                  />
+                  <Input
+                    value={task?.title || ""}
+                    onChange={(e) => handleTaskChange(index, e.target.value)}
+                    placeholder={`Your priority task ${index + 1}`}
+                    className="border-none bg-transparent text-base font-medium shadow-none focus-visible:ring-0"
+                    style={{ 
+                      color: task?.completed ? '#6B7280' : '#2E2E2E'
+                    }}
+                  />
+                  {task?.completed && (
+                    <div className="flex items-center gap-2 text-green-600 animate-bounce">
+                      <Coins className="w-5 h-5" />
+                      <span className="text-sm font-bold">+{EARNING_RATES.BIG_THREE_BONUS.coins}</span>
+                    </div>
+                  )}
+                </div>
+              </Card>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Quick Actions Section */}
+      {hasAnyTasks && (
+        <div className="grid grid-cols-3 gap-3">
+          <Button
+            onClick={() => navigate('/tools/focus')}
+            className="flex items-center gap-2 p-3 font-bold text-white rounded-lg"
+            style={{ 
+              backgroundColor: '#FF6B47',
+              color: '#FFFFFF'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#FF5A35';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#FF6B47';
+            }}
+          >
+            <span className="text-lg">🍅</span>
+            <span className="text-sm">Focus</span>
+          </Button>
+
+          <Button
+            onClick={() => navigate('/arcade')}
+            className="flex items-center gap-2 p-3 font-bold text-white rounded-lg"
+            style={{ 
+              backgroundColor: '#4F96FF',
+              color: '#FFFFFF'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#3D84FF';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#4F96FF';
+            }}
+          >
+            <span className="text-lg">⚔️</span>
+            <span className="text-sm">Quest</span>
+          </Button>
+
+          <Button
+            onClick={() => navigate('/tools/breaks')}
+            className="flex items-center gap-2 p-3 font-bold text-white rounded-lg"
+            style={{ 
+              backgroundColor: '#8B5FBF',
+              color: '#FFFFFF'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#7A4FA8';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#8B5FBF';
+            }}
+          >
+            <span className="text-lg">☕</span>
+            <span className="text-sm">Break</span>
           </Button>
         </div>
       )}
 
-      {/* Task Input Fields */}
-      <div className="space-y-4">
-        {[0, 1, 2].map((index) => {
-          const task = bigThreeTasks[index];
-          return (
-            <div
-              key={index}
-              className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all duration-300 ${
-                task?.completed
-                  ? "bg-primary/5 border-primary/30 shadow-sm"
-                  : "bg-background/80 border-border/20 hover:border-primary/40 hover:shadow-md"
-              }`}
-            >
-              <Checkbox
-                checked={task?.completed || false}
-                onCheckedChange={() => toggleTaskCompleted(index)}
-                className="scale-125"
-                disabled={!task?.title?.trim()}
-              />
-              <Input
-                value={task?.title || ""}
-                onChange={(e) => handleTaskChange(index, e.target.value)}
-                placeholder={`Task ${index + 1}`}
-                className={`border-none bg-transparent text-base font-medium shadow-none focus-visible:ring-0 ${
-                  task?.completed ? "line-through text-muted-foreground" : ""
-                }`}
-              />
-              {task?.completed && (
-                <div className="flex items-center gap-2 text-primary animate-bounce">
-                  <Coins className="w-5 h-5" />
-                  <span className="text-sm font-semibold">+{EARNING_RATES.BIG_THREE_BONUS.coins}</span>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Progress Summary */}
+      {/* Progress Statistics */}
       {hasAnyTasks && (
-        <div className="flex items-center justify-between p-4 bg-muted/20 rounded-xl">
-          <div className="flex items-center gap-2">
-            <CheckCircle className="w-5 h-5 text-primary" />
-            <span className="text-sm font-medium">
-              {stats.completedCount} of {stats.totalCount} completed
-            </span>
-          </div>
-          {stats.allCompleted && (
-            <div className="text-sm text-primary font-semibold animate-pulse">
-              Perfect day! ✨
+        <div className="grid grid-cols-3 gap-4">
+          {/* Today's Progress */}
+          <Card 
+            className="p-4 text-center"
+            style={{ 
+              backgroundColor: '#FFFFFF',
+              border: '1px solid #E5E7EB',
+              borderRadius: '8px'
+            }}
+          >
+            <div 
+              className="text-2xl font-bold"
+              style={{ color: '#2E2E2E' }}
+            >
+              {stats.completedCount}/{stats.totalCount}
             </div>
-          )}
+            <div 
+              className="text-xs font-medium"
+              style={{ color: '#6B7280' }}
+            >
+              Today
+            </div>
+          </Card>
+
+          {/* Week Progress */}
+          <Card 
+            className="p-4 text-center"
+            style={{ 
+              backgroundColor: '#FFFFFF',
+              border: '1px solid #E5E7EB',
+              borderRadius: '8px'
+            }}
+          >
+            <div 
+              className="text-2xl font-bold"
+              style={{ color: '#2E2E2E' }}
+            >
+              12/21
+            </div>
+            <div 
+              className="text-xs font-medium"
+              style={{ color: '#6B7280' }}
+            >
+              This Week
+            </div>
+          </Card>
+
+          {/* Streak */}
+          <Card 
+            className="p-4 text-center"
+            style={{ 
+              backgroundColor: '#FFFFFF',
+              border: '1px solid #E5E7EB',
+              borderRadius: '8px'
+            }}
+          >
+            <div className="flex items-center justify-center gap-1">
+              <span className="text-lg">🔥</span>
+              <span 
+                className="text-xl font-bold"
+                style={{ color: '#2E2E2E' }}
+              >
+                {streakData.streak}
+              </span>
+            </div>
+            <div 
+              className="text-xs font-medium"
+              style={{ color: '#6B7280' }}
+            >
+              Streak
+            </div>
+          </Card>
         </div>
       )}
 
-      {/* Set Intention Button if tasks exist but want to update */}
+      {/* Update Intention Button */}
       {hasAnyTasks && (
         <Button
           variant="ghost"
-          size="sm"
           onClick={() => setShowIntention(true)}
-          className="w-full gap-2 text-muted-foreground hover:text-foreground"
+          className="w-full"
+          style={{ 
+            color: '#6B7280',
+            fontSize: '14px'
+          }}
         >
           Update Daily Intention
         </Button>
