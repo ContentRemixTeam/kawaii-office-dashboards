@@ -74,13 +74,46 @@ export default function DailyIntentionModal({ open, onClose }:{
     }
   }, [open]);
 
+  // Handle backdrop click to close modal
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+  // Handle escape key to close modal
+  React.useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    
+    if (open) {
+      document.addEventListener('keydown', handleEscape);
+      return () => document.removeEventListener('keydown', handleEscape);
+    }
+  }, [open, onClose]);
+
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-[100] bg-background/80 backdrop-blur-sm flex items-center justify-center p-4" style={{ zIndex: 9999 }}>
-      <div className="w-full max-w-2xl rounded-2xl bg-card shadow-xl border">
-        <div className="p-5 border-b border-border">
-          <h2 className="text-lg font-semibold text-card-foreground">✨ Set today's intention</h2>
-          <p className="text-sm text-muted-foreground">Two minutes to align your day.</p>
+    <div 
+      className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4"
+      onClick={handleBackdropClick}
+    >
+      <div 
+        className="w-full max-w-2xl rounded-2xl bg-card shadow-xl border"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="p-5 border-b border-border flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-card-foreground">✨ Set today's intention</h2>
+            <p className="text-sm text-muted-foreground">Two minutes to align your day.</p>
+          </div>
+          <button 
+            onClick={onClose}
+            className="text-muted-foreground hover:text-foreground transition-colors"
+          >
+            ✕
+          </button>
         </div>
         <div className="p-5 space-y-4">
           <div>

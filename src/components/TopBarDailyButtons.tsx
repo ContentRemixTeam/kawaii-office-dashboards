@@ -6,6 +6,7 @@ export default function TopBarDailyButtons(){
   const f = useDailyFlow();
   
   const handleIntentionClick = () => {
+    console.log('[BUTTON CLICK] TopBar Intention button clicked at', new Date().toISOString());
     log.info("Intention button clicked, setting showIntention to true");
     console.log("Current flow state:", f);
     console.log("Available functions:", Object.keys(f));
@@ -13,6 +14,7 @@ export default function TopBarDailyButtons(){
   };
   
   const handleDebriefClick = () => {
+    console.log('[BUTTON CLICK] TopBar Debrief button clicked at', new Date().toISOString());
     log.info("Debrief button clicked, setting showDebrief to true");
     console.log("Current flow state:", f);
     console.log("Available functions:", Object.keys(f));

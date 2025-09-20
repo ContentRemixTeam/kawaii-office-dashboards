@@ -160,7 +160,10 @@ export function BigThreeCard() {
             Set your Big Three to start the day!
           </p>
           <Button
-            onClick={() => setShowIntention(true)}
+            onClick={() => {
+              console.log('[BUTTON CLICK] Set Daily Intention clicked');
+              setShowIntention(true);
+            }}
             className="font-bold text-white px-6 py-3"
             style={{ 
               backgroundColor: '#66D9A6',
@@ -239,7 +242,10 @@ export function BigThreeCard() {
       {/* Quick Actions Section */}
       <div className="grid grid-cols-3 gap-3">
         <Button
-          onClick={() => navigate('/tools/focus')}
+          onClick={() => {
+            console.log('[BUTTON CLICK] Focus button clicked');
+            navigate('/tools/focus');
+          }}
           className="flex items-center justify-center gap-2 font-bold text-white rounded-lg transition-all duration-200"
           style={{ 
             backgroundColor: '#FF6B47',
@@ -261,7 +267,10 @@ export function BigThreeCard() {
         </Button>
 
         <Button
-          onClick={() => navigate('/arcade')}
+          onClick={() => {
+            console.log('[BUTTON CLICK] Arcade button clicked');
+            navigate('/arcade');
+          }}
           className="flex items-center justify-center gap-2 font-bold text-white rounded-lg transition-all duration-200"
           style={{ 
             backgroundColor: '#4F96FF',
@@ -283,7 +292,10 @@ export function BigThreeCard() {
         </Button>
 
         <Button
-          onClick={() => navigate('/tools/breaks')}
+          onClick={() => {
+            console.log('[BUTTON CLICK] Break button clicked');
+            navigate('/tools/breaks');
+          }}
           className="flex items-center justify-center gap-2 font-bold text-white rounded-lg transition-all duration-200"
           style={{ 
             backgroundColor: '#8B5FBF',
@@ -386,7 +398,10 @@ export function BigThreeCard() {
       {hasAnyTasks && (
         <Button
           variant="ghost"
-          onClick={() => setShowIntention(true)}
+          onClick={() => {
+            console.log('[BUTTON CLICK] Update Daily Intention clicked');
+            setShowIntention(true);
+          }}
           className="w-full"
           style={{ 
             color: '#6B7280',
