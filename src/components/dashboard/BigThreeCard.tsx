@@ -164,12 +164,17 @@ export function BigThreeCard() {
               console.log('[BUTTON CLICK] Set Daily Intention clicked');
               setShowIntention(true);
             }}
-            className="font-bold text-white px-6 py-3"
+            onMouseDown={() => console.log('SET INTENTION MOUSE DOWN')}
+            onMouseUp={() => console.log('SET INTENTION MOUSE UP')}
+            className="font-bold text-white px-6 py-3 cursor-pointer"
             style={{ 
               backgroundColor: '#66D9A6',
               color: '#FFFFFF',
               borderRadius: '8px',
-              border: 'none'
+              border: 'none',
+              pointerEvents: 'auto',
+              position: 'relative',
+              zIndex: 100
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = '#5BC89A';

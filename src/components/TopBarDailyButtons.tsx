@@ -25,13 +25,33 @@ export default function TopBarDailyButtons(){
     <div className="flex items-center gap-2">
       <button 
         onClick={handleIntentionClick}
-        className="rounded-xl border border-border bg-card/80 backdrop-blur px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
+        onMouseDown={() => console.log('INTENTION BUTTON MOUSE DOWN')}
+        onMouseUp={() => console.log('INTENTION BUTTON MOUSE UP')}
+        className="rounded-xl border border-border bg-card/80 backdrop-blur px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
+        style={{ 
+          pointerEvents: 'auto',
+          position: 'relative',
+          zIndex: 1000,
+          backgroundColor: '#ffffff',
+          border: '1px solid #e5e7eb',
+          color: '#374151'
+        }}
       >
         ✨ Intention
       </button>
       <button 
         onClick={handleDebriefClick}
-        className="rounded-xl border border-border bg-card/80 backdrop-blur px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
+        onMouseDown={() => console.log('DEBRIEF BUTTON MOUSE DOWN')}
+        onMouseUp={() => console.log('DEBRIEF BUTTON MOUSE UP')}
+        className="rounded-xl border border-border bg-card/80 backdrop-blur px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
+        style={{ 
+          pointerEvents: 'auto',
+          position: 'relative',
+          zIndex: 1000,
+          backgroundColor: '#ffffff',
+          border: '1px solid #e5e7eb',
+          color: '#374151'
+        }}
       >
         🌙 Debrief
       </button>
