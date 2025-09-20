@@ -60,8 +60,17 @@ export function FocusTimerCard() {
     }
   };
 
+  const getProgressStyle = () => {
+    switch (timerState.phase) {
+      case "focus": return { backgroundColor: "#FF8A80" }; // Warm coral
+      case "short": return { backgroundColor: "#A8E6CF" }; // Mint green
+      case "long": return { backgroundColor: "#81D4FA" }; // Sky blue
+      default: return { backgroundColor: "#D1B3FF" }; // Lavender
+    }
+  };
+
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-3xl overflow-hidden shadow-xl border-4 border-purple-200 dark:border-purple-800">
+    <div className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100" style={{ boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)' }}>
       {/* Kawaii Header Image */}
       <div className="relative">
         <img 
@@ -69,51 +78,63 @@ export function FocusTimerCard() {
           alt="Kawaii Pomodoro Timer" 
           className="w-full h-40 object-cover"
         />
-        {/* Trophy Badge Overlay */}
+        {/* Trophy Badge Overlay - High contrast yellow with dark text */}
         <div className="absolute top-4 right-4">
-          <div className="bg-yellow-400 text-yellow-900 px-3 py-1.5 rounded-full shadow-lg flex items-center gap-2 font-bold text-sm">
+          <div className="px-4 py-2 rounded-full shadow-lg flex items-center gap-2 font-bold text-sm" style={{ backgroundColor: '#FFF176', color: '#2E2E2E' }}>
             <Trophy className="w-4 h-4" />
             {trophyCount}
           </div>
         </div>
       </div>
 
-      {/* Timer Content */}
-      <div className="p-6 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/50 dark:to-pink-950/50">
-        {/* Phase Indicator */}
-        <div className="text-center mb-6">
-          <div className="inline-flex items-center gap-3 bg-white dark:bg-gray-800 px-4 py-2 rounded-full shadow-md border-2 border-purple-200 dark:border-purple-700">
+      {/* Timer Content - Cream background with generous padding */}
+      <div className="p-6" style={{ backgroundColor: '#FFF8E1', padding: '24px' }}>
+        {/* Phase Indicator - High contrast with proper spacing */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-3 bg-white px-6 py-3 rounded-full shadow-md border border-gray-200">
             <span className="text-xl">{getPhaseEmoji()}</span>
-            <span className="font-semibold text-gray-800 dark:text-gray-200">{getPhaseText()}</span>
+            <span className="font-bold text-lg" style={{ color: '#2E2E2E' }}>{getPhaseText()}</span>
           </div>
         </div>
 
-        {/* Timer Display */}
+        {/* Timer Display - Large, bold, high contrast */}
         <div className="text-center mb-8">
-          <div className="text-6xl font-bold text-gray-800 dark:text-white mb-4 font-mono tracking-wider">
+          <div className="text-7xl font-bold font-mono tracking-wider mb-6" style={{ color: '#2E2E2E', lineHeight: '1.1' }}>
             {formatTime(timerState.msLeft)}
           </div>
           
-          {/* Progress Bar */}
+          {/* Progress Bar - Clean with soft corners */}
           <div className="max-w-sm mx-auto">
-            <div className="h-6 bg-white dark:bg-gray-700 rounded-full shadow-inner border-2 border-purple-200 dark:border-purple-600 overflow-hidden">
+            <div className="h-4 bg-white rounded-full shadow-inner border border-gray-200 overflow-hidden">
               <div 
-                className="h-full bg-gradient-to-r from-purple-400 to-pink-400 transition-all duration-300 ease-out rounded-full relative"
-                style={{ width: `${timerState.progress * 100}%` }}
-              >
-                <div className="absolute inset-0 bg-white/20 rounded-full animate-pulse"></div>
-              </div>
+                className="h-full transition-all duration-500 ease-out rounded-full"
+                style={{ 
+                  width: `${timerState.progress * 100}%`,
+                  ...getProgressStyle()
+                }}
+              />
             </div>
           </div>
         </div>
         
-        {/* Action Buttons */}
+        {/* Action Buttons - High contrast, proper sizing */}
         <div className="flex items-center justify-center gap-4">
           {!timerState.isRunning ? (
             <Button
               onClick={() => focusTimer.start(timerState.phase === "idle" ? "focus" : timerState.phase)}
               size="lg"
-              className="bg-green-500 hover:bg-green-600 text-white font-semibold px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 text-lg"
+              className="font-bold text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200"
+              style={{ 
+                backgroundColor: '#A8E6CF', 
+                color: '#2E2E2E',
+                border: 'none'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#96E0C1';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#A8E6CF';
+              }}
             >
               <Play className="w-5 h-5 mr-2" />
               Start
@@ -122,8 +143,18 @@ export function FocusTimerCard() {
             <Button
               onClick={() => focusTimer.pause()}
               size="lg"
-              variant="outline"
-              className="bg-white dark:bg-gray-800 border-2 border-orange-300 dark:border-orange-600 text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/20 font-semibold px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 text-lg"
+              className="font-bold text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200"
+              style={{ 
+                backgroundColor: '#FF8A80', 
+                color: '#FFFFFF',
+                border: 'none'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#FF7A6B';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#FF8A80';
+              }}
             >
               <Pause className="w-5 h-5 mr-2" />
               Pause
@@ -133,8 +164,18 @@ export function FocusTimerCard() {
           <Button
             onClick={() => navigate('/tools/focus')}
             size="lg"
-            variant="outline"
-            className="bg-white dark:bg-gray-800 border-2 border-blue-300 dark:border-blue-600 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/20 font-semibold px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 text-lg"
+            className="font-bold text-lg px-6 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200"
+            style={{ 
+              backgroundColor: '#D1B3FF', 
+              color: '#2E2E2E',
+              border: 'none'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#C7A6FF';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#D1B3FF';
+            }}
           >
             <Timer className="w-5 h-5 mr-2" />
             Full Timer
