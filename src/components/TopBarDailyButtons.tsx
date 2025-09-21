@@ -8,8 +8,13 @@ export default function TopBarDailyButtons() {
     console.log('=== INTENTION CLICK START ===');
     console.log('Current showIntention:', f.showIntention);
     console.log('setShowIntention function exists:', typeof f.setShowIntention);
-    f.setShowIntention(true);
-    console.log('After setShowIntention(true) call completed');
+    console.log('Full flow object:', f);
+    try {
+      f.setShowIntention(true);
+      console.log('After setShowIntention(true) call completed - SUCCESS');
+    } catch (error) {
+      console.error('ERROR calling setShowIntention:', error);
+    }
     console.log('=== INTENTION CLICK END ===');
   };
 
