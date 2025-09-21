@@ -1,22 +1,22 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { shouldShowIntention, shouldShowDebrief, readPrefs, writePrefs, readTodayDebrief } from "@/lib/dailyFlow";
 import { isFeatureVisible } from "@/lib/theme";
 import { log } from "@/lib/log";
 
 export default function useDailyFlow(){
-  const [showIntention,setShowIntention] = useState(false);
-  const [showDebrief,setShowDebrief]     = useState(false);
+  const [showIntention, setShowIntentionState] = useState(false);
+  const [showDebrief, setShowDebriefState] = useState(false);
 
-  // Enhanced setter functions with logging
-  const setShowIntentionWithLogging = (value: boolean) => {
-    log.info(`Setting showIntention to: ${value}`);
-    setShowIntention(value);
-  };
+  // Use useCallback to prevent function recreation and ensure stable references
+  const setShowIntention = useCallback((value: boolean) => {
+    log.info(`useDailyFlow: setShowIntention called with: ${value}`);
+    setShowIntentionState(value);
+  }, []);
 
-  const setShowDebriefWithLogging = (value: boolean) => {
-    log.info(`Setting showDebrief to: ${value}`);
-    setShowDebrief(value);
-  };
+  const setShowDebrief = useCallback((value: boolean) => {
+    log.info(`useDailyFlow: setShowDebrief called with: ${value}`);
+    setShowDebriefState(value);
+  }, []);
 
   useEffect(()=>{
     // Check if we should auto-show intention modal
@@ -56,9 +56,9 @@ export default function useDailyFlow(){
 
   return { 
     showIntention, 
-    setShowIntention: setShowIntentionWithLogging, 
+    setShowIntention, 
     showDebrief, 
-    setShowDebrief: setShowDebriefWithLogging, 
+    setShowDebrief, 
     prefs, 
     setSignoffTime, 
     setAutoPrompt 

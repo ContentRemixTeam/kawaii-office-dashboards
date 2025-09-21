@@ -1,69 +1,43 @@
-import React from "react";
+import React, { useCallback } from "react";
 import useDailyFlow from "@/hooks/useDailyFlow";
 
 export default function TopBarDailyButtons() {
-  const f = useDailyFlow();
+  const flow = useDailyFlow();
   
-  const handleIntentionClick = () => {
-    console.log('=== INTENTION CLICK START ===');
-    console.log('Current showIntention:', f.showIntention);
-    console.log('setShowIntention function exists:', typeof f.setShowIntention);
-    console.log('Full flow object:', f);
-    try {
-      f.setShowIntention(true);
-      console.log('After setShowIntention(true) call completed - SUCCESS');
-    } catch (error) {
-      console.error('ERROR calling setShowIntention:', error);
-    }
-    console.log('=== INTENTION CLICK END ===');
-  };
+  // Use useCallback to create stable event handlers
+  const handleIntentionClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('=== INTENTION BUTTON CLICKED ===');
+    console.log('Flow object:', flow);
+    console.log('Current showIntention:', flow.showIntention);
+    flow.setShowIntention(true);
+    console.log('After setShowIntention(true)');
+  }, [flow]);
 
-  const handleDebriefClick = () => {
-    console.log('=== DEBRIEF CLICK START ===');
-    console.log('Current showDebrief:', f.showDebrief);
-    f.setShowDebrief(true);
-    console.log('After setShowDebrief(true) call completed');
-    console.log('=== DEBRIEF CLICK END ===');
-  };
+  const handleDebriefClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('=== DEBRIEF BUTTON CLICKED ===');
+    flow.setShowDebrief(true);
+  }, [flow]);
 
   return (
     <div className="flex items-center gap-2">
       <button 
+        type="button"
         onClick={handleIntentionClick}
         onMouseDown={() => console.log('INTENTION MOUSE DOWN')}
         onMouseUp={() => console.log('INTENTION MOUSE UP')}
-        style={{
-          pointerEvents: 'auto',
-          zIndex: 1000,
-          position: 'relative',
-          backgroundColor: '#ffffff',
-          border: '1px solid #ccc',
-          padding: '8px 16px',
-          borderRadius: '8px',
-          cursor: 'pointer',
-          fontSize: '14px',
-          fontWeight: '500'
-        }}
+        className="rounded-xl border border-border bg-card/80 backdrop-blur px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
       >
         ✨ Intention
       </button>
       
       <button 
+        type="button"
         onClick={handleDebriefClick}
-        onMouseDown={() => console.log('DEBRIEF MOUSE DOWN')}
-        onMouseUp={() => console.log('DEBRIEF MOUSE UP')}
-        style={{
-          pointerEvents: 'auto',
-          zIndex: 1000,
-          position: 'relative',
-          backgroundColor: '#ffffff',
-          border: '1px solid #ccc',
-          padding: '8px 16px',
-          borderRadius: '8px',
-          cursor: 'pointer',
-          fontSize: '14px',
-          fontWeight: '500'
-        }}
+        className="rounded-xl border border-border bg-card/80 backdrop-blur px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
       >
         🌙 Debrief
       </button>
