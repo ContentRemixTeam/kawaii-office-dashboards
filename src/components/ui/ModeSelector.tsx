@@ -3,22 +3,18 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
 interface ModeSelectorProps {
-  selectedMode: 'pet-store' | 'design-studio' | 'task-arcade';
-  onModeChange: (mode: 'pet-store' | 'design-studio' | 'task-arcade') => void;
+  selectedMode: 'pet-store' | 'task-arcade';
+  onModeChange: (mode: 'pet-store' | 'task-arcade') => void;
 }
 
+// Note: Design Studio mode files are preserved for future use
+// To re-enable, add back: { id: 'design-studio', name: 'Design Studio', image: '/assets/mode-buttons/design-studio.png', description: 'Customize your character' }
 const MODES = [
   {
     id: 'pet-store' as const,
     name: 'Pet Store',
     image: '/assets/mode-buttons/pet-store.png',
     description: 'Grow your pets'
-  },
-  {
-    id: 'design-studio' as const,
-    name: 'Design Studio',
-    image: '/assets/mode-buttons/design-studio.png',
-    description: 'Customize your character'
   },
   {
     id: 'task-arcade' as const,

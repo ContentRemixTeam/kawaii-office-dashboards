@@ -3,14 +3,15 @@ import { Card, CardContent } from '@/components/ui/card';
 import CurrencyBar from '@/components/ui/CurrencyBar';
 import ModeSelector from '@/components/ui/ModeSelector';
 import PetStoreModeContent from './PetStoreModeContent';
-import DesignStudioModeContent from './DesignStudioModeContent';
+// Note: DesignStudioModeContent preserved for future use
+// import DesignStudioModeContent from './DesignStudioModeContent';
 import TaskArcadeModeContent from './TaskArcadeModeContent';
 import { getCurrencyData } from '@/lib/unifiedCurrency';
 import { readEarnedAnimals, readPetStage } from '@/lib/topbarState';
 import { onChanged } from '@/lib/bus';
 
 export default function UnifiedModeAwareDashboard() {
-  const [selectedMode, setSelectedMode] = useState<'pet-store' | 'design-studio' | 'task-arcade'>('pet-store');
+  const [selectedMode, setSelectedMode] = useState<'pet-store' | 'task-arcade'>('pet-store');
   const [currencyData, setCurrencyData] = useState(getCurrencyData());
   const [earnedAnimals, setEarnedAnimals] = useState<string[]>([]);
   const [petStage, setPetStage] = useState(0);
@@ -44,8 +45,6 @@ export default function UnifiedModeAwareDashboard() {
     switch (selectedMode) {
       case 'pet-store':
         return <PetStoreModeContent earnedAnimals={earnedAnimals} petStage={petStage} />;
-      case 'design-studio':
-        return <DesignStudioModeContent coins={currencyData.coins} gems={currencyData.gems} />;
       case 'task-arcade':
         return <TaskArcadeModeContent 
           tokens={currencyData.coins} 
